@@ -1,0 +1,124 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+from .models import PacketManifest, PacketType, RenderResult, RiskTier
+from .policy import IngestPolicy
+from .routes import packet_target_path
+
+INDEX_START = "<!-- wiki-ingest:index:start -->"
+INDEX_END = "<!-- wiki-ingest:index:end -->"
+LATEST_START = "<!-- wiki-ingest:latest:start -->"
+LATEST_END = "<!-- wiki-ingest:latest:end -->"
+REVIEW_TYPES = {
+    PacketType.PERFORMANCE,
+    PacketType.MODEL,
+    PacketType.FEATURE,
+    PacketType.EXPERIMENT,
+}
+
+
+def _replace_block(text: str, start: str, end: str, body: str) -> str:
+    block = f"{start}\n{body.rstrip()}\n{end}"
+    if start in text and end in text and text.index(start) < text.index(end):
+        before = text[: text.index(start)].rstrip()
+        after = text[text.index(end) + len(end) :].lstrip()
+        return "\n\n".join(part for part in [before, block, after] if part) + "\n"
+    return text.rstrip() + "\n\n" + block + "\n"
+
+
+def _append_once(path: Path, entry: str) -> None:
+    text = path.read_text(encoding="utf-8") if path.exists() else "# Log\n"
+    if entry.splitlines()[0] not in text:
+        path.write_text(text.rstrip() + "\n\n" + entry.rstrip() + "\n", encoding="utf-8")
+
+
+def _packet_page(manifest: PacketManifest, tier: RiskTier, run_id: str) -> str:
+    lines = [
+        "---",
+        f"id: {manifest.id}",
+        f"type: {manifest.type.value}",
+        f"status: {manifest.status}",
+        f"risk_tier: {tier.value}",
+        "---",
+        "",
+        f"# {manifest.title}",
+        "",
+        f"- packet: `{manifest.id}`",
+        f"- generated_by_run: `{run_id}`",
+    ]
+    if manifest.date:
+        lines.append(f"- date: `{manifest.date}`")
+    if manifest.raw_paths:
+        lines.append("- raw_evidence:")
+        lines.extend(f"  - `{path}`" for path in manifest.raw_paths)
+    if manifest.type in REVIEW_TYPES or any(claim.status == "supported" for claim in manifest.claims):
+        lines.append("- review-required: true")
+    lines.extend(["", "## Summary", "", manifest.summary or "No summary provided."])
+    if manifest.metrics_to_verify:
+        lines.extend(["", "## Metrics", ""])
+        lines.extend(
+            f"- {metric.name}: expected `{metric.expected}`, actual `{metric.actual}`, tolerance `{metric.tolerance}`"
+            for metric in manifest.metrics_to_verify
+        )
+    if manifest.claims:
+        lines.extend(["", "## Claims", ""])
+        lines.extend(f"- {claim.status}: {claim.text}" for claim in manifest.claims)
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _read(path: Path, default: str) -> str:
+    return path.read_text(encoding="utf-8") if path.exists() else default
+
+
+def render_packets(
+    repo_root: Path,
+    packets: list[tuple[PacketManifest, RiskTier]],
+    run_id: str,
+    policy: IngestPolicy | None = None,
+) -> RenderResult:
+    changed: list[str] = []
+    wiki = repo_root / "wiki"
+    wiki.mkdir(exist_ok=True)
+    rendered_targets: list[tuple[PacketManifest, str]] = []
+    for manifest, tier in packets:
+        rel = packet_target_path(manifest.type, manifest.id)
+        target = repo_root / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(_packet_page(manifest, tier, run_id), encoding="utf-8")
+        rendered_targets.append((manifest, rel))
+        changed.append(rel)
+
+    index = wiki / "index.md"
+    index_text = _read(index, "# Index\n")
+    entries = sorted(f"- [{manifest.title}]({rel}) - `{manifest.type.value}`" for manifest, rel in rendered_targets)
+    index.write_text(_replace_block(index_text, INDEX_START, INDEX_END, "\n".join(entries)), encoding="utf-8")
+    changed.append("wiki/index.md")
+
+    log = wiki / "log.md"
+    for manifest, rel in rendered_targets:
+        date = manifest.date or "undated"
+        _append_once(log, f"## [{date}] ingest | {manifest.id}\n\n- target: `{rel}`\n- run: `{run_id}`")
+    changed.append("wiki/log.md")
+
+    latest = wiki / "latest-context.md"
+    latest_text = _read(latest, "# Latest Context\n\n[[index]] [[overview]] [[log]]\n")
+    previous = ""
+    if LATEST_START in latest_text and LATEST_END in latest_text and latest_text.index(LATEST_START) < latest_text.index(LATEST_END):
+        previous = latest_text[latest_text.index(LATEST_START) + len(LATEST_START) : latest_text.index(LATEST_END)].strip()
+    new_entries = [
+        f"### {run_id} | {manifest.id}\n\n- link: [[{Path(rel).with_suffix('').as_posix().removeprefix('wiki/')}]]\n- tier: `{tier.value}`"
+        for manifest, tier in packets
+        for _, rel in [(manifest, packet_target_path(manifest.type, manifest.id))]
+    ]
+    all_entries = "\n\n".join([*new_entries, previous]).strip()
+    max_entries = policy.latest_context_max_entries if policy else 20
+    parts = [part for part in all_entries.split("\n\n### ") if part.strip()]
+    normalized_parts = [parts[0], *[f"### {part}" for part in parts[1:]]] if parts else []
+    latest_body = "\n\n".join(normalized_parts[:max_entries])
+    prefix = "# Latest Context\n\n[[index]] [[overview]] [[log]]\n"
+    latest.write_text(_replace_block(prefix, LATEST_START, LATEST_END, latest_body), encoding="utf-8")
+    changed.append("wiki/latest-context.md")
+
+    deduped = list(dict.fromkeys(changed))
+    return RenderResult(changed_paths=deduped)

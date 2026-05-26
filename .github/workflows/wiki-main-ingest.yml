@@ -1,0 +1,100 @@
+name: wiki-main-ingest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "raw/users/**"
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "automation/schemas/**"
+  workflow_dispatch:
+    inputs:
+      changed_paths:
+        description: "Newline-separated changed paths"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ingest:
+    if: ${{ github.actor != 'github-actions[bot]' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: Collect changed paths
+        id: changed
+        env:
+          INPUT_CHANGED_PATHS: ${{ inputs.changed_paths || '' }}
+        run: |
+          if [ -n "$INPUT_CHANGED_PATHS" ]; then
+            printf "%s\n" "$INPUT_CHANGED_PATHS" > changed-paths.txt
+          else
+            git diff --name-only HEAD^ HEAD > changed-paths.txt
+          fi
+      - name: Run wiki ingest
+        id: ingest
+        env:
+          PYTHONPATH: src
+          RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set +e
+          output=$(python -m team_llm_wiki.cli run-wiki-main-ingest \
+            --repo-root . \
+            --changed-path-file changed-paths.txt \
+            --run-id "$RUN_ID" \
+            --report-path "raw/results/wiki-ingest/$RUN_ID/report.json" 2>error.json)
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            cat error.json
+            exit "$status"
+          fi
+          printf "%s\n" "$output" > ingest-output.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import add_paths_from_payload, render_workflow_summary, write_github_outputs
+
+          raw = Path("ingest-output.json").read_text(encoding="utf-8") if Path("ingest-output.json").exists() else None
+          payload = json.loads(raw) if raw else {}
+          add_paths = "\n".join(add_paths_from_payload(payload))
+          write_github_outputs(Path(__import__("os").environ["GITHUB_OUTPUT"]), {
+              "status": payload.get("status", "missing"),
+              "add_paths": add_paths,
+          })
+          summary_path = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
+          summary_path.write_text(render_workflow_summary(raw), encoding="utf-8")
+          PY
+      - name: Fallback summary
+        if: always()
+        run: |
+          if [ ! -s "$GITHUB_STEP_SUMMARY" ]; then
+            printf "## Wiki ingest\n\nMissing ingest output.\n" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Direct commit low-risk wiki updates
+        if: steps.ingest.outputs.status == 'direct_commit'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          if [ -n "${{ steps.ingest.outputs.add_paths }}" ]; then
+            printf "%s\n" "${{ steps.ingest.outputs.add_paths }}" | xargs -r git add
+            git commit -m "chore: ingest wiki packets" || exit 0
+            git push
+          fi
+      - name: Create bot PR for reviewed wiki updates
+        if: steps.ingest.outputs.status == 'bot_pr'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          title: "Review wiki ingest"
+          commit-message: "chore: stage wiki ingest for review"
+          branch: "bot/wiki-ingest-${{ github.run_id }}-${{ github.run_attempt }}"
+          add-paths: ${{ steps.ingest.outputs.add_paths }}

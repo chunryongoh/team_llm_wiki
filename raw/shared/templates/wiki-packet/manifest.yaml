@@ -1,0 +1,14 @@
+id: example-packet
+type: reference
+title: Example Packet
+date: "2026-05-26"
+status: draft
+summary: Replace with a short source summary.
+raw_paths:
+  - notes.md
+intended_wiki_targets:
+  - wiki/sources/example-packet.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Replace with a careful claim.

@@ -1,0 +1,11 @@
+id: example-feature
+type: feature
+title: Example Feature
+summary: Feature engineering rationale and outcome.
+raw_paths:
+  - feature-notes.md
+intended_wiki_targets:
+  - wiki/features/example-feature.md
+claims:
+  - status: tentative
+    text: Feature effect has not been benchmark-confirmed yet.

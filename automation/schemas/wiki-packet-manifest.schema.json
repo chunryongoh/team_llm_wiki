@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/team-llm-wiki/wiki-packet-manifest.schema.json",
+  "title": "Team LLM Wiki Packet Manifest",
+  "type": "object",
+  "required": ["id", "type", "title"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "type": {
+      "enum": [
+        "reference",
+        "meeting",
+        "experiment",
+        "feature",
+        "model",
+        "performance",
+        "preprocessing",
+        "augmentation"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "default": "draft"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "raw_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "intended_wiki_targets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics_to_verify": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "expected", "actual"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "number"
+          },
+          "actual": {
+            "type": "number"
+          },
+          "tolerance": {
+            "type": "number",
+            "default": 0
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["status", "text"],
+        "properties": {
+          "status": {
+            "enum": ["tentative", "supported", "disputed", "superseded"]
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

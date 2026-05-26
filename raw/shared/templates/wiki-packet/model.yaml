@@ -1,0 +1,8 @@
+id: example-model
+type: model
+title: Example Model
+summary: Model configuration and tradeoff note.
+raw_paths:
+  - model-card.md
+intended_wiki_targets:
+  - wiki/models/example-model.md
