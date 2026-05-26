@@ -5,25 +5,32 @@ from pathlib import Path
 
 from .links import lint_wiki_links
 from .models import FailureCode, HealthError, HealthReport, as_jsonable
-from .render import INDEX_END, INDEX_START
+from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START
 
 REQUIRED_LATEST_LINKS = {"[[index]]", "[[overview]]", "[[log]]"}
 
 
 def _generated_block_errors(repo_root: Path) -> list[HealthError]:
-    index = repo_root / "wiki" / "index.md"
-    if not index.exists():
-        return [HealthError(FailureCode.UNBALANCED_GENERATED_BLOCK.value, "wiki/index.md is missing", "wiki/index.md")]
-    text = index.read_text(encoding="utf-8")
-    if text.count(INDEX_START) != 1 or text.count(INDEX_END) != 1 or text.index(INDEX_START) > text.index(INDEX_END):
-        return [
-            HealthError(
-                FailureCode.UNBALANCED_GENERATED_BLOCK.value,
-                "wiki/index.md generated block markers must be balanced",
-                "wiki/index.md",
+    checks = [
+        ("wiki/index.md", INDEX_START, INDEX_END),
+        ("wiki/latest-context.md", LATEST_START, LATEST_END),
+    ]
+    errors: list[HealthError] = []
+    for rel, start, end in checks:
+        path = repo_root / rel
+        if not path.exists():
+            errors.append(HealthError(FailureCode.UNBALANCED_GENERATED_BLOCK.value, f"{rel} is missing", rel))
+            continue
+        text = path.read_text(encoding="utf-8")
+        if text.count(start) != 1 or text.count(end) != 1 or text.index(start) > text.index(end):
+            errors.append(
+                HealthError(
+                    FailureCode.UNBALANCED_GENERATED_BLOCK.value,
+                    f"{rel} generated block markers must be balanced",
+                    rel,
+                )
             )
-        ]
-    return []
+    return errors
 
 
 def _latest_context_errors(repo_root: Path) -> list[HealthError]:

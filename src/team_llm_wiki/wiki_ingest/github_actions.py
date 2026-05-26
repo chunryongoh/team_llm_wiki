@@ -1,17 +1,45 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
 
 def add_paths_from_payload(payload: dict[str, Any]) -> list[str]:
-    return [str(path) for path in payload.get("changed_paths", []) if str(path).strip()]
+    paths = list(payload.get("generated_paths") or payload.get("changed_paths") or [])
+    report_path = payload.get("report_path")
+    if report_path:
+        paths.append(str(report_path))
+    return list(dict.fromkeys(str(path) for path in paths if str(path).strip()))
 
 
-def workflow_dispatch_changed_paths(env: dict[str, str]) -> list[str]:
+def workflow_dispatch_changed_paths(env: dict[str, str], repo_root: Path | None = None) -> list[str]:
     raw = env.get("INPUT_CHANGED_PATHS", "")
-    return [line.strip() for line in raw.splitlines() if line.strip()]
+    paths = [line.strip() for line in raw.splitlines() if line.strip()]
+    if paths or repo_root is None:
+        return paths
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "raw/users/**/manifest.yaml"],
+            cwd=repo_root,
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        tracked = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+        if tracked:
+            return sorted(tracked)
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return sorted(path.relative_to(repo_root).as_posix() for path in (repo_root / "raw" / "users").glob("*/*/manifest.yaml"))
+
+
+def safe_add_paths_file_from_payload(payload: dict[str, Any], path: Path) -> list[str]:
+    paths = add_paths_from_payload(payload)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(paths) + ("\n" if paths else ""), encoding="utf-8")
+    return paths
 
 
 def write_github_outputs(path: Path, outputs: dict[str, str]) -> None:

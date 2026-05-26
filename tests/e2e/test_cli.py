@@ -96,3 +96,27 @@ def test_cli_check_wiki_health_nonzero_on_failure(tmp_path):
 
     assert result.returncode == 1
     assert json.loads(report_path.read_text(encoding="utf-8"))["ok"] is False
+
+
+def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):
+    packet = seed_repo(tmp_path, packet_type="experiment", metric_expected=0.9)
+    report_path = tmp_path / "hard-fail-report.json"
+
+    result = run_cli(
+        [
+            "run-wiki-main-ingest",
+            "--repo-root",
+            str(tmp_path),
+            "--changed-path",
+            str(packet.relative_to(tmp_path) / "manifest.yaml"),
+            "--report-path",
+            str(report_path),
+            "--run-id",
+            "hard-fail",
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    assert json.loads(result.stdout)["status"] == "hard_fail"
+    assert json.loads(report_path.read_text(encoding="utf-8"))["status"] == "hard_fail"

@@ -1,11 +1,11 @@
 id: example-packet
-type: reference
+packet_type: reference
 title: Example Packet
 date: "2026-05-26"
 status: draft
 summary: Replace with a short source summary.
 raw_paths:
-  - notes.md
+  notes: notes.md
 intended_wiki_targets:
   - wiki/sources/example-packet.md
 metrics_to_verify: []

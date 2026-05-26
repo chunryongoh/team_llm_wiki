@@ -11,7 +11,12 @@ def seed_clean(root):
     )
     (root / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
     (root / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
-    (root / "wiki" / "latest-context.md").write_text("[[index]] [[overview]] [[log]]\n", encoding="utf-8")
+    (root / "wiki" / "latest-context.md").write_text(
+        "[[index]] [[overview]] [[log]]\n"
+        "<!-- wiki-ingest:latest:start -->\n"
+        "<!-- wiki-ingest:latest:end -->\n",
+        encoding="utf-8",
+    )
 
 
 def test_health_clean_report(tmp_path):
@@ -34,6 +39,18 @@ def test_health_detects_broken_links_unbalanced_block_and_incomplete_latest_cont
     assert any(error.code == "unbalanced_generated_block" for error in report.errors)
     assert any(error.code == "missing_required_latest_link" for error in report.errors)
     assert any(error.code == "broken_wiki_link" for error in report.errors)
+
+
+def test_health_detects_unbalanced_latest_context_generated_block(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "latest-context.md").write_text(
+        "[[index]] [[overview]] [[log]]\n<!-- wiki-ingest:latest:start -->\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path)
+
+    assert any(error.code == "unbalanced_generated_block" for error in report.errors)
 
 
 def test_health_writes_json_report(tmp_path):

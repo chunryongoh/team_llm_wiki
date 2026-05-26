@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import shutil
 import tempfile
+import time
 from pathlib import Path
 
 from .guards import run_guard_checks
@@ -22,6 +23,7 @@ def _write_report(repo_root: Path, report: IngestReport, report_path: Path | Non
     if report_path is None:
         return
     rel_report = report_path.resolve().relative_to(repo_root.resolve()).as_posix()
+    report.report_path = rel_report
     if rel_report not in report.changed_paths:
         report.changed_paths.append(rel_report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -48,15 +50,16 @@ def _staged_subset(repo_root: Path, packet_roots: list[Path]) -> Path:
 
 
 def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tuple[IngestReport, list[tuple]]:
-    validate_changed_paths(repo_root, changed_paths)
+    start = time.monotonic()
+    input_changed_paths = validate_changed_paths(repo_root, changed_paths)
     packet_roots = discover_packet_roots(repo_root, changed_paths)
     if not packet_roots:
-        return IngestReport(status="skipped", run_id=run_id), []
+        return IngestReport(status="skipped", run_id=run_id, input_changed_paths=input_changed_paths), []
 
     policy = load_policy(repo_root)
     packets = []
     report_packets = []
-    failures = []
+    failures = [as_jsonable(failure) for failure in policy.failures]
     warnings = list(policy.warnings)
     for packet_root in packet_roots:
         manifest = load_packet_manifest(packet_root)
@@ -79,10 +82,13 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
     report = IngestReport(
         status=status,
         run_id=run_id,
+        input_changed_paths=input_changed_paths,
         packet_roots=[_rel(repo_root, root) for root in packet_roots],
         packets=report_packets,
         failures=failures,
         warnings=list(dict.fromkeys(warnings)),
+        policy_warnings=list(dict.fromkeys(policy.warnings)),
+        timing_ms=int((time.monotonic() - start) * 1000),
     )
     return report, packets
 
@@ -99,20 +105,32 @@ def run_wiki_main_ingest(
     run_id: str = "run",
 ) -> IngestReport:
     report_path = report_path or _default_report_path(repo_root, run_id)
+    start = time.monotonic()
     report, packets = _build_report(repo_root, changed_paths, run_id)
     if report.status in {"skipped", "hard_fail"}:
+        report.timing_ms = int((time.monotonic() - start) * 1000)
         _write_report(repo_root, report, report_path)
         return report
 
     packet_roots = [repo_root / root for root in report.packet_roots]
     staging = _staged_subset(repo_root, packet_roots)
-    shutil.rmtree(staging, ignore_errors=True)
-    policy = load_policy(repo_root)
-    rendered = render_packets(repo_root, packets, run_id=run_id, policy=policy)
-    report.changed_paths = rendered.changed_paths
-    link_errors = lint_wiki_links(repo_root, rendered.changed_paths)
-    report.link_lint_errors = [as_jsonable(error) for error in link_errors]
-    if link_errors:
-        report.status = "hard_fail"
+    try:
+        policy = load_policy(repo_root)
+        rendered = render_packets(staging, packets, run_id=run_id, policy=policy)
+        link_errors = lint_wiki_links(staging, rendered.changed_paths)
+        report.link_lint_errors = [as_jsonable(error) for error in link_errors]
+        if link_errors:
+            report.status = "hard_fail"
+        else:
+            report.generated_paths = rendered.changed_paths
+            report.changed_paths = list(rendered.changed_paths)
+            for rel in rendered.changed_paths:
+                source = staging / rel
+                target = repo_root / rel
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+    report.timing_ms = int((time.monotonic() - start) * 1000)
     _write_report(repo_root, report, report_path)
     return report

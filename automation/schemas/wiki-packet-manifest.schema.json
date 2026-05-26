@@ -3,7 +3,7 @@
   "$id": "https://example.local/team-llm-wiki/wiki-packet-manifest.schema.json",
   "title": "Team LLM Wiki Packet Manifest",
   "type": "object",
-  "required": ["id", "type", "title"],
+  "required": ["id", "title"],
   "additionalProperties": true,
   "properties": {
     "id": {
@@ -11,6 +11,19 @@
       "pattern": "^[a-z0-9][a-z0-9-]*$"
     },
     "type": {
+      "description": "Legacy alias. Prefer packet_type for new manifests.",
+      "enum": [
+        "reference",
+        "meeting",
+        "experiment",
+        "feature",
+        "model",
+        "performance",
+        "preprocessing",
+        "augmentation"
+      ]
+    },
+    "packet_type": {
       "enum": [
         "reference",
         "meeting",
@@ -36,10 +49,20 @@
       "type": "string"
     },
     "raw_paths": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
     },
     "intended_wiki_targets": {
       "type": "array",
@@ -51,7 +74,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "expected", "actual"],
+        "required": ["name", "expected"],
         "properties": {
           "name": {
             "type": "string"
@@ -61,6 +84,12 @@
           },
           "actual": {
             "type": "number"
+          },
+          "raw_path": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
           },
           "tolerance": {
             "type": "number",

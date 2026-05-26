@@ -35,11 +35,19 @@ jobs:
         id: changed
         env:
           INPUT_CHANGED_PATHS: ${{ inputs.changed_paths || '' }}
+          PYTHONPATH: src
         run: |
-          if [ -n "$INPUT_CHANGED_PATHS" ]; then
-            printf "%s\n" "$INPUT_CHANGED_PATHS" > changed-paths.txt
-          else
+          if [ "${{ github.event_name }}" = "push" ]; then
             git diff --name-only HEAD^ HEAD > changed-paths.txt
+          else
+            python - <<'PY'
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import workflow_dispatch_changed_paths
+
+          paths = workflow_dispatch_changed_paths(os.environ, repo_root=Path("."))
+          Path("changed-paths.txt").write_text("\n".join(paths) + ("\n" if paths else ""), encoding="utf-8")
+          PY
           fi
       - name: Run wiki ingest
         id: ingest
@@ -54,26 +62,27 @@ jobs:
             --run-id "$RUN_ID" \
             --report-path "raw/results/wiki-ingest/$RUN_ID/report.json" 2>error.json)
           status=$?
+          printf "%s\n" "$output" > ingest-output.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
+
+          raw = Path("ingest-output.json").read_text(encoding="utf-8") if Path("ingest-output.json").exists() else None
+          payload = json.loads(raw) if raw else {}
+          paths = safe_add_paths_file_from_payload(payload, Path("add-paths.txt"))
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
+              "status": payload.get("status", "missing"),
+              "add_paths": "\n".join(paths),
+          })
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          summary_path.write_text(render_workflow_summary(raw), encoding="utf-8")
+          PY
           if [ "$status" -ne 0 ]; then
             cat error.json
             exit "$status"
           fi
-          printf "%s\n" "$output" > ingest-output.json
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from team_llm_wiki.wiki_ingest.github_actions import add_paths_from_payload, render_workflow_summary, write_github_outputs
-
-          raw = Path("ingest-output.json").read_text(encoding="utf-8") if Path("ingest-output.json").exists() else None
-          payload = json.loads(raw) if raw else {}
-          add_paths = "\n".join(add_paths_from_payload(payload))
-          write_github_outputs(Path(__import__("os").environ["GITHUB_OUTPUT"]), {
-              "status": payload.get("status", "missing"),
-              "add_paths": add_paths,
-          })
-          summary_path = Path(__import__("os").environ["GITHUB_STEP_SUMMARY"])
-          summary_path.write_text(render_workflow_summary(raw), encoding="utf-8")
-          PY
       - name: Fallback summary
         if: always()
         run: |
@@ -85,8 +94,8 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          if [ -n "${{ steps.ingest.outputs.add_paths }}" ]; then
-            printf "%s\n" "${{ steps.ingest.outputs.add_paths }}" | xargs -r git add
+          if [ -s add-paths.txt ]; then
+            git add --pathspec-from-file=add-paths.txt
             git commit -m "chore: ingest wiki packets" || exit 0
             git push
           fi

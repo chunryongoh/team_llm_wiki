@@ -31,6 +31,17 @@ def packet(root: Path, packet_id: str, packet_type: str, metric_expected=0.8):
     return packet_root
 
 
+def packet_with_manifest(root: Path, packet_id: str, manifest: dict, files: dict[str, str]):
+    packet_root = root / "raw" / "users" / "alice" / packet_id
+    packet_root.mkdir(parents=True)
+    for rel, content in files.items():
+        path = packet_root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+    (packet_root / "manifest.yaml").write_text(yaml.safe_dump(manifest), encoding="utf-8")
+    return packet_root
+
+
 def test_runner_low_risk_direct_commit_and_report(tmp_path):
     seed_repo(tmp_path)
     packet_root = packet(tmp_path, "ref-1", "reference")
@@ -46,7 +57,12 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert report.status == "direct_commit"
     assert (tmp_path / "wiki" / "sources" / "ref-1.md").exists()
     assert report_path.exists()
-    assert json.loads(report_path.read_text(encoding="utf-8"))["status"] == "direct_commit"
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert payload["status"] == "direct_commit"
+    assert payload["input_changed_paths"] == ["raw/users/alice/ref-1/manifest.yaml"]
+    assert "wiki/sources/ref-1.md" in payload["generated_paths"]
+    assert payload["report_path"] == "raw/results/wiki-ingest/run-1/report.json"
+    assert payload["timing_ms"] >= 0
 
 
 def test_runner_hard_fail_does_not_mutate_wiki(tmp_path):
@@ -64,6 +80,35 @@ def test_runner_hard_fail_does_not_mutate_wiki(tmp_path):
     assert report.status == "hard_fail"
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before
     assert not (tmp_path / "wiki" / "experiments" / "exp-1.md").exists()
+
+
+def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = packet_with_manifest(
+        tmp_path,
+        "ref-bad-link",
+        {
+            "id": "ref-bad-link",
+            "packet_type": "reference",
+            "title": "Bad Link",
+            "summary": "Generated page has [[missing-generated-link]].",
+            "raw_paths": ["result.json"],
+        },
+        {"result.json": '{"accuracy": 0.8}'},
+    )
+    before_index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "wiki-ingest" / "run-link" / "report.json",
+        run_id="run-link",
+    )
+
+    assert report.status == "hard_fail"
+    assert report.link_lint_errors
+    assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
+    assert not (tmp_path / "wiki" / "sources" / "ref-bad-link.md").exists()
 
 
 def test_runner_zero_packet_skipped_no_mutation(tmp_path):

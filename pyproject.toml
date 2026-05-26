@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "team-llm-wiki"
+version = "0.1.0"
+description = "Merge-time LLM wiki ingest automation for team ML research memory."
+requires-python = ">=3.13"
+dependencies = [
+  "PyYAML>=6,<7",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8,<9",
+]
+
+[project.scripts]
+team-llm-wiki = "team_llm_wiki.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

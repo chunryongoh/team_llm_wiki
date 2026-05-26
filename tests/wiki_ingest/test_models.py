@@ -45,5 +45,5 @@ def test_as_jsonable_converts_enums_paths_and_dataclasses():
     assert as_jsonable(payload) == {
         "tier": "bot_pr",
         "path": "wiki/index.md",
-        "metric": {"name": "f1", "expected": 0.5, "actual": 0.5, "tolerance": 0.0},
+        "metric": {"name": "f1", "expected": 0.5, "actual": 0.5, "tolerance": 0.0, "raw_path": None, "key": None},
     }

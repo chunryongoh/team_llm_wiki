@@ -27,6 +27,27 @@ def _replace_block(text: str, start: str, end: str, body: str) -> str:
     return text.rstrip() + "\n\n" + block + "\n"
 
 
+def _existing_block_lines(text: str, start: str, end: str) -> list[str]:
+    if start not in text or end not in text or text.index(start) > text.index(end):
+        return []
+    body = text[text.index(start) + len(start) : text.index(end)]
+    return [line for line in body.splitlines() if line.strip()]
+
+
+def _split_latest_entries(body: str) -> list[str]:
+    entries: list[str] = []
+    current: list[str] = []
+    for line in body.splitlines():
+        if line.startswith("### ") and current:
+            entries.append("\n".join(current).strip())
+            current = [line]
+        else:
+            current.append(line)
+    if current and "\n".join(current).strip():
+        entries.append("\n".join(current).strip())
+    return entries
+
+
 def _append_once(path: Path, entry: str) -> None:
     text = path.read_text(encoding="utf-8") if path.exists() else "# Log\n"
     if entry.splitlines()[0] not in text:
@@ -91,7 +112,14 @@ def render_packets(
 
     index = wiki / "index.md"
     index_text = _read(index, "# Index\n")
-    entries = sorted(f"- [{manifest.title}]({rel}) - `{manifest.type.value}`" for manifest, rel in rendered_targets)
+    entries = sorted(
+        set(
+            [
+                *_existing_block_lines(index_text, INDEX_START, INDEX_END),
+                *[f"- [{manifest.title}]({rel}) - `{manifest.type.value}`" for manifest, rel in rendered_targets],
+            ]
+        )
+    )
     index.write_text(_replace_block(index_text, INDEX_START, INDEX_END, "\n".join(entries)), encoding="utf-8")
     changed.append("wiki/index.md")
 
@@ -106,16 +134,20 @@ def render_packets(
     previous = ""
     if LATEST_START in latest_text and LATEST_END in latest_text and latest_text.index(LATEST_START) < latest_text.index(LATEST_END):
         previous = latest_text[latest_text.index(LATEST_START) + len(LATEST_START) : latest_text.index(LATEST_END)].strip()
-    new_entries = [
-        f"### {run_id} | {manifest.id}\n\n- link: [[{Path(rel).with_suffix('').as_posix().removeprefix('wiki/')}]]\n- tier: `{tier.value}`"
-        for manifest, tier in packets
-        for _, rel in [(manifest, packet_target_path(manifest.type, manifest.id))]
-    ]
-    all_entries = "\n\n".join([*new_entries, previous]).strip()
+    new_entries = []
+    for manifest, tier in packets:
+        rel = packet_target_path(manifest.type, manifest.id)
+        lines = [
+            f"### {run_id} | {manifest.id}",
+            "",
+            f"- link: [[{Path(rel).with_suffix('').as_posix().removeprefix('wiki/')}]]",
+            f"- tier: `{tier.value}`",
+        ]
+        if tier is RiskTier.BOT_PR or manifest.type in REVIEW_TYPES:
+            lines.append("- review-required: true")
+        new_entries.append("\n".join(lines))
     max_entries = policy.latest_context_max_entries if policy else 20
-    parts = [part for part in all_entries.split("\n\n### ") if part.strip()]
-    normalized_parts = [parts[0], *[f"### {part}" for part in parts[1:]]] if parts else []
-    latest_body = "\n\n".join(normalized_parts[:max_entries])
+    latest_body = "\n\n".join([*new_entries, *_split_latest_entries(previous)][:max_entries])
     prefix = "# Latest Context\n\n[[index]] [[overview]] [[log]]\n"
     latest.write_text(_replace_block(prefix, LATEST_START, LATEST_END, latest_body), encoding="utf-8")
     changed.append("wiki/latest-context.md")

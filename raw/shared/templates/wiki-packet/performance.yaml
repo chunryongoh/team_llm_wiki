@@ -1,15 +1,16 @@
 id: example-performance
-type: performance
+packet_type: performance
 title: Example Performance Result
 summary: Benchmark result requiring review.
 raw_paths:
-  - metrics.json
+  metrics: metrics.json
 intended_wiki_targets:
   - wiki/performance/example-performance.md
 metrics_to_verify:
   - name: accuracy
     expected: 0.0
-    actual: 0.0
+    raw_path: metrics.json
+    key: accuracy
     tolerance: 0.0
 claims:
   - status: supported

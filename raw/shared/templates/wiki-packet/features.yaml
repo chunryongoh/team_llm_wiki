@@ -1,9 +1,9 @@
 id: example-feature
-type: feature
+packet_type: feature
 title: Example Feature
 summary: Feature engineering rationale and outcome.
 raw_paths:
-  - feature-notes.md
+  notes: feature-notes.md
 intended_wiki_targets:
   - wiki/features/example-feature.md
 claims:

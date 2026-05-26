@@ -2,6 +2,7 @@ import json
 
 from team_llm_wiki.wiki_ingest.github_actions import (
     add_paths_from_payload,
+    safe_add_paths_file_from_payload,
     render_workflow_summary,
     workflow_dispatch_changed_paths,
     write_github_outputs,
@@ -20,6 +21,19 @@ def test_workflow_dispatch_changed_paths_parses_multiline_input():
     assert workflow_dispatch_changed_paths(env) == ["raw/users/a/p/manifest.yaml", "README.md"]
 
 
+def test_workflow_dispatch_empty_input_falls_back_to_raw_user_manifests(tmp_path):
+    manifest = tmp_path / "raw" / "users" / "alice" / "pkt-1" / "manifest.yaml"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text("id: pkt-1\npacket_type: reference\ntitle: Packet\n", encoding="utf-8")
+    ignored = tmp_path / "raw" / "shared" / "template" / "manifest.yaml"
+    ignored.parent.mkdir(parents=True)
+    ignored.write_text("id: ignored\npacket_type: reference\ntitle: Ignored\n", encoding="utf-8")
+
+    assert workflow_dispatch_changed_paths({"INPUT_CHANGED_PATHS": ""}, repo_root=tmp_path) == [
+        "raw/users/alice/pkt-1/manifest.yaml"
+    ]
+
+
 def test_write_github_outputs_writes_multiline_safe_file(tmp_path):
     out = tmp_path / "outputs.txt"
 
@@ -28,6 +42,14 @@ def test_write_github_outputs_writes_multiline_safe_file(tmp_path):
     text = out.read_text(encoding="utf-8")
     assert "status=bot_pr" in text
     assert "add_paths<<EOF" in text
+
+
+def test_safe_add_paths_file_from_payload_writes_newline_file(tmp_path):
+    path = tmp_path / "add-paths.txt"
+
+    safe_add_paths_file_from_payload({"generated_paths": ["wiki/a.md"], "report_path": "raw/results/report.json"}, path)
+
+    assert path.read_text(encoding="utf-8").splitlines() == ["wiki/a.md", "raw/results/report.json"]
 
 
 def test_render_summary_fallback_for_missing_ingest_output():

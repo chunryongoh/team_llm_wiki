@@ -61,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
                 run_id=args.run_id,
             )
             _print_json(report, sys.stdout)
-            return 0
+            return 1 if report.status == "hard_fail" else 0
         if args.command == "check-wiki-health":
             report = check_wiki_health(Path(args.repo_root), Path(args.report_path) if args.report_path else None)
             _print_json(report, sys.stdout)

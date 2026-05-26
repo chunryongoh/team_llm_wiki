@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 from .models import FailureCode, GuardResult, GuardViolation, PacketManifest
 from .policy import IngestPolicy
@@ -21,6 +24,29 @@ def _is_inside(child: Path, parent: Path) -> bool:
         return True
     except ValueError:
         return False
+
+
+def _lookup_metric_value(data: Any, key: str) -> Any:
+    current = data
+    for part in key.split("."):
+        if isinstance(current, dict) and part in current:
+            current = current[part]
+        else:
+            raise KeyError(key)
+    return current
+
+
+def _raw_metric_value(packet_root: Path, metric) -> float:
+    if not metric.raw_path:
+        if metric.actual is None:
+            raise ValueError("missing actual value")
+        return float(metric.actual)
+    source = (packet_root / metric.raw_path).resolve()
+    if not _is_inside(source, packet_root) or not source.exists():
+        raise ValueError(f"metric raw path missing: {metric.raw_path}")
+    data = yaml.safe_load(source.read_text(encoding="utf-8"))
+    key = metric.key or metric.name
+    return float(_lookup_metric_value(data, key))
 
 
 def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifest, policy: IngestPolicy) -> GuardResult:
@@ -69,7 +95,12 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
             )
 
     for metric in manifest.metrics_to_verify:
-        if not metric.is_consistent():
+        try:
+            actual = _raw_metric_value(packet_root, metric)
+        except (OSError, KeyError, TypeError, ValueError, yaml.YAMLError):
+            result.failures.append(GuardViolation(FailureCode.METRIC_MISMATCH, f"metric source mismatch: {metric.name}"))
+            continue
+        if abs(float(metric.expected) - actual) > float(metric.tolerance):
             result.failures.append(GuardViolation(FailureCode.METRIC_MISMATCH, f"metric mismatch: {metric.name}"))
 
     return result

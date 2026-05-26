@@ -86,6 +86,32 @@ def test_guard_blocks_secret_content_metric_mismatch_and_wrong_route(tmp_path):
     assert FailureCode.INVALID_TARGET_ROUTE in codes
 
 
+def test_guard_verifies_metric_against_raw_json_not_manifest_actual(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["result.json"],
+        metrics_to_verify=[{"name": "accuracy", "expected": 0.9, "actual": 0.9, "raw_path": "result.json"}],
+    )
+    (packet / "result.json").write_text(json.dumps({"accuracy": 0.82}), encoding="utf-8")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.METRIC_MISMATCH in [failure.code for failure in result.failures]
+
+
+def test_guard_verifies_metric_against_raw_yaml_dotted_key(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["metrics.yaml"],
+        metrics_to_verify=[{"name": "accuracy", "expected": 0.82, "raw_path": "metrics.yaml", "key": "scores.accuracy"}],
+    )
+    (packet / "metrics.yaml").write_text("scores:\n  accuracy: 0.82\n", encoding="utf-8")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert result.failures == []
+
+
 def test_guard_enforces_packet_limits(tmp_path):
     packet, manifest = make_packet(tmp_path)
     (packet / "extra.txt").write_text("123456", encoding="utf-8")
