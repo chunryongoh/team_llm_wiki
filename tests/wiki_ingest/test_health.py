@@ -53,6 +53,16 @@ def test_health_detects_unbalanced_latest_context_generated_block(tmp_path):
     assert any(error.code == "unbalanced_generated_block" for error in report.errors)
 
 
+def test_health_detects_wiki_link_escape(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "overview.md").write_text("[[../AGENTS]]\n", encoding="utf-8")
+    (tmp_path / "AGENTS.md").write_text("rules", encoding="utf-8")
+
+    report = check_wiki_health(tmp_path)
+
+    assert any(error.code == "path_escape" for error in report.errors)
+
+
 def test_health_writes_json_report(tmp_path):
     seed_clean(tmp_path)
     report_path = tmp_path / "health.json"

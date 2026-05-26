@@ -80,6 +80,7 @@ jobs:
           summary_path.write_text(render_workflow_summary(raw), encoding="utf-8")
           PY
           if [ "$status" -ne 0 ]; then
+            cat ingest-output.json
             cat error.json
             exit "$status"
           fi

@@ -89,6 +89,24 @@ def test_render_preserves_existing_generated_index_entries(tmp_path):
     assert "- [New Ref](wiki/sources/new-ref.md) - `reference`" in index
 
 
+def test_render_escapes_manifest_title_in_generated_index(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    (tmp_path / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
+    (tmp_path / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
+    (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
+    manifest = PacketManifest(
+        id="bad-title",
+        type="reference",
+        title="Bad <!-- wiki-ingest:index:end --> [link](../AGENTS.md)",
+    )
+
+    render_packets(tmp_path, [(manifest, RiskTier.DIRECT_COMMIT)], run_id="run-title")
+
+    index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+    assert index.count("<!-- wiki-ingest:index:end -->") == 1
+    assert "Bad &lt;!-- wiki-ingest:index:end --&gt; \\[link\\]" in index
+
+
 def test_latest_context_bounded_and_notes_bot_pr_review_required(tmp_path):
     (tmp_path / "wiki").mkdir()
     (tmp_path / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")

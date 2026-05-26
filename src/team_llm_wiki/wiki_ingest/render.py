@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 from pathlib import Path
 
 from .models import PacketManifest, PacketType, RenderResult, RiskTier
@@ -92,6 +93,11 @@ def _read(path: Path, default: str) -> str:
     return path.read_text(encoding="utf-8") if path.exists() else default
 
 
+def _markdown_link_text(value: str) -> str:
+    escaped = html.escape(value, quote=False)
+    return escaped.replace("[", "\\[").replace("]", "\\]").replace("\n", " ")
+
+
 def _bounded_latest_page(prefix: str, entries: list[str], policy: IngestPolicy | None) -> str:
     max_entries = policy.latest_context_max_entries if policy else IngestPolicy(agents_text="").latest_context_max_entries
     max_chars = policy.latest_context_max_chars if policy else IngestPolicy(agents_text="").latest_context_max_chars
@@ -128,7 +134,7 @@ def render_packets(
         set(
             [
                 *_existing_block_lines(index_text, INDEX_START, INDEX_END),
-                *[f"- [{manifest.title}]({rel}) - `{manifest.type.value}`" for manifest, rel in rendered_targets],
+                *[f"- [{_markdown_link_text(manifest.title)}]({rel}) - `{manifest.type.value}`" for manifest, rel in rendered_targets],
             ]
         )
     )

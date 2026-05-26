@@ -30,7 +30,12 @@ def lint_wiki_links(repo_root: Path, paths: list[str] | None = None) -> list[Hea
         text = source.read_text(encoding="utf-8")
         rel_source = source.relative_to(repo_root).as_posix()
         for match in WIKI_LINK_RE.finditer(text):
-            target = _resolve_wiki_link(wiki_root, source, match.group(1))
+            target = _resolve_wiki_link(wiki_root, source, match.group(1)).resolve()
+            try:
+                target.relative_to(wiki_root.resolve())
+            except ValueError:
+                errors.append(HealthError(FailureCode.PATH_ESCAPE.value, f"wiki link escapes wiki: {match.group(1)}", rel_source))
+                continue
             if not target.exists():
                 errors.append(HealthError(FailureCode.BROKEN_WIKI_LINK.value, f"broken wiki link: {match.group(1)}", rel_source))
         for match in MD_LINK_RE.finditer(text):

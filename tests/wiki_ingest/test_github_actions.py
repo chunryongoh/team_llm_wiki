@@ -55,3 +55,19 @@ def test_safe_add_paths_file_from_payload_writes_newline_file(tmp_path):
 def test_render_summary_fallback_for_missing_ingest_output():
     assert "missing ingest output" in render_workflow_summary(None).lower()
     assert "direct_commit" in render_workflow_summary(json.dumps({"status": "direct_commit"}))
+
+
+def test_render_summary_includes_report_and_failure_codes():
+    summary = render_workflow_summary(
+        json.dumps(
+            {
+                "status": "hard_fail",
+                "report_path": "raw/results/wiki-ingest/1/report.json",
+                "failures": [{"code": "invalid_manifest", "message": "missing title"}],
+            }
+        )
+    )
+
+    assert "raw/results/wiki-ingest/1/report.json" in summary
+    assert "invalid_manifest" in summary
+    assert "missing title" in summary

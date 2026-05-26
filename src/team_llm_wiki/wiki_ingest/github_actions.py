@@ -64,6 +64,12 @@ def render_workflow_summary(ingest_output: str | None) -> str:
     changed = payload.get("changed_paths", [])
     failures = payload.get("failures", [])
     lines = ["## Wiki ingest", "", f"- status: `{status}`", f"- changed paths: `{len(changed)}`"]
+    if payload.get("report_path"):
+        lines.append(f"- report: `{payload['report_path']}`")
     if failures:
         lines.append(f"- failures: `{len(failures)}`")
+        for failure in failures[:10]:
+            code = failure.get("code", "unknown") if isinstance(failure, dict) else "unknown"
+            message = failure.get("message", "") if isinstance(failure, dict) else str(failure)
+            lines.append(f"  - `{code}` {message}".rstrip())
     return "\n".join(lines) + "\n"

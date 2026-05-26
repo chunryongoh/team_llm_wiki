@@ -4,6 +4,14 @@
   "title": "Team LLM Wiki Packet Manifest",
   "type": "object",
   "required": ["id", "title"],
+  "anyOf": [
+    {
+      "required": ["packet_type"]
+    },
+    {
+      "required": ["type"]
+    }
+  ],
   "additionalProperties": true,
   "properties": {
     "id": {
