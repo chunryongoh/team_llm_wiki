@@ -92,6 +92,18 @@ def _read(path: Path, default: str) -> str:
     return path.read_text(encoding="utf-8") if path.exists() else default
 
 
+def _bounded_latest_page(prefix: str, entries: list[str], policy: IngestPolicy | None) -> str:
+    max_entries = policy.latest_context_max_entries if policy else IngestPolicy(agents_text="").latest_context_max_entries
+    max_chars = policy.latest_context_max_chars if policy else IngestPolicy(agents_text="").latest_context_max_chars
+    trimmed = entries[:max_entries]
+    while trimmed:
+        page = _replace_block(prefix, LATEST_START, LATEST_END, "\n\n".join(trimmed))
+        if len(page) <= max_chars:
+            return page
+        trimmed.pop()
+    return _replace_block(prefix, LATEST_START, LATEST_END, "")
+
+
 def render_packets(
     repo_root: Path,
     packets: list[tuple[PacketManifest, RiskTier]],
@@ -146,10 +158,8 @@ def render_packets(
         if tier is RiskTier.BOT_PR or manifest.type in REVIEW_TYPES:
             lines.append("- review-required: true")
         new_entries.append("\n".join(lines))
-    max_entries = policy.latest_context_max_entries if policy else 20
-    latest_body = "\n\n".join([*new_entries, *_split_latest_entries(previous)][:max_entries])
     prefix = "# Latest Context\n\n[[index]] [[overview]] [[log]]\n"
-    latest.write_text(_replace_block(prefix, LATEST_START, LATEST_END, latest_body), encoding="utf-8")
+    latest.write_text(_bounded_latest_page(prefix, [*new_entries, *_split_latest_entries(previous)], policy), encoding="utf-8")
     changed.append("wiki/latest-context.md")
 
     deduped = list(dict.fromkeys(changed))

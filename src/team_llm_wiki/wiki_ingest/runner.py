@@ -9,7 +9,7 @@ from pathlib import Path
 from .guards import run_guard_checks
 from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
-from .models import IngestReport, RiskTier, as_jsonable
+from .models import IngestFailure, IngestReport, RiskTier, as_jsonable
 from .policy import load_policy
 from .render import render_packets
 from .risk import classify_risk
@@ -56,13 +56,32 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
     if not packet_roots:
         return IngestReport(status="skipped", run_id=run_id, input_changed_paths=input_changed_paths), []
 
-    policy = load_policy(repo_root)
+    try:
+        policy = load_policy(repo_root)
+    except IngestFailure as exc:
+        report = IngestReport(
+            status="hard_fail",
+            run_id=run_id,
+            input_changed_paths=input_changed_paths,
+            packet_roots=[_rel(repo_root, root) for root in packet_roots],
+            failures=[exc.to_dict()],
+            timing_ms=int((time.monotonic() - start) * 1000),
+        )
+        return report, []
+
     packets = []
     report_packets = []
     failures = [as_jsonable(failure) for failure in policy.failures]
     warnings = list(policy.warnings)
     for packet_root in packet_roots:
-        manifest = load_packet_manifest(packet_root)
+        try:
+            manifest = load_packet_manifest(packet_root)
+        except IngestFailure as exc:
+            failure = exc.to_dict()
+            failure.setdefault("details", {})["packet_root"] = _rel(repo_root, packet_root)
+            failures.append(failure)
+            report_packets.append({"packet_root": _rel(repo_root, packet_root), "error": exc.code.value})
+            continue
         guard = run_guard_checks(repo_root, packet_root, manifest, policy)
         risk = classify_risk(manifest, guard)
         packets.append((manifest, risk.tier))

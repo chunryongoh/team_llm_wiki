@@ -73,16 +73,23 @@ def discover_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
     seen: set[Path] = set()
     repo = repo_root.resolve()
     for changed in validated:
-        if not (changed.startswith("raw/users/") and changed.endswith("/manifest.yaml")):
+        if not changed.startswith("raw/users/"):
             continue
-        current = repo / changed
-        if current.is_file():
+        changed_rel = Path(changed)
+        current = repo / changed_rel
+        if current.is_file() or changed_rel.name == "manifest.yaml" or changed_rel.suffix:
             current = current.parent
         for candidate in [current, *current.parents]:
             if candidate == repo.parent:
                 break
             if (candidate / "manifest.yaml").exists():
-                if candidate not in seen:
+                rel_candidate = candidate.relative_to(repo)
+                is_packet_root = (
+                    len(rel_candidate.parts) >= 4
+                    and rel_candidate.parts[0] == "raw"
+                    and rel_candidate.parts[1] == "users"
+                )
+                if is_packet_root and candidate not in seen:
                     roots.append(candidate)
                     seen.add(candidate)
                 break

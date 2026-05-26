@@ -111,6 +111,31 @@ def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
     assert not (tmp_path / "wiki" / "sources" / "ref-bad-link.md").exists()
 
 
+def test_runner_invalid_manifest_writes_hard_fail_report_without_mutation(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = tmp_path / "raw" / "users" / "alice" / "bad-packet"
+    packet_root.mkdir(parents=True)
+    (packet_root / "manifest.yaml").write_text(
+        yaml.safe_dump({"id": "bad-packet", "packet_type": "reference"}),
+        encoding="utf-8",
+    )
+    before_index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+    report_path = tmp_path / "raw" / "results" / "wiki-ingest" / "bad" / "report.json"
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=report_path,
+        run_id="bad",
+    )
+
+    assert report.status == "hard_fail"
+    assert report_path.exists()
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert payload["failures"][0]["code"] == "invalid_manifest"
+    assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
+
+
 def test_runner_zero_packet_skipped_no_mutation(tmp_path):
     seed_repo(tmp_path)
     before = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")

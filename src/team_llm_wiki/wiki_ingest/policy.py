@@ -14,7 +14,8 @@ class IngestPolicy:
     failures: list[GuardViolation] = field(default_factory=list)
     max_packet_files: int = 100
     max_packet_text_bytes: int = 1_000_000
-    latest_context_max_entries: int = 20
+    latest_context_max_entries: int = 12
+    latest_context_max_chars: int = 6_000
 
 
 def load_policy(repo_root: Path) -> IngestPolicy:

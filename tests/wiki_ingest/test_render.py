@@ -116,3 +116,35 @@ def test_latest_context_bounded_and_notes_bot_pr_review_required(tmp_path):
     assert "### run-4 | exp-1" in latest
     assert "### old-1 | old-one" in latest
     assert "### old-2 | old-two" not in latest
+
+
+def test_latest_context_defaults_to_12_entries_and_6000_chars(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    (tmp_path / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
+    (tmp_path / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
+    (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
+    old_entries = "\n\n".join(
+        f"### old-{index} | old-{index}\n\n- link: [[sources/old-{index}]]\n- note: {'x' * 700}"
+        for index in range(20)
+    )
+    (tmp_path / "wiki" / "latest-context.md").write_text(
+        "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n"
+        "<!-- wiki-ingest:latest:start -->\n"
+        f"{old_entries}\n"
+        "<!-- wiki-ingest:latest:end -->\n",
+        encoding="utf-8",
+    )
+
+    render_packets(
+        tmp_path,
+        [(PacketManifest(id="ref-new", type="reference", title="New Ref"), RiskTier.DIRECT_COMMIT)],
+        run_id="run-new",
+    )
+
+    latest = (tmp_path / "wiki" / "latest-context.md").read_text(encoding="utf-8")
+    assert latest.count("### ") <= 12
+    assert len(latest) <= 6000
+    assert "### run-new | ref-new" in latest
+    assert "[[index]]" in latest
+    assert "[[overview]]" in latest
+    assert "[[log]]" in latest

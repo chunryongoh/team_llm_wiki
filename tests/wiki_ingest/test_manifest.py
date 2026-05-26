@@ -119,6 +119,16 @@ def test_discover_packet_roots_dedupes_ancestor_manifest(tmp_path):
     assert roots == [packet]
 
 
+def test_discover_packet_roots_accepts_changed_packet_file_under_raw_users(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet)
+    (packet / "result.json").write_text('{"accuracy": 0.8}', encoding="utf-8")
+
+    roots = discover_packet_roots(tmp_path, ["raw/users/alice/pkt-1/result.json"])
+
+    assert roots == [packet]
+
+
 def test_discover_packet_roots_only_accepts_raw_user_manifest_changes(tmp_path):
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
     write_manifest(packet)
