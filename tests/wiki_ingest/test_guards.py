@@ -152,6 +152,38 @@ def test_guard_surfaces_packet_specific_schema_failure(tmp_path):
     )
 
 
+def test_guard_surfaces_non_string_packet_specific_raw_path(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        type="augmentation",
+        raw_paths={"augmentation": "augmentation.yaml"},
+        intended_wiki_targets=["wiki/datasets/pkt-1.md"],
+        metrics_to_verify=[],
+    )
+    (packet / "augmentation.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "source_data_scope": "train split only",
+                "generator": "rule based",
+                "prompt_or_recipe": "replace approved synonyms",
+                "privacy_guard": "no direct identifiers",
+                "label_policy": "preserve labels",
+                "validation_policy": "spot check",
+                "failure_modes": ["semantic drift"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest.raw_path_map["augmentation"] = ["augmentation.yaml"]
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert any(
+        failure.code is FailureCode.INVALID_MANIFEST and "augmentation" in failure.message
+        for failure in result.failures
+    )
+
+
 def test_guard_enforces_packet_limits(tmp_path):
     packet, manifest = make_packet(tmp_path)
     (packet / "extra.txt").write_text("123456", encoding="utf-8")

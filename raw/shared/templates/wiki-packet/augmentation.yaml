@@ -1,0 +1,37 @@
+id: example-augmentation
+packet_type: augmentation
+title: Example Augmentation Note
+date: "2026-05-26"
+owner: replace-with-owner
+status: draft
+task: data-augmentation
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: train
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: Augmentation note applies only to the named dataset, split, and generator recipe.
+claim_status: tentative
+summary: Data augmentation recipe, guardrails, and validation plan.
+raw_paths:
+  augmentation: augmentation.yaml
+intended_wiki_targets:
+  - wiki/datasets/example-augmentation.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Replace with a careful augmentation claim.
+source_data_scope: Replace with the source rows, split, modalities, and exclusions.
+generator: Replace with generator, model, or deterministic transform name.
+prompt_or_recipe: Replace with exact prompt, recipe, seed policy, or transformation steps.
+privacy_guard: Replace with PII, memorization, or sensitive attribute guard.
+label_policy: Replace with label preservation, relabeling, or review policy.
+validation_policy: Replace with checks for quality, drift, leakage, and duplicates.
+failure_modes:
+  - Replace with a known failure mode or risk.

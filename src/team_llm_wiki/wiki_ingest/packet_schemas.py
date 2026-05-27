@@ -96,6 +96,12 @@ def validate_packet_specific_schema(packet_root: Path, manifest: PacketManifest)
             f"raw_paths missing required packet-specific entry: {label}",
             {"label": label},
         )
+    if not isinstance(raw_path, str):
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"raw_paths packet-specific entry must be a string: {label}",
+            {"label": label},
+        )
 
     source = _resolve_packet_raw_path(packet_root, raw_path)
     data = _load_mapping(source, raw_path)
@@ -106,6 +112,12 @@ def validate_packet_specific_schema(packet_root: Path, manifest: PacketManifest)
 
 
 def _resolve_packet_raw_path(packet_root: Path, raw_path: str) -> Path:
+    if not isinstance(raw_path, str):
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            "packet-specific raw path must be a string",
+            {"path": str(raw_path)},
+        )
     path = Path(raw_path)
     source = (packet_root / path).resolve()
     try:
