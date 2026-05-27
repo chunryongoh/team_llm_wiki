@@ -2,7 +2,20 @@ id: example-packet
 packet_type: reference
 title: Example Packet
 date: "2026-05-26"
+owner: replace-with-owner
 status: draft
+task: source-ingest
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: null
+split:
+  name: none
+  group_key: null
+  fold_file: null
+model: null
+claim_boundary: Replace with the boundary for claims made from this packet.
+claim_status: tentative
 summary: Replace with a short source summary.
 raw_paths:
   notes: notes.md

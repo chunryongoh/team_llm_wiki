@@ -43,7 +43,7 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     raw: Any = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
     if not isinstance(raw, dict):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, "manifest must be a mapping")
-    if "packet_type" in raw and (raw.get("type") is None or "type" not in raw):
+    if "packet_type" in raw:
         raw["type"] = raw["packet_type"]
     known = {
         "id",
@@ -51,7 +51,14 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
         "packet_type",
         "title",
         "date",
+        "owner",
         "status",
+        "task",
+        "dataset",
+        "split",
+        "model",
+        "claim_boundary",
+        "claim_status",
         "summary",
         "raw_paths",
         "raw_path_map",
@@ -59,12 +66,35 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
         "metrics_to_verify",
         "claims",
     }
-    missing = [key for key in ["id", "type", "title"] if key not in raw]
+    missing = _missing_required_fields(raw)
     if missing:
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest missing fields: {', '.join(missing)}")
     payload = {key: raw[key] for key in known if key in raw and key != "packet_type"}
     payload["extra"] = {key: value for key, value in raw.items() if key not in known}
     return PacketManifest(**payload)
+
+
+FULL_MANIFEST_REQUIRED = [
+    "id",
+    "type",
+    "title",
+    "date",
+    "owner",
+    "status",
+    "task",
+    "dataset",
+    "split",
+    "claim_boundary",
+    "summary",
+    "raw_paths",
+    "intended_wiki_targets",
+]
+FULL_MANIFEST_SENTINELS = {"owner", "task", "dataset", "split", "model", "claim_boundary", "claim_status"}
+
+
+def _missing_required_fields(raw: dict[str, Any]) -> list[str]:
+    required = FULL_MANIFEST_REQUIRED if FULL_MANIFEST_SENTINELS.intersection(raw) else ["id", "type", "title"]
+    return [key for key in required if key not in raw]
 
 
 def discover_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Path]:

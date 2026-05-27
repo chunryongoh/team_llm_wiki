@@ -16,9 +16,19 @@ def write_manifest(root: Path, **overrides):
     root.mkdir(parents=True, exist_ok=True)
     data = {
         "id": root.name,
-        "type": "experiment",
+        "packet_type": "experiment",
         "title": "Run title",
+        "date": "2026-05-27",
+        "owner": "alice",
+        "status": "ready",
+        "task": "classification",
+        "dataset": {"name": "benchmark-set", "version": "v1"},
+        "split": {"name": "dev"},
+        "claim_boundary": "Only applies to the dev split.",
+        "claim_status": "tentative",
+        "summary": "Run summary.",
         "raw_paths": ["result.json"],
+        "intended_wiki_targets": ["wiki/experiments/pkt-1.md"],
         "metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8}],
     }
     data.update(overrides)
@@ -29,14 +39,21 @@ def test_load_manifest_nested_fields_and_metrics_to_verify(tmp_path):
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
     write_manifest(
         packet,
-        type="performance",
-        claims=[{"status": "supported", "text": "f1 improved"}],
+        packet_type="performance",
         intended_wiki_targets=["wiki/performance/pkt-1.md"],
+        claims=[{"status": "supported", "text": "f1 improved"}],
     )
 
     manifest = load_packet_manifest(packet)
 
     assert manifest.type is PacketType.PERFORMANCE
+    assert manifest.owner == "alice"
+    assert manifest.task == "classification"
+    assert manifest.dataset.name == "benchmark-set"
+    assert manifest.dataset.version == "v1"
+    assert manifest.split.name == "dev"
+    assert manifest.claim_boundary == "Only applies to the dev split."
+    assert manifest.claim_status == "tentative"
     assert manifest.metrics_to_verify[0].name == "accuracy"
     assert manifest.claims[0].status == "supported"
     assert manifest.intended_wiki_targets == ["wiki/performance/pkt-1.md"]
@@ -47,7 +64,8 @@ def test_load_manifest_accepts_packet_type_alias_and_raw_path_mapping(tmp_path):
     write_manifest(
         packet,
         packet_type="performance",
-        type=None,
+        type="reference",
+        intended_wiki_targets=["wiki/performance/pkt-1.md"],
         raw_paths={"metrics": "metrics/results.yaml", "notes": "notes.md"},
         metrics_to_verify=[{"name": "accuracy", "expected": 0.8, "raw_path": "metrics/results.yaml"}],
     )
@@ -58,6 +76,38 @@ def test_load_manifest_accepts_packet_type_alias_and_raw_path_mapping(tmp_path):
     assert manifest.raw_paths == ["metrics/results.yaml", "notes.md"]
     assert manifest.raw_path_map == {"metrics": "metrics/results.yaml", "notes": "notes.md"}
     assert manifest.metrics_to_verify[0].raw_path == "metrics/results.yaml"
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "id",
+        "packet_type",
+        "title",
+        "date",
+        "owner",
+        "status",
+        "task",
+        "dataset",
+        "split",
+        "claim_boundary",
+        "summary",
+        "raw_paths",
+        "intended_wiki_targets",
+    ],
+)
+def test_load_manifest_requires_full_shape_fields_for_new_manifests(tmp_path, field):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet)
+    manifest_path = packet / "manifest.yaml"
+    data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    data.pop(field)
+    manifest_path.write_text(yaml.safe_dump(data), encoding="utf-8")
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
 @pytest.mark.parametrize(

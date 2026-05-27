@@ -3,7 +3,20 @@
   "$id": "https://example.local/team-llm-wiki/wiki-packet-manifest.schema.json",
   "title": "Team LLM Wiki Packet Manifest",
   "type": "object",
-  "required": ["id", "title"],
+  "required": [
+    "id",
+    "title",
+    "date",
+    "owner",
+    "status",
+    "task",
+    "dataset",
+    "split",
+    "claim_boundary",
+    "summary",
+    "raw_paths",
+    "intended_wiki_targets"
+  ],
   "anyOf": [
     {
       "required": ["packet_type"]
@@ -49,9 +62,79 @@
     "date": {
       "type": "string"
     },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
     "status": {
       "type": "string",
       "default": "draft"
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataset": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "split": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "group_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fold_file": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["family"],
+      "additionalProperties": true,
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "weights_in_repo": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "claim_boundary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_status": {
+      "enum": ["tentative", "supported", "disputed", "superseded"],
+      "default": "tentative"
     },
     "summary": {
       "type": "string"

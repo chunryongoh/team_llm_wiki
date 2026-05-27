@@ -94,12 +94,57 @@ class Claim:
 
 
 @dataclass
+class DatasetRef:
+    name: str
+    version: str
+    hash: str | None = None
+
+    def __post_init__(self) -> None:
+        self.name = _require_non_empty_string(self.name, "dataset.name")
+        self.version = _require_non_empty_string(self.version, "dataset.version")
+        if self.hash is not None:
+            self.hash = _require_non_empty_string(self.hash, "dataset.hash")
+
+
+@dataclass
+class SplitRef:
+    name: str
+    group_key: str | None = None
+    fold_file: str | None = None
+
+    def __post_init__(self) -> None:
+        self.name = _require_non_empty_string(self.name, "split.name")
+        if self.group_key is not None:
+            self.group_key = _require_non_empty_string(self.group_key, "split.group_key")
+        if self.fold_file is not None:
+            self.fold_file = _validate_manifest_rel_path(_require_non_empty_string(self.fold_file, "split.fold_file"))
+
+
+@dataclass
+class ModelRef:
+    family: str
+    weights_in_repo: bool = False
+
+    def __post_init__(self) -> None:
+        self.family = _require_non_empty_string(self.family, "model.family")
+        if not isinstance(self.weights_in_repo, bool):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, "model.weights_in_repo must be a boolean")
+
+
+@dataclass
 class PacketManifest:
     id: str
     type: PacketType | str
     title: str
     date: str | None = None
+    owner: str = ""
     status: str = "draft"
+    task: str = ""
+    dataset: DatasetRef | dict[str, Any] = field(default_factory=lambda: DatasetRef(name="unknown", version="unknown"))
+    split: SplitRef | dict[str, Any] = field(default_factory=lambda: SplitRef(name="default"))
+    model: ModelRef | dict[str, Any] | None = None
+    claim_boundary: str = ""
+    claim_status: str = "tentative"
     summary: str = ""
     raw_paths: list[str] = field(default_factory=list)
     raw_path_map: dict[str, str] = field(default_factory=dict)
@@ -114,6 +159,25 @@ class PacketManifest:
             self.type = PacketType(self.type)
         except ValueError as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"unknown packet type: {self.type}") from exc
+        self.title = _require_non_empty_string(self.title, "title")
+        self.owner = _coerce_optional_string(self.owner, "owner")
+        self.task = _coerce_optional_string(self.task, "task")
+        self.claim_boundary = _coerce_optional_string(self.claim_boundary, "claim_boundary")
+        if self.claim_status not in {"tentative", "supported", "disputed", "superseded"}:
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.claim_status}")
+        try:
+            if isinstance(self.dataset, DatasetRef):
+                pass
+            else:
+                self.dataset = DatasetRef(**_require_mapping(self.dataset, "dataset"))
+            if isinstance(self.split, SplitRef):
+                pass
+            else:
+                self.split = SplitRef(**_require_mapping(self.split, "split"))
+            if self.model is not None and not isinstance(self.model, ModelRef):
+                self.model = ModelRef(**_require_mapping(self.model, "model"))
+        except TypeError as exc:
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, str(exc)) from exc
         if isinstance(self.raw_paths, dict):
             self.raw_path_map = {str(key): _validate_manifest_rel_path(str(value)) for key, value in self.raw_paths.items()}
             self.raw_paths = list(self.raw_path_map.values())
@@ -217,6 +281,18 @@ CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 def _validate_kebab_id(value: str) -> None:
     if not isinstance(value, str) or not ID_RE.fullmatch(value) or "/" in value or "\\" in value or CONTROL_RE.search(value):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, "id must be ASCII kebab-case without separators")
+
+
+def _require_non_empty_string(value: Any, label: str) -> str:
+    if not isinstance(value, str) or not value.strip() or CONTROL_RE.search(value):
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label} must be a non-empty string")
+    return value
+
+
+def _coerce_optional_string(value: Any, label: str) -> str:
+    if not isinstance(value, str) or CONTROL_RE.search(value):
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label} must be a string")
+    return value
 
 
 def _validate_manifest_rel_path(value: str) -> str:
