@@ -1,8 +1,29 @@
 id: example-model
 packet_type: model
 title: Example Model
+date: "2026-05-26"
+owner: replace-with-owner
+status: draft
+task: model-documentation
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: none
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: replace-with-model-family
+  weights_in_repo: false
+claim_boundary: Model note describes configuration only unless backed by raw metrics.
+claim_status: tentative
 summary: Model configuration and tradeoff note.
 raw_paths:
   card: model-card.md
 intended_wiki_targets:
   - wiki/models/example-model.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Replace with a careful model claim.

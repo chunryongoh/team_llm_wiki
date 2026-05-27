@@ -264,7 +264,7 @@
             "type": "number"
           },
           "raw_path": {
-            "type": "string"
+            "$ref": "#/$defs/packet_relative_path"
           },
           "key": {
             "type": "string"

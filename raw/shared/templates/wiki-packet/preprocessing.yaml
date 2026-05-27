@@ -1,8 +1,29 @@
 id: example-preprocessing
 packet_type: preprocessing
 title: Example Preprocessing Note
+date: "2026-05-26"
+owner: replace-with-owner
+status: draft
+task: dataset-preprocessing
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: dev
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: Preprocessing note applies only to the named dataset and split.
+claim_status: tentative
 summary: Dataset handling or cleaning change.
 raw_paths:
   notes: preprocessing-notes.md
 intended_wiki_targets:
   - wiki/datasets/example-preprocessing.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Replace with a careful preprocessing claim.

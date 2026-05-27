@@ -202,12 +202,15 @@ def test_load_manifest_rejects_whitespace_required_text_fields(tmp_path, manifes
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
-def test_shared_manifest_template_validates_against_schema():
+def test_shared_manifest_templates_validate_against_schema():
     repo_root = Path(__file__).resolve().parents[2]
     schema = load_manifest_schema()
-    manifest = yaml.safe_load((repo_root / "raw" / "shared" / "templates" / "wiki-packet" / "manifest.yaml").read_text())
+    template_paths = sorted((repo_root / "raw" / "shared" / "templates" / "wiki-packet").glob("*.yaml"))
 
-    Draft202012Validator(schema).validate(manifest)
+    assert template_paths
+    for path in template_paths:
+        manifest = yaml.safe_load(path.read_text(encoding="utf-8"))
+        Draft202012Validator(schema).validate(manifest)
 
 
 @pytest.mark.parametrize(
@@ -241,6 +244,26 @@ def test_manifest_schema_rejects_conflicting_packet_type_alias(tmp_path):
 def test_manifest_schema_rejects_metric_without_actual_or_raw_path(tmp_path):
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
     write_manifest(packet, metrics_to_verify=[{"name": "accuracy", "expected": 0.8}])
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "raw_path",
+    [
+        "",
+        "   ",
+        "../metrics.json",
+        "/metrics.json",
+        "nested//metrics.json",
+    ],
+)
+def test_manifest_schema_rejects_unsafe_metric_raw_path(raw_path, tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, metrics_to_verify=[{"name": "accuracy", "expected": 0.8, "raw_path": raw_path}])
     manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
 
     errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
@@ -339,12 +362,18 @@ def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manif
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8, "unexpected": "extra"}]},
         {"metrics_to_verify": [{"name": "   ", "expected": 0.8, "actual": 0.8}]},
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": ""}]},
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "   "}]},
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "../metrics.json"}]},
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "/metrics.json"}]},
         {"metrics_to_verify": ["not-a-mapping"]},
         {"raw_paths": {"metrics": "../escape.json"}},
         {"raw_paths": ["../escape.json"]},
         {"raw_paths": ["/abs.json"]},
+        {"raw_paths": ["   "]},
         {"intended_wiki_targets": ["../wiki/experiments/pkt-1.md"]},
         {"intended_wiki_targets": ["/wiki/experiments/pkt-1.md"]},
+        {"intended_wiki_targets": ["   "]},
     ],
 )
 def test_load_manifest_rejects_invalid_shapes(tmp_path, manifest_overrides):

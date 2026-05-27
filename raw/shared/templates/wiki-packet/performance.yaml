@@ -1,6 +1,23 @@
 id: example-performance
 packet_type: performance
 title: Example Performance Result
+date: "2026-05-26"
+owner: replace-with-owner
+status: draft
+task: benchmark-evaluation
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: dev
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: replace-with-model-family
+  weights_in_repo: false
+claim_boundary: Performance claim applies only to the metric source, dataset, split, and model listed here.
+claim_status: supported
 summary: Benchmark result requiring review.
 raw_paths:
   metrics: metrics.json

@@ -1,6 +1,23 @@
 id: example-feature
 packet_type: feature
 title: Example Feature
+date: "2026-05-26"
+owner: replace-with-owner
+status: draft
+task: feature-engineering
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: dev
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: Feature claim applies only to the named dataset and split.
+claim_status: tentative
 summary: Feature engineering rationale and outcome.
 raw_paths:
   notes: feature-notes.md

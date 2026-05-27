@@ -72,6 +72,10 @@ class MetricCheck:
                 self.actual = float(self.actual)
         except (TypeError, ValueError) as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.name} has non-numeric values") from exc
+        if self.raw_path is not None:
+            if not isinstance(self.raw_path, str):
+                raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.name} raw_path must be a string")
+            self.raw_path = _validate_manifest_rel_path(self.raw_path)
         if self.actual is None and not self.raw_path:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.name} requires actual or raw_path")
 
@@ -296,7 +300,7 @@ def _coerce_optional_string(value: Any, label: str) -> str:
 
 
 def _validate_manifest_rel_path(value: str) -> str:
-    if not value or "\\" in value or "//" in value or CONTROL_RE.search(value):
+    if not value or not value.strip() or "\\" in value or "//" in value or CONTROL_RE.search(value):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid manifest path: {value}")
     path = Path(value)
     if path.is_absolute() or ".." in path.parts:
