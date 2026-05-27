@@ -5,6 +5,48 @@ from team_llm_wiki.wiki_ingest.policy import IngestPolicy
 from team_llm_wiki.wiki_ingest.render import render_packets
 
 
+def manifest(**overrides):
+    packet_id = overrides.get("id", "pkt-1")
+    packet_type = overrides.get("type", PacketType.REFERENCE)
+    route = {
+        "meeting": "wiki/sources",
+        "feature": "wiki/features",
+        "model": "wiki/models",
+        "performance": "wiki/performance",
+        "preprocessing": "wiki/datasets",
+        "augmentation": "wiki/datasets",
+        "experiment": "wiki/experiments",
+        "reference": "wiki/sources",
+        PacketType.MEETING: "wiki/sources",
+        PacketType.FEATURE: "wiki/features",
+        PacketType.MODEL: "wiki/models",
+        PacketType.PERFORMANCE: "wiki/performance",
+        PacketType.PREPROCESSING: "wiki/datasets",
+        PacketType.AUGMENTATION: "wiki/datasets",
+        PacketType.EXPERIMENT: "wiki/experiments",
+        PacketType.REFERENCE: "wiki/sources",
+    }[packet_type]
+    data = {
+        "id": packet_id,
+        "type": packet_type,
+        "title": "Reference",
+        "date": "2026-05-27",
+        "owner": "alice",
+        "status": "ready",
+        "task": "classification",
+        "dataset": {"name": "benchmark-set", "version": "v1"},
+        "split": {"name": "dev"},
+        "model": {"family": "llama"},
+        "claim_boundary": "Only applies to the dev split.",
+        "claim_status": "tentative",
+        "summary": "Run summary.",
+        "raw_paths": ["result.json"],
+        "intended_wiki_targets": [f"{route}/{packet_id}.md"],
+    }
+    data.update(overrides)
+    return PacketManifest(**data)
+
+
 def test_render_source_index_log_and_latest_context(tmp_path):
     (tmp_path / "wiki").mkdir()
     (tmp_path / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
@@ -18,7 +60,7 @@ def test_render_source_index_log_and_latest_context(tmp_path):
         "<!-- wiki-ingest:latest:end -->\n",
         encoding="utf-8",
     )
-    manifest = PacketManifest(
+    packet = manifest(
         id="ref-1",
         type=PacketType.REFERENCE,
         title="Reference One",
@@ -26,7 +68,7 @@ def test_render_source_index_log_and_latest_context(tmp_path):
         summary="Short summary",
     )
 
-    result = render_packets(tmp_path, [(manifest, RiskTier.DIRECT_COMMIT)], run_id="run-1")
+    result = render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-1")
 
     target = tmp_path / "wiki" / "sources" / "ref-1.md"
     assert target.exists()
@@ -49,13 +91,13 @@ def test_render_source_index_log_and_latest_context(tmp_path):
 def test_render_canonical_routes_and_review_notes(tmp_path):
     (tmp_path / "wiki").mkdir()
     packets = [
-        PacketManifest(id="meet", type="meeting", title="Meeting"),
-        PacketManifest(id="feat", type="feature", title="Feature"),
-        PacketManifest(id="model", type="model", title="Model"),
-        PacketManifest(id="perf", type="performance", title="Perf"),
-        PacketManifest(id="prep", type="preprocessing", title="Prep"),
-        PacketManifest(id="aug", type="augmentation", title="Aug"),
-        PacketManifest(id="exp", type="experiment", title="Exp"),
+        manifest(id="meet", type="meeting", title="Meeting"),
+        manifest(id="feat", type="feature", title="Feature"),
+        manifest(id="model", type="model", title="Model"),
+        manifest(id="perf", type="performance", title="Perf"),
+        manifest(id="prep", type="preprocessing", title="Prep"),
+        manifest(id="aug", type="augmentation", title="Aug"),
+        manifest(id="exp", type="experiment", title="Exp"),
     ]
 
     render_packets(tmp_path, [(packet, RiskTier.BOT_PR) for packet in packets], run_id="run-2")
@@ -80,9 +122,9 @@ def test_render_preserves_existing_generated_index_entries(tmp_path):
     )
     (tmp_path / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
     (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
-    manifest = PacketManifest(id="new-ref", type="reference", title="New Ref")
+    packet = manifest(id="new-ref", type="reference", title="New Ref")
 
-    render_packets(tmp_path, [(manifest, RiskTier.DIRECT_COMMIT)], run_id="run-3")
+    render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-3")
 
     index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
     assert "- [Existing](wiki/sources/existing.md) - `reference`" in index
@@ -94,13 +136,13 @@ def test_render_escapes_manifest_title_in_generated_index(tmp_path):
     (tmp_path / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
     (tmp_path / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
     (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
-    manifest = PacketManifest(
+    packet = manifest(
         id="bad-title",
         type="reference",
         title="Bad <!-- wiki-ingest:index:end --> [link](../AGENTS.md)",
     )
 
-    render_packets(tmp_path, [(manifest, RiskTier.DIRECT_COMMIT)], run_id="run-title")
+    render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-title")
 
     index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
     assert index.count("<!-- wiki-ingest:index:end -->") == 1
@@ -124,7 +166,7 @@ def test_latest_context_bounded_and_notes_bot_pr_review_required(tmp_path):
 
     render_packets(
         tmp_path,
-        [(PacketManifest(id="exp-1", type="experiment", title="Experiment"), RiskTier.BOT_PR)],
+        [(manifest(id="exp-1", type="experiment", title="Experiment"), RiskTier.BOT_PR)],
         run_id="run-4",
         policy=policy,
     )
@@ -155,7 +197,7 @@ def test_latest_context_defaults_to_12_entries_and_6000_chars(tmp_path):
 
     render_packets(
         tmp_path,
-        [(PacketManifest(id="ref-new", type="reference", title="New Ref"), RiskTier.DIRECT_COMMIT)],
+        [(manifest(id="ref-new", type="reference", title="New Ref"), RiskTier.DIRECT_COMMIT)],
         run_id="run-new",
     )
 

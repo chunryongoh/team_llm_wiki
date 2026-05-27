@@ -13,22 +13,34 @@ from team_llm_wiki.wiki_ingest.models import (
 )
 
 
+def manifest_data(**overrides):
+    data = {
+        "id": "pkt-1",
+        "type": "experiment",
+        "title": "A run",
+        "date": "2026-05-27",
+        "owner": "alice",
+        "status": "ready",
+        "task": "classification",
+        "dataset": {"name": "benchmark-set", "version": "v1"},
+        "split": {"name": "dev"},
+        "model": {"family": "llama"},
+        "claim_boundary": "Only applies to the dev split.",
+        "claim_status": "tentative",
+        "summary": "Run summary.",
+        "raw_paths": ["result.json"],
+        "intended_wiki_targets": ["wiki/experiments/pkt-1.md"],
+    }
+    data.update(overrides)
+    return data
+
+
 def test_manifest_full_shape_and_packet_type_coercion():
     manifest = PacketManifest(
-        id="pkt-1",
-        type="experiment",
-        title="A run",
-        date="2026-05-27",
-        owner="alice",
-        status="ready",
-        task="classification",
-        dataset={"name": "benchmark-set", "version": "v1", "hash": "sha256:abc"},
-        split={"name": "dev", "group_key": "team", "fold_file": "folds/dev.txt"},
-        model={"family": "llama"},
-        claim_boundary="Only applies to the dev split.",
-        summary="Run summary.",
-        raw_paths=["result.json"],
-        intended_wiki_targets=["wiki/experiments/pkt-1.md"],
+        **manifest_data(
+            dataset={"name": "benchmark-set", "version": "v1", "hash": "sha256:abc"},
+            split={"name": "dev", "group_key": "team", "fold_file": "folds/dev.txt"},
+        )
     )
 
     assert manifest.type is PacketType.EXPERIMENT
@@ -50,7 +62,19 @@ def test_manifest_full_shape_and_packet_type_coercion():
 
 def test_manifest_rejects_unknown_packet_type():
     with pytest.raises(IngestFailure) as exc:
-        PacketManifest(id="pkt-1", type="other", title="Bad")
+        PacketManifest(**manifest_data(type="other", title="Bad"))
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+def test_manifest_minimal_direct_construction_fails():
+    with pytest.raises(TypeError):
+        PacketManifest(id="pkt-1", type="experiment", title="A run")
+
+
+def test_manifest_rejects_none_model():
+    with pytest.raises(IngestFailure) as exc:
+        PacketManifest(**manifest_data(model=None))
 
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
@@ -61,23 +85,14 @@ def test_manifest_rejects_unknown_packet_type():
         {"owner": "   "},
         {"task": "   "},
         {"claim_boundary": "   "},
+        {"date": "   "},
+        {"status": "   "},
+        {"summary": "   "},
     ],
 )
-def test_manifest_rejects_whitespace_owner_task_and_claim_boundary(overrides):
-    data = {
-        "id": "pkt-1",
-        "type": "experiment",
-        "title": "A run",
-        "owner": "alice",
-        "task": "classification",
-        "dataset": {"name": "benchmark-set", "version": "v1"},
-        "split": {"name": "dev"},
-        "claim_boundary": "Only applies to the dev split.",
-    }
-    data.update(overrides)
-
+def test_manifest_rejects_whitespace_required_text_fields(overrides):
     with pytest.raises(IngestFailure) as exc:
-        PacketManifest(**data)
+        PacketManifest(**manifest_data(**overrides))
 
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
@@ -93,20 +108,8 @@ def test_manifest_rejects_whitespace_owner_task_and_claim_boundary(overrides):
     ],
 )
 def test_manifest_rejects_invalid_full_shape_fields(overrides):
-    data = {
-        "id": "pkt-1",
-        "type": "experiment",
-        "title": "A run",
-        "owner": "alice",
-        "task": "classification",
-        "dataset": {"name": "benchmark-set", "version": "v1"},
-        "split": {"name": "dev"},
-        "claim_boundary": "Only applies to the dev split.",
-    }
-    data.update(overrides)
-
     with pytest.raises(IngestFailure) as exc:
-        PacketManifest(**data)
+        PacketManifest(**manifest_data(**overrides))
 
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 

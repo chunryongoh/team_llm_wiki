@@ -140,21 +140,21 @@ class PacketManifest:
     id: str
     type: PacketType | str
     title: str
-    date: str | None = None
-    owner: str = "unknown"
-    status: str = "draft"
-    task: str = "unspecified"
-    dataset: DatasetRef | dict[str, Any] = field(default_factory=lambda: DatasetRef(name="unknown", version="unknown"))
-    split: SplitRef | dict[str, Any] = field(default_factory=lambda: SplitRef(name="default"))
-    model: ModelRef | dict[str, Any] | None = None
-    claim_boundary: str = "unspecified"
-    claim_status: str = "tentative"
-    summary: str = ""
-    raw_paths: list[str] = field(default_factory=list)
-    raw_path_map: dict[str, str] = field(default_factory=dict)
-    intended_wiki_targets: list[str] = field(default_factory=list)
+    date: str
+    owner: str
+    status: str
+    task: str
+    dataset: DatasetRef | dict[str, Any]
+    split: SplitRef | dict[str, Any]
+    model: ModelRef | dict[str, Any]
+    claim_boundary: str
+    claim_status: str
+    summary: str
+    raw_paths: list[str] | dict[str, str]
+    intended_wiki_targets: list[str]
     metrics_to_verify: list[MetricCheck | dict[str, Any]] = field(default_factory=list)
     claims: list[Claim | dict[str, Any]] = field(default_factory=list)
+    raw_path_map: dict[str, str] = field(default_factory=dict)
     extra: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -164,9 +164,12 @@ class PacketManifest:
         except ValueError as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"unknown packet type: {self.type}") from exc
         self.title = _require_non_empty_string(self.title, "title")
+        self.date = _require_non_empty_string(self.date, "date")
         self.owner = _require_non_empty_string(self.owner, "owner")
+        self.status = _require_non_empty_string(self.status, "status")
         self.task = _require_non_empty_string(self.task, "task")
         self.claim_boundary = _require_non_empty_string(self.claim_boundary, "claim_boundary")
+        self.summary = _require_non_empty_string(self.summary, "summary")
         if self.claim_status not in {"tentative", "supported", "disputed", "superseded"}:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.claim_status}")
         try:
@@ -178,7 +181,9 @@ class PacketManifest:
                 pass
             else:
                 self.split = SplitRef(**_require_mapping(self.split, "split"))
-            if self.model is not None and not isinstance(self.model, ModelRef):
+            if self.model is None:
+                raise IngestFailure(FailureCode.INVALID_MANIFEST, "model is required")
+            if not isinstance(self.model, ModelRef):
                 self.model = ModelRef(**_require_mapping(self.model, "model"))
         except TypeError as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, str(exc)) from exc
