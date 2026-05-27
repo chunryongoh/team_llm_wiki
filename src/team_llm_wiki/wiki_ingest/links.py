@@ -7,6 +7,7 @@ from .models import FailureCode, HealthError
 
 WIKI_LINK_RE = re.compile(r"\[\[([^\]]+)\]\]")
 MD_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+CONFLICT_MARKERS = ("<<<<<<<", "=======", ">>>>>>>")
 
 
 def _resolve_wiki_link(wiki_root: Path, source: Path, label: str) -> Path:
@@ -29,6 +30,14 @@ def lint_wiki_links(repo_root: Path, paths: list[str] | None = None) -> list[Hea
             continue
         text = source.read_text(encoding="utf-8")
         rel_source = source.relative_to(repo_root).as_posix()
+        if any(marker in text for marker in CONFLICT_MARKERS):
+            errors.append(
+                HealthError(
+                    FailureCode.UNBALANCED_GENERATED_BLOCK.value,
+                    "generated wiki contains unresolved conflict marker",
+                    rel_source,
+                )
+            )
         for match in WIKI_LINK_RE.finditer(text):
             target = _resolve_wiki_link(wiki_root, source, match.group(1)).resolve()
             try:

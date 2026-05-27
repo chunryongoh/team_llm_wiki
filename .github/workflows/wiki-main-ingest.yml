@@ -128,7 +128,7 @@ jobs:
         with:
           name: wiki-ingest-report
           path: raw/results/wiki-ingest/*/report.json
-          if-no-files-found: ignore
+          if-no-files-found: error
       - name: Direct commit low-risk wiki updates
         if: steps.skip.outputs.skip != 'true' && steps.ingest.outputs.status == 'direct_commit'
         run: |

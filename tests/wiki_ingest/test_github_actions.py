@@ -207,6 +207,7 @@ def test_main_ingest_workflow_uses_review_required_pr_title_and_body():
     assert "body: ${{ steps.ingest.outputs.pr_body }}" in workflow
     assert "name: Upload wiki ingest report" in workflow
     assert "raw/results/wiki-ingest/*/report.json" in workflow
+    assert "if-no-files-found: error" in workflow
 
 
 def test_docs_note_default_github_token_follow_up_workflow_caveat():

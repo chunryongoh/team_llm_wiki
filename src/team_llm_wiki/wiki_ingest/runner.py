@@ -10,7 +10,7 @@ from .compile import compile_packet
 from .guards import run_guard_checks
 from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
-from .models import IngestFailure, IngestReport, RiskTier, as_jsonable
+from .models import FailureCode, IngestFailure, IngestReport, RiskTier, RiskTierLabel, as_jsonable
 from .policy import load_policy
 from .render import render_packets
 from .risk import classify_risk
@@ -24,7 +24,10 @@ def _rel(repo_root: Path, path: Path) -> str:
 def _write_report(repo_root: Path, report: IngestReport, report_path: Path | None) -> None:
     if report_path is None:
         return
-    rel_report = report_path.resolve().relative_to(repo_root.resolve()).as_posix()
+    try:
+        rel_report = report_path.resolve().relative_to(repo_root.resolve()).as_posix()
+    except ValueError:
+        rel_report = report_path.resolve().as_posix()
     report.report_path = rel_report
     if rel_report not in report.changed_paths:
         report.changed_paths.append(rel_report)
@@ -119,7 +122,8 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
                 "type": manifest.type.value,
                 "claim_status": manifest.claim_status,
                 "packet_root": _rel(repo_root, packet_root),
-                "risk_tier": risk.tier.value,
+                "publish_action": risk.tier.value,
+                "risk_tier": risk.risk_tier.value,
                 "risk_reasons": risk.reasons,
             }
         )
@@ -150,9 +154,21 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
         failures=failures,
         warnings=list(dict.fromkeys(warnings)),
         policy_warnings=list(dict.fromkeys(policy.warnings)),
+        risk_tier=_max_risk_tier([risk_tier for _manifest, risk_tier in packets]),
         timing_ms=int((time.monotonic() - start) * 1000),
     )
     return report, packets
+
+
+def _max_risk_tier(packets: list[RiskTier]) -> str | None:
+    if not packets:
+        return None
+    order = {
+        RiskTier.DIRECT_COMMIT: RiskTierLabel.TIER0_CATALOG.value,
+        RiskTier.BOT_PR: RiskTierLabel.TIER2_INTERPRETATION.value,
+        RiskTier.HARD_FAIL: RiskTierLabel.TIER4_GOVERNANCE.value,
+    }
+    return order[max(packets, key=lambda tier: list(order).index(tier))]
 
 
 def plan_wiki_main_ingest(repo_root: Path, changed_paths: list[str], run_id: str = "plan") -> IngestReport:
@@ -171,7 +187,18 @@ def run_wiki_main_ingest(
 ) -> IngestReport:
     report_path = report_path or _default_report_path(repo_root, run_id)
     start = time.monotonic()
-    report, packets = _build_report(repo_root, changed_paths, run_id)
+    try:
+        report, packets = _build_report(repo_root, changed_paths, run_id)
+    except IngestFailure as exc:
+        report = IngestReport(
+            status="hard_fail",
+            run_id=run_id,
+            failures=[exc.to_dict()],
+            risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value,
+            timing_ms=int((time.monotonic() - start) * 1000),
+        )
+        _write_report(repo_root, report, report_path)
+        return report
     if report.status in {"skipped", "hard_fail"}:
         report.timing_ms = int((time.monotonic() - start) * 1000)
         _write_report(repo_root, report, report_path)

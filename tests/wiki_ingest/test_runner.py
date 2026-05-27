@@ -90,7 +90,8 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert compiled_payload["id"] == "ref-1"
     assert compiled_payload["packet_type"] == "reference"
     assert compiled_payload["packet_root"] == "raw/users/alice/ref-1"
-    assert compiled_payload["risk_tier"] == "direct_commit"
+    assert payload["packets"][0]["publish_action"] == "direct_commit"
+    assert payload["packets"][0]["risk_tier"] == "tier0-catalog"
 
 
 def test_runner_compiled_payload_preserves_labeled_raw_paths(tmp_path):
@@ -149,6 +150,64 @@ def test_runner_hard_fail_does_not_mutate_wiki(tmp_path):
     assert report.status == "hard_fail"
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before
     assert not (tmp_path / "wiki" / "experiments" / "exp-1.md").exists()
+
+
+def test_runner_invalid_changed_path_writes_hard_fail_report(tmp_path):
+    seed_repo(tmp_path)
+    report_path = tmp_path / "raw" / "results" / "wiki-ingest" / "bad-path" / "report.json"
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=["/tmp/bad"],
+        report_path=report_path,
+        run_id="bad-path",
+    )
+
+    assert report.status == "hard_fail"
+    assert report_path.exists()
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert payload["status"] == "hard_fail"
+    assert payload["failures"][0]["code"] == "invalid_changed_path"
+
+
+def test_runner_conflict_markers_hard_fail_without_mutation(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = packet_with_manifest(
+        tmp_path,
+        "ref-conflict",
+        {
+            "id": "ref-conflict",
+            "packet_type": "reference",
+            "title": "Conflict",
+            "date": "2026-05-27",
+            "owner": "alice",
+            "status": "ready",
+            "task": "source-ingest",
+            "dataset": {"name": "benchmark-set", "version": "v1"},
+            "split": {"name": "none"},
+            "model": {"family": "not-applicable"},
+            "claim_boundary": "Only applies to this source packet.",
+            "claim_status": "tentative",
+            "summary": "Run summary.",
+            "raw_paths": ["result.json"],
+            "intended_wiki_targets": ["wiki/sources/ref-conflict.md"],
+            "claims": [{"status": "tentative", "text": "<<<<<<< HEAD\nleft\n=======\nright\n>>>>>>> branch"}],
+        },
+        {"result.json": '{"accuracy": 0.8}'},
+    )
+    before_index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "wiki-ingest" / "conflict" / "report.json",
+        run_id="conflict",
+    )
+
+    assert report.status == "hard_fail"
+    assert any(error["code"] == "unbalanced_generated_block" for error in report.link_lint_errors)
+    assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
+    assert not (tmp_path / "wiki" / "sources" / "ref-conflict.md").exists()
 
 
 def test_plan_hard_fail_does_not_predict_generated_paths(tmp_path):

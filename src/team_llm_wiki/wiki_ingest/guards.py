@@ -20,8 +20,14 @@ MODEL_WEIGHT_SUFFIXES = {".bin", ".pt", ".pth", ".ckpt", ".onnx", ".safetensors"
 SECRET_CONTENT_RE = re.compile(
     r"(OPENAI_API_KEY|AWS_SECRET_ACCESS_KEY|BEGIN (RSA|OPENSSH|PRIVATE) KEY|sk-[A-Za-z0-9_-]{8,})"
 )
+SECRET_CONTENT_BYTES_RE = re.compile(
+    rb"(OPENAI_API_KEY|AWS_SECRET_ACCESS_KEY|BEGIN (RSA|OPENSSH|PRIVATE) KEY|sk-[A-Za-z0-9_-]{8,})"
+)
 PII_CONTENT_RE = re.compile(
     r"([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\b\d{3}-\d{2}-\d{4}\b|\b\d{6}-[1-4]\d{6}\b)"
+)
+PII_CONTENT_BYTES_RE = re.compile(
+    rb"([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\b\d{3}-\d{2}-\d{4}\b|\b\d{6}-[1-4]\d{6}\b)"
 )
 
 
@@ -126,7 +132,12 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
     for path in files:
         lower_name = path.name.lower()
         lower_suffix = path.suffix.lower()
-        if lower_name in SECRET_NAMES or lower_name in SECRET_NAME_SUFFIXES or lower_suffix in SECRET_NAME_SUFFIXES:
+        if (
+            lower_name in SECRET_NAMES
+            or lower_name in SECRET_NAME_SUFFIXES
+            or lower_name.startswith(".env.")
+            or lower_suffix in SECRET_NAME_SUFFIXES
+        ):
             result.failures.append(
                 GuardViolation(FailureCode.FORBIDDEN_SECRET_FILE, "forbidden secret filename", path.as_posix())
             )
@@ -135,6 +146,11 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
         try:
             content = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
+            raw_content = path.read_bytes()
+            if SECRET_CONTENT_BYTES_RE.search(raw_content):
+                result.failures.append(GuardViolation(FailureCode.SECRET_CONTENT, "secret-like content detected", path.as_posix()))
+            if PII_CONTENT_BYTES_RE.search(raw_content):
+                result.failures.append(GuardViolation(FailureCode.PII_CONTENT, "PII-like content detected", path.as_posix()))
             continue
         text_bytes += len(content.encode("utf-8"))
         if SECRET_CONTENT_RE.search(content):

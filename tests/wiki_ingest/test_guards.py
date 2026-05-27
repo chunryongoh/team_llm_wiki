@@ -55,6 +55,7 @@ def test_guard_allows_valid_packet(tmp_path):
     "filename,code",
     [
         (".env", FailureCode.FORBIDDEN_SECRET_FILE),
+        (".env.local", FailureCode.FORBIDDEN_SECRET_FILE),
         ("secret.pem", FailureCode.FORBIDDEN_SECRET_FILE),
         ("weights.safetensors", FailureCode.MODEL_WEIGHT_FILE),
         ("weights.bin", FailureCode.MODEL_WEIGHT_FILE),
@@ -79,6 +80,15 @@ def test_guard_blocks_pii_content(tmp_path):
     result = run_guard_checks(tmp_path, packet, manifest, policy())
 
     assert FailureCode.PII_CONTENT in [failure.code for failure in result.failures]
+
+
+def test_guard_blocks_invalid_utf8_text_file_instead_of_skipping_scan(tmp_path):
+    packet, manifest = make_packet(tmp_path)
+    (packet / "notes.txt").write_bytes(b"OPENAI_API_KEY=sk-testsecret\xff")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.SECRET_CONTENT in [failure.code for failure in result.failures]
 
 
 def test_guard_blocks_missing_raw_file(tmp_path):

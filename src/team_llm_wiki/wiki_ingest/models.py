@@ -25,6 +25,14 @@ class RiskTier(str, Enum):
     HARD_FAIL = "hard_fail"
 
 
+class RiskTierLabel(str, Enum):
+    TIER0_CATALOG = "tier0-catalog"
+    TIER1_SUMMARY = "tier1-summary"
+    TIER2_INTERPRETATION = "tier2-interpretation"
+    TIER3_PERFORMANCE = "tier3-performance"
+    TIER4_GOVERNANCE = "tier4-governance"
+
+
 class FailureCode(str, Enum):
     INVALID_CHANGED_PATH = "invalid_changed_path"
     INVALID_MANIFEST = "invalid_manifest"
@@ -269,6 +277,7 @@ class GuardResult:
 class RiskDecision:
     tier: RiskTier
     reasons: list[str] = field(default_factory=list)
+    risk_tier: RiskTierLabel = RiskTierLabel.TIER0_CATALOG
 
 
 @dataclass
@@ -291,6 +300,7 @@ class IngestReport:
     generated_paths: list[str] = field(default_factory=list)
     changed_paths: list[str] = field(default_factory=list)
     link_lint_errors: list[dict[str, Any]] = field(default_factory=list)
+    risk_tier: str | None = None
     report_path: str | None = None
     timing_ms: int = 0
 

@@ -40,6 +40,8 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     manifest_path = packet_root / "manifest.yaml"
     if not manifest_path.exists():
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"missing manifest: {manifest_path}")
+    if not manifest_path.is_file():
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest must be a file: {manifest_path}")
     try:
         manifest_text = manifest_path.read_text(encoding="utf-8")
     except UnicodeDecodeError as exc:
