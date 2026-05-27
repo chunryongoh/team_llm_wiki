@@ -383,6 +383,8 @@ def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manif
         {"date": "2026\x01-05-27"},
         {"status": "rea\x01dy"},
         {"summary": "Run\x01summary."},
+        {"id": "bad\nid"},
+        {"id": "pkt-1\n"},
     ],
 )
 def test_manifest_schema_rejects_control_character_fields(tmp_path, manifest_overrides):
