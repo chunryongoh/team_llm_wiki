@@ -79,6 +79,18 @@ def test_guard_blocks_missing_raw_file(tmp_path):
     assert FailureCode.MISSING_RAW_FILE in codes
 
 
+def test_guard_surfaces_malformed_direct_manifest_raw_path_entry(tmp_path):
+    packet, manifest = make_packet(tmp_path)
+    manifest.raw_paths = ["result.json", ["nested-result.json"]]
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert any(
+        failure.code is FailureCode.INVALID_MANIFEST and "raw_paths" in failure.message
+        for failure in result.failures
+    )
+
+
 def test_guard_blocks_secret_content_metric_mismatch_and_wrong_route(tmp_path):
     packet, manifest = make_packet(
         tmp_path,

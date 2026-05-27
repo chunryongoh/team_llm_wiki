@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -78,12 +79,24 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
         result.failures.append(GuardViolation(FailureCode.PACKET_TOO_LARGE, "packet text bytes exceed limit"))
 
     for raw in manifest.raw_paths:
-        candidate = (packet_root / raw).resolve()
+        try:
+            raw_path = os.fspath(raw)
+        except TypeError:
+            result.failures.append(
+                GuardViolation(FailureCode.INVALID_MANIFEST, "raw_paths entry must be a string", repr(raw))
+            )
+            continue
+        if not isinstance(raw_path, str):
+            result.failures.append(
+                GuardViolation(FailureCode.INVALID_MANIFEST, "raw_paths entry must be a string", repr(raw))
+            )
+            continue
+        candidate = (packet_root / raw_path).resolve()
         if not _is_inside(candidate, packet_root):
-            result.failures.append(GuardViolation(FailureCode.PATH_ESCAPE, "raw path escapes packet root", raw))
+            result.failures.append(GuardViolation(FailureCode.PATH_ESCAPE, "raw path escapes packet root", raw_path))
             continue
         if not candidate.exists():
-            result.failures.append(GuardViolation(FailureCode.MISSING_RAW_FILE, "raw path is missing", raw))
+            result.failures.append(GuardViolation(FailureCode.MISSING_RAW_FILE, "raw path is missing", raw_path))
 
     try:
         validate_packet_specific_schema(packet_root, manifest)
