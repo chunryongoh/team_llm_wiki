@@ -235,7 +235,7 @@
     "intended_wiki_targets": {
       "type": "array",
       "items": {
-        "type": "string"
+        "$ref": "#/$defs/packet_relative_path"
       }
     },
     "metrics_to_verify": {
@@ -243,6 +243,7 @@
       "items": {
         "type": "object",
         "required": ["name", "expected"],
+        "additionalProperties": false,
         "anyOf": [
           {
             "required": ["actual"]
@@ -253,7 +254,8 @@
         ],
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "pattern": "\\S"
           },
           "expected": {
             "type": "number"
@@ -279,6 +281,7 @@
       "items": {
         "type": "object",
         "required": ["status", "text"],
+        "additionalProperties": false,
         "properties": {
           "status": {
             "enum": ["tentative", "supported", "disputed", "superseded"]

@@ -272,6 +272,41 @@ def test_manifest_schema_rejects_unsafe_raw_paths(raw_paths, tmp_path):
 @pytest.mark.parametrize(
     "manifest_overrides",
     [
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8, "unexpected": "extra"}]},
+        {"claims": [{"status": "tentative", "text": "claim", "unexpected": "extra"}]},
+    ],
+)
+def test_manifest_schema_rejects_metric_and_claim_extras(manifest_overrides, tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, **manifest_overrides)
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        "../wiki/experiments/pkt-1.md",
+        "/wiki/experiments/pkt-1.md",
+        "wiki//experiments/pkt-1.md",
+    ],
+)
+def test_manifest_schema_rejects_unsafe_intended_wiki_targets(target, tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, intended_wiki_targets=[target])
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "manifest_overrides",
+    [
         {"owner": "   "},
         {"task": "   "},
         {"claim_boundary": "   "},
@@ -298,13 +333,18 @@ def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manif
         {"id": "bad/id"},
         {"id": "bad\nid"},
         {"claims": [{"status": "proven", "text": "unsupported status"}]},
+        {"claims": [{"status": "tentative", "text": "claim", "unexpected": "extra"}]},
         {"claims": ["not-a-mapping"]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": "high"}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8}]},
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8, "unexpected": "extra"}]},
+        {"metrics_to_verify": [{"name": "   ", "expected": 0.8, "actual": 0.8}]},
         {"metrics_to_verify": ["not-a-mapping"]},
         {"raw_paths": {"metrics": "../escape.json"}},
         {"raw_paths": ["../escape.json"]},
         {"raw_paths": ["/abs.json"]},
+        {"intended_wiki_targets": ["../wiki/experiments/pkt-1.md"]},
+        {"intended_wiki_targets": ["/wiki/experiments/pkt-1.md"]},
     ],
 )
 def test_load_manifest_rejects_invalid_shapes(tmp_path, manifest_overrides):

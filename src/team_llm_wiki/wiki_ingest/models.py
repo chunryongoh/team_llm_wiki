@@ -63,7 +63,7 @@ class MetricCheck:
     key: str | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.name, str) or not self.name:
+        if not isinstance(self.name, str) or not self.name.strip():
             raise IngestFailure(FailureCode.INVALID_MANIFEST, "metric name is required")
         try:
             self.expected = float(self.expected)
