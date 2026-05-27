@@ -41,7 +41,7 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         "claim_boundary": "Only applies to dev split.",
         "claim_status": "tentative",
         "summary": "Run summary.",
-        "raw_paths": ["result.json"],
+        "raw_paths": {"metrics": "result.json"},
         "intended_wiki_targets": ["wiki/experiments/exp-1.md"],
         "metrics_to_verify": [
             {
@@ -59,4 +59,29 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         "packet_root": "raw/users/alice/exp-1",
         "risk_tier": "bot_pr",
     }
+    json.dumps(payload, sort_keys=True)
+
+
+def test_compile_packet_preserves_unlabeled_raw_paths_as_list():
+    manifest = PacketManifest(
+        id="exp-2",
+        type=PacketType.EXPERIMENT,
+        title="Experiment Two",
+        date="2026-05-27",
+        owner="alice",
+        status="ready",
+        task="classification",
+        dataset={"name": "benchmark-set", "version": "v1"},
+        split={"name": "dev"},
+        model={"family": "llama"},
+        claim_boundary="Only applies to dev split.",
+        claim_status="tentative",
+        summary="Run summary.",
+        raw_paths=["result.json", "folds.csv"],
+        intended_wiki_targets=["wiki/experiments/exp-2.md"],
+    )
+
+    payload = compile_packet(manifest, packet_root="raw/users/alice/exp-2", risk_tier="bot_pr")
+
+    assert payload["raw_paths"] == ["result.json", "folds.csv"]
     json.dumps(payload, sort_keys=True)

@@ -93,6 +93,47 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert compiled_payload["risk_tier"] == "direct_commit"
 
 
+def test_runner_compiled_payload_preserves_labeled_raw_paths(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = packet_with_manifest(
+        tmp_path,
+        "ref-labeled",
+        {
+            "id": "ref-labeled",
+            "packet_type": "reference",
+            "title": "ref-labeled",
+            "date": "2026-05-27",
+            "owner": "alice",
+            "status": "ready",
+            "task": "source-ingest",
+            "dataset": {"name": "benchmark-set", "version": "v1"},
+            "split": {"name": "none"},
+            "model": {"family": "not-applicable"},
+            "claim_boundary": "Only applies to this source packet.",
+            "claim_status": "tentative",
+            "summary": "Run summary.",
+            "raw_paths": {"metrics": "metrics.json", "split": "folds.csv"},
+            "intended_wiki_targets": ["wiki/sources/ref-labeled.md"],
+            "metrics_to_verify": [
+                {"raw_path": "metrics.json", "metric_key": "accuracy", "reported_value": 0.8}
+            ],
+        },
+        {"metrics.json": '{"accuracy": 0.8}', "folds.csv": "fold,id\n0,1\n"},
+    )
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "wiki-ingest" / "run-labeled" / "report.json",
+        run_id="run-labeled",
+    )
+
+    assert report.status == "direct_commit"
+    compiled = tmp_path / "automation" / ".cache" / "compiled" / "ref-labeled.json"
+    compiled_payload = json.loads(compiled.read_text(encoding="utf-8"))
+    assert compiled_payload["raw_paths"] == {"metrics": "metrics.json", "split": "folds.csv"}
+
+
 def test_runner_hard_fail_does_not_mutate_wiki(tmp_path):
     seed_repo(tmp_path)
     packet_root = packet(tmp_path, "exp-1", "experiment", metric_expected=0.9)

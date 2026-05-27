@@ -7,6 +7,7 @@ from .models import PacketManifest, as_jsonable
 
 
 def compile_packet(manifest: PacketManifest, packet_root: str, risk_tier: str) -> dict[str, Any]:
+    raw_paths = manifest.raw_path_map if manifest.raw_path_map else manifest.raw_paths
     payload = {
         "id": manifest.id,
         "packet_type": manifest.type,
@@ -21,7 +22,7 @@ def compile_packet(manifest: PacketManifest, packet_root: str, risk_tier: str) -
         "claim_boundary": manifest.claim_boundary,
         "claim_status": manifest.claim_status,
         "summary": manifest.summary,
-        "raw_paths": manifest.raw_paths,
+        "raw_paths": raw_paths,
         "intended_wiki_targets": manifest.intended_wiki_targets,
         "metrics_to_verify": manifest.metrics_to_verify,
         "claims": manifest.claims,
