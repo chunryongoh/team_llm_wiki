@@ -61,7 +61,7 @@ def _check_split_group_overlap(packet_root: Path, manifest: PacketManifest) -> l
 
     groups_by_fold: dict[str, dict[str, set[str]]] = {}
     with source.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
+        reader = csv.DictReader(handle, strict=True)
         columns = set(reader.fieldnames or [])
         if split.group_key not in columns:
             return [
