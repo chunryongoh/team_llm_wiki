@@ -129,19 +129,32 @@ def test_manifest_rejects_non_string_raw_path_entries(raw_paths):
 
 
 def test_metric_check_uses_absolute_tolerance():
-    assert MetricCheck(name="accuracy", expected=0.9, actual=0.9004, tolerance=0.001).is_consistent()
-    assert not MetricCheck(name="accuracy", expected=0.9, actual=0.92, tolerance=0.001).is_consistent()
+    assert MetricCheck(
+        raw_path="result.json", metric_key="accuracy", reported_value=0.9, actual=0.9004, tolerance=0.001
+    ).is_consistent()
+    assert not MetricCheck(
+        raw_path="result.json", metric_key="accuracy", reported_value=0.9, actual=0.92, tolerance=0.001
+    ).is_consistent()
 
 
 def test_as_jsonable_converts_enums_paths_and_dataclasses():
     payload = {
         "tier": RiskTier.BOT_PR,
         "path": Path("wiki/index.md"),
-        "metric": MetricCheck(name="f1", expected=0.5, actual=0.5),
+        "metric": MetricCheck(raw_path="result.json", metric_key="f1", reported_value=0.5),
     }
 
     assert as_jsonable(payload) == {
         "tier": "bot_pr",
         "path": "wiki/index.md",
-        "metric": {"name": "f1", "expected": 0.5, "actual": 0.5, "tolerance": 0.0, "raw_path": None, "key": None},
+        "metric": {
+            "raw_path": "result.json",
+            "metric_key": "f1",
+            "reported_value": 0.5,
+            "tolerance": 0.0,
+            "name": None,
+            "key": None,
+            "expected": None,
+            "actual": None,
+        },
     }

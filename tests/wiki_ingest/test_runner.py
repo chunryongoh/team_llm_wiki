@@ -42,7 +42,9 @@ def packet(root: Path, packet_id: str, packet_type: str, metric_expected=0.8):
         "summary": "Run summary.",
         "raw_paths": ["result.json"],
         "intended_wiki_targets": [f"{ROUTES[packet_type]}/{packet_id}.md"],
-        "metrics_to_verify": [{"name": "accuracy", "expected": metric_expected, "actual": 0.8}],
+        "metrics_to_verify": [
+            {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": metric_expected}
+        ],
     }
     (packet_root / "manifest.yaml").write_text(yaml.safe_dump(manifest), encoding="utf-8")
     return packet_root

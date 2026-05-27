@@ -30,7 +30,7 @@ def make_packet(tmp_path: Path, **manifest_overrides):
         "summary": "Run summary.",
         "raw_paths": ["result.json"],
         "intended_wiki_targets": ["wiki/experiments/pkt-1.md"],
-        "metrics_to_verify": [{"name": "accuracy", "expected": 0.82, "actual": 0.82}],
+        "metrics_to_verify": [{"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.82}],
     }
     data.update(manifest_overrides)
     (packet / "manifest.yaml").write_text(yaml.safe_dump(data), encoding="utf-8")
@@ -95,7 +95,7 @@ def test_guard_blocks_secret_content_metric_mismatch_and_wrong_route(tmp_path):
     packet, manifest = make_packet(
         tmp_path,
         intended_wiki_targets=["wiki/models/pkt-1.md"],
-        metrics_to_verify=[{"name": "accuracy", "expected": 0.9, "actual": 0.82}],
+        metrics_to_verify=[{"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.9}],
     )
     (packet / "notes.txt").write_text("OPENAI_API_KEY=sk-testsecret", encoding="utf-8")
 
@@ -111,7 +111,14 @@ def test_guard_verifies_metric_against_raw_json_not_manifest_actual(tmp_path):
     packet, manifest = make_packet(
         tmp_path,
         raw_paths=["result.json"],
-        metrics_to_verify=[{"name": "accuracy", "expected": 0.9, "actual": 0.9, "raw_path": "result.json"}],
+        metrics_to_verify=[
+            {
+                "raw_path": "result.json",
+                "metric_key": "accuracy",
+                "reported_value": 0.9,
+                "actual": 0.9,
+            }
+        ],
     )
     (packet / "result.json").write_text(json.dumps({"accuracy": 0.82}), encoding="utf-8")
 
@@ -124,13 +131,88 @@ def test_guard_verifies_metric_against_raw_yaml_dotted_key(tmp_path):
     packet, manifest = make_packet(
         tmp_path,
         raw_paths=["metrics.yaml"],
-        metrics_to_verify=[{"name": "accuracy", "expected": 0.82, "raw_path": "metrics.yaml", "key": "scores.accuracy"}],
+        metrics_to_verify=[{"raw_path": "metrics.yaml", "metric_key": "scores.accuracy", "reported_value": 0.82}],
     )
     (packet / "metrics.yaml").write_text("scores:\n  accuracy: 0.82\n", encoding="utf-8")
 
     result = run_guard_checks(tmp_path, packet, manifest, policy())
 
     assert result.failures == []
+
+
+def test_manifest_rejects_metric_actual_without_raw_path(tmp_path):
+    with pytest.raises(IngestFailure) as exc_info:
+        make_packet(
+            tmp_path,
+            metrics_to_verify=[{"name": "accuracy", "expected": 0.82, "actual": 0.82}],
+        )
+
+    assert exc_info.value.code is FailureCode.INVALID_MANIFEST
+
+
+def test_guard_allows_legacy_metric_names_only_with_raw_path(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        metrics_to_verify=[{"raw_path": "result.json", "name": "accuracy", "expected": 0.82}],
+    )
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert result.failures == []
+
+
+def test_guard_reports_grouped_split_overlap(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["result.json", "folds.csv"],
+        split={"name": "dev", "fold_file": "folds.csv", "group_key": "patient_id"},
+    )
+    (packet / "folds.csv").write_text(
+        "fold,split,patient_id\n0,train,p1\n0,valid,p1\n0,train,p2\n1,valid,p2\n",
+        encoding="utf-8",
+    )
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.SPLIT_GROUP_OVERLAP in [failure.code for failure in result.failures]
+
+
+def test_guard_allows_grouped_split_non_overlap(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["result.json", "folds.csv"],
+        split={"name": "dev", "fold_file": "folds.csv", "group_key": "patient_id"},
+    )
+    (packet / "folds.csv").write_text(
+        "split,patient_id\ntrain,p1\ntrain,p2\nvalidation,p3\nval,p4\n",
+        encoding="utf-8",
+    )
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert result.failures == []
+
+
+def test_guard_reports_missing_split_fold_file(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["result.json", "folds.csv"],
+        split={"name": "dev", "fold_file": "folds.csv", "group_key": "patient_id"},
+    )
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.MISSING_RAW_FILE in [failure.code for failure in result.failures]
+
+
+def test_guard_reports_escaped_split_fold_file(tmp_path):
+    packet, manifest = make_packet(tmp_path)
+    manifest.split.fold_file = "../folds.csv"
+    manifest.split.group_key = "patient_id"
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.PATH_ESCAPE in [failure.code for failure in result.failures]
 
 
 def test_guard_surfaces_packet_specific_schema_failure(tmp_path):

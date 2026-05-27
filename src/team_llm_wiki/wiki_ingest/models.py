@@ -35,6 +35,7 @@ class FailureCode(str, Enum):
     MODEL_WEIGHT_FILE = "model_weight_file"
     INVALID_TARGET_ROUTE = "invalid_target_route"
     METRIC_MISMATCH = "metric_mismatch"
+    SPLIT_GROUP_OVERLAP = "split_group_overlap"
     PACKET_TOO_LARGE = "packet_too_large"
     POLICY_CONFLICT = "policy_conflict"
     BROKEN_WIKI_LINK = "broken_wiki_link"
@@ -55,34 +56,46 @@ class IngestFailure(Exception):
 
 @dataclass
 class MetricCheck:
-    name: str
-    expected: float
-    actual: float | None = None
-    tolerance: float = 0.0
     raw_path: str | None = None
+    metric_key: str | None = None
+    reported_value: float | None = None
+    tolerance: float = 0.0
+    name: str | None = None
     key: str | None = None
+    expected: float | None = None
+    actual: float | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.name, str) or not self.name.strip() or CONTROL_RE.search(self.name):
-            raise IngestFailure(FailureCode.INVALID_MANIFEST, "metric name is required")
+        if self.raw_path is None:
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, "metric raw_path is required")
+        if not isinstance(self.raw_path, str):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, "metric raw_path must be a string")
+        self.raw_path = _validate_manifest_rel_path(self.raw_path)
+
+        if self.metric_key is None:
+            self.metric_key = self.key or self.name
+        if not isinstance(self.metric_key, str) or not self.metric_key.strip() or CONTROL_RE.search(self.metric_key):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, "metric metric_key is required")
+        self.metric_key = self.metric_key.strip()
+
+        if self.reported_value is None:
+            self.reported_value = self.expected
+        if self.reported_value is None:
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} reported_value is required")
         try:
-            self.expected = float(self.expected)
+            self.reported_value = float(self.reported_value)
             self.tolerance = float(self.tolerance)
+            if self.expected is not None:
+                self.expected = float(self.expected)
             if self.actual is not None:
                 self.actual = float(self.actual)
         except (TypeError, ValueError) as exc:
-            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.name} has non-numeric values") from exc
-        if self.raw_path is not None:
-            if not isinstance(self.raw_path, str):
-                raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.name} raw_path must be a string")
-            self.raw_path = _validate_manifest_rel_path(self.raw_path)
-        if self.actual is None and not self.raw_path:
-            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.name} requires actual or raw_path")
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} has non-numeric values") from exc
 
     def is_consistent(self) -> bool:
         if self.actual is None:
             return True
-        return abs(float(self.expected) - float(self.actual)) <= float(self.tolerance)
+        return abs(float(self.reported_value) - float(self.actual)) <= float(self.tolerance)
 
 
 @dataclass

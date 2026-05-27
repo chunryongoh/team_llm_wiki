@@ -32,7 +32,7 @@ def write_manifest(root: Path, **overrides):
         "summary": "Run summary.",
         "raw_paths": ["result.json"],
         "intended_wiki_targets": ["wiki/experiments/pkt-1.md"],
-        "metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8}],
+        "metrics_to_verify": [{"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.8}],
     }
     data.update(overrides)
     (root / "manifest.yaml").write_text(yaml.safe_dump(data), encoding="utf-8")
@@ -62,7 +62,7 @@ def test_load_manifest_nested_fields_and_metrics_to_verify(tmp_path):
     assert manifest.split.name == "dev"
     assert manifest.claim_boundary == "Only applies to the dev split."
     assert manifest.claim_status == "tentative"
-    assert manifest.metrics_to_verify[0].name == "accuracy"
+    assert manifest.metrics_to_verify[0].metric_key == "accuracy"
     assert manifest.claims[0].status == "supported"
     assert manifest.intended_wiki_targets == ["wiki/performance/pkt-1.md"]
 
@@ -309,7 +309,11 @@ def test_manifest_schema_rejects_unsafe_raw_paths(raw_paths, tmp_path):
 @pytest.mark.parametrize(
     "manifest_overrides",
     [
-        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8, "unexpected": "extra"}]},
+        {
+            "metrics_to_verify": [
+                {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.8, "unexpected": "extra"}
+            ]
+        },
         {"claims": [{"status": "tentative", "text": "claim", "unexpected": "extra"}]},
     ],
 )
@@ -376,7 +380,7 @@ def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manif
         {"dataset": {"name": "benchmark-set", "version": "v\x011"}},
         {"split": {"name": "dev\x01"}},
         {"model": {"family": "not\x01applicable"}},
-        {"metrics_to_verify": [{"name": "acc\x01uracy", "expected": 0.8, "actual": 0.8}]},
+        {"metrics_to_verify": [{"raw_path": "result.json", "metric_key": "acc\x01uracy", "reported_value": 0.8}]},
         {"raw_paths": ["res\x01ult.json"]},
         {"intended_wiki_targets": ["wiki/experiments/pkt\x01-1.md"]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "metrics\x01.json"}]},
@@ -406,11 +410,15 @@ def test_manifest_schema_rejects_control_character_fields(tmp_path, manifest_ove
         {"claims": [{"status": "proven", "text": "unsupported status"}]},
         {"claims": [{"status": "tentative", "text": "claim", "unexpected": "extra"}]},
         {"claims": ["not-a-mapping"]},
-        {"metrics_to_verify": [{"name": "accuracy", "expected": "high"}]},
-        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8}]},
-        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "actual": 0.8, "unexpected": "extra"}]},
-        {"metrics_to_verify": [{"name": "   ", "expected": 0.8, "actual": 0.8}]},
-        {"metrics_to_verify": [{"name": "acc\x01uracy", "expected": 0.8, "actual": 0.8}]},
+        {"metrics_to_verify": [{"raw_path": "result.json", "metric_key": "accuracy", "reported_value": "high"}]},
+        {"metrics_to_verify": [{"metric_key": "accuracy", "reported_value": 0.8}]},
+        {
+            "metrics_to_verify": [
+                {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.8, "unexpected": "extra"}
+            ]
+        },
+        {"metrics_to_verify": [{"raw_path": "result.json", "metric_key": "   ", "reported_value": 0.8}]},
+        {"metrics_to_verify": [{"raw_path": "result.json", "metric_key": "acc\x01uracy", "reported_value": 0.8}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": ""}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "   "}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "../metrics.json"}]},

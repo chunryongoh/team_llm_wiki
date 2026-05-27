@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import os
 import re
 from pathlib import Path
@@ -39,16 +40,56 @@ def _lookup_metric_value(data: Any, key: str) -> Any:
 
 
 def _raw_metric_value(packet_root: Path, metric) -> float:
-    if not metric.raw_path:
-        if metric.actual is None:
-            raise ValueError("missing actual value")
-        return float(metric.actual)
     source = (packet_root / metric.raw_path).resolve()
     if not _is_inside(source, packet_root) or not source.exists():
         raise ValueError(f"metric raw path missing: {metric.raw_path}")
     data = yaml.safe_load(source.read_text(encoding="utf-8"))
-    key = metric.key or metric.name
+    key = metric.metric_key
     return float(_lookup_metric_value(data, key))
+
+
+def _check_split_group_overlap(packet_root: Path, manifest: PacketManifest) -> list[GuardViolation]:
+    split = manifest.split
+    if not split.fold_file or not split.group_key:
+        return []
+
+    source = (packet_root / split.fold_file).resolve()
+    if not _is_inside(source, packet_root):
+        return [GuardViolation(FailureCode.PATH_ESCAPE, "split fold_file escapes packet root", split.fold_file)]
+    if not source.exists():
+        return [GuardViolation(FailureCode.MISSING_RAW_FILE, "split fold_file is missing", split.fold_file)]
+
+    groups_by_fold: dict[str, dict[str, set[str]]] = {}
+    with source.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            role = (row.get("split") or row.get("role") or "").strip().lower()
+            if role == "train":
+                normalized_role = "train"
+            elif role in {"valid", "validation", "val"}:
+                normalized_role = "valid"
+            else:
+                continue
+
+            group = (row.get(split.group_key) or "").strip()
+            if not group:
+                continue
+            fold = (row.get("fold") or "0").strip() or "0"
+            groups_by_fold.setdefault(fold, {"train": set(), "valid": set()})[normalized_role].add(group)
+
+    failures: list[GuardViolation] = []
+    for fold, groups in groups_by_fold.items():
+        overlap = groups["train"] & groups["valid"]
+        if overlap:
+            sample = ", ".join(sorted(overlap)[:5])
+            failures.append(
+                GuardViolation(
+                    FailureCode.SPLIT_GROUP_OVERLAP,
+                    f"split group overlap in fold {fold} for {split.group_key}: {sample}",
+                    split.fold_file,
+                )
+            )
+    return failures
 
 
 def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifest, policy: IngestPolicy) -> GuardResult:
@@ -117,9 +158,16 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
         try:
             actual = _raw_metric_value(packet_root, metric)
         except (OSError, KeyError, TypeError, ValueError, yaml.YAMLError):
-            result.failures.append(GuardViolation(FailureCode.METRIC_MISMATCH, f"metric source mismatch: {metric.name}"))
+            result.failures.append(GuardViolation(FailureCode.METRIC_MISMATCH, f"metric source mismatch: {metric.metric_key}"))
             continue
-        if abs(float(metric.expected) - actual) > float(metric.tolerance):
-            result.failures.append(GuardViolation(FailureCode.METRIC_MISMATCH, f"metric mismatch: {metric.name}"))
+        if abs(float(metric.reported_value) - actual) > float(metric.tolerance):
+            result.failures.append(GuardViolation(FailureCode.METRIC_MISMATCH, f"metric mismatch: {metric.metric_key}"))
+
+    try:
+        result.failures.extend(_check_split_group_overlap(packet_root, manifest))
+    except (OSError, csv.Error):
+        result.failures.append(
+            GuardViolation(FailureCode.INVALID_MANIFEST, "split fold_file could not be read", manifest.split.fold_file)
+        )
 
     return result

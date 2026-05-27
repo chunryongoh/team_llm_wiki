@@ -245,17 +245,42 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "expected"],
+        "required": ["raw_path"],
         "additionalProperties": false,
         "anyOf": [
           {
-            "required": ["actual"]
+            "required": ["metric_key"]
           },
           {
-            "required": ["raw_path"]
+            "required": ["key"]
+          },
+          {
+            "required": ["name"]
+          }
+        ],
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "required": ["reported_value"]
+              },
+              {
+                "required": ["expected"]
+              }
+            ]
           }
         ],
         "properties": {
+          "raw_path": {
+            "$ref": "#/$defs/packet_relative_path"
+          },
+          "metric_key": {
+            "type": "string",
+            "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
+          },
+          "reported_value": {
+            "type": "number"
+          },
           "name": {
             "type": "string",
             "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
@@ -266,11 +291,9 @@
           "actual": {
             "type": "number"
           },
-          "raw_path": {
-            "$ref": "#/$defs/packet_relative_path"
-          },
           "key": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
           },
           "tolerance": {
             "type": "number",

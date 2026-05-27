@@ -40,7 +40,9 @@ def seed_repo(root: Path, packet_type="reference", metric_expected=0.8):
                 "summary": "Run summary.",
                 "raw_paths": ["result.json"],
                 "intended_wiki_targets": [f"{ROUTES[packet_type]}/pkt-1.md"],
-                "metrics_to_verify": [{"name": "accuracy", "expected": metric_expected, "actual": 0.8}],
+                "metrics_to_verify": [
+                    {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": metric_expected}
+                ],
             }
         ),
         encoding="utf-8",
