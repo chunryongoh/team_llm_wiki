@@ -136,6 +136,35 @@ def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):
     assert payload == {"generated_paths": ["wiki/briefs/2026-05-27-daily.md", "wiki/briefs/latest.md"]}
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-daily.md").exists()
     assert (tmp_path / "wiki" / "briefs" / "latest.md").exists()
+    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-05-27-daily]]\n"
+
+
+def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    (tmp_path / "wiki" / "log.md").write_text(
+        "# Log\n\n"
+        "## [2026-05-27] ingest | pkt-1\n\n"
+        "- target: `wiki/sources/pkt-1.md`\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "wiki" / "questions").mkdir()
+    (tmp_path / "wiki" / "questions" / "old.md").write_text(
+        "---\nclaim_status: tentative\ndate: 2026-05-01\n---\n# Old\n",
+        encoding="utf-8",
+    )
+
+    result = run_cli(
+        ["generate-wiki-weekly-brief", "--repo-root", str(tmp_path), "--date", "2026-05-27"],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 0
+    payload = json.loads(result.stdout)
+    assert payload == {
+        "generated_paths": ["wiki/briefs/2026-W22-weekly.md", "wiki/briefs/2026-05-27-stale-claims.md"]
+    }
+    assert (tmp_path / "wiki" / "briefs" / "2026-W22-weekly.md").exists()
+    assert (tmp_path / "wiki" / "briefs" / "2026-05-27-stale-claims.md").exists()
 
 
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):

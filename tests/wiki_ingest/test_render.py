@@ -3,6 +3,7 @@ from pathlib import Path
 from team_llm_wiki.wiki_ingest.models import PacketManifest, PacketType, RiskTier
 from team_llm_wiki.wiki_ingest.policy import IngestPolicy
 from team_llm_wiki.wiki_ingest.render import render_packets
+from team_llm_wiki.wiki_ingest.health import check_wiki_health
 
 
 def manifest(**overrides):
@@ -160,6 +161,20 @@ def test_render_packet_page_includes_full_manifest_lineage(tmp_path):
     assert "- model: `llama`" in text
     assert "- claim_boundary: Only applies to the dev split." in text
     assert "- claim_status: `tentative`" in text
+
+
+def test_render_packet_page_links_to_compiled_packet_json(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
+    (tmp_path / "automation" / ".cache" / "compiled").mkdir(parents=True)
+    (tmp_path / "automation" / ".cache" / "compiled" / "compiled-ref.json").write_text("{}\n", encoding="utf-8")
+    packet = manifest(id="compiled-ref", type="reference", title="Compiled Ref")
+
+    render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-compiled")
+
+    text = (tmp_path / "wiki" / "sources" / "compiled-ref.md").read_text(encoding="utf-8")
+    assert "[automation/.cache/compiled/compiled-ref.json](../../automation/.cache/compiled/compiled-ref.json)" in text
+    assert check_wiki_health(tmp_path).ok is True
 
 
 def test_render_preserves_existing_generated_index_entries(tmp_path):

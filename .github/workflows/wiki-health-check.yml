@@ -33,6 +33,16 @@ jobs:
             --date "$(date -u +%F)" \
             > artifacts/wiki-briefs/generated-paths.json
           cp wiki/briefs/*-daily.md wiki/briefs/latest.md artifacts/wiki-briefs/
+      - name: Generate weekly brief
+        if: always()
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m team_llm_wiki.cli generate-wiki-weekly-brief \
+            --repo-root . \
+            --date "$(date -u +%F)" \
+            > artifacts/wiki-briefs/generated-weekly-paths.json
+          cp wiki/briefs/*-weekly.md wiki/briefs/*-stale-claims.md artifacts/wiki-briefs/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -41,5 +51,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: wiki-daily-brief
+          name: wiki-briefs
           path: artifacts/wiki-briefs/

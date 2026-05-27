@@ -98,6 +98,7 @@ def _parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
 def _is_orphan_claim_excluded(rel_path: str) -> bool:
     return (
         rel_path in ORPHAN_AND_CLAIM_CHECK_EXCLUDES
+        or rel_path.startswith("wiki/briefs/")
         or rel_path.startswith("wiki/team/")
         or rel_path.startswith("wiki/") and rel_path.endswith("/README.md")
     )
@@ -182,8 +183,9 @@ def _expanded_health_errors(repo_root: Path) -> list[HealthError]:
 
 def check_wiki_health(repo_root: Path, report_path: Path | None = None) -> HealthReport:
     checked = [path.relative_to(repo_root).as_posix() for path in (repo_root / "wiki").rglob("*.md")] if (repo_root / "wiki").exists() else []
+    link_checked = [path for path in checked if not path.startswith("wiki/briefs/")]
     errors = [
-        *lint_wiki_links(repo_root),
+        *lint_wiki_links(repo_root, paths=link_checked),
         *_generated_block_errors(repo_root),
         *_latest_context_errors(repo_root),
         *_expanded_health_errors(repo_root),

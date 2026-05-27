@@ -1,5 +1,6 @@
 import json
 
+from team_llm_wiki.wiki_ingest.brief import generate_daily_brief
 from team_llm_wiki.wiki_ingest.health import check_wiki_health
 
 
@@ -254,3 +255,19 @@ def test_health_detects_empty_metrics_to_verify_as_unverified(tmp_path):
     report = check_wiki_health(tmp_path)
 
     assert any(error.code == "performance_metric_unverified" for error in report.errors)
+
+
+def test_health_ignores_generated_briefs_for_links_orphan_claim_and_metric_checks(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "log.md").write_text(
+        "# Log\n\n"
+        "## [2026-05-27] ingest | pkt-1\n\n"
+        "- accuracy: 0.91\n"
+        "- target: `wiki/sources/pkt-1.md`\n",
+        encoding="utf-8",
+    )
+
+    generate_daily_brief(tmp_path, date="2026-05-27")
+    report = check_wiki_health(tmp_path)
+
+    assert report.ok is True

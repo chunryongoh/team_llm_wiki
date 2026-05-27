@@ -108,6 +108,7 @@ def _packet_page(manifest: PacketManifest, tier: RiskTier, run_id: str) -> str:
         "",
         f"- packet: `{manifest.id}`",
         f"- generated_by_run: `{run_id}`",
+        f"- compiled_packet: [automation/.cache/compiled/{manifest.id}.json](../../automation/.cache/compiled/{manifest.id}.json)",
         *_lineage_lines(manifest),
     ]
     if manifest.date:
