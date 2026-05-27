@@ -180,6 +180,28 @@ def test_load_manifest_rejects_empty_required_text_fields(tmp_path, field):
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
+@pytest.mark.parametrize(
+    "manifest_overrides",
+    [
+        {"owner": "   "},
+        {"task": "   "},
+        {"claim_boundary": "   "},
+        {"dataset": {"name": "   ", "version": "v1"}},
+        {"dataset": {"name": "benchmark-set", "version": "   "}},
+        {"split": {"name": "   "}},
+        {"model": {"family": "   "}},
+    ],
+)
+def test_load_manifest_rejects_whitespace_required_text_fields(tmp_path, manifest_overrides):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, **manifest_overrides)
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
 def test_shared_manifest_template_validates_against_schema():
     repo_root = Path(__file__).resolve().parents[2]
     schema = load_manifest_schema()
@@ -209,6 +231,28 @@ def test_manifest_schema_rejects_nested_extras(field, value, tmp_path):
 def test_manifest_schema_rejects_conflicting_packet_type_alias(tmp_path):
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
     write_manifest(packet, packet_type="performance", type="reference")
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "manifest_overrides",
+    [
+        {"owner": "   "},
+        {"task": "   "},
+        {"claim_boundary": "   "},
+        {"dataset": {"name": "   ", "version": "v1"}},
+        {"dataset": {"name": "benchmark-set", "version": "   "}},
+        {"split": {"name": "   "}},
+        {"model": {"family": "   "}},
+    ],
+)
+def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manifest_overrides):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, **manifest_overrides)
     manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
 
     errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))

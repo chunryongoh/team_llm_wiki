@@ -118,14 +118,16 @@
       ]
     },
     "title": {
-      "type": "string"
+      "type": "string",
+      "pattern": "\\S"
     },
     "date": {
       "type": "string"
     },
     "owner": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "status": {
       "type": "string",
@@ -133,7 +135,8 @@
     },
     "task": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "dataset": {
       "type": "object",
@@ -142,15 +145,18 @@
       "properties": {
         "name": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "\\S"
         },
         "version": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "\\S"
         },
         "hash": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "\\S"
         }
       }
     },
@@ -161,16 +167,18 @@
       "properties": {
         "name": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "\\S"
         },
         "group_key": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "\\S"
         },
         "fold_file": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
+          "pattern": "^(?=.*\\S)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
         }
       }
     },
@@ -181,7 +189,8 @@
       "properties": {
         "family": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "\\S"
         },
         "weights_in_repo": {
           "type": "boolean",
@@ -191,7 +200,8 @@
     },
     "claim_boundary": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "claim_status": {
       "enum": ["tentative", "supported", "disputed", "superseded"],
