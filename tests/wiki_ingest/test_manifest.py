@@ -180,6 +180,17 @@ def test_load_manifest_rejects_empty_required_text_fields(tmp_path, field):
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
+@pytest.mark.parametrize("field", ["date", "status", "summary"])
+def test_load_manifest_rejects_empty_required_metadata_text_fields(tmp_path, field):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, **{field: ""})
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
 @pytest.mark.parametrize(
     "manifest_overrides",
     [
@@ -190,6 +201,9 @@ def test_load_manifest_rejects_empty_required_text_fields(tmp_path, field):
         {"dataset": {"name": "benchmark-set", "version": "   "}},
         {"split": {"name": "   "}},
         {"model": {"family": "   "}},
+        {"date": "   "},
+        {"status": "   "},
+        {"summary": "   "},
     ],
 )
 def test_load_manifest_rejects_whitespace_required_text_fields(tmp_path, manifest_overrides):
@@ -337,6 +351,9 @@ def test_manifest_schema_rejects_unsafe_intended_wiki_targets(target, tmp_path):
         {"dataset": {"name": "benchmark-set", "version": "   "}},
         {"split": {"name": "   "}},
         {"model": {"family": "   "}},
+        {"date": "   "},
+        {"status": "   "},
+        {"summary": "   "},
     ],
 )
 def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manifest_overrides):
@@ -363,6 +380,9 @@ def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manif
         {"raw_paths": ["res\x01ult.json"]},
         {"intended_wiki_targets": ["wiki/experiments/pkt\x01-1.md"]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "metrics\x01.json"}]},
+        {"date": "2026\x01-05-27"},
+        {"status": "rea\x01dy"},
+        {"summary": "Run\x01summary."},
     ],
 )
 def test_manifest_schema_rejects_control_character_fields(tmp_path, manifest_overrides):
@@ -394,6 +414,9 @@ def test_manifest_schema_rejects_control_character_fields(tmp_path, manifest_ove
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "../metrics.json"}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "/metrics.json"}]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8, "raw_path": "metrics\x01.json"}]},
+        {"date": "2026\x01-05-27"},
+        {"status": "rea\x01dy"},
+        {"summary": "Run\x01summary."},
         {"metrics_to_verify": ["not-a-mapping"]},
         {"raw_paths": {"metrics": "../escape.json"}},
         {"raw_paths": ["../escape.json"]},

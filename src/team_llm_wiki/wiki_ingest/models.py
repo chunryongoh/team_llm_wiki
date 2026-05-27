@@ -141,13 +141,13 @@ class PacketManifest:
     type: PacketType | str
     title: str
     date: str | None = None
-    owner: str = ""
+    owner: str = "unknown"
     status: str = "draft"
-    task: str = ""
+    task: str = "unspecified"
     dataset: DatasetRef | dict[str, Any] = field(default_factory=lambda: DatasetRef(name="unknown", version="unknown"))
     split: SplitRef | dict[str, Any] = field(default_factory=lambda: SplitRef(name="default"))
     model: ModelRef | dict[str, Any] | None = None
-    claim_boundary: str = ""
+    claim_boundary: str = "unspecified"
     claim_status: str = "tentative"
     summary: str = ""
     raw_paths: list[str] = field(default_factory=list)
@@ -164,9 +164,9 @@ class PacketManifest:
         except ValueError as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"unknown packet type: {self.type}") from exc
         self.title = _require_non_empty_string(self.title, "title")
-        self.owner = _coerce_optional_string(self.owner, "owner")
-        self.task = _coerce_optional_string(self.task, "task")
-        self.claim_boundary = _coerce_optional_string(self.claim_boundary, "claim_boundary")
+        self.owner = _require_non_empty_string(self.owner, "owner")
+        self.task = _require_non_empty_string(self.task, "task")
+        self.claim_boundary = _require_non_empty_string(self.claim_boundary, "claim_boundary")
         if self.claim_status not in {"tentative", "supported", "disputed", "superseded"}:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.claim_status}")
         try:

@@ -58,6 +58,33 @@ def test_manifest_rejects_unknown_packet_type():
 @pytest.mark.parametrize(
     "overrides",
     [
+        {"owner": "   "},
+        {"task": "   "},
+        {"claim_boundary": "   "},
+    ],
+)
+def test_manifest_rejects_whitespace_owner_task_and_claim_boundary(overrides):
+    data = {
+        "id": "pkt-1",
+        "type": "experiment",
+        "title": "A run",
+        "owner": "alice",
+        "task": "classification",
+        "dataset": {"name": "benchmark-set", "version": "v1"},
+        "split": {"name": "dev"},
+        "claim_boundary": "Only applies to the dev split.",
+    }
+    data.update(overrides)
+
+    with pytest.raises(IngestFailure) as exc:
+        PacketManifest(**data)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
         {"claim_status": "proven"},
         {"split": {"name": "dev", "fold_file": "../folds.txt"}},
         {"dataset": {"name": "benchmark-set"}},

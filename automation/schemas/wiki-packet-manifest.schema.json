@@ -128,7 +128,8 @@
       "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "date": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "owner": {
       "type": "string",
@@ -137,6 +138,7 @@
     },
     "status": {
       "type": "string",
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$",
       "default": "draft"
     },
     "task": {
@@ -214,7 +216,8 @@
       "default": "tentative"
     },
     "summary": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "raw_paths": {
       "oneOf": [

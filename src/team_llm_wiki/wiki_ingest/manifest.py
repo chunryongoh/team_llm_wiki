@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-from .models import FailureCode, IngestFailure, PacketManifest
+from .models import CONTROL_RE, FailureCode, IngestFailure, PacketManifest
 
 
 def _repo_relative(repo_root: Path, path: Path) -> str:
@@ -71,8 +71,8 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     missing = _missing_required_fields(raw)
     if missing:
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest missing fields: {', '.join(missing)}")
-    for key in ["owner", "task", "claim_boundary"]:
-        if not isinstance(raw.get(key), str) or not raw[key].strip():
+    for key in ["date", "owner", "status", "task", "claim_boundary", "summary"]:
+        if not isinstance(raw.get(key), str) or not raw[key].strip() or CONTROL_RE.search(raw[key]):
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest field must be a non-empty string: {key}")
     if not isinstance(raw.get("model"), dict):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, "manifest model must be a mapping")
