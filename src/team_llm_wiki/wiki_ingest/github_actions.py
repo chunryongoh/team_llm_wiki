@@ -159,6 +159,79 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
     return comment[: MAX_COMMENT_CHARS - 80].rstrip() + "\n\n_Comment truncated to fit GitHub limits._\n"
 
 
+def render_bot_pr_body(payload: dict[str, Any]) -> str:
+    lines = ["## Changed raw packet ids", ""]
+    packet_roots = list(payload.get("packet_roots") or [])
+    if packet_roots:
+        lines.extend(f"- `{_bounded_text(path, MAX_PATH_CHARS)}`" for path in packet_roots[:MAX_LIST_ITEMS])
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Affected wiki pages", ""])
+    wiki_paths = [path for path in payload.get("generated_paths") or payload.get("changed_paths") or [] if str(path).startswith("wiki/")]
+    if wiki_paths:
+        lines.extend(f"- `{_bounded_text(path, MAX_PATH_CHARS)}`" for path in wiki_paths[:MAX_LIST_ITEMS])
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Claim changes", ""])
+    claim_statuses = list(payload.get("claim_statuses") or [])
+    if claim_statuses:
+        for item in claim_statuses[:MAX_LIST_ITEMS]:
+            if isinstance(item, dict):
+                packet = _bounded_text(item.get("packet", item.get("id", "unknown")), MAX_PATH_CHARS)
+                status = _bounded_text(item.get("status", "unknown"), MAX_PATH_CHARS)
+                lines.append(f"- `{packet}` `{status}`")
+            else:
+                lines.append(f"- {_bounded_text(item)}")
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Metric changes", ""])
+    metric_changes = list(payload.get("metric_changes") or [])
+    if metric_changes:
+        for item in metric_changes[:MAX_LIST_ITEMS]:
+            if isinstance(item, dict):
+                packet = _bounded_text(item.get("packet", "unknown"), MAX_PATH_CHARS)
+                metric = _bounded_text(item.get("metric", "unknown"), MAX_PATH_CHARS)
+                value = _bounded_text(item.get("reported_value", "unknown"), MAX_PATH_CHARS)
+                lines.append(f"- `{packet}` `{metric}` = `{value}`")
+            else:
+                lines.append(f"- {_bounded_text(item)}")
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Leakage/security warnings", ""])
+    warnings = list(payload.get("warnings") or [])
+    security_failures = [
+        failure
+        for failure in payload.get("failures") or []
+        if isinstance(failure, dict)
+        and str(failure.get("code", "")) in {"secret_content", "pii_content", "forbidden_secret_file", "model_weight_file"}
+    ]
+    if warnings or security_failures:
+        lines.extend(f"- {_bounded_text(warning)}" for warning in warnings[:MAX_LIST_ITEMS])
+        lines.extend(_failure_line(failure) for failure in security_failures[:MAX_LIST_ITEMS])
+    else:
+        lines.append("- none")
+
+    lines.extend(
+        [
+            "",
+            "## Reviewer checklist",
+            "",
+            "- [ ] Confirm raw packet ids and affected pages are expected.",
+            "- [ ] Confirm claim status changes are supported by raw evidence.",
+            "- [ ] Confirm metric changes match referenced raw result files.",
+            "- [ ] Confirm leakage, security, and PII warnings are resolved.",
+        ]
+    )
+    body = "\n".join(lines).rstrip() + "\n"
+    if len(body) <= MAX_COMMENT_CHARS:
+        return body
+    return body[: MAX_COMMENT_CHARS - 80].rstrip() + "\n\n_Body truncated to fit GitHub limits._\n"
+
+
 def preview_payload_from_streams(raw_stdout: str, raw_stderr: str, run_id: str = "preview") -> dict[str, Any]:
     raw = raw_stdout.strip()
     error = raw_stderr.strip()

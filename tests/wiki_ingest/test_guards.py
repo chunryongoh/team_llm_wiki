@@ -57,6 +57,8 @@ def test_guard_allows_valid_packet(tmp_path):
         (".env", FailureCode.FORBIDDEN_SECRET_FILE),
         ("secret.pem", FailureCode.FORBIDDEN_SECRET_FILE),
         ("weights.safetensors", FailureCode.MODEL_WEIGHT_FILE),
+        ("weights.bin", FailureCode.MODEL_WEIGHT_FILE),
+        ("weights.pkl", FailureCode.MODEL_WEIGHT_FILE),
     ],
 )
 def test_guard_blocks_forbidden_files_anywhere_under_packet(tmp_path, filename, code):
@@ -68,6 +70,15 @@ def test_guard_blocks_forbidden_files_anywhere_under_packet(tmp_path, filename, 
     result = run_guard_checks(tmp_path, packet, manifest, policy())
 
     assert code in [failure.code for failure in result.failures]
+
+
+def test_guard_blocks_pii_content(tmp_path):
+    packet, manifest = make_packet(tmp_path)
+    (packet / "notes.txt").write_text("reviewer_email: alice@example.com\n", encoding="utf-8")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.PII_CONTENT in [failure.code for failure in result.failures]
 
 
 def test_guard_blocks_missing_raw_file(tmp_path):

@@ -54,3 +54,20 @@ def test_supported_disputed_superseded_claims_require_bot_pr():
         )
 
         assert classify_risk(packet, GuardResult()).tier is RiskTier.BOT_PR
+
+
+def test_top_level_supported_disputed_superseded_claim_status_requires_bot_pr():
+    for status in ["supported", "disputed", "superseded"]:
+        packet = manifest(
+            id=status,
+            type="reference",
+            title="Claim",
+            intended_wiki_targets=[f"wiki/sources/{status}.md"],
+            claim_status=status,
+            claims=[],
+        )
+
+        decision = classify_risk(packet, GuardResult())
+
+        assert decision.tier is RiskTier.BOT_PR
+        assert "governance-tier claim status" in decision.reasons

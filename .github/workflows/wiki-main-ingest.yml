@@ -98,7 +98,7 @@ jobs:
           import json
           import os
           from pathlib import Path
-          from team_llm_wiki.wiki_ingest.github_actions import render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
+          from team_llm_wiki.wiki_ingest.github_actions import render_bot_pr_body, render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
 
           raw = Path("ingest-output.json").read_text(encoding="utf-8") if Path("ingest-output.json").exists() else None
           payload = json.loads(raw) if raw else {}
@@ -106,6 +106,7 @@ jobs:
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
               "status": payload.get("status", "missing"),
               "add_paths": "\n".join(paths),
+              "pr_body": render_bot_pr_body(payload),
           })
           summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
           summary_path.write_text(render_workflow_summary(raw), encoding="utf-8")
@@ -135,7 +136,8 @@ jobs:
         if: steps.skip.outputs.skip != 'true' && steps.ingest.outputs.status == 'bot_pr'
         uses: peter-evans/create-pull-request@v8
         with:
-          title: "[wiki-bot] ingest wiki packets"
+          title: "[wiki-bot][review-required] ingest wiki packets"
           commit-message: "[wiki-bot] ingest wiki packets"
+          body: ${{ steps.ingest.outputs.pr_body }}
           branch: "bot/wiki-ingest-${{ github.run_id }}-${{ github.run_attempt }}"
           add-paths: ${{ steps.ingest.outputs.add_paths }}

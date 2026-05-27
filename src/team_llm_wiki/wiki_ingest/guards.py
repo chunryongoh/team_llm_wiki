@@ -16,9 +16,12 @@ from .routes import PACKET_ROUTE_MAP
 
 SECRET_NAME_SUFFIXES = {".env", ".pem", ".key", ".p12", ".pfx"}
 SECRET_NAMES = {"id_rsa", "id_dsa", "id_ed25519", "credentials.json"}
-MODEL_WEIGHT_SUFFIXES = {".pt", ".pth", ".ckpt", ".safetensors", ".onnx"}
+MODEL_WEIGHT_SUFFIXES = {".bin", ".pt", ".pth", ".ckpt", ".onnx", ".safetensors", ".pkl"}
 SECRET_CONTENT_RE = re.compile(
     r"(OPENAI_API_KEY|AWS_SECRET_ACCESS_KEY|BEGIN (RSA|OPENSSH|PRIVATE) KEY|sk-[A-Za-z0-9_-]{8,})"
+)
+PII_CONTENT_RE = re.compile(
+    r"([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\b\d{3}-\d{2}-\d{4}\b|\b\d{6}-[1-4]\d{6}\b)"
 )
 
 
@@ -136,6 +139,8 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
         text_bytes += len(content.encode("utf-8"))
         if SECRET_CONTENT_RE.search(content):
             result.failures.append(GuardViolation(FailureCode.SECRET_CONTENT, "secret-like content detected", path.as_posix()))
+        if PII_CONTENT_RE.search(content):
+            result.failures.append(GuardViolation(FailureCode.PII_CONTENT, "PII-like content detected", path.as_posix()))
 
     if text_bytes > policy.max_packet_text_bytes:
         result.failures.append(GuardViolation(FailureCode.PACKET_TOO_LARGE, "packet text bytes exceed limit"))

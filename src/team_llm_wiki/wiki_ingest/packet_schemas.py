@@ -51,7 +51,11 @@ PACKET_REQUIRED_KEYS: dict[PacketType, tuple[str, ...]] = {
         "split_id",
         "overall_metrics",
         "target_metrics",
+        "confusion_matrices",
+        "oof_predictions",
+        "submission_predictions",
         "baseline_comparison",
+        "uncertainty",
         "claim_status",
     ),
     PacketType.AUGMENTATION: (
@@ -159,6 +163,8 @@ def _require_keys(data: dict[str, Any], required_keys: tuple[str, ...], label: s
 def _validate_feature_families(value: Any, label: str) -> None:
     if not isinstance(value, list):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.feature_families must be a list")
+    if not value:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.feature_families must not be empty")
     for index, family in enumerate(value):
         if not isinstance(family, dict):
             raise IngestFailure(

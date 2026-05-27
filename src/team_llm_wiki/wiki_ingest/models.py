@@ -32,6 +32,7 @@ class FailureCode(str, Enum):
     PATH_ESCAPE = "path_escape"
     MISSING_RAW_FILE = "missing_raw_file"
     SECRET_CONTENT = "secret_content"
+    PII_CONTENT = "pii_content"
     FORBIDDEN_SECRET_FILE = "forbidden_secret_file"
     MODEL_WEIGHT_FILE = "model_weight_file"
     INVALID_TARGET_ROUTE = "invalid_target_route"
@@ -283,6 +284,7 @@ class IngestReport:
     packet_roots: list[str] = field(default_factory=list)
     packets: list[dict[str, Any]] = field(default_factory=list)
     claim_statuses: list[dict[str, str]] = field(default_factory=list)
+    metric_changes: list[dict[str, Any]] = field(default_factory=list)
     failures: list[dict[str, Any]] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     policy_warnings: list[str] = field(default_factory=list)

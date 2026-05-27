@@ -4,6 +4,7 @@ from pathlib import Path
 from team_llm_wiki.wiki_ingest.github_actions import (
     add_paths_from_payload,
     preview_payload_from_streams,
+    render_bot_pr_body,
     render_pr_comment,
     safe_add_paths_file_from_payload,
     render_workflow_summary,
@@ -94,6 +95,30 @@ def test_render_summary_includes_report_and_failure_codes():
     assert "missing title" in summary
 
 
+def test_render_bot_pr_body_includes_required_review_sections():
+    body = render_bot_pr_body(
+        {
+            "packet_roots": ["raw/users/alice/pkt-1"],
+            "generated_paths": ["wiki/performance/pkt-1.md", "automation/.cache/compiled/pkt-1.json"],
+            "claim_statuses": [{"packet": "pkt-1", "status": "supported"}],
+            "metric_changes": [{"packet": "pkt-1", "metric": "accuracy", "reported_value": 0.82}],
+            "warnings": ["possible leakage warning"],
+        }
+    )
+
+    assert "## Changed raw packet ids" in body
+    assert "raw/users/alice/pkt-1" in body
+    assert "## Affected wiki pages" in body
+    assert "wiki/performance/pkt-1.md" in body
+    assert "## Claim changes" in body
+    assert "`pkt-1` `supported`" in body
+    assert "## Metric changes" in body
+    assert "accuracy" in body
+    assert "## Leakage/security warnings" in body
+    assert "possible leakage warning" in body
+    assert "## Reviewer checklist" in body
+
+
 def test_render_pr_comment_includes_preview_details():
     comment = render_pr_comment(
         {
@@ -171,3 +196,10 @@ def test_health_workflow_copies_latest_after_weekly_brief_generation():
     latest_copy_index = workflow.rindex("cp wiki/briefs/latest.md")
 
     assert latest_copy_index > weekly_index
+
+
+def test_main_ingest_workflow_uses_review_required_pr_title_and_body():
+    workflow = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
+
+    assert 'title: "[wiki-bot][review-required] ingest wiki packets"' in workflow
+    assert "body: ${{ steps.ingest.outputs.pr_body }}" in workflow

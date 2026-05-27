@@ -155,6 +155,51 @@ def test_performance_missing_overall_metrics_fails(tmp_path):
     assert "overall_metrics" in exc.value.message
 
 
+@pytest.mark.parametrize(
+    "missing_key",
+    ["confusion_matrices", "oof_predictions", "submission_predictions", "uncertainty"],
+)
+def test_performance_missing_extended_spec_fields_fails(tmp_path, missing_key):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "performance", {"performance": "performance.yaml"})
+    payload = {
+        "primary_metric": "accuracy",
+        "metric_definitions": {"accuracy": "correct / total"},
+        "targets": ["overall"],
+        "split_id": "dev",
+        "overall_metrics": {"accuracy": 0.82},
+        "target_metrics": {},
+        "confusion_matrices": "not computed",
+        "oof_predictions": "raw/results/oof.csv",
+        "submission_predictions": "not generated",
+        "baseline_comparison": "not compared",
+        "uncertainty": "not estimated",
+        "claim_status": "tentative",
+    }
+    payload.pop(missing_key)
+    (packet / "performance.yaml").write_text(yaml.safe_dump(payload), encoding="utf-8")
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert missing_key in exc.value.message
+
+
+def test_feature_families_must_not_be_empty(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "feature", {"features": "features.yaml"})
+    (packet / "features.yaml").write_text(yaml.safe_dump({"feature_families": []}), encoding="utf-8")
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "feature_families" in exc.value.message
+
+
 def test_packet_specific_schema_rejects_missing_raw_path_label(tmp_path):
     packet = tmp_path / "packet"
     write_manifest(packet, "performance", {"metrics": "performance.yaml"})

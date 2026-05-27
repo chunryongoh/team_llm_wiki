@@ -25,7 +25,9 @@ def classify_risk(manifest: PacketManifest, guard: GuardResult) -> RiskDecision:
         reasons.append("high-risk wiki target path")
     if PACKET_ROUTE_MAP[manifest.type] + "/" in HIGH_RISK_PATH_PREFIXES:
         reasons.append("high-risk canonical route")
-    if any(claim.status in GOVERNANCE_CLAIM_STATUSES for claim in manifest.claims):
+    if manifest.claim_status in GOVERNANCE_CLAIM_STATUSES or any(
+        claim.status in GOVERNANCE_CLAIM_STATUSES for claim in manifest.claims
+    ):
         reasons.append("governance-tier claim status")
 
     return RiskDecision(RiskTier.BOT_PR if reasons else RiskTier.DIRECT_COMMIT, reasons)

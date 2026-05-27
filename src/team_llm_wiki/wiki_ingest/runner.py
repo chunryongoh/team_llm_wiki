@@ -138,6 +138,15 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
             for packet in report_packets
             if "id" in packet and "claim_status" in packet
         ],
+        metric_changes=[
+            {
+                "packet": manifest.id,
+                "metric": metric.metric_key,
+                "reported_value": metric.reported_value,
+            }
+            for manifest, _tier in packets
+            for metric in manifest.metrics_to_verify
+        ],
         failures=failures,
         warnings=list(dict.fromkeys(warnings)),
         policy_warnings=list(dict.fromkeys(policy.warnings)),

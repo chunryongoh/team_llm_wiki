@@ -43,4 +43,8 @@ overall_metrics:
 target_metrics:
   replace-with-target:
     accuracy: 0.0
+confusion_matrices: Replace with threshold policy and table path, or not computed.
+oof_predictions: Replace with path, row order contract, and target probability columns.
+submission_predictions: Replace with prediction path, or not generated.
 baseline_comparison: Replace with baseline name and delta.
+uncertainty: Replace with bootstrap or seed spread, or not estimated.
