@@ -78,6 +78,8 @@ def test_preview_wiki_ingest_outputs_json_without_mutating_wiki(tmp_path):
     assert payload["status"] == "direct_commit"
     assert payload["run_id"] == "preview"
     assert payload["packet_roots"] == ["raw/users/alice/pkt-1"]
+    assert payload["packets"][0]["type"] == "reference"
+    assert payload["claim_statuses"] == [{"packet": "pkt-1", "status": "tentative"}]
     assert "wiki/sources/pkt-1.md" in payload["generated_paths"]
     assert "automation/.cache/compiled/pkt-1.json" in payload["generated_paths"]
     assert "wiki/sources/pkt-1.md" in payload["changed_paths"]

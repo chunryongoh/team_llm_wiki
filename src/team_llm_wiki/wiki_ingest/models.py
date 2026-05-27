@@ -282,6 +282,7 @@ class IngestReport:
     input_changed_paths: list[str] = field(default_factory=list)
     packet_roots: list[str] = field(default_factory=list)
     packets: list[dict[str, Any]] = field(default_factory=list)
+    claim_statuses: list[dict[str, str]] = field(default_factory=list)
     failures: list[dict[str, Any]] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     policy_warnings: list[str] = field(default_factory=list)

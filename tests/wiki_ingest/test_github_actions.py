@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from team_llm_wiki.wiki_ingest.github_actions import (
     add_paths_from_payload,
@@ -98,8 +99,18 @@ def test_render_pr_comment_includes_preview_details():
         {
             "status": "hard_fail",
             "packet_roots": ["raw/users/alice/pkt-1"],
+            "packets": [
+                {
+                    "id": "pkt-1",
+                    "type": "performance",
+                    "risk_tier": "bot_pr",
+                    "risk_reasons": ["performance evidence requires review"],
+                }
+            ],
             "generated_paths": ["wiki/sources/pkt-1.md"],
+            "claim_statuses": [{"packet": "pkt-1", "status": "tentative"}],
             "failures": [{"code": "invalid_manifest", "message": "missing title"}],
+            "warnings": ["review calibration evidence"],
         }
     )
 
@@ -107,6 +118,15 @@ def test_render_pr_comment_includes_preview_details():
     assert "raw/users/alice/pkt-1" in comment
     assert "wiki/sources/pkt-1.md" in comment
     assert "invalid_manifest" in comment
+    assert "### Detected packet types" in comment
+    assert "`pkt-1` performance" in comment
+    assert "### Affected wiki pages" in comment
+    assert "### Proposed claim statuses" in comment
+    assert "`pkt-1` `tentative`" in comment
+    assert "### Missing evidence" in comment
+    assert "missing title" in comment
+    assert "### Expected PR review questions" in comment
+    assert "review calibration evidence" in comment
 
 
 def test_preview_payload_from_streams_preserves_stderr_only_error():
@@ -142,3 +162,12 @@ def test_render_pr_comment_preserves_failures_with_many_long_paths():
     assert "### Failures" in comment
     assert "invalid_manifest" in comment
     assert "missing title" in comment
+
+
+def test_health_workflow_copies_latest_after_weekly_brief_generation():
+    workflow = Path(".github/workflows/wiki-health-check.yml").read_text(encoding="utf-8")
+
+    weekly_index = workflow.index("generate-wiki-weekly-brief")
+    latest_copy_index = workflow.rindex("cp wiki/briefs/latest.md")
+
+    assert latest_copy_index > weekly_index

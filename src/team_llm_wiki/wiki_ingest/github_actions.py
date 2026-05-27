@@ -29,7 +29,90 @@ def _append_path_section(lines: list[str], title: str, paths: list[Any]) -> None
         lines.append(f"- `{path}`")
     remaining = len(clean) - MAX_LIST_ITEMS
     if remaining > 0:
+            lines.append(f"- and {remaining} more")
+
+
+def _failure_line(failure: Any) -> str:
+    if isinstance(failure, dict):
+        code = failure.get("code", "unknown")
+        message = _bounded_text(failure.get("message", ""))
+    else:
+        code = "unknown"
+        message = _bounded_text(failure)
+    return f"- `{code}` {message}".rstrip()
+
+
+def _append_packet_type_section(lines: list[str], packets: list[Any]) -> None:
+    lines.extend(["", "### Detected packet types"])
+    clean = [packet for packet in packets if isinstance(packet, dict)]
+    if not clean:
+        lines.append("- none")
+        return
+    for packet in clean[:MAX_LIST_ITEMS]:
+        packet_id = _bounded_text(packet.get("id", "unknown"), MAX_PATH_CHARS)
+        packet_type = _bounded_text(packet.get("type", "unknown"), MAX_PATH_CHARS)
+        risk = _bounded_text(packet.get("risk_tier", "unknown"), MAX_PATH_CHARS)
+        lines.append(f"- `{packet_id}` {packet_type} (risk: `{risk}`)")
+    remaining = len(clean) - MAX_LIST_ITEMS
+    if remaining > 0:
         lines.append(f"- and {remaining} more")
+
+
+def _append_claim_status_section(lines: list[str], payload: dict[str, Any]) -> None:
+    lines.extend(["", "### Proposed claim statuses"])
+    statuses = [item for item in payload.get("claim_statuses") or [] if isinstance(item, dict)]
+    if not statuses:
+        statuses = [
+            {"packet": packet.get("id", "unknown"), "status": packet.get("claim_status", "unknown")}
+            for packet in payload.get("packets") or []
+            if isinstance(packet, dict) and packet.get("claim_status")
+        ]
+    if not statuses:
+        lines.append("- none")
+        return
+    for item in statuses[:MAX_LIST_ITEMS]:
+        packet_id = _bounded_text(item.get("packet", item.get("id", "unknown")), MAX_PATH_CHARS)
+        status = _bounded_text(item.get("status", "unknown"), MAX_PATH_CHARS)
+        lines.append(f"- `{packet_id}` `{status}`")
+    remaining = len(statuses) - MAX_LIST_ITEMS
+    if remaining > 0:
+        lines.append(f"- and {remaining} more")
+
+
+def _append_missing_evidence_section(lines: list[str], failures: list[Any]) -> None:
+    lines.extend(["", "### Missing evidence"])
+    missing = [
+        failure
+        for failure in failures
+        if isinstance(failure, dict)
+        and str(failure.get("code", "")) in {"missing_raw_file", "metric_mismatch", "invalid_manifest"}
+    ]
+    if not missing:
+        lines.append("- none")
+        return
+    for failure in missing[:MAX_LIST_ITEMS]:
+        lines.append(_failure_line(failure))
+    remaining = len(missing) - MAX_LIST_ITEMS
+    if remaining > 0:
+        lines.append(f"- and {remaining} more")
+
+
+def _append_review_question_section(lines: list[str], payload: dict[str, Any], failures: list[Any]) -> None:
+    lines.extend(["", "### Expected PR review questions"])
+    questions: list[str] = []
+    questions.extend(str(warning) for warning in payload.get("warnings") or [] if str(warning).strip())
+    for packet in payload.get("packets") or []:
+        if not isinstance(packet, dict):
+            continue
+        for reason in packet.get("risk_reasons") or []:
+            if str(reason).strip():
+                questions.append(str(reason))
+    if failures and not questions:
+        questions.append("Resolve hard-fail items before merge.")
+    if not questions:
+        questions.append("Confirm the packet claim boundary and evidence are sufficient for the proposed status.")
+    for question in list(dict.fromkeys(questions))[:MAX_LIST_ITEMS]:
+        lines.append(f"- {_bounded_text(question)}")
 
 
 def should_skip_wiki_ingest(actor: str, commit_message: str | None = None, pr_title: str | None = None) -> bool:
@@ -52,18 +135,17 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
         lines.append(f"- timing: `{payload['timing_ms']} ms`")
 
     failures = list(payload.get("failures") or [])
+    _append_packet_type_section(lines, list(payload.get("packets") or []))
+    _append_path_section(lines, "Affected wiki pages", list(payload.get("generated_paths") or payload.get("changed_paths") or []))
+    _append_claim_status_section(lines, payload)
+    _append_missing_evidence_section(lines, failures)
+    _append_review_question_section(lines, payload, failures)
     lines.extend(["", "### Failures"])
     if not failures:
         lines.append("- none")
     else:
         for failure in failures[:MAX_LIST_ITEMS]:
-            if isinstance(failure, dict):
-                code = failure.get("code", "unknown")
-                message = _bounded_text(failure.get("message", ""))
-            else:
-                code = "unknown"
-                message = _bounded_text(failure)
-            lines.append(f"- `{code}` {message}".rstrip())
+            lines.append(_failure_line(failure))
         remaining = len(failures) - MAX_LIST_ITEMS
         if remaining > 0:
             lines.append(f"- and {remaining} more")

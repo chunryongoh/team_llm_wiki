@@ -117,6 +117,7 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
             {
                 "id": manifest.id,
                 "type": manifest.type.value,
+                "claim_status": manifest.claim_status,
                 "packet_root": _rel(repo_root, packet_root),
                 "risk_tier": risk.tier.value,
                 "risk_reasons": risk.reasons,
@@ -132,6 +133,11 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
         input_changed_paths=input_changed_paths,
         packet_roots=[_rel(repo_root, root) for root in packet_roots],
         packets=report_packets,
+        claim_statuses=[
+            {"packet": packet["id"], "status": packet["claim_status"]}
+            for packet in report_packets
+            if "id" in packet and "claim_status" in packet
+        ],
         failures=failures,
         warnings=list(dict.fromkeys(warnings)),
         policy_warnings=list(dict.fromkeys(policy.warnings)),
