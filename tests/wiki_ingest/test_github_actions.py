@@ -5,6 +5,7 @@ from team_llm_wiki.wiki_ingest.github_actions import (
     render_pr_comment,
     safe_add_paths_file_from_payload,
     render_workflow_summary,
+    should_skip_wiki_ingest,
     workflow_dispatch_changed_paths,
     write_github_outputs,
 )
@@ -14,6 +15,23 @@ def test_add_paths_from_payload_uses_report_declared_paths():
     payload = {"changed_paths": ["wiki/a.md", "wiki/b.md"], "status": "direct_commit"}
 
     assert add_paths_from_payload(payload) == ["wiki/a.md", "wiki/b.md"]
+
+
+def test_should_skip_wiki_ingest_for_wiki_bot_direct_commit():
+    assert should_skip_wiki_ingest(
+        "github-actions[bot]",
+        commit_message="[wiki-bot] ingest wiki packets",
+    )
+
+
+def test_should_skip_wiki_ingest_for_wiki_bot_pr_title():
+    assert should_skip_wiki_ingest("octocat", pr_title="[wiki-bot] ingest wiki packets")
+
+
+def test_should_skip_wiki_ingest_allows_normal_human_and_raw_packet_changes():
+    assert not should_skip_wiki_ingest("alice", commit_message="add raw packet")
+    assert not should_skip_wiki_ingest("github-actions[bot]", commit_message="chore: unrelated automation")
+    assert not should_skip_wiki_ingest("alice", pr_title="add experiment packet")
 
 
 def test_workflow_dispatch_changed_paths_parses_multiline_input():

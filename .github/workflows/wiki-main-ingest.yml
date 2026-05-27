@@ -19,9 +19,12 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: wiki-ingest-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   ingest:
-    if: ${{ github.actor != 'github-actions[bot]' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,8 +33,35 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: pip install -r requirements.txt
+      - name: Check wiki bot loop guard
+        id: skip
+        env:
+          GITHUB_ACTOR_NAME: ${{ github.actor }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message || '' }}
+          PR_TITLE: ${{ github.event.pull_request.title || '' }}
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          from team_llm_wiki.wiki_ingest.github_actions import should_skip_wiki_ingest, write_github_outputs
+
+          skip = should_skip_wiki_ingest(
+              os.environ.get("GITHUB_ACTOR_NAME", ""),
+              commit_message=os.environ.get("COMMIT_MESSAGE") or None,
+              pr_title=os.environ.get("PR_TITLE") or None,
+          )
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {"skip": "true" if skip else "false"})
+          PY
+      - name: Record skipped wiki bot ingest
+        if: steps.skip.outputs.skip == 'true'
+        run: |
+          printf "## Wiki ingest\n\nSkipped wiki bot change with [wiki-bot] prefix to avoid an ingest loop.\n" >> "$GITHUB_STEP_SUMMARY"
+      - if: steps.skip.outputs.skip != 'true'
+        run: pip install -r requirements.txt
       - name: Collect changed paths
+        if: steps.skip.outputs.skip != 'true'
         id: changed
         env:
           INPUT_CHANGED_PATHS: ${{ inputs.changed_paths || '' }}
@@ -50,6 +80,7 @@ jobs:
           PY
           fi
       - name: Run wiki ingest
+        if: steps.skip.outputs.skip != 'true'
         id: ingest
         env:
           PYTHONPATH: src
@@ -85,26 +116,26 @@ jobs:
             exit "$status"
           fi
       - name: Fallback summary
-        if: always()
+        if: always() && steps.skip.outputs.skip != 'true'
         run: |
           if [ ! -s "$GITHUB_STEP_SUMMARY" ]; then
             printf "## Wiki ingest\n\nMissing ingest output.\n" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Direct commit low-risk wiki updates
-        if: steps.ingest.outputs.status == 'direct_commit'
+        if: steps.skip.outputs.skip != 'true' && steps.ingest.outputs.status == 'direct_commit'
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           if [ -s add-paths.txt ]; then
             git add --pathspec-from-file=add-paths.txt
-            git commit -m "chore: ingest wiki packets" || exit 0
+            git commit -m "[wiki-bot] ingest wiki packets" || exit 0
             git push
           fi
       - name: Create bot PR for reviewed wiki updates
-        if: steps.ingest.outputs.status == 'bot_pr'
+        if: steps.skip.outputs.skip != 'true' && steps.ingest.outputs.status == 'bot_pr'
         uses: peter-evans/create-pull-request@v8
         with:
-          title: "Review wiki ingest"
-          commit-message: "chore: stage wiki ingest for review"
+          title: "[wiki-bot] ingest wiki packets"
+          commit-message: "[wiki-bot] ingest wiki packets"
           branch: "bot/wiki-ingest-${{ github.run_id }}-${{ github.run_attempt }}"
           add-paths: ${{ steps.ingest.outputs.add_paths }}

@@ -9,6 +9,7 @@ MAX_COMMENT_CHARS = 60000
 MAX_LIST_ITEMS = 25
 MAX_FAILURE_MESSAGE_CHARS = 500
 MAX_PATH_CHARS = 180
+WIKI_BOT_PREFIX = "[wiki-bot]"
 
 
 def _bounded_text(value: Any, limit: int = MAX_FAILURE_MESSAGE_CHARS) -> str:
@@ -29,6 +30,12 @@ def _append_path_section(lines: list[str], title: str, paths: list[Any]) -> None
     remaining = len(clean) - MAX_LIST_ITEMS
     if remaining > 0:
         lines.append(f"- and {remaining} more")
+
+
+def should_skip_wiki_ingest(actor: str, commit_message: str | None = None, pr_title: str | None = None) -> bool:
+    if pr_title and pr_title.startswith(WIKI_BOT_PREFIX):
+        return True
+    return actor == "github-actions[bot]" and bool(commit_message and commit_message.startswith(WIKI_BOT_PREFIX))
 
 
 def render_pr_comment(payload: dict[str, Any]) -> str:
