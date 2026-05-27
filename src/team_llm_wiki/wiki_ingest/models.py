@@ -236,7 +236,12 @@ class PacketManifest:
             ]
         except TypeError as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, str(exc)) from exc
-        self.intended_wiki_targets = [_validate_manifest_rel_path(str(item)) for item in self.intended_wiki_targets]
+        if not isinstance(self.intended_wiki_targets, list):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, "intended_wiki_targets must be a list")
+        self.intended_wiki_targets = [
+            _validate_manifest_rel_path(_require_non_empty_string(item, "intended_wiki_targets[]"))
+            for item in self.intended_wiki_targets
+        ]
 
 
 @dataclass

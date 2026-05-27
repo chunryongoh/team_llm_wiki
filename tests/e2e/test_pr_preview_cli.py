@@ -140,6 +140,68 @@ def test_preview_wiki_ingest_reports_invalid_utf8_manifest_as_hard_fail(tmp_path
     assert "Traceback" not in result.stderr
 
 
+def test_preview_wiki_ingest_reports_null_targets_as_hard_fail(tmp_path):
+    packet = seed_repo(tmp_path)
+    manifest_path = packet / "manifest.yaml"
+    data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    data["intended_wiki_targets"] = None
+    manifest_path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    changed_file = tmp_path / "changed.txt"
+    changed_file.write_text(str(packet.relative_to(tmp_path) / "manifest.yaml"), encoding="utf-8")
+
+    result = run_cli(
+        [
+            "preview-wiki-ingest",
+            "--repo-root",
+            str(tmp_path),
+            "--changed-path-file",
+            str(changed_file),
+            "--run-id",
+            "preview",
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "hard_fail"
+    assert payload["failures"][0]["code"] == "invalid_manifest"
+    assert "intended_wiki_targets" in payload["failures"][0]["message"]
+    assert "Traceback" not in result.stderr
+
+
+def test_preview_wiki_ingest_reports_invalid_utf8_split_fold_as_hard_fail(tmp_path):
+    packet = seed_repo(tmp_path)
+    manifest_path = packet / "manifest.yaml"
+    data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    data["raw_paths"] = ["result.json", "folds.csv"]
+    data["split"] = {"name": "dev", "group_key": "patient_id", "fold_file": "folds.csv"}
+    manifest_path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    (packet / "folds.csv").write_bytes(b"fold,split,patient_id\n0,train,\xff\n")
+    changed_file = tmp_path / "changed.txt"
+    changed_file.write_text(str(packet.relative_to(tmp_path) / "manifest.yaml"), encoding="utf-8")
+
+    result = run_cli(
+        [
+            "preview-wiki-ingest",
+            "--repo-root",
+            str(tmp_path),
+            "--changed-path-file",
+            str(changed_file),
+            "--run-id",
+            "preview",
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "hard_fail"
+    assert payload["failures"][0]["code"] == "invalid_manifest"
+    assert "split fold_file could not be read" in payload["failures"][0]["message"]
+    assert "Traceback" not in result.stderr
+
+
 def test_wiki_pr_validate_workflow_yaml_parses():
     workflow = Path(".github/workflows/wiki-pr-validate.yml")
 

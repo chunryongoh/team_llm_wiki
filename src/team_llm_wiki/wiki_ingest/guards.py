@@ -186,7 +186,7 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
 
     try:
         result.failures.extend(_check_split_group_overlap(packet_root, manifest))
-    except (OSError, csv.Error):
+    except (OSError, UnicodeDecodeError, csv.Error):
         result.failures.append(
             GuardViolation(FailureCode.INVALID_MANIFEST, "split fold_file could not be read", manifest.split.fold_file)
         )

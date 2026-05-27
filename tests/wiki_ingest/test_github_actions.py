@@ -2,6 +2,7 @@ import json
 
 from team_llm_wiki.wiki_ingest.github_actions import (
     add_paths_from_payload,
+    preview_payload_from_streams,
     render_pr_comment,
     safe_add_paths_file_from_payload,
     render_workflow_summary,
@@ -106,6 +107,24 @@ def test_render_pr_comment_includes_preview_details():
     assert "raw/users/alice/pkt-1" in comment
     assert "wiki/sources/pkt-1.md" in comment
     assert "invalid_manifest" in comment
+
+
+def test_preview_payload_from_streams_preserves_stderr_only_error():
+    payload = preview_payload_from_streams(
+        "",
+        '{"error": {"code": "invalid_manifest", "message": "bad manifest"}}',
+        run_id="preview-1",
+    )
+
+    assert payload == {
+        "status": "hard_fail",
+        "run_id": "preview-1",
+        "failures": [{"code": "invalid_manifest", "message": "bad manifest"}],
+    }
+    comment = render_pr_comment(payload)
+    assert "hard_fail" in comment
+    assert "invalid_manifest" in comment
+    assert "bad manifest" in comment
 
 
 def test_render_pr_comment_preserves_failures_with_many_long_paths():

@@ -77,6 +77,40 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
     return comment[: MAX_COMMENT_CHARS - 80].rstrip() + "\n\n_Comment truncated to fit GitHub limits._\n"
 
 
+def preview_payload_from_streams(raw_stdout: str, raw_stderr: str, run_id: str = "preview") -> dict[str, Any]:
+    raw = raw_stdout.strip()
+    error = raw_stderr.strip()
+    payload: dict[str, Any] = {}
+    if raw:
+        try:
+            parsed = json.loads(raw)
+            if isinstance(parsed, dict):
+                payload = parsed
+            else:
+                payload = {
+                    "status": "hard_fail",
+                    "failures": [{"code": "invalid_preview_json", "message": "preview stdout was not an object"}],
+                }
+        except json.JSONDecodeError:
+            payload = {
+                "status": "hard_fail",
+                "failures": [{"code": "invalid_preview_json", "message": raw or "missing stdout"}],
+            }
+    if not payload and error:
+        try:
+            error_payload = json.loads(error)
+            failure = error_payload.get("error", {"code": "preview_failed", "message": error})
+            if not isinstance(failure, dict):
+                failure = {"code": "preview_failed", "message": str(failure)}
+            payload = {"status": "hard_fail", "failures": [failure]}
+        except json.JSONDecodeError:
+            payload = {"status": "hard_fail", "failures": [{"code": "preview_failed", "message": error}]}
+    if not payload:
+        payload = {"status": "hard_fail", "failures": [{"code": "missing_preview", "message": "preview produced no output"}]}
+    payload.setdefault("run_id", run_id)
+    return payload
+
+
 def add_paths_from_payload(payload: dict[str, Any]) -> list[str]:
     paths = list(payload.get("generated_paths") or payload.get("changed_paths") or [])
     report_path = payload.get("report_path")

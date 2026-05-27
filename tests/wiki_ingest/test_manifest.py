@@ -192,6 +192,17 @@ def test_load_manifest_rejects_partial_full_manifest_without_core_fields(tmp_pat
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
+def test_load_manifest_rejects_non_list_intended_wiki_targets(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, intended_wiki_targets=None)
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "intended_wiki_targets" in exc.value.message
+
+
 @pytest.mark.parametrize("field", ["owner", "task", "claim_boundary"])
 def test_load_manifest_rejects_empty_required_text_fields(tmp_path, field):
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"

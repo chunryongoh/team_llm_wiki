@@ -40,30 +40,16 @@ jobs:
             --run-id "$RUN_ID" > preview-output.json 2> preview-error.json
           status=$?
           PREVIEW_STATUS="$status" python - <<'PY'
-          import json
           import os
           from pathlib import Path
 
-          from team_llm_wiki.wiki_ingest.github_actions import render_pr_comment, write_github_outputs
+          from team_llm_wiki.wiki_ingest.github_actions import preview_payload_from_streams, render_pr_comment, write_github_outputs
 
           output_path = Path("preview-output.json")
           error_path = Path("preview-error.json")
           raw = output_path.read_text(encoding="utf-8").strip() if output_path.exists() else ""
           error = error_path.read_text(encoding="utf-8").strip() if error_path.exists() else ""
-          try:
-              payload = json.loads(raw) if raw else {}
-          except json.JSONDecodeError:
-              payload = {"status": "hard_fail", "failures": [{"code": "invalid_preview_json", "message": raw or "missing stdout"}]}
-          payload.setdefault("run_id", os.environ.get("RUN_ID", "preview"))
-          if not payload and error:
-              try:
-                  error_payload = json.loads(error)
-                  payload = {
-                      "status": "hard_fail",
-                      "failures": [error_payload.get("error", {"code": "preview_failed", "message": error})],
-                  }
-              except json.JSONDecodeError:
-                  payload = {"status": "hard_fail", "failures": [{"code": "preview_failed", "message": error}]}
+          payload = preview_payload_from_streams(raw, error, run_id=os.environ.get("RUN_ID", "preview"))
           Path("preview-comment.md").write_text(render_pr_comment(payload), encoding="utf-8")
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {"exit_status": str(os.environ["PREVIEW_STATUS"])})
           PY
