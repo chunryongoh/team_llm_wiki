@@ -162,14 +162,14 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
     payload = json.loads(result.stdout)
     assert payload == {
         "generated_paths": [
-            "wiki/briefs/2026-W22-weekly.md",
+            "wiki/briefs/2026-05-27-weekly.md",
             "wiki/briefs/2026-05-27-stale-claims.md",
             "wiki/briefs/latest.md",
         ]
     }
-    assert (tmp_path / "wiki" / "briefs" / "2026-W22-weekly.md").exists()
+    assert (tmp_path / "wiki" / "briefs" / "2026-05-27-weekly.md").exists()
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-stale-claims.md").exists()
-    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-W22-weekly]]\n"
+    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-05-27-weekly]]\n"
 
 
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):

@@ -256,12 +256,12 @@ def generate_weekly_brief(repo_root: Path, date: str | None = None) -> list[str]
     stale_claims = _stale_tentative_claims(repo_root, today)
     contradictions = _contradiction_scan(repo_root)
 
-    weekly_rel = f"wiki/briefs/{week_id}-weekly.md"
+    weekly_rel = f"wiki/briefs/{day}-weekly.md"
     stale_rel = f"wiki/briefs/{day}-stale-claims.md"
     (repo_root / weekly_rel).write_text(
         _weekly_brief_text(week_id, day, _dated_log_entries(log_text, week_start, week_end), contradictions, stale_claims),
         encoding="utf-8",
     )
     (repo_root / stale_rel).write_text(_stale_report_text(day, stale_claims), encoding="utf-8")
-    latest_rel = _write_latest_pointer(repo_root, f"{week_id}-weekly")
+    latest_rel = _write_latest_pointer(repo_root, f"{day}-weekly")
     return [weekly_rel, stale_rel, latest_rel]

@@ -54,6 +54,6 @@ PYTHONPATH=src python -m team_llm_wiki.cli generate-wiki-brief --repo-root . --d
 PYTHONPATH=src python -m team_llm_wiki.cli generate-wiki-weekly-brief --repo-root . --date "$(date -u +%F)"
 ```
 
-Daily brief generation writes `wiki/briefs/<date>-daily.md` and keeps `wiki/briefs/latest.md` as a pointer to the newest brief. Weekly brief generation writes `wiki/briefs/<YYYY-Www>-weekly.md` with the required weekly sections, a contradiction scan, and `wiki/briefs/<date>-stale-claims.md` for tentative claims older than 14 days; it also refreshes the latest pointer. Generated brief pages are excluded from wiki health link, orphan, claim, and metric checks.
+Daily brief generation writes `wiki/briefs/<date>-daily.md` and keeps `wiki/briefs/latest.md` as a pointer to the newest brief. Weekly brief generation writes `wiki/briefs/<date>-weekly.md` with the required weekly sections, a contradiction scan, and `wiki/briefs/<date>-stale-claims.md` for tentative claims older than 14 days; it also refreshes the latest pointer. Generated brief pages are excluded from wiki health link, orphan, claim, and metric checks.
 
 Merge-time ingest writes generated wiki pages and `automation/.cache/compiled/<packet-id>.json`; each rendered packet page links to its compiled packet JSON. Direct bot commits and bot PR titles use the `[wiki-bot] ingest wiki packets` prefix so the ingest workflow can skip its own output without disabling normal CI.

@@ -83,11 +83,11 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
     generated = generate_weekly_brief(tmp_path, date="2026-05-27")
 
     assert generated == [
-        "wiki/briefs/2026-W22-weekly.md",
+        "wiki/briefs/2026-05-27-weekly.md",
         "wiki/briefs/2026-05-27-stale-claims.md",
         "wiki/briefs/latest.md",
     ]
-    weekly = (wiki / "briefs" / "2026-W22-weekly.md").read_text(encoding="utf-8")
+    weekly = (wiki / "briefs" / "2026-05-27-weekly.md").read_text(encoding="utf-8")
     stale = (wiki / "briefs" / "2026-05-27-stale-claims.md").read_text(encoding="utf-8")
     latest = (wiki / "briefs" / "latest.md").read_text(encoding="utf-8")
     assert "type: weekly-brief" in weekly
@@ -110,4 +110,4 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
     assert "wiki/questions/old-hypothesis.md" in weekly
     assert "type: stale-claim-report" in stale
     assert "wiki/questions/old-hypothesis.md" in stale
-    assert latest == "[[2026-W22-weekly]]\n"
+    assert latest == "[[2026-05-27-weekly]]\n"
