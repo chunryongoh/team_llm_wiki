@@ -8,12 +8,14 @@ task: source-ingest
 dataset:
   name: replace-with-dataset
   version: replace-with-version
-  hash: null
+  hash: replace-with-dataset-hash
 split:
   name: none
-  group_key: null
-  fold_file: null
-model: null
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: not-applicable
+  weights_in_repo: false
 claim_boundary: Replace with the boundary for claims made from this packet.
 claim_status: tentative
 summary: Replace with a short source summary.

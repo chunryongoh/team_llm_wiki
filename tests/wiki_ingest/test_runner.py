@@ -6,6 +6,12 @@ import yaml
 from team_llm_wiki.wiki_ingest.runner import plan_wiki_main_ingest, run_wiki_main_ingest
 
 
+ROUTES = {
+    "reference": "wiki/sources",
+    "experiment": "wiki/experiments",
+}
+
+
 def seed_repo(root: Path):
     (root / "AGENTS.md").write_text("rules", encoding="utf-8")
     (root / "CLAUDE.md").write_text("@AGENTS.md", encoding="utf-8")
@@ -24,7 +30,18 @@ def packet(root: Path, packet_id: str, packet_type: str, metric_expected=0.8):
         "id": packet_id,
         "type": packet_type,
         "title": packet_id,
+        "date": "2026-05-27",
+        "owner": "alice",
+        "status": "ready",
+        "task": "classification",
+        "dataset": {"name": "benchmark-set", "version": "v1"},
+        "split": {"name": "dev"},
+        "model": {"family": "not-applicable"},
+        "claim_boundary": "Only applies to the dev split.",
+        "claim_status": "tentative",
+        "summary": "Run summary.",
         "raw_paths": ["result.json"],
+        "intended_wiki_targets": [f"{ROUTES[packet_type]}/{packet_id}.md"],
         "metrics_to_verify": [{"name": "accuracy", "expected": metric_expected, "actual": 0.8}],
     }
     (packet_root / "manifest.yaml").write_text(yaml.safe_dump(manifest), encoding="utf-8")
@@ -91,8 +108,18 @@ def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
             "id": "ref-bad-link",
             "packet_type": "reference",
             "title": "Bad Link",
+            "date": "2026-05-27",
+            "owner": "alice",
+            "status": "ready",
+            "task": "source-ingest",
+            "dataset": {"name": "benchmark-set", "version": "v1"},
+            "split": {"name": "none"},
+            "model": {"family": "not-applicable"},
+            "claim_boundary": "Only applies to this source packet.",
+            "claim_status": "tentative",
             "summary": "Generated page has [[missing-generated-link]].",
             "raw_paths": ["result.json"],
+            "intended_wiki_targets": ["wiki/sources/ref-bad-link.md"],
         },
         {"result.json": '{"accuracy": 0.8}'},
     )

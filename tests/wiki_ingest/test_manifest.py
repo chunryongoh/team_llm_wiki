@@ -1,5 +1,7 @@
+import json
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
 import pytest
 import yaml
 
@@ -24,6 +26,7 @@ def write_manifest(root: Path, **overrides):
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
+        "model": {"family": "not-applicable"},
         "claim_boundary": "Only applies to the dev split.",
         "claim_status": "tentative",
         "summary": "Run summary.",
@@ -90,7 +93,9 @@ def test_load_manifest_accepts_packet_type_alias_and_raw_path_mapping(tmp_path):
         "task",
         "dataset",
         "split",
+        "model",
         "claim_boundary",
+        "claim_status",
         "summary",
         "raw_paths",
         "intended_wiki_targets",
@@ -108,6 +113,64 @@ def test_load_manifest_requires_full_shape_fields_for_new_manifests(tmp_path, fi
         load_packet_manifest(packet)
 
     assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+def test_load_manifest_rejects_minimal_legacy_manifest(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, id="pkt-1", type="reference")
+    (packet / "manifest.yaml").write_text(
+        yaml.safe_dump({"id": "pkt-1", "type": "reference", "title": "Legacy minimal"}),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+def test_load_manifest_rejects_partial_full_manifest_without_core_fields(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    packet.mkdir(parents=True)
+    (packet / "manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "id": "pkt-1",
+                "packet_type": "reference",
+                "title": "Partial",
+                "date": "2026-05-27",
+                "status": "ready",
+                "summary": "Missing core manifest fields.",
+                "raw_paths": ["result.json"],
+                "intended_wiki_targets": ["wiki/sources/pkt-1.md"],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+@pytest.mark.parametrize("field", ["owner", "task", "claim_boundary"])
+def test_load_manifest_rejects_empty_required_text_fields(tmp_path, field):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, **{field: ""})
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+def test_shared_manifest_template_validates_against_schema():
+    repo_root = Path(__file__).resolve().parents[2]
+    schema = json.loads((repo_root / "automation" / "schemas" / "wiki-packet-manifest.schema.json").read_text())
+    manifest = yaml.safe_load((repo_root / "raw" / "shared" / "templates" / "wiki-packet" / "manifest.yaml").read_text())
+
+    Draft202012Validator(schema).validate(manifest)
 
 
 @pytest.mark.parametrize(

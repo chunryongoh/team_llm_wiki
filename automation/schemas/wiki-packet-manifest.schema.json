@@ -12,7 +12,9 @@
     "task",
     "dataset",
     "split",
+    "model",
     "claim_boundary",
+    "claim_status",
     "summary",
     "raw_paths",
     "intended_wiki_targets"

@@ -69,6 +69,11 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     missing = _missing_required_fields(raw)
     if missing:
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest missing fields: {', '.join(missing)}")
+    for key in ["owner", "task", "claim_boundary"]:
+        if not isinstance(raw.get(key), str) or not raw[key].strip():
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest field must be a non-empty string: {key}")
+    if not isinstance(raw.get("model"), dict):
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, "manifest model must be a mapping")
     payload = {key: raw[key] for key in known if key in raw and key != "packet_type"}
     payload["extra"] = {key: value for key, value in raw.items() if key not in known}
     return PacketManifest(**payload)
@@ -84,17 +89,17 @@ FULL_MANIFEST_REQUIRED = [
     "task",
     "dataset",
     "split",
+    "model",
     "claim_boundary",
+    "claim_status",
     "summary",
     "raw_paths",
     "intended_wiki_targets",
 ]
-FULL_MANIFEST_SENTINELS = {"owner", "task", "dataset", "split", "model", "claim_boundary", "claim_status"}
 
 
 def _missing_required_fields(raw: dict[str, Any]) -> list[str]:
-    required = FULL_MANIFEST_REQUIRED if FULL_MANIFEST_SENTINELS.intersection(raw) else ["id", "type", "title"]
-    return [key for key in required if key not in raw]
+    return [key for key in FULL_MANIFEST_REQUIRED if key not in raw]
 
 
 def discover_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Path]:

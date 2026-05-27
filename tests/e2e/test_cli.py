@@ -6,6 +6,12 @@ from pathlib import Path
 import yaml
 
 
+ROUTES = {
+    "reference": "wiki/sources",
+    "experiment": "wiki/experiments",
+}
+
+
 def seed_repo(root: Path, packet_type="reference", metric_expected=0.8):
     (root / "AGENTS.md").write_text("rules", encoding="utf-8")
     (root / "CLAUDE.md").write_text("@AGENTS.md", encoding="utf-8")
@@ -22,7 +28,18 @@ def seed_repo(root: Path, packet_type="reference", metric_expected=0.8):
                 "id": "pkt-1",
                 "type": packet_type,
                 "title": "Packet",
+                "date": "2026-05-27",
+                "owner": "alice",
+                "status": "ready",
+                "task": "classification",
+                "dataset": {"name": "benchmark-set", "version": "v1"},
+                "split": {"name": "dev"},
+                "model": {"family": "not-applicable"},
+                "claim_boundary": "Only applies to the dev split.",
+                "claim_status": "tentative",
+                "summary": "Run summary.",
                 "raw_paths": ["result.json"],
+                "intended_wiki_targets": [f"{ROUTES[packet_type]}/pkt-1.md"],
                 "metrics_to_verify": [{"name": "accuracy", "expected": metric_expected, "actual": 0.8}],
             }
         ),
