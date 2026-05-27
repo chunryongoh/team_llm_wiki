@@ -236,6 +236,19 @@ def test_packet_specific_schema_rejects_missing_packet_file(tmp_path):
     assert exc.value.code is FailureCode.MISSING_RAW_FILE
 
 
+def test_packet_specific_schema_rejects_directory_packet_file(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "performance", {"performance": "performance.yaml"})
+    (packet / "performance.yaml").mkdir()
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "must be a file" in exc.value.message
+
+
 def test_packet_specific_schema_rejects_non_string_raw_path_label(tmp_path):
     packet = tmp_path / "packet"
     write_manifest(packet, "augmentation", {"augmentation": "augmentation.yaml"})

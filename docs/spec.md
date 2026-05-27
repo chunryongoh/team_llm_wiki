@@ -19,7 +19,7 @@ Packet-specific YAML contract:
 - `preprocessing` packets require a `raw_paths.preprocessing` YAML file with `input_sources`, `row_identity`, `target_scope`, `split_strategy`, `fold_assignment`, `leakage_guards`, `normalization`, `feature_window_policy`, `imputation`, and `code_entrypoint`.
 - `feature` packets require `raw_paths.features` with `feature_families`. Each family requires `name`, `owner`, `source_modalities`, `feature_prefixes`, `anchor`, `window`, `formula`, `expected_dtype`, `missing_policy`, `leakage_risk`, `target_hypothesis`, `evidence`, `compute_cost`, and `dependencies`.
 - `model` packets require `raw_paths.model` with `family`, `library_versions`, `objective`, `target_handling`, `hyperparameters`, `training_strategy`, `validation_strategy`, `calibration`, `ensembling`, `hardware`, `inference_contract`, and `weights_policy`.
-- `performance` packets require `raw_paths.performance` with `primary_metric`, `metric_definitions`, `targets`, `split_id`, `overall_metrics`, `target_metrics`, `baseline_comparison`, and `claim_status`.
+- `performance` packets require `raw_paths.performance` with `primary_metric`, `metric_definitions`, `targets`, `split_id`, `overall_metrics`, `target_metrics`, `confusion_matrices`, `oof_predictions`, `submission_predictions`, `baseline_comparison`, `uncertainty`, and `claim_status`.
 - `augmentation` packets require `raw_paths.augmentation` with `source_data_scope`, `generator`, `prompt_or_recipe`, `privacy_guard`, `label_policy`, `validation_policy`, and `failure_modes`.
 
 Risk policy:
@@ -34,7 +34,7 @@ Guard policy:
 
 - Raw paths must stay inside the changed packet root and exist.
 - Changed paths and intended wiki targets must not escape the repository.
-- Secret-like content, forbidden secret filenames, and model-weight suffixes are blocked.
+- Secret-like content, PII-like content, forbidden secret filenames, and model-weight suffixes including `.bin`, `.pt`, `.pth`, `.ckpt`, `.onnx`, `.safetensors`, and `.pkl` are blocked.
 - Intended wiki targets must match the packet type route.
 - Metrics in `metrics_to_verify` must match raw YAML/JSON evidence via `raw_path` and `metric_key`. Metric evidence is raw-only; manifest-side values are reports to verify, not source evidence.
 - Grouped split validation reads `split.fold_file` when `split.group_key` is set. The CSV must stay inside the packet root, include the group key, include `split` or `role`, and keep each group out of both train and validation within the same `fold` value.
@@ -53,7 +53,8 @@ Renderer policy:
 Workflow policy:
 
 - `.github/workflows/wiki-main-ingest.yml` runs on main-branch packet changes and manual dispatch. It uses concurrency group `wiki-ingest-${{ github.ref }}` with `cancel-in-progress: false`.
-- Direct bot commits and bot PR titles use `[wiki-bot] ingest wiki packets`. The main ingest workflow skips only that bot-loop convention, and does not add `[skip ci]`.
+- Direct bot commits use `[wiki-bot] ingest wiki packets`; reviewed bot PR titles use `[wiki-bot][review-required] ingest wiki packets`. The main ingest workflow skips only that bot-loop convention, and does not add `[skip ci]`.
+- Default `GITHUB_TOKEN` bot commits may suppress follow-up workflows under GitHub event rules. Use a PAT or GitHub App token if follow-up workflows must run from bot-generated commits or PR updates.
 - Manual `workflow_dispatch` accepts optional newline-separated `changed_paths`. When omitted, the helper falls back to tracked `raw/users/**/manifest.yaml` files, then filesystem glob discovery. The caveat is that a manual dispatch without input can intentionally scan more packets than a push event.
-- `.github/workflows/wiki-pr-validate.yml` runs `preview-wiki-ingest` on packet PRs and updates a single marked preview comment with status, failures, packet roots, and generated paths.
-- `.github/workflows/wiki-health-check.yml` runs scheduled/manual health checks, writes a JSON report, generates a daily brief, and uploads both as artifacts.
+- `.github/workflows/wiki-pr-validate.yml` runs `preview-wiki-ingest` on packet PRs and updates a single marked preview comment with status, failures, packet roots, affected pages, detected packet types, proposed claim statuses, missing evidence, and expected review questions.
+- `.github/workflows/wiki-health-check.yml` runs scheduled/manual health checks, writes a JSON report, generates daily and weekly briefs, refreshes `wiki/briefs/latest.md`, and uploads the health report plus brief artifacts.

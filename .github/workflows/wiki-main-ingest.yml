@@ -122,6 +122,13 @@ jobs:
           if [ ! -s "$GITHUB_STEP_SUMMARY" ]; then
             printf "## Wiki ingest\n\nMissing ingest output.\n" >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Upload wiki ingest report
+        if: always() && steps.skip.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wiki-ingest-report
+          path: raw/results/wiki-ingest/*/report.json
+          if-no-files-found: ignore
       - name: Direct commit low-risk wiki updates
         if: steps.skip.outputs.skip != 'true' && steps.ingest.outputs.status == 'direct_commit'
         run: |

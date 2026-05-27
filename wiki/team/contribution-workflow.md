@@ -12,4 +12,4 @@ Metric claims must be backed by raw YAML or JSON evidence in the packet. Put eac
 
 For grouped splits, set `split.group_key` and `split.fold_file`. The fold file must stay inside the packet root, include the group key column, and include `split` or `role` values that distinguish train from validation rows. An optional `fold` column separates multiple folds; without it, the guard treats rows as fold `0`.
 
-Pull requests that change `raw/users/**` get a preview comment from `preview-wiki-ingest`. Main-branch ingest direct commits and bot PR titles use `[wiki-bot] ingest wiki packets`; this prefix prevents bot loops while leaving normal test workflow runs enabled.
+Pull requests that change `raw/users/**` get a preview comment from `preview-wiki-ingest`. Main-branch ingest direct commits use `[wiki-bot] ingest wiki packets`; reviewed bot PRs use `[wiki-bot][review-required] ingest wiki packets`. These prefixes prevent bot loops. Default `GITHUB_TOKEN` bot commits may suppress follow-up workflows, so use a PAT or GitHub App token if the team requires follow-up workflow execution from bot output.

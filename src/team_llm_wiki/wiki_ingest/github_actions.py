@@ -160,7 +160,14 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
 
 
 def render_bot_pr_body(payload: dict[str, Any]) -> str:
-    lines = ["## Changed raw packet ids", ""]
+    lines = ["## Ingest report", ""]
+    report_path = payload.get("report_path")
+    if report_path:
+        lines.append(f"- `{_bounded_text(report_path, MAX_PATH_CHARS)}`")
+    else:
+        lines.append("- none")
+
+    lines.extend(["", "## Changed raw packet ids", ""])
     packet_roots = list(payload.get("packet_roots") or [])
     if packet_roots:
         lines.extend(f"- `{_bounded_text(path, MAX_PATH_CHARS)}`" for path in packet_roots[:MAX_LIST_ITEMS])

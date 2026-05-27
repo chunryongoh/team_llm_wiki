@@ -130,6 +130,12 @@ def _resolve_packet_raw_path(packet_root: Path, raw_path: str) -> Path:
         raise IngestFailure(FailureCode.PATH_ESCAPE, "packet-specific raw path escapes packet root", {"path": raw_path}) from exc
     if not source.exists():
         raise IngestFailure(FailureCode.MISSING_RAW_FILE, "packet-specific raw file is missing", {"path": raw_path})
+    if not source.is_file():
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            "packet-specific raw path must be a file",
+            {"path": raw_path},
+        )
     return source
 
 

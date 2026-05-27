@@ -98,6 +98,7 @@ def test_render_summary_includes_report_and_failure_codes():
 def test_render_bot_pr_body_includes_required_review_sections():
     body = render_bot_pr_body(
         {
+            "report_path": "raw/results/wiki-ingest/1/report.json",
             "packet_roots": ["raw/users/alice/pkt-1"],
             "generated_paths": ["wiki/performance/pkt-1.md", "automation/.cache/compiled/pkt-1.json"],
             "claim_statuses": [{"packet": "pkt-1", "status": "supported"}],
@@ -106,6 +107,7 @@ def test_render_bot_pr_body_includes_required_review_sections():
         }
     )
 
+    assert "raw/results/wiki-ingest/1/report.json" in body
     assert "## Changed raw packet ids" in body
     assert "raw/users/alice/pkt-1" in body
     assert "## Affected wiki pages" in body
@@ -203,3 +205,19 @@ def test_main_ingest_workflow_uses_review_required_pr_title_and_body():
 
     assert 'title: "[wiki-bot][review-required] ingest wiki packets"' in workflow
     assert "body: ${{ steps.ingest.outputs.pr_body }}" in workflow
+    assert "name: Upload wiki ingest report" in workflow
+    assert "raw/results/wiki-ingest/*/report.json" in workflow
+
+
+def test_docs_note_default_github_token_follow_up_workflow_caveat():
+    docs = "\n".join(
+        [
+            Path("README.md").read_text(encoding="utf-8"),
+            Path("wiki/team/wiki-ingest-policy.md").read_text(encoding="utf-8"),
+            Path("wiki/team/contribution-workflow.md").read_text(encoding="utf-8"),
+            Path("docs/spec.md").read_text(encoding="utf-8"),
+        ]
+    )
+
+    assert "GITHUB_TOKEN" in docs
+    assert "follow-up workflows" in docs
