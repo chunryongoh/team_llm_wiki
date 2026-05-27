@@ -3,7 +3,7 @@ packet_type: reference
 title: Example Packet
 date: "2026-05-26"
 owner: replace-with-owner
-status: draft
+status: submitted
 task: source-ingest
 dataset:
   name: replace-with-dataset

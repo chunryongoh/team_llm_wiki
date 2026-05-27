@@ -6,7 +6,12 @@ from typing import Any
 from .models import PacketManifest, as_jsonable
 
 
-def compile_packet(manifest: PacketManifest, packet_root: str, risk_tier: str) -> dict[str, Any]:
+def compile_packet(
+    manifest: PacketManifest,
+    packet_root: str,
+    risk_tier: str,
+    publish_action: str | None = None,
+) -> dict[str, Any]:
     raw_paths = manifest.raw_path_map if manifest.raw_path_map else manifest.raw_paths
     payload = {
         "id": manifest.id,
@@ -29,6 +34,8 @@ def compile_packet(manifest: PacketManifest, packet_root: str, risk_tier: str) -
         "packet_root": packet_root,
         "risk_tier": risk_tier,
     }
+    if publish_action is not None:
+        payload["publish_action"] = publish_action
     compiled = as_jsonable(payload)
     json.dumps(compiled)
     return compiled

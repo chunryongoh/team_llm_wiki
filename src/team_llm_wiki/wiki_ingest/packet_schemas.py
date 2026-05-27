@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-from .models import FailureCode, IngestFailure, PacketManifest, PacketType
+from .models import CLAIM_STATUS_VALUES, FailureCode, IngestFailure, PacketManifest, PacketType
 
 
 PACKET_SCHEMA_LABELS: dict[PacketType, str] = {
@@ -86,6 +86,9 @@ FEATURE_FAMILY_REQUIRED_KEYS = (
     "dependencies",
 )
 
+FEATURE_LEAKAGE_RISK_VALUES = {"low", "medium", "high"}
+MODEL_WEIGHTS_POLICY_VALUES = {"not_in_repo", "small_in_repo", "external_uri"}
+
 
 def validate_packet_specific_schema(packet_root: Path, manifest: PacketManifest) -> None:
     packet_type = manifest.type
@@ -113,6 +116,10 @@ def validate_packet_specific_schema(packet_root: Path, manifest: PacketManifest)
 
     if packet_type is PacketType.FEATURE:
         _validate_feature_families(data["feature_families"], label)
+    elif packet_type is PacketType.MODEL:
+        _validate_model_packet(data, label)
+    elif packet_type is PacketType.PERFORMANCE:
+        _validate_performance_packet(data, manifest, label)
 
 
 def _resolve_packet_raw_path(packet_root: Path, raw_path: str) -> Path:
@@ -184,3 +191,37 @@ def _validate_feature_families(value: Any, label: str) -> None:
                 f"{label}.feature_families[{index}] missing fields: {', '.join(missing)}",
                 {"index": index, "missing": missing},
             )
+        leakage_risk = family["leakage_risk"]
+        if not isinstance(leakage_risk, str) or leakage_risk not in FEATURE_LEAKAGE_RISK_VALUES:
+            raise IngestFailure(
+                FailureCode.INVALID_MANIFEST,
+                f"{label}.feature_families[{index}].leakage_risk must be one of: "
+                f"{', '.join(sorted(FEATURE_LEAKAGE_RISK_VALUES))}",
+                {"index": index, "value": str(leakage_risk)},
+            )
+
+
+def _validate_model_packet(data: dict[str, Any], label: str) -> None:
+    weights_policy = data["weights_policy"]
+    if not isinstance(weights_policy, str) or weights_policy not in MODEL_WEIGHTS_POLICY_VALUES:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"{label}.weights_policy must be one of: {', '.join(sorted(MODEL_WEIGHTS_POLICY_VALUES))}",
+            {"value": str(weights_policy)},
+        )
+
+
+def _validate_performance_packet(data: dict[str, Any], manifest: PacketManifest, label: str) -> None:
+    claim_status = data["claim_status"]
+    if not isinstance(claim_status, str) or claim_status not in CLAIM_STATUS_VALUES:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"{label}.claim_status must be one of: {', '.join(sorted(CLAIM_STATUS_VALUES))}",
+            {"value": str(claim_status)},
+        )
+    if claim_status != manifest.claim_status:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"{label}.claim_status must match manifest claim_status",
+            {"manifest": manifest.claim_status, "performance": claim_status},
+        )

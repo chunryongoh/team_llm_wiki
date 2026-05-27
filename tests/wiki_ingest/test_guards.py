@@ -20,7 +20,7 @@ def make_packet(tmp_path: Path, **manifest_overrides):
         "title": "Run",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},

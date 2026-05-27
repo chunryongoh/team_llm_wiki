@@ -53,6 +53,10 @@ class FailureCode(str, Enum):
     MISSING_REQUIRED_LATEST_LINK = "missing_required_latest_link"
 
 
+PACKET_STATUS_VALUES = {"submitted", "validated", "ingested", "rejected", "superseded"}
+CLAIM_STATUS_VALUES = {"tentative", "supported", "disputed", "superseded"}
+
+
 class IngestFailure(Exception):
     def __init__(self, code: FailureCode | str, message: str, details: dict[str, Any] | None = None):
         self.code = FailureCode(code)
@@ -122,7 +126,7 @@ class Claim:
     text: str = ""
 
     def __post_init__(self) -> None:
-        if not isinstance(self.status, str) or self.status not in {"tentative", "supported", "disputed", "superseded"}:
+        if not isinstance(self.status, str) or self.status not in CLAIM_STATUS_VALUES:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.status}")
         if not isinstance(self.text, str):
             raise IngestFailure(FailureCode.INVALID_MANIFEST, "claim text must be a string")
@@ -198,15 +202,12 @@ class PacketManifest:
         self.date = _require_non_empty_string(self.date, "date")
         self.owner = _require_non_empty_string(self.owner, "owner")
         self.status = _require_non_empty_string(self.status, "status")
+        if self.status not in PACKET_STATUS_VALUES:
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid status: {self.status}")
         self.task = _require_non_empty_string(self.task, "task")
         self.claim_boundary = _require_non_empty_string(self.claim_boundary, "claim_boundary")
         self.summary = _require_non_empty_string(self.summary, "summary")
-        if not isinstance(self.claim_status, str) or self.claim_status not in {
-            "tentative",
-            "supported",
-            "disputed",
-            "superseded",
-        }:
+        if not isinstance(self.claim_status, str) or self.claim_status not in CLAIM_STATUS_VALUES:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.claim_status}")
         try:
             if isinstance(self.dataset, DatasetRef):
@@ -333,12 +334,20 @@ def as_jsonable(value: Any) -> Any:
     return value
 
 
+MAX_PACKET_ID_LENGTH = 120
 ID_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
 CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 
 def _validate_kebab_id(value: str) -> None:
-    if not isinstance(value, str) or not ID_RE.fullmatch(value) or "/" in value or "\\" in value or CONTROL_RE.search(value):
+    if (
+        not isinstance(value, str)
+        or len(value) > MAX_PACKET_ID_LENGTH
+        or not ID_RE.fullmatch(value)
+        or "/" in value
+        or "\\" in value
+        or CONTROL_RE.search(value)
+    ):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, "id must be ASCII kebab-case without separators")
 
 

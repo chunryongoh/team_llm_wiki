@@ -100,6 +100,7 @@ def test_render_bot_pr_body_includes_required_review_sections():
         {
             "report_path": "raw/results/wiki-ingest/1/report.json",
             "packet_roots": ["raw/users/alice/pkt-1"],
+            "packets": [{"id": "pkt-1", "type": "performance"}],
             "generated_paths": ["wiki/performance/pkt-1.md", "automation/.cache/compiled/pkt-1.json"],
             "claim_statuses": [{"packet": "pkt-1", "status": "supported"}],
             "metric_changes": [{"packet": "pkt-1", "metric": "accuracy", "reported_value": 0.82}],
@@ -109,7 +110,9 @@ def test_render_bot_pr_body_includes_required_review_sections():
 
     assert "raw/results/wiki-ingest/1/report.json" in body
     assert "## Changed raw packet ids" in body
-    assert "raw/users/alice/pkt-1" in body
+    packet_id_section = body.split("## Changed raw packet ids", 1)[1].split("## Affected wiki pages", 1)[0]
+    assert "- `pkt-1`" in packet_id_section
+    assert "raw/users/alice/pkt-1" not in packet_id_section
     assert "## Affected wiki pages" in body
     assert "wiki/performance/pkt-1.md" in body
     assert "## Claim changes" in body
@@ -130,7 +133,8 @@ def test_render_pr_comment_includes_preview_details():
                 {
                     "id": "pkt-1",
                     "type": "performance",
-                    "risk_tier": "bot_pr",
+                    "publish_action": "bot_pr",
+                    "risk_tier": "tier3-performance",
                     "risk_reasons": ["performance evidence requires review"],
                 }
             ],
@@ -147,6 +151,8 @@ def test_render_pr_comment_includes_preview_details():
     assert "invalid_manifest" in comment
     assert "### Detected packet types" in comment
     assert "`pkt-1` performance" in comment
+    assert "publish: `bot_pr`" in comment
+    assert "risk: `tier3-performance`" in comment
     assert "### Affected wiki pages" in comment
     assert "### Proposed claim statuses" in comment
     assert "`pkt-1` `tentative`" in comment

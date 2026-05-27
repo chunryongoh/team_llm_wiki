@@ -22,7 +22,7 @@ def write_manifest(root: Path, **overrides):
         "title": "Run title",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
@@ -94,6 +94,17 @@ def test_load_manifest_rejects_conflicting_packet_type_alias(tmp_path):
         load_packet_manifest(packet)
 
     assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+def test_load_manifest_rejects_invalid_status(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, status="ready")
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "status" in exc.value.message
 
 
 def test_load_manifest_rejects_malformed_yaml_as_invalid_manifest(tmp_path):
@@ -188,7 +199,7 @@ def test_load_manifest_rejects_partial_full_manifest_without_core_fields(tmp_pat
                 "packet_type": "reference",
                 "title": "Partial",
                 "date": "2026-05-27",
-                "status": "ready",
+                "status": "submitted",
                 "summary": "Missing core manifest fields.",
                 "raw_paths": ["result.json"],
                 "intended_wiki_targets": ["wiki/sources/pkt-1.md"],
@@ -451,6 +462,7 @@ def test_manifest_schema_rejects_control_character_fields(tmp_path, manifest_ove
     [
         {"id": "Bad_ID"},
         {"id": "pkt-1-"},
+        {"id": "a" * 121},
         {"id": "bad/id"},
         {"id": "bad\nid"},
         {"claim_status": ["tentative"]},

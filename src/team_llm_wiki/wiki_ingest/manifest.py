@@ -7,6 +7,19 @@ import yaml
 
 from .models import CONTROL_RE, FailureCode, IngestFailure, PacketManifest
 
+RAW_PACKET_CATEGORY_DIRS = {
+    "augmentation",
+    "benchmarks",
+    "datasets",
+    "experiments",
+    "features",
+    "meetings",
+    "models",
+    "performance",
+    "preprocessing",
+    "references",
+}
+
 
 def _repo_relative(repo_root: Path, path: Path) -> str:
     return path.resolve().relative_to(repo_root.resolve()).as_posix()
@@ -128,10 +141,12 @@ def discover_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
         current = repo / changed_rel
         if current.is_file() or changed_rel.name == "manifest.yaml" or changed_rel.suffix:
             current = current.parent
+        found = False
         for candidate in [current, *current.parents]:
             if candidate == repo.parent:
                 break
             if (candidate / "manifest.yaml").exists():
+                found = True
                 rel_candidate = candidate.relative_to(repo)
                 is_packet_root = (
                     len(rel_candidate.parts) >= 4
@@ -144,4 +159,18 @@ def discover_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
                 break
             if candidate == repo:
                 break
+        if not found:
+            fallback = _fallback_raw_user_packet_root(repo, changed_rel)
+            if fallback is not None and fallback not in seen:
+                roots.append(fallback)
+                seen.add(fallback)
     return roots
+
+
+def _fallback_raw_user_packet_root(repo_root: Path, changed_rel: Path) -> Path | None:
+    parts = changed_rel.parts
+    if len(parts) < 4 or parts[0] != "raw" or parts[1] != "users":
+        return None
+    if len(parts) >= 5 and parts[3] in RAW_PACKET_CATEGORY_DIRS:
+        return repo_root.joinpath(*parts[:5])
+    return repo_root.joinpath(*parts[:4])

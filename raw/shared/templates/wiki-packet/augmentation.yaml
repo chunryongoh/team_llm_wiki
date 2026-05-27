@@ -3,7 +3,7 @@ packet_type: augmentation
 title: Example Augmentation Note
 date: "2026-05-26"
 owner: replace-with-owner
-status: draft
+status: submitted
 task: data-augmentation
 dataset:
   name: replace-with-dataset

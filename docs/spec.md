@@ -7,6 +7,7 @@ The source of truth is packet evidence under `raw/users/<user>/<packet-id>/`. Ea
 Manifest contract:
 
 - Full manifests require `id`, `packet_type` or legacy `type`, `title`, `date`, `owner`, `status`, `task`, `dataset`, `split`, `model`, `claim_boundary`, `claim_status`, `summary`, `raw_paths`, and `intended_wiki_targets`.
+- `status` must be one of `submitted`, `validated`, `ingested`, `rejected`, or `superseded`.
 - `dataset` requires `name` and `version`; optional `hash` is preserved.
 - `split` requires `name`; optional `group_key` and `fold_file` activate grouped split guards.
 - `model` requires `family`; optional `weights_in_repo` must be boolean.
@@ -17,13 +18,15 @@ Manifest contract:
 Packet-specific YAML contract:
 
 - `preprocessing` packets require a `raw_paths.preprocessing` YAML file with `input_sources`, `row_identity`, `target_scope`, `split_strategy`, `fold_assignment`, `leakage_guards`, `normalization`, `feature_window_policy`, `imputation`, and `code_entrypoint`.
-- `feature` packets require `raw_paths.features` with `feature_families`. Each family requires `name`, `owner`, `source_modalities`, `feature_prefixes`, `anchor`, `window`, `formula`, `expected_dtype`, `missing_policy`, `leakage_risk`, `target_hypothesis`, `evidence`, `compute_cost`, and `dependencies`.
-- `model` packets require `raw_paths.model` with `family`, `library_versions`, `objective`, `target_handling`, `hyperparameters`, `training_strategy`, `validation_strategy`, `calibration`, `ensembling`, `hardware`, `inference_contract`, and `weights_policy`.
+- `feature` packets require `raw_paths.features` with `feature_families`. Each family requires `name`, `owner`, `source_modalities`, `feature_prefixes`, `anchor`, `window`, `formula`, `expected_dtype`, `missing_policy`, `leakage_risk`, `target_hypothesis`, `evidence`, `compute_cost`, and `dependencies`; `leakage_risk` must be one of `low`, `medium`, or `high`.
+- `model` packets require `raw_paths.model` with `family`, `library_versions`, `objective`, `target_handling`, `hyperparameters`, `training_strategy`, `validation_strategy`, `calibration`, `ensembling`, `hardware`, `inference_contract`, and `weights_policy`; `weights_policy` must be one of `not_in_repo`, `small_in_repo`, or `external_uri`.
 - `performance` packets require `raw_paths.performance` with `primary_metric`, `metric_definitions`, `targets`, `split_id`, `overall_metrics`, `target_metrics`, `confusion_matrices`, `oof_predictions`, `submission_predictions`, `baseline_comparison`, `uncertainty`, and `claim_status`.
 - `augmentation` packets require `raw_paths.augmentation` with `source_data_scope`, `generator`, `prompt_or_recipe`, `privacy_guard`, `label_policy`, `validation_policy`, and `failure_modes`.
 
 Risk policy:
 
+- `publish_action` records automation behavior as `direct_commit`, `bot_pr`, or `hard_fail`.
+- `risk_tier` records semantic review severity as `tier0-catalog`, `tier1-summary`, `tier2-interpretation`, `tier3-performance`, or `tier4-governance`.
 - `reference` and `meeting` packets can be `direct_commit` when guards pass.
 - `performance`, `experiment`, `model`, `feature`, and `augmentation` packets are `bot_pr`.
 - High-risk wiki paths under `wiki/performance`, `wiki/models`, `wiki/features`, and `wiki/experiments` are `bot_pr`.

@@ -3,7 +3,7 @@ packet_type: model
 title: Example Model
 date: "2026-05-26"
 owner: replace-with-owner
-status: draft
+status: submitted
 task: model-documentation
 dataset:
   name: replace-with-dataset
@@ -40,4 +40,4 @@ calibration: Replace with calibration approach or none.
 ensembling: Replace with ensembling approach or none.
 hardware: Replace with hardware used or expected.
 inference_contract: Replace with input/output contract.
-weights_policy: Do not store model weights in this packet.
+weights_policy: not_in_repo

@@ -3,7 +3,7 @@ packet_type: preprocessing
 title: Example Preprocessing Note
 date: "2026-05-26"
 owner: replace-with-owner
-status: draft
+status: submitted
 task: dataset-preprocessing
 dataset:
   name: replace-with-dataset

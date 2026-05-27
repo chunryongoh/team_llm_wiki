@@ -3,7 +3,7 @@ packet_type: feature
 title: Example Feature
 date: "2026-05-26"
 owner: replace-with-owner
-status: draft
+status: submitted
 task: feature-engineering
 dataset:
   name: replace-with-dataset
@@ -38,7 +38,7 @@ feature_families:
     formula: Replace with exact feature formula or recipe.
     expected_dtype: float32
     missing_policy: Replace with missing-value handling.
-    leakage_risk: tentative
+    leakage_risk: low
     target_hypothesis: Replace with target relationship hypothesis.
     evidence: Replace with raw result, note, or benchmark path.
     compute_cost: low

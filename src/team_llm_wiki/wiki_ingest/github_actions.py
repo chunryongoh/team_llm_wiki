@@ -29,7 +29,23 @@ def _append_path_section(lines: list[str], title: str, paths: list[Any]) -> None
         lines.append(f"- `{path}`")
     remaining = len(clean) - MAX_LIST_ITEMS
     if remaining > 0:
-            lines.append(f"- and {remaining} more")
+        lines.append(f"- and {remaining} more")
+
+
+def _packet_ids_from_payload(payload: dict[str, Any]) -> list[str]:
+    ids = [
+        _bounded_text(packet.get("id"), MAX_PATH_CHARS)
+        for packet in payload.get("packets") or []
+        if isinstance(packet, dict) and str(packet.get("id", "")).strip()
+    ]
+    if ids:
+        return list(dict.fromkeys(ids))
+    roots = []
+    for root in payload.get("packet_roots") or []:
+        path = str(root).strip().rstrip("/")
+        if path:
+            roots.append(_bounded_text(Path(path).name, MAX_PATH_CHARS))
+    return list(dict.fromkeys(roots))
 
 
 def _failure_line(failure: Any) -> str:
@@ -51,8 +67,9 @@ def _append_packet_type_section(lines: list[str], packets: list[Any]) -> None:
     for packet in clean[:MAX_LIST_ITEMS]:
         packet_id = _bounded_text(packet.get("id", "unknown"), MAX_PATH_CHARS)
         packet_type = _bounded_text(packet.get("type", "unknown"), MAX_PATH_CHARS)
+        publish_action = _bounded_text(packet.get("publish_action", "unknown"), MAX_PATH_CHARS)
         risk = _bounded_text(packet.get("risk_tier", "unknown"), MAX_PATH_CHARS)
-        lines.append(f"- `{packet_id}` {packet_type} (risk: `{risk}`)")
+        lines.append(f"- `{packet_id}` {packet_type} (publish: `{publish_action}`, risk: `{risk}`)")
     remaining = len(clean) - MAX_LIST_ITEMS
     if remaining > 0:
         lines.append(f"- and {remaining} more")
@@ -168,9 +185,9 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
         lines.append("- none")
 
     lines.extend(["", "## Changed raw packet ids", ""])
-    packet_roots = list(payload.get("packet_roots") or [])
-    if packet_roots:
-        lines.extend(f"- `{_bounded_text(path, MAX_PATH_CHARS)}`" for path in packet_roots[:MAX_LIST_ITEMS])
+    packet_ids = _packet_ids_from_payload(payload)
+    if packet_ids:
+        lines.extend(f"- `{packet_id}`" for packet_id in packet_ids[:MAX_LIST_ITEMS])
     else:
         lines.append("- none")
 

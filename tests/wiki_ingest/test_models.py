@@ -21,7 +21,7 @@ def manifest_data(**overrides):
         "title": "A run",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
@@ -119,6 +119,7 @@ def test_manifest_rejects_invalid_full_shape_fields(overrides):
     "overrides",
     [
         {"id": "pkt-1-"},
+        {"id": "a" * 121},
         {"claim_status": ["tentative"]},
         {"claims": [{"status": ["tentative"], "text": "claim"}]},
     ],

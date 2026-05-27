@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from .models import PacketManifest, PacketType, RenderResult, RiskTier, as_jsonable
+from .models import PacketManifest, PacketType, RenderResult, RiskTier, RiskTierLabel, as_jsonable
 from .policy import IngestPolicy
 from .routes import packet_target_path
 
@@ -57,7 +57,27 @@ def _append_once(path: Path, entry: str) -> None:
         path.write_text(text.rstrip() + "\n\n" + entry.rstrip() + "\n", encoding="utf-8")
 
 
-def _packet_frontmatter(manifest: PacketManifest, tier: RiskTier) -> str:
+PacketRenderInput = tuple[PacketManifest, RiskTier] | tuple[PacketManifest, RiskTier, RiskTierLabel | str]
+
+
+def _default_risk_tier_label(publish_action: RiskTier) -> str:
+    if publish_action is RiskTier.HARD_FAIL:
+        return RiskTierLabel.TIER4_GOVERNANCE.value
+    if publish_action is RiskTier.BOT_PR:
+        return RiskTierLabel.TIER2_INTERPRETATION.value
+    return RiskTierLabel.TIER0_CATALOG.value
+
+
+def _normalize_packet_input(packet: PacketRenderInput) -> tuple[PacketManifest, RiskTier, str]:
+    if len(packet) == 2:
+        manifest, publish_action = packet
+        return manifest, publish_action, _default_risk_tier_label(publish_action)
+    manifest, publish_action, risk_tier = packet
+    risk_tier_value = risk_tier.value if isinstance(risk_tier, RiskTierLabel) else str(risk_tier)
+    return manifest, publish_action, risk_tier_value
+
+
+def _packet_frontmatter(manifest: PacketManifest, publish_action: RiskTier, risk_tier: str) -> str:
     frontmatter = {
         "id": manifest.id,
         "packet_type": manifest.type,
@@ -77,7 +97,8 @@ def _packet_frontmatter(manifest: PacketManifest, tier: RiskTier) -> str:
         "intended_wiki_targets": manifest.intended_wiki_targets,
         "metrics_to_verify": manifest.metrics_to_verify,
         "claims": manifest.claims,
-        "risk_tier": tier.value,
+        "publish_action": publish_action.value,
+        "risk_tier": risk_tier,
     }
     return yaml.safe_dump(as_jsonable(frontmatter), sort_keys=False).strip()
 
@@ -98,16 +119,18 @@ def _lineage_lines(manifest: PacketManifest) -> list[str]:
     ]
 
 
-def _packet_page(manifest: PacketManifest, tier: RiskTier, run_id: str) -> str:
+def _packet_page(manifest: PacketManifest, publish_action: RiskTier, risk_tier: str, run_id: str) -> str:
     lines = [
         "---",
-        _packet_frontmatter(manifest, tier),
+        _packet_frontmatter(manifest, publish_action, risk_tier),
         "---",
         "",
         f"# {manifest.title}",
         "",
         f"- packet: `{manifest.id}`",
         f"- generated_by_run: `{run_id}`",
+        f"- publish_action: `{publish_action.value}`",
+        f"- risk_tier: `{risk_tier}`",
         f"- compiled_packet: [automation/.cache/compiled/{manifest.id}.json](../../automation/.cache/compiled/{manifest.id}.json)",
         *_lineage_lines(manifest),
     ]
@@ -154,7 +177,7 @@ def _bounded_latest_page(prefix: str, entries: list[str], policy: IngestPolicy |
 
 def render_packets(
     repo_root: Path,
-    packets: list[tuple[PacketManifest, RiskTier]],
+    packets: list[PacketRenderInput],
     run_id: str,
     policy: IngestPolicy | None = None,
 ) -> RenderResult:
@@ -162,11 +185,12 @@ def render_packets(
     wiki = repo_root / "wiki"
     wiki.mkdir(exist_ok=True)
     rendered_targets: list[tuple[PacketManifest, str]] = []
-    for manifest, tier in packets:
+    normalized_packets = [_normalize_packet_input(packet) for packet in packets]
+    for manifest, publish_action, risk_tier in normalized_packets:
         rel = packet_target_path(manifest.type, manifest.id)
         target = repo_root / rel
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(_packet_page(manifest, tier, run_id), encoding="utf-8")
+        target.write_text(_packet_page(manifest, publish_action, risk_tier, run_id), encoding="utf-8")
         rendered_targets.append((manifest, rel))
         changed.append(rel)
 
@@ -195,15 +219,16 @@ def render_packets(
     if LATEST_START in latest_text and LATEST_END in latest_text and latest_text.index(LATEST_START) < latest_text.index(LATEST_END):
         previous = latest_text[latest_text.index(LATEST_START) + len(LATEST_START) : latest_text.index(LATEST_END)].strip()
     new_entries = []
-    for manifest, tier in packets:
+    for manifest, publish_action, risk_tier in normalized_packets:
         rel = packet_target_path(manifest.type, manifest.id)
         lines = [
             f"### {run_id} | {manifest.id}",
             "",
             f"- link: [[{Path(rel).with_suffix('').as_posix().removeprefix('wiki/')}]]",
-            f"- tier: `{tier.value}`",
+            f"- publish_action: `{publish_action.value}`",
+            f"- risk_tier: `{risk_tier}`",
         ]
-        if tier is RiskTier.BOT_PR or manifest.type in REVIEW_TYPES:
+        if publish_action is RiskTier.BOT_PR or manifest.type in REVIEW_TYPES:
             lines.append("- review-required: true")
         new_entries.append("\n".join(lines))
     prefix = "# Latest Context\n\n[[index]] [[overview]] [[log]]\n"

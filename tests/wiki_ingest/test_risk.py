@@ -9,7 +9,7 @@ def manifest(**overrides):
         "title": "Reference",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
@@ -34,6 +34,19 @@ def test_high_risk_packet_type_goes_bot_pr():
     packet = manifest(id="exp", type="experiment", title="Run", intended_wiki_targets=["wiki/experiments/exp.md"])
 
     assert classify_risk(packet, GuardResult()).tier is RiskTier.BOT_PR
+
+
+def test_preprocessing_packet_requires_review():
+    packet = manifest(
+        id="prep",
+        type="preprocessing",
+        title="Preprocessing",
+        intended_wiki_targets=["wiki/datasets/prep.md"],
+    )
+
+    decision = classify_risk(packet, GuardResult())
+
+    assert decision.tier is RiskTier.BOT_PR
 
 
 def test_guard_failure_hard_fail():

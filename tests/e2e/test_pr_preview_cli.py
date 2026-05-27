@@ -24,7 +24,7 @@ def seed_repo(root: Path):
                 "title": "Packet",
                 "date": "2026-05-27",
                 "owner": "alice",
-                "status": "ready",
+                "status": "submitted",
                 "task": "classification",
                 "dataset": {"name": "benchmark-set", "version": "v1"},
                 "split": {"name": "dev"},

@@ -3,7 +3,7 @@ packet_type: performance
 title: Example Performance Result
 date: "2026-05-26"
 owner: replace-with-owner
-status: draft
+status: submitted
 task: benchmark-evaluation
 dataset:
   name: replace-with-dataset

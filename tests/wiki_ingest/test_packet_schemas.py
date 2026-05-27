@@ -17,7 +17,7 @@ def write_manifest(root: Path, packet_type: str, raw_paths: dict[str, str]) -> N
         "title": "Packet",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
@@ -85,7 +85,7 @@ def model_payload(**overrides):
         "ensembling": "none",
         "hardware": "cpu",
         "inference_contract": "tabular rows to probability",
-        "weights_policy": "weights stored outside packet",
+        "weights_policy": "not_in_repo",
     }
     payload.update(overrides)
     return payload
@@ -129,6 +129,38 @@ def test_complete_feature_family_passes(tmp_path):
     validate_packet_specific_schema(packet, manifest)
 
 
+def test_feature_leakage_risk_must_use_supported_value(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "feature", {"features": "features.yaml"})
+    (packet / "features.yaml").write_text(
+        yaml.safe_dump(feature_payload(leakage_risk="tentative")),
+        encoding="utf-8",
+    )
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "leakage_risk" in exc.value.message
+
+
+def test_model_weights_policy_must_use_supported_value(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "model", {"model": "model.yaml"})
+    (packet / "model.yaml").write_text(
+        yaml.safe_dump(model_payload(weights_policy="Do not store model weights in this packet.")),
+        encoding="utf-8",
+    )
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "weights_policy" in exc.value.message
+
+
 def test_performance_missing_overall_metrics_fails(tmp_path):
     packet = tmp_path / "packet"
     write_manifest(packet, "performance", {"performance": "performance.yaml"})
@@ -153,6 +185,33 @@ def test_performance_missing_overall_metrics_fails(tmp_path):
 
     assert exc.value.code is FailureCode.INVALID_MANIFEST
     assert "overall_metrics" in exc.value.message
+
+
+def test_performance_claim_status_must_use_supported_value(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "performance", {"performance": "performance.yaml"})
+    payload = {
+        "primary_metric": "accuracy",
+        "metric_definitions": {"accuracy": "correct / total"},
+        "targets": ["overall"],
+        "split_id": "dev",
+        "overall_metrics": {"accuracy": 0.82},
+        "target_metrics": {},
+        "confusion_matrices": "not computed",
+        "oof_predictions": "raw/results/oof.csv",
+        "submission_predictions": "not generated",
+        "baseline_comparison": "not compared",
+        "uncertainty": "not estimated",
+        "claim_status": "ready",
+    }
+    (packet / "performance.yaml").write_text(yaml.safe_dump(payload), encoding="utf-8")
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "claim_status" in exc.value.message
 
 
 @pytest.mark.parametrize(

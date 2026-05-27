@@ -32,7 +32,7 @@ def packet(root: Path, packet_id: str, packet_type: str, metric_expected=0.8):
         "title": packet_id,
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
@@ -90,8 +90,55 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert compiled_payload["id"] == "ref-1"
     assert compiled_payload["packet_type"] == "reference"
     assert compiled_payload["packet_root"] == "raw/users/alice/ref-1"
+    assert compiled_payload["publish_action"] == "direct_commit"
+    assert compiled_payload["risk_tier"] == "tier0-catalog"
     assert payload["packets"][0]["publish_action"] == "direct_commit"
     assert payload["packets"][0]["risk_tier"] == "tier0-catalog"
+    assert payload["risk_tier"] == "tier0-catalog"
+
+
+def test_runner_top_level_risk_tier_uses_governance_label(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = packet_with_manifest(
+        tmp_path,
+        "ref-supported",
+        {
+            "id": "ref-supported",
+            "packet_type": "reference",
+            "title": "Supported Claim",
+            "date": "2026-05-27",
+            "owner": "alice",
+            "status": "submitted",
+            "task": "source-ingest",
+            "dataset": {"name": "benchmark-set", "version": "v1"},
+            "split": {"name": "none"},
+            "model": {"family": "not-applicable"},
+            "claim_boundary": "Only applies to this source packet.",
+            "claim_status": "supported",
+            "summary": "Run summary.",
+            "raw_paths": ["result.json"],
+            "intended_wiki_targets": ["wiki/sources/ref-supported.md"],
+        },
+        {"result.json": '{"accuracy": 0.8}'},
+    )
+
+    report_path = tmp_path / "raw" / "results" / "wiki-ingest" / "risk-label" / "report.json"
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=report_path,
+        run_id="risk-label",
+    )
+
+    assert report.status == "bot_pr"
+    assert report.packets[0]["risk_tier"] == "tier4-governance"
+    assert report.risk_tier == "tier4-governance"
+    compiled_payload = json.loads((tmp_path / "automation" / ".cache" / "compiled" / "ref-supported.json").read_text())
+    rendered_text = (tmp_path / "wiki" / "sources" / "ref-supported.md").read_text(encoding="utf-8")
+    assert compiled_payload["publish_action"] == "bot_pr"
+    assert compiled_payload["risk_tier"] == "tier4-governance"
+    assert "publish_action: bot_pr" in rendered_text
+    assert "risk_tier: tier4-governance" in rendered_text
 
 
 def test_runner_compiled_payload_preserves_labeled_raw_paths(tmp_path):
@@ -105,7 +152,7 @@ def test_runner_compiled_payload_preserves_labeled_raw_paths(tmp_path):
             "title": "ref-labeled",
             "date": "2026-05-27",
             "owner": "alice",
-            "status": "ready",
+            "status": "submitted",
             "task": "source-ingest",
             "dataset": {"name": "benchmark-set", "version": "v1"},
             "split": {"name": "none"},
@@ -181,7 +228,7 @@ def test_runner_conflict_markers_hard_fail_without_mutation(tmp_path):
             "title": "Conflict",
             "date": "2026-05-27",
             "owner": "alice",
-            "status": "ready",
+            "status": "submitted",
             "task": "source-ingest",
             "dataset": {"name": "benchmark-set", "version": "v1"},
             "split": {"name": "none"},
@@ -237,7 +284,7 @@ def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
             "title": "Bad Link",
             "date": "2026-05-27",
             "owner": "alice",
-            "status": "ready",
+            "status": "submitted",
             "task": "source-ingest",
             "dataset": {"name": "benchmark-set", "version": "v1"},
             "split": {"name": "none"},
@@ -260,10 +307,33 @@ def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
     )
 
     assert report.status == "hard_fail"
+    assert report.risk_tier == "tier4-governance"
     assert report.link_lint_errors
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
     assert not (tmp_path / "wiki" / "sources" / "ref-bad-link.md").exists()
     assert not (tmp_path / "automation" / ".cache" / "compiled" / "ref-bad-link.json").exists()
+
+
+def test_runner_missing_manifest_under_raw_users_hard_fails(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = tmp_path / "raw" / "users" / "alice" / "missing-manifest"
+    packet_root.mkdir(parents=True)
+    (packet_root / "result.json").write_text('{"accuracy": 0.8}', encoding="utf-8")
+    report_path = tmp_path / "raw" / "results" / "wiki-ingest" / "missing" / "report.json"
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "result.json")],
+        report_path=report_path,
+        run_id="missing",
+    )
+
+    assert report.status == "hard_fail"
+    assert report.risk_tier == "tier4-governance"
+    assert report_path.exists()
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert payload["packet_roots"] == ["raw/users/alice/missing-manifest"]
+    assert payload["failures"][0]["code"] == "invalid_manifest"
 
 
 def test_runner_invalid_manifest_writes_hard_fail_report_without_mutation(tmp_path):
@@ -285,10 +355,29 @@ def test_runner_invalid_manifest_writes_hard_fail_report_without_mutation(tmp_pa
     )
 
     assert report.status == "hard_fail"
+    assert report.risk_tier == "tier4-governance"
     assert report_path.exists()
     payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert payload["risk_tier"] == "tier4-governance"
     assert payload["failures"][0]["code"] == "invalid_manifest"
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
+
+
+def test_runner_policy_conflict_hard_fail_uses_governance_risk(tmp_path):
+    seed_repo(tmp_path)
+    (tmp_path / "CLAUDE.md").write_text("@AGENTS.md\nrewrite raw files\n", encoding="utf-8")
+    packet_root = packet(tmp_path, "ref-policy-conflict", "reference")
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "wiki-ingest" / "policy" / "report.json",
+        run_id="policy",
+    )
+
+    assert report.status == "hard_fail"
+    assert report.risk_tier == "tier4-governance"
+    assert any(failure["code"] == "policy_conflict" for failure in report.failures)
 
 
 def test_runner_zero_packet_skipped_no_mutation(tmp_path):

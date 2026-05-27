@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -68,7 +68,13 @@ jobs:
           PYTHONPATH: src
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            git diff --name-only HEAD^ HEAD > changed-paths.txt
+            base="${{ github.event.before }}"
+            head="${{ github.sha }}"
+            if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+              git diff-tree --no-commit-id --name-only -r "$head" > changed-paths.txt
+            else
+              git diff --name-only "$base" "$head" > changed-paths.txt
+            fi
           else
             python - <<'PY'
           import os

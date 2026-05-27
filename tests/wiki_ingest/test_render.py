@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from team_llm_wiki.wiki_ingest.models import PacketManifest, PacketType, RiskTier
+from team_llm_wiki.wiki_ingest.models import PacketManifest, PacketType, RiskTier, RiskTierLabel
 from team_llm_wiki.wiki_ingest.policy import IngestPolicy
 from team_llm_wiki.wiki_ingest.render import render_packets
 from team_llm_wiki.wiki_ingest.health import check_wiki_health
@@ -33,7 +33,7 @@ def manifest(**overrides):
         "title": "Reference",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1"},
         "split": {"name": "dev"},
@@ -87,6 +87,24 @@ def test_render_source_index_log_and_latest_context(tmp_path):
         "wiki/log.md",
         "wiki/latest-context.md",
     ]
+
+
+def test_render_packet_page_separates_publish_action_from_risk_tier(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    packet = manifest(id="risk-ref", type=PacketType.REFERENCE, title="Risk Ref")
+
+    render_packets(
+        tmp_path,
+        [(packet, RiskTier.BOT_PR, RiskTierLabel.TIER4_GOVERNANCE)],
+        run_id="run-risk",
+    )
+
+    text = (tmp_path / "wiki" / "sources" / "risk-ref.md").read_text(encoding="utf-8")
+    latest = (tmp_path / "wiki" / "latest-context.md").read_text(encoding="utf-8")
+    assert "publish_action: bot_pr" in text
+    assert "risk_tier: tier4-governance" in text
+    assert "- publish_action: `bot_pr`" in latest
+    assert "- risk_tier: `tier4-governance`" in latest
 
 
 def test_render_canonical_routes_and_review_notes(tmp_path):

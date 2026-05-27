@@ -636,7 +636,12 @@ def test_compile_packet_contains_normalized_lineage_fields():
         intended_wiki_targets=["wiki/experiments/"],
     )
 
-    compiled = compile_packet(manifest, packet_root="raw/users/alice/experiments/demo", risk_tier="bot_pr")
+    compiled = compile_packet(
+        manifest,
+        packet_root="raw/users/alice/experiments/demo",
+        risk_tier="tier3-performance",
+        publish_action="bot_pr",
+    )
 
     assert compiled["id"] == "demo"
     assert compiled["owner"] == "alice"
@@ -771,7 +776,7 @@ def test_render_pr_comment_includes_preview_and_failures():
         {
             "status": "bot_pr",
             "packet_roots": ["raw/users/alice/experiments/demo"],
-            "packets": [{"id": "demo", "type": "experiment", "risk_tier": "bot_pr"}],
+            "packets": [{"id": "demo", "type": "experiment", "publish_action": "bot_pr", "risk_tier": "tier3-performance"}],
             "generated_paths": ["wiki/experiments/demo.md"],
             "failures": [{"code": "metric_mismatch", "message": "raw mismatch"}],
         }

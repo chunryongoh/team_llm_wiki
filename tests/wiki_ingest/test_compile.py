@@ -11,7 +11,7 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         title="Experiment One",
         date="2026-05-27",
         owner="alice",
-        status="ready",
+        status="submitted",
         task="classification",
         dataset={"name": "benchmark-set", "version": "v1"},
         split={"name": "dev", "group_key": "patient_id"},
@@ -25,7 +25,12 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         claims=[Claim(status="supported", text="Accuracy improved.")],
     )
 
-    payload = compile_packet(manifest, packet_root="raw/users/alice/exp-1", risk_tier="bot_pr")
+    payload = compile_packet(
+        manifest,
+        packet_root="raw/users/alice/exp-1",
+        risk_tier="tier3-performance",
+        publish_action="bot_pr",
+    )
 
     assert payload == {
         "id": "exp-1",
@@ -33,7 +38,7 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         "title": "Experiment One",
         "date": "2026-05-27",
         "owner": "alice",
-        "status": "ready",
+        "status": "submitted",
         "task": "classification",
         "dataset": {"name": "benchmark-set", "version": "v1", "hash": None},
         "split": {"name": "dev", "group_key": "patient_id", "fold_file": None},
@@ -57,7 +62,8 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         ],
         "claims": [{"status": "supported", "text": "Accuracy improved."}],
         "packet_root": "raw/users/alice/exp-1",
-        "risk_tier": "bot_pr",
+        "risk_tier": "tier3-performance",
+        "publish_action": "bot_pr",
     }
     json.dumps(payload, sort_keys=True)
 
@@ -69,7 +75,7 @@ def test_compile_packet_preserves_unlabeled_raw_paths_as_list():
         title="Experiment Two",
         date="2026-05-27",
         owner="alice",
-        status="ready",
+        status="submitted",
         task="classification",
         dataset={"name": "benchmark-set", "version": "v1"},
         split={"name": "dev"},
@@ -81,7 +87,7 @@ def test_compile_packet_preserves_unlabeled_raw_paths_as_list():
         intended_wiki_targets=["wiki/experiments/exp-2.md"],
     )
 
-    payload = compile_packet(manifest, packet_root="raw/users/alice/exp-2", risk_tier="bot_pr")
+    payload = compile_packet(manifest, packet_root="raw/users/alice/exp-2", risk_tier="tier3-performance")
 
     assert payload["raw_paths"] == ["result.json", "folds.csv"]
     json.dumps(payload, sort_keys=True)
