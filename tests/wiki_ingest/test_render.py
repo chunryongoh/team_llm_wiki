@@ -136,6 +136,32 @@ def test_render_spec_metric_uses_raw_evidence_fields(tmp_path):
     assert "raw-evidence-backed" in text
 
 
+def test_render_packet_page_includes_full_manifest_lineage(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    packet = manifest(id="lineage-ref", type="reference", title="Lineage Ref")
+
+    render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-lineage")
+
+    text = (tmp_path / "wiki" / "sources" / "lineage-ref.md").read_text(encoding="utf-8")
+    assert "owner: alice" in text
+    assert "task: classification" in text
+    assert "dataset:" in text
+    assert "name: benchmark-set" in text
+    assert "split:" in text
+    assert "name: dev" in text
+    assert "model:" in text
+    assert "family: llama" in text
+    assert "claim_boundary: Only applies to the dev split." in text
+    assert "claim_status: tentative" in text
+    assert "- owner: `alice`" in text
+    assert "- task: `classification`" in text
+    assert "- dataset: `benchmark-set` (`v1`)" in text
+    assert "- split: `dev`" in text
+    assert "- model: `llama`" in text
+    assert "- claim_boundary: Only applies to the dev split." in text
+    assert "- claim_status: `tentative`" in text
+
+
 def test_render_preserves_existing_generated_index_entries(tmp_path):
     (tmp_path / "wiki").mkdir()
     (tmp_path / "wiki" / "index.md").write_text(

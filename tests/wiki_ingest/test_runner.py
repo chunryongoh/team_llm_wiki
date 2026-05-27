@@ -80,8 +80,17 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert payload["status"] == "direct_commit"
     assert payload["input_changed_paths"] == ["raw/users/alice/ref-1/manifest.yaml"]
     assert "wiki/sources/ref-1.md" in payload["generated_paths"]
+    assert "automation/.cache/compiled/ref-1.json" in payload["generated_paths"]
+    assert "automation/.cache/compiled/ref-1.json" in payload["changed_paths"]
     assert payload["report_path"] == "raw/results/wiki-ingest/run-1/report.json"
     assert payload["timing_ms"] >= 0
+    compiled = tmp_path / "automation" / ".cache" / "compiled" / "ref-1.json"
+    assert compiled.exists()
+    compiled_payload = json.loads(compiled.read_text(encoding="utf-8"))
+    assert compiled_payload["id"] == "ref-1"
+    assert compiled_payload["packet_type"] == "reference"
+    assert compiled_payload["packet_root"] == "raw/users/alice/ref-1"
+    assert compiled_payload["risk_tier"] == "direct_commit"
 
 
 def test_runner_hard_fail_does_not_mutate_wiki(tmp_path):
@@ -138,6 +147,7 @@ def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
     assert report.link_lint_errors
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
     assert not (tmp_path / "wiki" / "sources" / "ref-bad-link.md").exists()
+    assert not (tmp_path / "automation" / ".cache" / "compiled" / "ref-bad-link.json").exists()
 
 
 def test_runner_invalid_manifest_writes_hard_fail_report_without_mutation(tmp_path):

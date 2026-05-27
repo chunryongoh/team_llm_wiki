@@ -3,7 +3,9 @@ from __future__ import annotations
 import html
 from pathlib import Path
 
-from .models import PacketManifest, PacketType, RenderResult, RiskTier
+import yaml
+
+from .models import PacketManifest, PacketType, RenderResult, RiskTier, as_jsonable
 from .policy import IngestPolicy
 from .routes import packet_target_path
 
@@ -55,19 +57,58 @@ def _append_once(path: Path, entry: str) -> None:
         path.write_text(text.rstrip() + "\n\n" + entry.rstrip() + "\n", encoding="utf-8")
 
 
+def _packet_frontmatter(manifest: PacketManifest, tier: RiskTier) -> str:
+    frontmatter = {
+        "id": manifest.id,
+        "packet_type": manifest.type,
+        "type": manifest.type,
+        "title": manifest.title,
+        "date": manifest.date,
+        "owner": manifest.owner,
+        "status": manifest.status,
+        "task": manifest.task,
+        "dataset": manifest.dataset,
+        "split": manifest.split,
+        "model": manifest.model,
+        "claim_boundary": manifest.claim_boundary,
+        "claim_status": manifest.claim_status,
+        "summary": manifest.summary,
+        "raw_paths": manifest.raw_paths,
+        "intended_wiki_targets": manifest.intended_wiki_targets,
+        "metrics_to_verify": manifest.metrics_to_verify,
+        "claims": manifest.claims,
+        "risk_tier": tier.value,
+    }
+    return yaml.safe_dump(as_jsonable(frontmatter), sort_keys=False).strip()
+
+
+def _lineage_lines(manifest: PacketManifest) -> list[str]:
+    dataset = manifest.dataset
+    split = manifest.split
+    model = manifest.model
+    return [
+        f"- owner: `{manifest.owner}`",
+        f"- status: `{manifest.status}`",
+        f"- task: `{manifest.task}`",
+        f"- dataset: `{dataset.name}` (`{dataset.version}`)",
+        f"- split: `{split.name}`",
+        f"- model: `{model.family}`",
+        f"- claim_boundary: {manifest.claim_boundary}",
+        f"- claim_status: `{manifest.claim_status}`",
+    ]
+
+
 def _packet_page(manifest: PacketManifest, tier: RiskTier, run_id: str) -> str:
     lines = [
         "---",
-        f"id: {manifest.id}",
-        f"type: {manifest.type.value}",
-        f"status: {manifest.status}",
-        f"risk_tier: {tier.value}",
+        _packet_frontmatter(manifest, tier),
         "---",
         "",
         f"# {manifest.title}",
         "",
         f"- packet: `{manifest.id}`",
         f"- generated_by_run: `{run_id}`",
+        *_lineage_lines(manifest),
     ]
     if manifest.date:
         lines.append(f"- date: `{manifest.date}`")

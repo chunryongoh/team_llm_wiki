@@ -6,6 +6,7 @@ import tempfile
 import time
 from pathlib import Path
 
+from .compile import compile_packet
 from .guards import run_guard_checks
 from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
@@ -32,6 +33,22 @@ def _write_report(repo_root: Path, report: IngestReport, report_path: Path | Non
 
 def _default_report_path(repo_root: Path, run_id: str) -> Path:
     return repo_root / "raw" / "results" / "wiki-ingest" / run_id / "report.json"
+
+
+def _compiled_packet_path(packet_id: str) -> str:
+    return f"automation/.cache/compiled/{packet_id}.json"
+
+
+def _write_compiled_packets(staging: Path, packets: list[tuple], packet_roots: list[str]) -> list[str]:
+    compiled_paths: list[str] = []
+    for (manifest, tier), packet_root in zip(packets, packet_roots, strict=True):
+        rel = _compiled_packet_path(manifest.id)
+        target = staging / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        payload = compile_packet(manifest, packet_root=packet_root, risk_tier=tier.value)
+        target.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        compiled_paths.append(rel)
+    return compiled_paths
 
 
 def _staged_subset(repo_root: Path, packet_roots: list[Path]) -> Path:
@@ -136,14 +153,16 @@ def run_wiki_main_ingest(
     try:
         policy = load_policy(repo_root)
         rendered = render_packets(staging, packets, run_id=run_id, policy=policy)
+        compiled_paths = _write_compiled_packets(staging, packets, report.packet_roots)
         link_errors = lint_wiki_links(staging, rendered.changed_paths)
         report.link_lint_errors = [as_jsonable(error) for error in link_errors]
         if link_errors:
             report.status = "hard_fail"
         else:
-            report.generated_paths = rendered.changed_paths
-            report.changed_paths = list(rendered.changed_paths)
-            for rel in rendered.changed_paths:
+            generated_paths = [*rendered.changed_paths, *compiled_paths]
+            report.generated_paths = generated_paths
+            report.changed_paths = list(generated_paths)
+            for rel in generated_paths:
                 source = staging / rel
                 target = repo_root / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
