@@ -78,6 +78,10 @@ def test_preview_wiki_ingest_outputs_json_without_mutating_wiki(tmp_path):
     assert payload["status"] == "direct_commit"
     assert payload["run_id"] == "preview"
     assert payload["packet_roots"] == ["raw/users/alice/pkt-1"]
+    assert "wiki/sources/pkt-1.md" in payload["generated_paths"]
+    assert "automation/.cache/compiled/pkt-1.json" in payload["generated_paths"]
+    assert "wiki/sources/pkt-1.md" in payload["changed_paths"]
+    assert "automation/.cache/compiled/pkt-1.json" in payload["changed_paths"]
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
     assert not (tmp_path / "wiki" / "sources" / "pkt-1.md").exists()
     assert not (tmp_path / "automation" / ".cache" / "compiled" / "pkt-1.json").exists()

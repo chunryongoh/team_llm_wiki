@@ -88,3 +88,20 @@ def test_render_pr_comment_includes_preview_details():
     assert "raw/users/alice/pkt-1" in comment
     assert "wiki/sources/pkt-1.md" in comment
     assert "invalid_manifest" in comment
+
+
+def test_render_pr_comment_preserves_failures_with_many_long_paths():
+    long_paths = [f"wiki/sources/{'very-long-segment-' * 200}{idx}.md" for idx in range(200)]
+
+    comment = render_pr_comment(
+        {
+            "status": "hard_fail",
+            "packet_roots": long_paths,
+            "generated_paths": long_paths,
+            "failures": [{"code": "invalid_manifest", "message": "missing title"}],
+        }
+    )
+
+    assert "### Failures" in comment
+    assert "invalid_manifest" in comment
+    assert "missing title" in comment

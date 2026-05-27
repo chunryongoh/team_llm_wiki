@@ -14,6 +14,7 @@ from .models import IngestFailure, IngestReport, RiskTier, as_jsonable
 from .policy import load_policy
 from .render import render_packets
 from .risk import classify_risk
+from .routes import packet_target_path
 
 
 def _rel(repo_root: Path, path: Path) -> str:
@@ -49,6 +50,16 @@ def _write_compiled_packets(staging: Path, packets: list[tuple], packet_roots: l
         target.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         compiled_paths.append(rel)
     return compiled_paths
+
+
+def _predicted_generated_paths(packets: list[tuple]) -> list[str]:
+    paths: list[str] = []
+    for manifest, _tier in packets:
+        paths.append(packet_target_path(manifest.type, manifest.id))
+    if packets:
+        paths.extend(["wiki/index.md", "wiki/log.md", "wiki/latest-context.md"])
+        paths.extend(_compiled_packet_path(manifest.id) for manifest, _tier in packets)
+    return list(dict.fromkeys(paths))
 
 
 def _staged_subset(repo_root: Path, packet_roots: list[Path]) -> Path:
@@ -130,7 +141,10 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
 
 
 def plan_wiki_main_ingest(repo_root: Path, changed_paths: list[str], run_id: str = "plan") -> IngestReport:
-    report, _packets = _build_report(repo_root, changed_paths, run_id)
+    report, packets = _build_report(repo_root, changed_paths, run_id)
+    if report.status not in {"skipped", "hard_fail"}:
+        report.generated_paths = _predicted_generated_paths(packets)
+        report.changed_paths = list(report.generated_paths)
     return report
 
 

@@ -8,6 +8,7 @@ from typing import Any
 MAX_COMMENT_CHARS = 60000
 MAX_LIST_ITEMS = 25
 MAX_FAILURE_MESSAGE_CHARS = 500
+MAX_PATH_CHARS = 180
 
 
 def _bounded_text(value: Any, limit: int = MAX_FAILURE_MESSAGE_CHARS) -> str:
@@ -19,7 +20,7 @@ def _bounded_text(value: Any, limit: int = MAX_FAILURE_MESSAGE_CHARS) -> str:
 
 def _append_path_section(lines: list[str], title: str, paths: list[Any]) -> None:
     lines.extend(["", f"### {title}"])
-    clean = [str(path).strip() for path in paths if str(path).strip()]
+    clean = [_bounded_text(path, MAX_PATH_CHARS) for path in paths if str(path).strip()]
     if not clean:
         lines.append("- none")
         return
@@ -43,9 +44,6 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
     if payload.get("timing_ms") is not None:
         lines.append(f"- timing: `{payload['timing_ms']} ms`")
 
-    _append_path_section(lines, "Packet roots", list(payload.get("packet_roots") or []))
-    _append_path_section(lines, "Generated paths", list(payload.get("generated_paths") or []))
-
     failures = list(payload.get("failures") or [])
     lines.extend(["", "### Failures"])
     if not failures:
@@ -62,6 +60,9 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
         remaining = len(failures) - MAX_LIST_ITEMS
         if remaining > 0:
             lines.append(f"- and {remaining} more")
+
+    _append_path_section(lines, "Packet roots", list(payload.get("packet_roots") or []))
+    _append_path_section(lines, "Generated paths", list(payload.get("generated_paths") or []))
 
     comment = "\n".join(lines).rstrip() + "\n"
     if len(comment) <= MAX_COMMENT_CHARS:

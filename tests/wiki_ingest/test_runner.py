@@ -151,6 +151,22 @@ def test_runner_hard_fail_does_not_mutate_wiki(tmp_path):
     assert not (tmp_path / "wiki" / "experiments" / "exp-1.md").exists()
 
 
+def test_plan_hard_fail_does_not_predict_generated_paths(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = packet(tmp_path, "exp-preview-fail", "experiment", metric_expected=0.9)
+
+    report = plan_wiki_main_ingest(
+        tmp_path,
+        [str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        "preview-fail",
+    )
+
+    assert report.status == "hard_fail"
+    assert report.generated_paths == []
+    assert report.changed_paths == []
+    assert not (tmp_path / "wiki" / "experiments" / "exp-preview-fail.md").exists()
+
+
 def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
     seed_repo(tmp_path)
     packet_root = packet_with_manifest(
