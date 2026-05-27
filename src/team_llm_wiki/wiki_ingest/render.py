@@ -78,9 +78,9 @@ def _packet_page(manifest: PacketManifest, tier: RiskTier, run_id: str) -> str:
         lines.append("- review-required: true")
     lines.extend(["", "## Summary", "", manifest.summary or "No summary provided."])
     if manifest.metrics_to_verify:
-        lines.extend(["", "## Metrics", ""])
+        lines.extend(["", "## Metrics", "", "raw-evidence-backed metric checks:"])
         lines.extend(
-            f"- {metric.name}: expected `{metric.expected}`, actual `{metric.actual}`, tolerance `{metric.tolerance}`"
+            f"- `{metric.metric_key}`: reported `{metric.reported_value}`, raw_path `{metric.raw_path}`, tolerance `{metric.tolerance}`"
             for metric in manifest.metrics_to_verify
         )
     if manifest.claims:

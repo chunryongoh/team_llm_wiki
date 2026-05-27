@@ -62,6 +62,23 @@ def _check_split_group_overlap(packet_root: Path, manifest: PacketManifest) -> l
     groups_by_fold: dict[str, dict[str, set[str]]] = {}
     with source.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
+        columns = set(reader.fieldnames or [])
+        if split.group_key not in columns:
+            return [
+                GuardViolation(
+                    FailureCode.INVALID_MANIFEST,
+                    f"split fold_file missing group_key column: {split.group_key}",
+                    split.fold_file,
+                )
+            ]
+        if "split" not in columns and "role" not in columns:
+            return [
+                GuardViolation(
+                    FailureCode.INVALID_MANIFEST,
+                    "split fold_file must include split or role column",
+                    split.fold_file,
+                )
+            ]
         for row in reader:
             role = (row.get("split") or row.get("role") or "").strip().lower()
             if role == "train":

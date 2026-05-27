@@ -193,6 +193,38 @@ def test_guard_allows_grouped_split_non_overlap(tmp_path):
     assert result.failures == []
 
 
+def test_guard_rejects_grouped_split_fold_file_missing_group_key_column(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["result.json", "folds.csv"],
+        split={"name": "dev", "fold_file": "folds.csv", "group_key": "patient_id"},
+    )
+    (packet / "folds.csv").write_text("split,subject_id\ntrain,p1\nvalid,p2\n", encoding="utf-8")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert any(
+        failure.code is FailureCode.INVALID_MANIFEST and "patient_id" in failure.message
+        for failure in result.failures
+    )
+
+
+def test_guard_rejects_grouped_split_fold_file_missing_split_or_role_column(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["result.json", "folds.csv"],
+        split={"name": "dev", "fold_file": "folds.csv", "group_key": "patient_id"},
+    )
+    (packet / "folds.csv").write_text("fold,patient_id\n0,p1\n0,p2\n", encoding="utf-8")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert any(
+        failure.code is FailureCode.INVALID_MANIFEST and "split or role" in failure.message
+        for failure in result.failures
+    )
+
+
 def test_guard_reports_missing_split_fold_file(tmp_path):
     packet, manifest = make_packet(
         tmp_path,

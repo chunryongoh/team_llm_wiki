@@ -111,6 +111,31 @@ def test_render_canonical_routes_and_review_notes(tmp_path):
     assert "review-required" in (tmp_path / "wiki" / "features" / "feat.md").read_text(encoding="utf-8")
 
 
+def test_render_spec_metric_uses_raw_evidence_fields(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    packet = manifest(
+        id="metric-ref",
+        type="reference",
+        title="Metric Ref",
+        raw_paths=["metrics/result.json"],
+        metrics_to_verify=[
+            {
+                "raw_path": "metrics/result.json",
+                "metric_key": "scores.accuracy",
+                "reported_value": 0.82,
+                "tolerance": 0.001,
+            }
+        ],
+    )
+
+    render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-metric")
+
+    text = (tmp_path / "wiki" / "sources" / "metric-ref.md").read_text(encoding="utf-8")
+    assert "None" not in text
+    assert "- `scores.accuracy`: reported `0.82`, raw_path `metrics/result.json`, tolerance `0.001`" in text
+    assert "raw-evidence-backed" in text
+
+
 def test_render_preserves_existing_generated_index_entries(tmp_path):
     (tmp_path / "wiki").mkdir()
     (tmp_path / "wiki" / "index.md").write_text(
