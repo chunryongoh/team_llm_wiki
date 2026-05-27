@@ -140,6 +140,20 @@ def test_guard_verifies_metric_against_raw_yaml_dotted_key(tmp_path):
     assert result.failures == []
 
 
+@pytest.mark.parametrize("raw_metric", [".nan", ".inf", "-.inf"])
+def test_guard_rejects_non_finite_raw_metric_values(tmp_path, raw_metric):
+    packet, manifest = make_packet(
+        tmp_path,
+        raw_paths=["metrics.yaml"],
+        metrics_to_verify=[{"raw_path": "metrics.yaml", "metric_key": "accuracy", "reported_value": 0.82}],
+    )
+    (packet / "metrics.yaml").write_text(f"accuracy: {raw_metric}\n", encoding="utf-8")
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert FailureCode.METRIC_MISMATCH in [failure.code for failure in result.failures]
+
+
 def test_manifest_rejects_metric_actual_without_raw_path(tmp_path):
     with pytest.raises(IngestFailure) as exc_info:
         make_packet(

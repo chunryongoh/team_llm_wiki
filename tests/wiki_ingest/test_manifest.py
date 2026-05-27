@@ -96,6 +96,17 @@ def test_load_manifest_rejects_conflicting_packet_type_alias(tmp_path):
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
+def test_load_manifest_rejects_malformed_yaml_as_invalid_manifest(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    packet.mkdir(parents=True)
+    (packet / "manifest.yaml").write_text("id: [unterminated\n", encoding="utf-8")
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
 @pytest.mark.parametrize(
     "field",
     [
@@ -405,9 +416,12 @@ def test_manifest_schema_rejects_control_character_fields(tmp_path, manifest_ove
     "manifest_overrides",
     [
         {"id": "Bad_ID"},
+        {"id": "pkt-1-"},
         {"id": "bad/id"},
         {"id": "bad\nid"},
+        {"claim_status": ["tentative"]},
         {"claims": [{"status": "proven", "text": "unsupported status"}]},
+        {"claims": [{"status": ["tentative"], "text": "unsupported status"}]},
         {"claims": [{"status": "tentative", "text": "claim", "unexpected": "extra"}]},
         {"claims": ["not-a-mapping"]},
         {"metrics_to_verify": [{"raw_path": "result.json", "metric_key": "accuracy", "reported_value": "high"}]},

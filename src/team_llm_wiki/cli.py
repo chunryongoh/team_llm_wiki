@@ -67,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "preview-wiki-ingest":
             report = plan_wiki_main_ingest(Path(args.repo_root), _changed_paths(args), run_id=args.run_id)
             _print_json(report, sys.stdout)
-            return 0
+            return 1 if report.status == "hard_fail" else 0
         if args.command == "run-wiki-main-ingest":
             report = run_wiki_main_ingest(
                 Path(args.repo_root),

@@ -44,6 +44,8 @@ Packets live under `raw/users/<user>/<packet-id>/manifest.yaml`. Use `packet_typ
 
 Required manifest fields are `id`, `packet_type` or legacy `type`, `title`, `date`, `owner`, `status`, `task`, `dataset`, `split`, `model`, `claim_boundary`, `claim_status`, `summary`, `raw_paths`, and `intended_wiki_targets`.
 
+Shared examples in `raw/shared/templates/wiki-packet/` are manifest-shaped templates. When copying one into a packet root, also create every packet-specific file referenced by `raw_paths` such as `notes.md`, `performance.yaml`, or `folds/example.txt`, or intentionally split the template content between `manifest.yaml` and those raw files before running ingest.
+
 Useful maintenance commands:
 
 ```bash

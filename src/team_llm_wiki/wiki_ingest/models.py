@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field, is_dataclass
 from enum import Enum
+import math
 from pathlib import Path
 import re
 from typing import Any
@@ -91,6 +92,14 @@ class MetricCheck:
                 self.actual = float(self.actual)
         except (TypeError, ValueError) as exc:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} has non-numeric values") from exc
+        if not math.isfinite(self.reported_value):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} reported_value must be finite")
+        if not math.isfinite(self.tolerance):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} tolerance must be finite")
+        if self.expected is not None and not math.isfinite(self.expected):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} expected must be finite")
+        if self.actual is not None and not math.isfinite(self.actual):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"metric {self.metric_key} actual must be finite")
 
     def is_consistent(self) -> bool:
         if self.actual is None:
@@ -104,7 +113,7 @@ class Claim:
     text: str = ""
 
     def __post_init__(self) -> None:
-        if self.status not in {"tentative", "supported", "disputed", "superseded"}:
+        if not isinstance(self.status, str) or self.status not in {"tentative", "supported", "disputed", "superseded"}:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.status}")
         if not isinstance(self.text, str):
             raise IngestFailure(FailureCode.INVALID_MANIFEST, "claim text must be a string")
@@ -183,7 +192,12 @@ class PacketManifest:
         self.task = _require_non_empty_string(self.task, "task")
         self.claim_boundary = _require_non_empty_string(self.claim_boundary, "claim_boundary")
         self.summary = _require_non_empty_string(self.summary, "summary")
-        if self.claim_status not in {"tentative", "supported", "disputed", "superseded"}:
+        if not isinstance(self.claim_status, str) or self.claim_status not in {
+            "tentative",
+            "supported",
+            "disputed",
+            "superseded",
+        }:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid claim status: {self.claim_status}")
         try:
             if isinstance(self.dataset, DatasetRef):
@@ -301,7 +315,7 @@ def as_jsonable(value: Any) -> Any:
     return value
 
 
-ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+ID_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
 CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 

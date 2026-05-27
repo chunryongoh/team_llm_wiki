@@ -1,4 +1,5 @@
 from pathlib import Path
+import math
 
 import pytest
 
@@ -115,6 +116,21 @@ def test_manifest_rejects_invalid_full_shape_fields(overrides):
 
 
 @pytest.mark.parametrize(
+    "overrides",
+    [
+        {"id": "pkt-1-"},
+        {"claim_status": ["tentative"]},
+        {"claims": [{"status": ["tentative"], "text": "claim"}]},
+    ],
+)
+def test_manifest_rejects_runtime_schema_drift_shapes(overrides):
+    with pytest.raises(IngestFailure) as exc:
+        PacketManifest(**manifest_data(**overrides))
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
+@pytest.mark.parametrize(
     "raw_paths",
     [
         {"metrics": ["result.json"]},
@@ -135,6 +151,24 @@ def test_metric_check_uses_absolute_tolerance():
     assert not MetricCheck(
         raw_path="result.json", metric_key="accuracy", reported_value=0.9, actual=0.92, tolerance=0.001
     ).is_consistent()
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": math.nan},
+        {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": math.inf},
+        {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.9, "tolerance": math.nan},
+        {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.9, "expected": math.nan},
+        {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.9, "actual": math.inf},
+        {"raw_path": "result.json", "name": "accuracy", "expected": math.nan},
+    ],
+)
+def test_metric_check_rejects_non_finite_numeric_values(kwargs):
+    with pytest.raises(IngestFailure) as exc:
+        MetricCheck(**kwargs)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
 def test_as_jsonable_converts_enums_paths_and_dataclasses():

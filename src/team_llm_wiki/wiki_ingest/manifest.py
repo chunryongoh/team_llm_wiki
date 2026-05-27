@@ -40,7 +40,10 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     manifest_path = packet_root / "manifest.yaml"
     if not manifest_path.exists():
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"missing manifest: {manifest_path}")
-    raw: Any = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+    try:
+        raw: Any = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as exc:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest YAML could not be parsed: {manifest_path}") from exc
     if not isinstance(raw, dict):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, "manifest must be a mapping")
     if "packet_type" in raw and "type" in raw and raw["packet_type"] != raw["type"]:

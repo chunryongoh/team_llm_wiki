@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import math
 import os
 import re
 from pathlib import Path
@@ -45,7 +46,10 @@ def _raw_metric_value(packet_root: Path, metric) -> float:
         raise ValueError(f"metric raw path missing: {metric.raw_path}")
     data = yaml.safe_load(source.read_text(encoding="utf-8"))
     key = metric.metric_key
-    return float(_lookup_metric_value(data, key))
+    value = float(_lookup_metric_value(data, key))
+    if not math.isfinite(value):
+        raise ValueError(f"metric raw value is not finite: {metric.metric_key}")
+    return value
 
 
 def _check_split_group_overlap(packet_root: Path, manifest: PacketManifest) -> list[GuardViolation]:
