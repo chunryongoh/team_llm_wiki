@@ -96,7 +96,11 @@ def _parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
 
 
 def _is_orphan_claim_excluded(rel_path: str) -> bool:
-    return rel_path in ORPHAN_AND_CLAIM_CHECK_EXCLUDES or rel_path.startswith("wiki/team/")
+    return (
+        rel_path in ORPHAN_AND_CLAIM_CHECK_EXCLUDES
+        or rel_path.startswith("wiki/team/")
+        or rel_path.startswith("wiki/") and rel_path.endswith("/README.md")
+    )
 
 
 def _has_raw_evidence(frontmatter: dict[str, str], text: str) -> bool:
@@ -145,9 +149,7 @@ def _has_metric_verification(frontmatter: dict[str, str], text: str) -> bool:
 
 
 def _performance_metric_errors(rel_path: str, frontmatter: dict[str, str], text: str) -> list[HealthError]:
-    page_type = frontmatter.get("type", "").strip()
-    is_performance_page = rel_path.startswith("wiki/performance/") or page_type == "performance"
-    if is_performance_page and _has_performance_metric_content(text) and not _has_metric_verification(frontmatter, text):
+    if _has_performance_metric_content(text) and not _has_metric_verification(frontmatter, text):
         return [
             HealthError(
                 "performance_metric_unverified",
@@ -169,10 +171,12 @@ def _expanded_health_errors(repo_root: Path) -> list[HealthError]:
         text = path.read_text(encoding="utf-8")
         frontmatter, _body = _parse_frontmatter(text)
         if not _is_orphan_claim_excluded(rel_path):
-            if not _is_indexed(index_text, rel_path):
+            is_indexed = _is_indexed(index_text, rel_path)
+            if not is_indexed:
                 errors.append(HealthError("orphan_wiki_page", f"{rel_path} is missing from wiki/index.md", rel_path))
             errors.extend(_claim_errors(rel_path, frontmatter, text))
-        errors.extend(_performance_metric_errors(rel_path, frontmatter, text))
+            if is_indexed:
+                errors.extend(_performance_metric_errors(rel_path, frontmatter, text))
     return errors
 
 

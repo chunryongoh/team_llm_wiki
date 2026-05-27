@@ -100,6 +100,16 @@ def test_health_accepts_indexed_wiki_link_without_md(tmp_path):
     assert not any(error.code == "orphan_wiki_page" for error in report.errors)
 
 
+def test_health_excludes_section_readme_landing_page_from_orphan_checks(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "performance").mkdir()
+    (tmp_path / "wiki" / "performance" / "README.md").write_text("# Performance\n", encoding="utf-8")
+
+    report = check_wiki_health(tmp_path)
+
+    assert not any(error.code == "orphan_wiki_page" for error in report.errors)
+
+
 def test_health_detects_supported_claim_missing_raw(tmp_path):
     seed_clean(tmp_path)
     (tmp_path / "wiki" / "models").mkdir()
@@ -184,6 +194,32 @@ def test_health_detects_performance_metric_unverified(tmp_path):
         "# Index\n\n"
         "<!-- wiki-ingest:index:start -->\n"
         "- [Leaderboard](performance/leaderboard.md)\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path)
+
+    assert any(error.code == "performance_metric_unverified" for error in report.errors)
+
+
+def test_health_detects_unverified_metrics_on_indexed_non_performance_page(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "models").mkdir()
+    (tmp_path / "wiki" / "models" / "candidate.md").write_text(
+        "---\n"
+        "type: model\n"
+        "date: 2026-05-20\n"
+        "---\n"
+        "# Candidate model\n\n"
+        "## Metrics\n\n"
+        "- accuracy: 0.91\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "wiki" / "index.md").write_text(
+        "# Index\n\n"
+        "<!-- wiki-ingest:index:start -->\n"
+        "- [Candidate](models/candidate.md)\n"
         "<!-- wiki-ingest:index:end -->\n",
         encoding="utf-8",
     )
