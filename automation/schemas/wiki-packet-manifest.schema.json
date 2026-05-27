@@ -27,6 +27,65 @@
       "required": ["type"]
     }
   ],
+  "allOf": [
+    {
+      "if": {
+        "required": ["packet_type", "type"]
+      },
+      "then": {
+        "oneOf": [
+          {
+            "properties": {
+              "packet_type": {"const": "reference"},
+              "type": {"const": "reference"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "meeting"},
+              "type": {"const": "meeting"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "experiment"},
+              "type": {"const": "experiment"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "feature"},
+              "type": {"const": "feature"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "model"},
+              "type": {"const": "model"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "performance"},
+              "type": {"const": "performance"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "preprocessing"},
+              "type": {"const": "preprocessing"}
+            }
+          },
+          {
+            "properties": {
+              "packet_type": {"const": "augmentation"},
+              "type": {"const": "augmentation"}
+            }
+          }
+        ]
+      }
+    }
+  ],
   "additionalProperties": true,
   "properties": {
     "id": {
@@ -79,7 +138,7 @@
     "dataset": {
       "type": "object",
       "required": ["name", "version"],
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -98,7 +157,7 @@
     "split": {
       "type": "object",
       "required": ["name"],
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -118,7 +177,7 @@
     "model": {
       "type": "object",
       "required": ["family"],
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "family": {
           "type": "string",

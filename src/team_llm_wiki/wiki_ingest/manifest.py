@@ -43,6 +43,8 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     raw: Any = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
     if not isinstance(raw, dict):
         raise IngestFailure(FailureCode.INVALID_MANIFEST, "manifest must be a mapping")
+    if "packet_type" in raw and "type" in raw and raw["packet_type"] != raw["type"]:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, "manifest packet_type and type fields conflict")
     if "packet_type" in raw:
         raw["type"] = raw["packet_type"]
     known = {

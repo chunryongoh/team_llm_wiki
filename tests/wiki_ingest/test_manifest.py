@@ -38,6 +38,11 @@ def write_manifest(root: Path, **overrides):
     (root / "manifest.yaml").write_text(yaml.safe_dump(data), encoding="utf-8")
 
 
+def load_manifest_schema() -> dict:
+    repo_root = Path(__file__).resolve().parents[2]
+    return json.loads((repo_root / "automation" / "schemas" / "wiki-packet-manifest.schema.json").read_text())
+
+
 def test_load_manifest_nested_fields_and_metrics_to_verify(tmp_path):
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
     write_manifest(
@@ -67,7 +72,7 @@ def test_load_manifest_accepts_packet_type_alias_and_raw_path_mapping(tmp_path):
     write_manifest(
         packet,
         packet_type="performance",
-        type="reference",
+        type="performance",
         intended_wiki_targets=["wiki/performance/pkt-1.md"],
         raw_paths={"metrics": "metrics/results.yaml", "notes": "notes.md"},
         metrics_to_verify=[{"name": "accuracy", "expected": 0.8, "raw_path": "metrics/results.yaml"}],
@@ -79,6 +84,16 @@ def test_load_manifest_accepts_packet_type_alias_and_raw_path_mapping(tmp_path):
     assert manifest.raw_paths == ["metrics/results.yaml", "notes.md"]
     assert manifest.raw_path_map == {"metrics": "metrics/results.yaml", "notes": "notes.md"}
     assert manifest.metrics_to_verify[0].raw_path == "metrics/results.yaml"
+
+
+def test_load_manifest_rejects_conflicting_packet_type_alias(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, packet_type="performance", type="reference")
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
 @pytest.mark.parametrize(
@@ -167,10 +182,38 @@ def test_load_manifest_rejects_empty_required_text_fields(tmp_path, field):
 
 def test_shared_manifest_template_validates_against_schema():
     repo_root = Path(__file__).resolve().parents[2]
-    schema = json.loads((repo_root / "automation" / "schemas" / "wiki-packet-manifest.schema.json").read_text())
+    schema = load_manifest_schema()
     manifest = yaml.safe_load((repo_root / "raw" / "shared" / "templates" / "wiki-packet" / "manifest.yaml").read_text())
 
     Draft202012Validator(schema).validate(manifest)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("dataset", {"name": "benchmark-set", "version": "v1", "unexpected": "extra"}),
+        ("split", {"name": "dev", "unexpected": "extra"}),
+        ("model", {"family": "not-applicable", "unexpected": "extra"}),
+    ],
+)
+def test_manifest_schema_rejects_nested_extras(field, value, tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, **{field: value})
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
+def test_manifest_schema_rejects_conflicting_packet_type_alias(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, packet_type="performance", type="reference")
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
 
 
 @pytest.mark.parametrize(
