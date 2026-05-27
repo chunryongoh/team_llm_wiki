@@ -6,7 +6,7 @@
   "$defs": {
     "packet_relative_path": {
       "type": "string",
-      "pattern": "^(?=.*\\S)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f])(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
     }
   },
   "required": [
@@ -125,7 +125,7 @@
     },
     "title": {
       "type": "string",
-      "pattern": "\\S"
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "date": {
       "type": "string"
@@ -133,7 +133,7 @@
     "owner": {
       "type": "string",
       "minLength": 1,
-      "pattern": "\\S"
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "status": {
       "type": "string",
@@ -142,7 +142,7 @@
     "task": {
       "type": "string",
       "minLength": 1,
-      "pattern": "\\S"
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "dataset": {
       "type": "object",
@@ -152,17 +152,17 @@
         "name": {
           "type": "string",
           "minLength": 1,
-          "pattern": "\\S"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
         },
         "version": {
           "type": "string",
           "minLength": 1,
-          "pattern": "\\S"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
         },
         "hash": {
           "type": "string",
           "minLength": 1,
-          "pattern": "\\S"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
         }
       }
     },
@@ -174,17 +174,17 @@
         "name": {
           "type": "string",
           "minLength": 1,
-          "pattern": "\\S"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
         },
         "group_key": {
           "type": "string",
           "minLength": 1,
-          "pattern": "\\S"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
         },
         "fold_file": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^(?=.*\\S)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f])(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
         }
       }
     },
@@ -196,7 +196,7 @@
         "family": {
           "type": "string",
           "minLength": 1,
-          "pattern": "\\S"
+          "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
         },
         "weights_in_repo": {
           "type": "boolean",
@@ -207,7 +207,7 @@
     "claim_boundary": {
       "type": "string",
       "minLength": 1,
-      "pattern": "\\S"
+      "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
     },
     "claim_status": {
       "enum": ["tentative", "supported", "disputed", "superseded"],
@@ -255,7 +255,7 @@
         "properties": {
           "name": {
             "type": "string",
-            "pattern": "\\S"
+            "pattern": "^(?=.*\\S)(?!.*[\\x00-\\x1f\\x7f]).+$"
           },
           "expected": {
             "type": "number"
