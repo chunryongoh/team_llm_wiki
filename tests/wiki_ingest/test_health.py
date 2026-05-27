@@ -227,3 +227,30 @@ def test_health_detects_unverified_metrics_on_indexed_non_performance_page(tmp_p
     report = check_wiki_health(tmp_path)
 
     assert any(error.code == "performance_metric_unverified" for error in report.errors)
+
+
+def test_health_detects_empty_metrics_to_verify_as_unverified(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "performance").mkdir(exist_ok=True)
+    (tmp_path / "wiki" / "performance" / "leaderboard.md").write_text(
+        "---\n"
+        "type: performance\n"
+        "date: 2026-05-20\n"
+        "metrics_to_verify: []\n"
+        "---\n"
+        "# Leaderboard\n\n"
+        "## Metrics\n\n"
+        "- accuracy: 0.91\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "wiki" / "index.md").write_text(
+        "# Index\n\n"
+        "<!-- wiki-ingest:index:start -->\n"
+        "- [Leaderboard](performance/leaderboard.md)\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path)
+
+    assert any(error.code == "performance_metric_unverified" for error in report.errors)

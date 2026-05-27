@@ -145,7 +145,7 @@ def _has_performance_metric_content(text: str) -> bool:
 
 
 def _has_metric_verification(frontmatter: dict[str, str], text: str) -> bool:
-    return _has_raw_evidence(frontmatter, text) or "raw-evidence-backed metric" in text or "metrics_to_verify" in text
+    return _has_raw_evidence(frontmatter, text) or "raw-evidence-backed metric" in text
 
 
 def _performance_metric_errors(rel_path: str, frontmatter: dict[str, str], text: str) -> list[HealthError]:
