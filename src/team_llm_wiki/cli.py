@@ -32,6 +32,12 @@ def build_parser() -> argparse.ArgumentParser:
     plan.add_argument("--changed-path-file")
     plan.add_argument("--run-id", default="plan")
 
+    preview = sub.add_parser("preview-wiki-ingest")
+    preview.add_argument("--repo-root", default=".")
+    preview.add_argument("--changed-path", action="append")
+    preview.add_argument("--changed-path-file")
+    preview.add_argument("--run-id", default="preview")
+
     run = sub.add_parser("run-wiki-main-ingest")
     run.add_argument("--repo-root", required=True)
     run.add_argument("--changed-path", action="append")
@@ -50,6 +56,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "plan-wiki-main-ingest":
+            report = plan_wiki_main_ingest(Path(args.repo_root), _changed_paths(args), run_id=args.run_id)
+            _print_json(report, sys.stdout)
+            return 0
+        if args.command == "preview-wiki-ingest":
             report = plan_wiki_main_ingest(Path(args.repo_root), _changed_paths(args), run_id=args.run_id)
             _print_json(report, sys.stdout)
             return 0

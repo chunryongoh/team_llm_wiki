@@ -2,6 +2,7 @@ import json
 
 from team_llm_wiki.wiki_ingest.github_actions import (
     add_paths_from_payload,
+    render_pr_comment,
     safe_add_paths_file_from_payload,
     render_workflow_summary,
     workflow_dispatch_changed_paths,
@@ -71,3 +72,19 @@ def test_render_summary_includes_report_and_failure_codes():
     assert "raw/results/wiki-ingest/1/report.json" in summary
     assert "invalid_manifest" in summary
     assert "missing title" in summary
+
+
+def test_render_pr_comment_includes_preview_details():
+    comment = render_pr_comment(
+        {
+            "status": "hard_fail",
+            "packet_roots": ["raw/users/alice/pkt-1"],
+            "generated_paths": ["wiki/sources/pkt-1.md"],
+            "failures": [{"code": "invalid_manifest", "message": "missing title"}],
+        }
+    )
+
+    assert "Wiki ingest preview" in comment
+    assert "raw/users/alice/pkt-1" in comment
+    assert "wiki/sources/pkt-1.md" in comment
+    assert "invalid_manifest" in comment

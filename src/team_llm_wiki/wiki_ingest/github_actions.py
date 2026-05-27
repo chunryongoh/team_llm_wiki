@@ -5,6 +5,69 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+MAX_COMMENT_CHARS = 60000
+MAX_LIST_ITEMS = 25
+MAX_FAILURE_MESSAGE_CHARS = 500
+
+
+def _bounded_text(value: Any, limit: int = MAX_FAILURE_MESSAGE_CHARS) -> str:
+    text = str(value).replace("\r", " ").replace("\n", " ").strip()
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3].rstrip() + "..."
+
+
+def _append_path_section(lines: list[str], title: str, paths: list[Any]) -> None:
+    lines.extend(["", f"### {title}"])
+    clean = [str(path).strip() for path in paths if str(path).strip()]
+    if not clean:
+        lines.append("- none")
+        return
+    for path in clean[:MAX_LIST_ITEMS]:
+        lines.append(f"- `{path}`")
+    remaining = len(clean) - MAX_LIST_ITEMS
+    if remaining > 0:
+        lines.append(f"- and {remaining} more")
+
+
+def render_pr_comment(payload: dict[str, Any]) -> str:
+    status = payload.get("status", "unknown")
+    lines = [
+        "<!-- team-llm-wiki-preview -->",
+        "## Wiki ingest preview",
+        "",
+        f"- status: `{status}`",
+    ]
+    if payload.get("run_id"):
+        lines.append(f"- run id: `{payload['run_id']}`")
+    if payload.get("timing_ms") is not None:
+        lines.append(f"- timing: `{payload['timing_ms']} ms`")
+
+    _append_path_section(lines, "Packet roots", list(payload.get("packet_roots") or []))
+    _append_path_section(lines, "Generated paths", list(payload.get("generated_paths") or []))
+
+    failures = list(payload.get("failures") or [])
+    lines.extend(["", "### Failures"])
+    if not failures:
+        lines.append("- none")
+    else:
+        for failure in failures[:MAX_LIST_ITEMS]:
+            if isinstance(failure, dict):
+                code = failure.get("code", "unknown")
+                message = _bounded_text(failure.get("message", ""))
+            else:
+                code = "unknown"
+                message = _bounded_text(failure)
+            lines.append(f"- `{code}` {message}".rstrip())
+        remaining = len(failures) - MAX_LIST_ITEMS
+        if remaining > 0:
+            lines.append(f"- and {remaining} more")
+
+    comment = "\n".join(lines).rstrip() + "\n"
+    if len(comment) <= MAX_COMMENT_CHARS:
+        return comment
+    return comment[: MAX_COMMENT_CHARS - 80].rstrip() + "\n\n_Comment truncated to fit GitHub limits._\n"
+
 
 def add_paths_from_payload(payload: dict[str, Any]) -> list[str]:
     paths = list(payload.get("generated_paths") or payload.get("changed_paths") or [])

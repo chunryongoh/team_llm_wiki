@@ -1,0 +1,91 @@
+name: wiki-pr-validate
+
+on:
+  pull_request:
+    paths:
+      - "raw/users/**"
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "automation/schemas/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    if: ${{ github.actor != 'github-actions[bot]' && !startsWith(github.head_ref, 'bot/wiki-ingest-') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install package and test dependencies
+        run: python -m pip install -e .[test]
+      - name: Collect changed paths
+        run: git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > changed-paths.txt
+      - name: Run wiki ingest preview
+        id: preview
+        env:
+          PYTHONPATH: src
+          RUN_ID: pr-${{ github.event.pull_request.number }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set +e
+          python -m team_llm_wiki.cli preview-wiki-ingest \
+            --repo-root . \
+            --changed-path-file changed-paths.txt \
+            --run-id "$RUN_ID" > preview-output.json 2> preview-error.json
+          status=$?
+          PREVIEW_STATUS="$status" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          from team_llm_wiki.wiki_ingest.github_actions import render_pr_comment, write_github_outputs
+
+          output_path = Path("preview-output.json")
+          error_path = Path("preview-error.json")
+          raw = output_path.read_text(encoding="utf-8").strip() if output_path.exists() else ""
+          error = error_path.read_text(encoding="utf-8").strip() if error_path.exists() else ""
+          try:
+              payload = json.loads(raw) if raw else {}
+          except json.JSONDecodeError:
+              payload = {"status": "hard_fail", "failures": [{"code": "invalid_preview_json", "message": raw or "missing stdout"}]}
+          payload.setdefault("run_id", os.environ.get("RUN_ID", "preview"))
+          if not payload and error:
+              try:
+                  error_payload = json.loads(error)
+                  payload = {
+                      "status": "hard_fail",
+                      "failures": [error_payload.get("error", {"code": "preview_failed", "message": error})],
+                  }
+              except json.JSONDecodeError:
+                  payload = {"status": "hard_fail", "failures": [{"code": "preview_failed", "message": error}]}
+          Path("preview-comment.md").write_text(render_pr_comment(payload), encoding="utf-8")
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {"exit_status": str(os.environ["PREVIEW_STATUS"])})
+          PY
+          exit "$status"
+      - name: Comment preview
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- team-llm-wiki-preview -->';
+            const body = fs.existsSync('preview-comment.md')
+              ? fs.readFileSync('preview-comment.md', 'utf8')
+              : `${marker}\n## Wiki ingest preview\n\n- status: \`hard_fail\`\n\n### Packet roots\n- none\n\n### Generated paths\n- none\n\n### Failures\n- \`missing_preview\` Preview did not produce a comment body.\n`;
+            const {owner, repo} = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.rest.issues.listComments({owner, repo, issue_number, per_page: 100});
+            const existing = comments.data.find(comment =>
+              comment.user.type === 'Bot' && comment.body && comment.body.includes(marker)
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({owner, repo, comment_id: existing.id, body});
+            } else {
+              await github.rest.issues.createComment({owner, repo, issue_number, body});
+            }
