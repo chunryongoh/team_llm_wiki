@@ -20,9 +20,27 @@ claim_boundary: Feature claim applies only to the named dataset and split.
 claim_status: tentative
 summary: Feature engineering rationale and outcome.
 raw_paths:
-  notes: feature-notes.md
+  features: features.yaml
 intended_wiki_targets:
   - wiki/features/example-feature.md
 claims:
   - status: tentative
     text: Feature effect has not been benchmark-confirmed yet.
+feature_families:
+  - name: example-feature-family
+    owner: replace-with-owner
+    source_modalities:
+      - tabular
+    feature_prefixes:
+      - example_
+    anchor: event_time
+    window: Replace with lookback or point-in-time window.
+    formula: Replace with exact feature formula or recipe.
+    expected_dtype: float32
+    missing_policy: Replace with missing-value handling.
+    leakage_risk: tentative
+    target_hypothesis: Replace with target relationship hypothesis.
+    evidence: Replace with raw result, note, or benchmark path.
+    compute_cost: low
+    dependencies:
+      - replace-with-source-column-or-upstream-feature

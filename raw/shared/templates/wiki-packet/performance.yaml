@@ -20,15 +20,27 @@ claim_boundary: Performance claim applies only to the metric source, dataset, sp
 claim_status: supported
 summary: Benchmark result requiring review.
 raw_paths:
-  metrics: metrics.json
+  performance: performance.yaml
 intended_wiki_targets:
   - wiki/performance/example-performance.md
 metrics_to_verify:
   - name: accuracy
     expected: 0.0
-    raw_path: metrics.json
-    key: accuracy
+    raw_path: performance.yaml
+    key: overall_metrics.accuracy
     tolerance: 0.0
 claims:
   - status: supported
     text: Replace with a metric-backed claim.
+primary_metric: accuracy
+metric_definitions:
+  accuracy: Replace with metric definition and averaging policy.
+targets:
+  - overall
+split_id: dev
+overall_metrics:
+  accuracy: 0.0
+target_metrics:
+  replace-with-target:
+    accuracy: 0.0
+baseline_comparison: Replace with baseline name and delta.

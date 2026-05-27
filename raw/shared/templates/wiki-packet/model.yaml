@@ -20,10 +20,24 @@ claim_boundary: Model note describes configuration only unless backed by raw met
 claim_status: tentative
 summary: Model configuration and tradeoff note.
 raw_paths:
-  card: model-card.md
+  model: model.yaml
 intended_wiki_targets:
   - wiki/models/example-model.md
 metrics_to_verify: []
 claims:
   - status: tentative
     text: Replace with a careful model claim.
+family: replace-with-model-family
+library_versions:
+  replace-with-library: replace-with-version
+objective: Replace with training or inference objective.
+target_handling: Replace with target encoding, class balance, or regression handling.
+hyperparameters:
+  replace-with-parameter: replace-with-value
+training_strategy: Replace with training strategy.
+validation_strategy: Replace with validation strategy.
+calibration: Replace with calibration approach or none.
+ensembling: Replace with ensembling approach or none.
+hardware: Replace with hardware used or expected.
+inference_contract: Replace with input/output contract.
+weights_policy: Do not store model weights in this packet.

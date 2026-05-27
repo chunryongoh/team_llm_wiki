@@ -121,6 +121,37 @@ def test_guard_verifies_metric_against_raw_yaml_dotted_key(tmp_path):
     assert result.failures == []
 
 
+def test_guard_surfaces_packet_specific_schema_failure(tmp_path):
+    packet, manifest = make_packet(
+        tmp_path,
+        type="performance",
+        raw_paths={"performance": "performance.yaml"},
+        intended_wiki_targets=["wiki/performance/pkt-1.md"],
+        metrics_to_verify=[],
+    )
+    (packet / "performance.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "primary_metric": "accuracy",
+                "metric_definitions": {"accuracy": "correct / total"},
+                "targets": ["overall"],
+                "split_id": "dev",
+                "target_metrics": {},
+                "baseline_comparison": "not compared",
+                "claim_status": "tentative",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = run_guard_checks(tmp_path, packet, manifest, policy())
+
+    assert any(
+        failure.code is FailureCode.INVALID_MANIFEST and "overall_metrics" in failure.message
+        for failure in result.failures
+    )
+
+
 def test_guard_enforces_packet_limits(tmp_path):
     packet, manifest = make_packet(tmp_path)
     (packet / "extra.txt").write_text("123456", encoding="utf-8")

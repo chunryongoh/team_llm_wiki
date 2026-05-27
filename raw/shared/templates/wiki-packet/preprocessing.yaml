@@ -20,10 +20,22 @@ claim_boundary: Preprocessing note applies only to the named dataset and split.
 claim_status: tentative
 summary: Dataset handling or cleaning change.
 raw_paths:
-  notes: preprocessing-notes.md
+  preprocessing: preprocessing.yaml
 intended_wiki_targets:
   - wiki/datasets/example-preprocessing.md
 metrics_to_verify: []
 claims:
   - status: tentative
     text: Replace with a careful preprocessing claim.
+input_sources:
+  - replace-with-raw-input
+row_identity: Replace with row identifier or entity-time key.
+target_scope: Replace with included targets and exclusions.
+split_strategy: Replace with train/dev/test or fold split method.
+fold_assignment: Replace with fold assignment source or policy.
+leakage_guards:
+  - Replace with leakage guard.
+normalization: Replace with normalization policy.
+feature_window_policy: Replace with time window policy.
+imputation: Replace with imputation policy.
+code_entrypoint: Replace with script, notebook, or command path.

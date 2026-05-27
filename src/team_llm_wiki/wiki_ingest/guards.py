@@ -6,7 +6,8 @@ from typing import Any
 
 import yaml
 
-from .models import FailureCode, GuardResult, GuardViolation, PacketManifest
+from .models import FailureCode, GuardResult, GuardViolation, IngestFailure, PacketManifest
+from .packet_schemas import validate_packet_specific_schema
 from .policy import IngestPolicy
 from .routes import PACKET_ROUTE_MAP
 
@@ -83,6 +84,11 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
             continue
         if not candidate.exists():
             result.failures.append(GuardViolation(FailureCode.MISSING_RAW_FILE, "raw path is missing", raw))
+
+    try:
+        validate_packet_specific_schema(packet_root, manifest)
+    except IngestFailure as exc:
+        result.failures.append(GuardViolation(exc.code, exc.message, exc.details.get("path")))
 
     expected_route = PACKET_ROUTE_MAP[manifest.type] + "/"
     for target in manifest.intended_wiki_targets:
