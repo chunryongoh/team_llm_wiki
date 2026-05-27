@@ -114,6 +114,20 @@ def test_manifest_rejects_invalid_full_shape_fields(overrides):
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
+@pytest.mark.parametrize(
+    "raw_paths",
+    [
+        {"metrics": ["result.json"]},
+        [["result.json"]],
+    ],
+)
+def test_manifest_rejects_non_string_raw_path_entries(raw_paths):
+    with pytest.raises(IngestFailure) as exc:
+        PacketManifest(**manifest_data(raw_paths=raw_paths))
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+
+
 def test_metric_check_uses_absolute_tolerance():
     assert MetricCheck(name="accuracy", expected=0.9, actual=0.9004, tolerance=0.001).is_consistent()
     assert not MetricCheck(name="accuracy", expected=0.9, actual=0.92, tolerance=0.001).is_consistent()
