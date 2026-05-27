@@ -117,6 +117,27 @@ def test_cli_check_wiki_health_nonzero_on_failure(tmp_path):
     assert json.loads(report_path.read_text(encoding="utf-8"))["ok"] is False
 
 
+def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    (tmp_path / "wiki" / "log.md").write_text(
+        "# Log\n\n"
+        "## [2026-05-27] ingest | pkt-1\n\n"
+        "- target: `wiki/sources/pkt-1.md`\n",
+        encoding="utf-8",
+    )
+
+    result = run_cli(
+        ["generate-wiki-brief", "--repo-root", str(tmp_path), "--date", "2026-05-27"],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 0
+    payload = json.loads(result.stdout)
+    assert payload == {"generated_paths": ["wiki/briefs/2026-05-27-daily.md", "wiki/briefs/latest.md"]}
+    assert (tmp_path / "wiki" / "briefs" / "2026-05-27-daily.md").exists()
+    assert (tmp_path / "wiki" / "briefs" / "latest.md").exists()
+
+
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):
     packet = seed_repo(tmp_path, packet_type="experiment", metric_expected=0.9)
     report_path = tmp_path / "hard-fail-report.json"

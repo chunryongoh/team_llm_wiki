@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from .wiki_ingest.brief import generate_daily_brief
 from .wiki_ingest.health import check_wiki_health
 from .wiki_ingest.manifest import read_changed_paths_file
 from .wiki_ingest.models import IngestFailure, as_jsonable
@@ -48,6 +49,10 @@ def build_parser() -> argparse.ArgumentParser:
     health = sub.add_parser("check-wiki-health")
     health.add_argument("--repo-root", required=True)
     health.add_argument("--report-path")
+
+    brief = sub.add_parser("generate-wiki-brief")
+    brief.add_argument("--repo-root", default=".")
+    brief.add_argument("--date")
     return parser
 
 
@@ -76,6 +81,10 @@ def main(argv: list[str] | None = None) -> int:
             report = check_wiki_health(Path(args.repo_root), Path(args.report_path) if args.report_path else None)
             _print_json(report, sys.stdout)
             return 0 if report.ok else 1
+        if args.command == "generate-wiki-brief":
+            generated_paths = generate_daily_brief(Path(args.repo_root), date=args.date)
+            _print_json({"generated_paths": generated_paths}, sys.stdout)
+            return 0
     except IngestFailure as exc:
         _print_json({"error": exc.to_dict()}, sys.stderr)
         return 1

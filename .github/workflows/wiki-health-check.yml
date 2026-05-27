@@ -14,15 +14,32 @@ jobs:
         with:
           python-version: "3.13"
       - run: pip install -r requirements.txt
+      - name: Prepare artifact directories
+        run: mkdir -p artifacts/wiki-health artifacts/wiki-briefs
       - name: Check wiki health
         env:
           PYTHONPATH: src
         run: |
           python -m team_llm_wiki.cli check-wiki-health \
             --repo-root . \
-            --report-path raw/results/wiki-health/report.json
+            --report-path artifacts/wiki-health/report.json
+      - name: Generate daily brief
+        if: always()
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m team_llm_wiki.cli generate-wiki-brief \
+            --repo-root . \
+            --date "$(date -u +%F)" \
+            > artifacts/wiki-briefs/generated-paths.json
+          cp wiki/briefs/*-daily.md wiki/briefs/latest.md artifacts/wiki-briefs/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: wiki-health-report
-          path: raw/results/wiki-health/report.json
+          path: artifacts/wiki-health/report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wiki-daily-brief
+          path: artifacts/wiki-briefs/
