@@ -70,13 +70,12 @@ def test_guard_blocks_forbidden_files_anywhere_under_packet(tmp_path, filename, 
     assert code in [failure.code for failure in result.failures]
 
 
-def test_guard_blocks_path_escape_and_missing_raw_file(tmp_path):
-    packet, manifest = make_packet(tmp_path, raw_paths=["../outside.json", "missing.json"])
+def test_guard_blocks_missing_raw_file(tmp_path):
+    packet, manifest = make_packet(tmp_path, raw_paths=["missing.json"])
 
     result = run_guard_checks(tmp_path, packet, manifest, policy())
 
     codes = [failure.code for failure in result.failures]
-    assert FailureCode.PATH_ESCAPE in codes
     assert FailureCode.MISSING_RAW_FILE in codes
 
 

@@ -3,6 +3,12 @@
   "$id": "https://example.local/team-llm-wiki/wiki-packet-manifest.schema.json",
   "title": "Team LLM Wiki Packet Manifest",
   "type": "object",
+  "$defs": {
+    "packet_relative_path": {
+      "type": "string",
+      "pattern": "^(?=.*\\S)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\).+$"
+    }
+  },
   "required": [
     "id",
     "title",
@@ -215,13 +221,13 @@
         {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/packet_relative_path"
           }
         },
         {
           "type": "object",
           "additionalProperties": {
-            "type": "string"
+            "$ref": "#/$defs/packet_relative_path"
           }
         }
       ]
@@ -237,6 +243,14 @@
       "items": {
         "type": "object",
         "required": ["name", "expected"],
+        "anyOf": [
+          {
+            "required": ["actual"]
+          },
+          {
+            "required": ["raw_path"]
+          }
+        ],
         "properties": {
           "name": {
             "type": "string"

@@ -238,6 +238,37 @@ def test_manifest_schema_rejects_conflicting_packet_type_alias(tmp_path):
     assert errors
 
 
+def test_manifest_schema_rejects_metric_without_actual_or_raw_path(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, metrics_to_verify=[{"name": "accuracy", "expected": 0.8}])
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "raw_paths",
+    [
+        ["../escape.json"],
+        ["/abs.json"],
+        ["nested//result.json"],
+        {"metrics": "../escape.json"},
+        {"metrics": "/abs.json"},
+        {"metrics": "nested//result.json"},
+    ],
+)
+def test_manifest_schema_rejects_unsafe_raw_paths(raw_paths, tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    write_manifest(packet, raw_paths=raw_paths)
+    manifest = yaml.safe_load((packet / "manifest.yaml").read_text(encoding="utf-8"))
+
+    errors = list(Draft202012Validator(load_manifest_schema()).iter_errors(manifest))
+
+    assert errors
+
+
 @pytest.mark.parametrize(
     "manifest_overrides",
     [
@@ -269,8 +300,11 @@ def test_manifest_schema_rejects_whitespace_required_text_fields(tmp_path, manif
         {"claims": [{"status": "proven", "text": "unsupported status"}]},
         {"claims": ["not-a-mapping"]},
         {"metrics_to_verify": [{"name": "accuracy", "expected": "high"}]},
+        {"metrics_to_verify": [{"name": "accuracy", "expected": 0.8}]},
         {"metrics_to_verify": ["not-a-mapping"]},
         {"raw_paths": {"metrics": "../escape.json"}},
+        {"raw_paths": ["../escape.json"]},
+        {"raw_paths": ["/abs.json"]},
     ],
 )
 def test_load_manifest_rejects_invalid_shapes(tmp_path, manifest_overrides):

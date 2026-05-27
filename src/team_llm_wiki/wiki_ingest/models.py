@@ -182,7 +182,7 @@ class PacketManifest:
             self.raw_path_map = {str(key): _validate_manifest_rel_path(str(value)) for key, value in self.raw_paths.items()}
             self.raw_paths = list(self.raw_path_map.values())
         elif isinstance(self.raw_paths, list):
-            self.raw_paths = [_validate_loose_rel_path(str(item)) for item in self.raw_paths]
+            self.raw_paths = [_validate_manifest_rel_path(str(item)) for item in self.raw_paths]
         else:
             raise IngestFailure(FailureCode.INVALID_MANIFEST, "raw_paths must be a list or mapping")
         try:
