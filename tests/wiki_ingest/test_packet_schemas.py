@@ -218,6 +218,19 @@ def test_packet_specific_schema_rejects_non_mapping_yaml(tmp_path):
     assert "must be a mapping" in exc.value.message
 
 
+def test_packet_specific_schema_rejects_invalid_utf8_yaml(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "augmentation", {"augmentation": "augmentation.yaml"})
+    (packet / "augmentation.yaml").write_bytes(b"source_data_scope: train\nsummary: \xff\n")
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "could not be read as UTF-8" in exc.value.message
+
+
 def test_packet_specific_schema_rejects_feature_families_not_list(tmp_path):
     packet = tmp_path / "packet"
     write_manifest(packet, "feature", {"features": "features.yaml"})

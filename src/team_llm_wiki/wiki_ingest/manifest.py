@@ -41,7 +41,14 @@ def load_packet_manifest(packet_root: Path) -> PacketManifest:
     if not manifest_path.exists():
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"missing manifest: {manifest_path}")
     try:
-        raw: Any = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+        manifest_text = manifest_path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"manifest YAML could not be read as UTF-8: {manifest_path}",
+        ) from exc
+    try:
+        raw: Any = yaml.safe_load(manifest_text) or {}
     except yaml.YAMLError as exc:
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"manifest YAML could not be parsed: {manifest_path}") from exc
     if not isinstance(raw, dict):

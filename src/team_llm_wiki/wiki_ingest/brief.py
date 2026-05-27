@@ -9,6 +9,12 @@ LOG_HEADING_RE = re.compile(r"^## \[(?P<date>\d{4}-\d{2}-\d{2})\] .*$")
 CLAIM_LINE_RE = re.compile(r"(?im)^\s*[-*]\s*(?P<status>supported|tentative|disputed|superseded)\s*:\s*(?P<text>.+?)\s*$")
 
 
+def _write_latest_pointer(repo_root: Path, target_stem: str) -> str:
+    latest_rel = "wiki/briefs/latest.md"
+    (repo_root / latest_rel).write_text(f"[[{target_stem}]]\n", encoding="utf-8")
+    return latest_rel
+
+
 def _daily_log_entries(log_text: str, target_date: str) -> list[str]:
     entries: list[str] = []
     current: list[str] = []
@@ -132,6 +138,32 @@ def _brief_text(day: str, entries: list[str]) -> str:
     lines.extend(
         [
             "",
+            "## Score movement and target movement",
+            "",
+            "- No score movement detected in today's log entries.",
+            "",
+            "## Reusable features discovered",
+            "",
+            "- No reusable feature discoveries detected in today's log entries.",
+            "",
+            "## Failed ideas worth stopping",
+            "",
+            "- No stopped ideas detected in today's log entries.",
+            "",
+            "## Leakage or validation warnings",
+            "",
+            "- No leakage or validation warnings detected in today's log entries.",
+            "",
+            "## Unresolved reviewer questions",
+            "",
+            "- No unresolved reviewer questions detected in today's log entries.",
+            "",
+            "## Recommended next 3 actions",
+            "",
+            "1. Review [[latest-context]] before starting new work.",
+            "2. Promote supported findings into the relevant wiki page.",
+            "3. Resolve stale or tentative claims with raw evidence.",
+            "",
             "## Session context",
             "",
             "- Continue from [[latest-context]].",
@@ -151,9 +183,8 @@ def generate_daily_brief(repo_root: Path, date: str | None = None) -> list[str]:
     text = _brief_text(day, _daily_log_entries(log_text, day))
 
     dated_rel = f"wiki/briefs/{day}-daily.md"
-    latest_rel = "wiki/briefs/latest.md"
     (repo_root / dated_rel).write_text(text, encoding="utf-8")
-    (repo_root / latest_rel).write_text(f"[[{day}-daily]]\n", encoding="utf-8")
+    latest_rel = _write_latest_pointer(repo_root, f"{day}-daily")
     return [dated_rel, latest_rel]
 
 
@@ -183,10 +214,24 @@ def _weekly_brief_text(week_id: str, day: str, entries: list[str], contradiction
         "",
         f"# Weekly Brief - {week_id}",
         "",
-        "## Week log entries",
+        "## Leaderboard and maintained local line",
         "",
     ]
     lines.append("\n\n".join(entries) if entries else "- No matching log entries found for this week.")
+    lines.extend(["", "## Target deficit analysis", ""])
+    lines.append("- No target deficit summary detected in this week's log entries.")
+    lines.extend(["", "## Best reusable preprocessing policies", ""])
+    lines.append("- No reusable preprocessing policy summary detected in this week's log entries.")
+    lines.extend(["", "## Best reusable feature families", ""])
+    lines.append("- No reusable feature family summary detected in this week's log entries.")
+    lines.extend(["", "## Model family comparison", ""])
+    lines.append("- No model family comparison detected in this week's log entries.")
+    lines.extend(["", "## Repeated failure modes", ""])
+    lines.append("- No repeated failure mode summary detected in this week's log entries.")
+    lines.extend(["", "## Decisions to accept or supersede", ""])
+    lines.append("- Review contradiction scan and stale tentative claims before accepting or superseding decisions.")
+    lines.extend(["", "## Next sprint backlog", ""])
+    lines.append("- Convert unresolved reviewer questions and stale claims into prioritized wiki tasks.")
     lines.extend(["", "## Contradiction scan", ""])
     lines.extend(contradictions or ["- No disputed, superseded, or repeated conflicting claims found."])
     lines.extend(["", "## Stale tentative claims", ""])
@@ -218,4 +263,5 @@ def generate_weekly_brief(repo_root: Path, date: str | None = None) -> list[str]
         encoding="utf-8",
     )
     (repo_root / stale_rel).write_text(_stale_report_text(day, stale_claims), encoding="utf-8")
-    return [weekly_rel, stale_rel]
+    latest_rel = _write_latest_pointer(repo_root, f"{week_id}-weekly")
+    return [weekly_rel, stale_rel, latest_rel]

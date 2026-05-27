@@ -113,6 +113,33 @@ def test_preview_wiki_ingest_exits_nonzero_on_hard_fail(tmp_path):
     assert payload["failures"]
 
 
+def test_preview_wiki_ingest_reports_invalid_utf8_manifest_as_hard_fail(tmp_path):
+    packet = seed_repo(tmp_path)
+    (packet / "manifest.yaml").write_bytes(b"id: pkt-1\nsummary: \xff\n")
+    changed_file = tmp_path / "changed.txt"
+    changed_file.write_text(str(packet.relative_to(tmp_path) / "manifest.yaml"), encoding="utf-8")
+
+    result = run_cli(
+        [
+            "preview-wiki-ingest",
+            "--repo-root",
+            str(tmp_path),
+            "--changed-path-file",
+            str(changed_file),
+            "--run-id",
+            "preview",
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "hard_fail"
+    assert payload["failures"][0]["code"] == "invalid_manifest"
+    assert "could not be read as UTF-8" in payload["failures"][0]["message"]
+    assert "Traceback" not in result.stderr
+
+
 def test_wiki_pr_validate_workflow_yaml_parses():
     workflow = Path(".github/workflows/wiki-pr-validate.yml")
 

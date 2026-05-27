@@ -131,7 +131,14 @@ def _resolve_packet_raw_path(packet_root: Path, raw_path: str) -> Path:
 
 def _load_mapping(source: Path, display_path: str) -> dict[str, Any]:
     try:
-        data = yaml.safe_load(source.read_text(encoding="utf-8"))
+        source_text = source.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"packet-specific YAML could not be read as UTF-8: {display_path}",
+        ) from exc
+    try:
+        data = yaml.safe_load(source_text)
     except yaml.YAMLError as exc:
         raise IngestFailure(FailureCode.INVALID_MANIFEST, f"invalid packet-specific YAML: {display_path}") from exc
     if not isinstance(data, dict):

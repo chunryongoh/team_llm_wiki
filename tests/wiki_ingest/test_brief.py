@@ -32,6 +32,12 @@ def test_generate_daily_brief_writes_dated_brief_and_latest_pointer(tmp_path):
     assert "type: daily-brief" in text
     assert "# Daily Brief - 2026-05-27" in text
     assert "## New packets ingested" in text
+    assert "## Score movement and target movement" in text
+    assert "## Reusable features discovered" in text
+    assert "## Failed ideas worth stopping" in text
+    assert "## Leakage or validation warnings" in text
+    assert "## Unresolved reviewer questions" in text
+    assert "## Recommended next 3 actions" in text
     assert "[[latest-context]]" in text
     assert "pkt-1" in text
     assert "benchmark-a" in text
@@ -76,12 +82,24 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
 
     generated = generate_weekly_brief(tmp_path, date="2026-05-27")
 
-    assert generated == ["wiki/briefs/2026-W22-weekly.md", "wiki/briefs/2026-05-27-stale-claims.md"]
+    assert generated == [
+        "wiki/briefs/2026-W22-weekly.md",
+        "wiki/briefs/2026-05-27-stale-claims.md",
+        "wiki/briefs/latest.md",
+    ]
     weekly = (wiki / "briefs" / "2026-W22-weekly.md").read_text(encoding="utf-8")
     stale = (wiki / "briefs" / "2026-05-27-stale-claims.md").read_text(encoding="utf-8")
+    latest = (wiki / "briefs" / "latest.md").read_text(encoding="utf-8")
     assert "type: weekly-brief" in weekly
     assert "# Weekly Brief - 2026-W22" in weekly
-    assert "## Week log entries" in weekly
+    assert "## Leaderboard and maintained local line" in weekly
+    assert "## Target deficit analysis" in weekly
+    assert "## Best reusable preprocessing policies" in weekly
+    assert "## Best reusable feature families" in weekly
+    assert "## Model family comparison" in weekly
+    assert "## Repeated failure modes" in weekly
+    assert "## Decisions to accept or supersede" in weekly
+    assert "## Next sprint backlog" in weekly
     assert "pkt-1" in weekly
     assert "benchmark-a" in weekly
     assert "previous-week" not in weekly
@@ -92,3 +110,4 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
     assert "wiki/questions/old-hypothesis.md" in weekly
     assert "type: stale-claim-report" in stale
     assert "wiki/questions/old-hypothesis.md" in stale
+    assert latest == "[[2026-W22-weekly]]\n"

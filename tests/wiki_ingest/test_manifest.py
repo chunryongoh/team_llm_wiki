@@ -107,6 +107,18 @@ def test_load_manifest_rejects_malformed_yaml_as_invalid_manifest(tmp_path):
     assert exc.value.code is FailureCode.INVALID_MANIFEST
 
 
+def test_load_manifest_rejects_invalid_utf8_as_invalid_manifest(tmp_path):
+    packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
+    packet.mkdir(parents=True)
+    (packet / "manifest.yaml").write_bytes(b"id: pkt-1\nsummary: \xff\n")
+
+    with pytest.raises(IngestFailure) as exc:
+        load_packet_manifest(packet)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "could not be read as UTF-8" in exc.value.message
+
+
 @pytest.mark.parametrize(
     "field",
     [
