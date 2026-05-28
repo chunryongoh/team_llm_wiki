@@ -63,6 +63,49 @@ team-llm-wiki-packet/
 
 This keeps the workflow portable across teammates and AI tools. A teammate installs or shares the skill once, then points it at the active wiki repo.
 
+## Markdown Safety Gate
+
+Because v1 is markdown-first, `packet.md` must pass a lightweight safety gate before preview approval and before upload. This gate protects the future LLM wiki context from unsafe or over-strong raw text.
+
+The gate should classify findings as either `block` or `warning`.
+
+### Hard Blocks
+
+Hard blocks stop upload until the user edits the packet or explicitly removes the unsafe content.
+
+| Code | Trigger | Recovery |
+| --- | --- | --- |
+| `secret_like_content` | API keys, private keys, tokens, credential-looking strings, or credential filenames appear in markdown or referenced files | Remove or redact the secret before preview/upload. |
+| `pii_like_content` | Personal identifiers, phone numbers, emails, addresses, or sensitive health identifiers appear without clear approval | Remove or summarize the content. |
+| `model_weight_reference` | Markdown references committing model weights or forbidden binary artifacts | Replace with model config, hash, or external non-secret reference. |
+| `unsafe_local_path` | Absolute local paths such as `/home/...`, Windows drive paths, or private attachment paths appear as evidence references | Copy approved evidence into the packet or summarize it without local paths. |
+| `prompt_injection_phrase` | Text tries to override future agent instructions, ignore policies, reveal secrets, or mutate generated wiki outside workflow | Quote it as an unsafe source excerpt or remove it from the packet body. |
+| `oversized_markdown` | `packet.md` exceeds the configured size limit for reviewable raw packets | Summarize the source and attach bounded evidence instead. |
+
+### Warnings
+
+Warnings do not automatically block upload, but the preview must show them and ask the user to approve or revise.
+
+| Code | Trigger | Recovery |
+| --- | --- | --- |
+| `unsupported_performance_claim` | Markdown says a model is best, improved, or optimal without raw metric evidence | Downgrade wording to tentative or switch to structured mode. |
+| `meeting_claim_as_fact` | Meeting notes present an opinion or decision as experimentally verified fact | Separate "decision", "hypothesis", and "verified evidence" sections. |
+| `missing_claim_boundary` | Claim status exists but claim boundary is too broad or absent | Add a narrow claim boundary. |
+| `large_embedded_log` | Long log/notebook text is pasted directly into markdown | Summarize and attach only relevant excerpts. |
+| `external_reference_unchecked` | External paper/blog/source claim is stated without provenance or applicability note | Add source provenance and mark applicability as tentative. |
+
+Safety scan output should be machine-readable:
+
+```json
+{
+  "ok": false,
+  "blocks": [{"code": "unsafe_local_path", "message": "Absolute local path found."}],
+  "warnings": [{"code": "unsupported_performance_claim", "message": "Best-model claim lacks metric evidence."}]
+}
+```
+
+The user can approve warnings, but not hard blocks. A blocked packet must be edited before upload.
+
 ## Skill Name and Trigger
 
 Recommended skill name:
@@ -681,6 +724,7 @@ Failure codes:
 | `missing_structured_evidence` | Structured packet lacks required type YAML or metric/split evidence | Ask for the missing evidence or downgrade claim status. |
 | `secret_or_pii_detected` | Source artifact or markdown contains secret-like or PII-like content | Reject the file and ask for a sanitized summary. |
 | `model_weight_rejected` | Source artifact appears to be model weights or forbidden binary | Reject the file and ask for config or external reference only. |
+| `markdown_safety_block` | Markdown safety gate returns one or more hard blocks | Show blocks and stop before preview/upload. |
 
 ### `preview_packet.py`
 
@@ -708,6 +752,7 @@ Failure codes:
 | `preview_too_large` | Preview exceeds a bounded size | Show compact summary plus file paths instead of full content. |
 | `preview_missing_required_section` | Preview lacks target path, files, claim status, or validation plan | Regenerate preview from draft contract. |
 | `unsupported_preview_mode` | Preview mode is neither compact nor full | Use compact preview by default. |
+| `unacknowledged_markdown_warning` | Markdown safety warnings exist but user has not approved them | Show warnings and request approval or edits. |
 
 ### `upload_packet_pr.py`
 
@@ -779,6 +824,8 @@ flowchart TD
 - Missing policy/template files: stop and report missing files.
 - Ambiguous packet type: ask the packet triage question again with examples.
 - Missing required evidence: mark the claim `tentative` or ask for evidence.
+- Markdown safety hard block: stop before preview/upload and ask the user to redact, summarize, or remove the unsafe text.
+- Markdown safety warning: show the warning in preview and require explicit user approval before upload.
 - Markdown frontmatter/manifest mismatch: stop and regenerate both from the draft contract.
 - Draft contract invalid: stop before file writes and ask the missing interview question.
 - Metric mismatch: stop, show the raw value and reported value, ask which is correct.
@@ -799,6 +846,7 @@ flowchart TD
 - Every packet includes `packet.md`.
 - Every packet includes an ingest-compatible `manifest.yaml`.
 - Markdown-first packets include minimal frontmatter synchronized with the manifest.
+- Markdown-first packets pass the markdown safety gate, with hard blocks rejected and warnings explicitly acknowledged.
 - Packet-specific YAML is created only when required by packet type or claim strength.
 - Structured packet raw evidence paths are packet-local.
 - Performance metrics are linked to raw YAML/JSON evidence when claim strength depends on them.
@@ -820,6 +868,7 @@ flowchart TD
 - Helper scripts live inside the skill package for v1, not inside the project CLI.
 - Helper script failure contracts are part of v1 scope.
 - The standalone skill's canonical source is `chunryongoh/team-llm-wiki-packet-skill`; local skill directories are installs.
+- Markdown safety gate is part of v1 scope.
 
 ## Open Implementation Decisions
 

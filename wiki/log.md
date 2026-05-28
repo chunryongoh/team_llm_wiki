@@ -42,3 +42,9 @@ Append-only ingest and maintenance events belong here.
 
 - Set the standalone packet skill source repository to `chunryongoh/team-llm-wiki-packet-skill`.
 - Kept `~/.codex/skills/team-llm-wiki-packet/` as the local install/use location.
+
+## [2026-05-28] design | packet-skill-markdown-safety-gate
+
+- Added a v1 markdown safety gate for markdown-first packet creation.
+- Hard blocks cover secret-like content, PII-like content, model weight references, unsafe local paths, prompt-injection text, and oversized markdown.
+- Warnings cover unsupported performance claims, meeting opinions stated as facts, missing claim boundaries, large embedded logs, and unchecked external references.

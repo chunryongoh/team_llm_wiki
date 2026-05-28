@@ -23,6 +23,7 @@ The skill itself must be standalone. `team_llm_wiki` is the target repo the skil
 - Packaging boundary: standalone skill package, not a subdirectory of `team_llm_wiki`
 - Helper reliability: standalone scripts must return JSON success/failure contracts with named failure codes
 - Skill source: `chunryongoh/team-llm-wiki-packet-skill`
+- Markdown safety: hard-block secrets, PII, unsafe local paths, prompt-injection text, model weight references, and oversized markdown before upload
 
 ## Design Spec
 
@@ -30,4 +31,4 @@ The skill itself must be standalone. `team_llm_wiki` is the target repo the skil
 
 ## Next Action
 
-Turn the design into an implementation plan for a standalone reusable skill package in a separate GitHub repository, with deterministic helper scripts and named failure contracts.
+Turn the design into an implementation plan for a standalone reusable skill package in a separate GitHub repository, with deterministic helper scripts, named failure contracts, and a markdown safety gate.
