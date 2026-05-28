@@ -638,6 +638,52 @@ team-llm-wiki-packet/
 
 The package above is not created under `team_llm_wiki/`. It is installed as a standalone skill and treats `team_llm_wiki` as an external target repo.
 
+## Standalone Skill Self-Tests
+
+The separate skill repository must be testable without mutating the real `team_llm_wiki` repository. It should include fixture target repos and example packet inputs.
+
+Recommended fixture layout:
+
+```text
+fixtures/
+  minimal-target-repo/
+    AGENTS.md
+    CLAUDE.md
+    wiki/
+      index.md
+      latest-context.md
+      team/
+        wiki-ingest-policy.md
+        contribution-workflow.md
+    raw/
+      shared/
+        templates/
+          wiki-packet/
+            README.md
+            manifest.yaml
+  examples/
+    markdown-meeting-packet/
+    markdown-feature-hypothesis/
+    structured-performance-packet/
+    unsafe-secret-packet/
+    unsupported-performance-claim/
+```
+
+Required self-tests:
+
+- Markdown-first packet renders `packet.md` and ingest-compatible `manifest.yaml`.
+- Markdown frontmatter and manifest stay synchronized.
+- Structured performance packet renders `packet.md`, `manifest.yaml`, type-specific YAML, and metric evidence references.
+- Markdown safety hard blocks stop unsafe packets before upload.
+- Markdown safety warnings require explicit acknowledgement before upload.
+- Render helper refuses paths outside the packet root.
+- Upload helper stages only approved packet files.
+- Upload helper refuses unexpected staged files.
+- PR creation failure leaves the pushed branch or local commit recoverable.
+- Existing `team_llm_wiki` validation commands can run against rendered fixture packets when the target repo CLI is available.
+
+These tests live in the standalone skill repository, not in `team_llm_wiki`.
+
 ## Standalone Helper Failure Contract
 
 Helper scripts must use explicit failure codes and machine-readable JSON output. The skill should never depend on parsing free-form stderr to decide what to do next.
@@ -850,6 +896,7 @@ flowchart TD
 - Packet-specific YAML is created only when required by packet type or claim strength.
 - Structured packet raw evidence paths are packet-local.
 - Performance metrics are linked to raw YAML/JSON evidence when claim strength depends on them.
+- Standalone skill repo includes fixture-based self-tests for markdown-first, structured, unsafe, warning, and upload failure paths.
 - The skill runs local validation before pushing.
 - The commit contains only the approved raw packet files.
 - The skill pushes the packet branch to GitHub and opens a pull request by default.
@@ -869,6 +916,7 @@ flowchart TD
 - Helper script failure contracts are part of v1 scope.
 - The standalone skill's canonical source is `chunryongoh/team-llm-wiki-packet-skill`; local skill directories are installs.
 - Markdown safety gate is part of v1 scope.
+- Fixture-based self-tests in the standalone skill repo are part of v1 scope.
 
 ## Open Implementation Decisions
 

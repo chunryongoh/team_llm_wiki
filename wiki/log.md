@@ -48,3 +48,9 @@ Append-only ingest and maintenance events belong here.
 - Added a v1 markdown safety gate for markdown-first packet creation.
 - Hard blocks cover secret-like content, PII-like content, model weight references, unsafe local paths, prompt-injection text, and oversized markdown.
 - Warnings cover unsupported performance claims, meeting opinions stated as facts, missing claim boundaries, large embedded logs, and unchecked external references.
+
+## [2026-05-28] design | packet-skill-fixture-self-tests
+
+- Added fixture-based self-tests to the standalone packet skill v1 scope.
+- Required tests cover markdown-first rendering, structured performance rendering, markdown safety blocks/warnings, path containment, staging safety, PR failure recovery, and optional target repo CLI validation.
+- Clarified that these tests live in the separate skill repository, not in `team_llm_wiki`.
