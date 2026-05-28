@@ -1,0 +1,36 @@
+claim_boundary: meeting_decision_not_experimentally_verified
+claim_status: tentative
+claims:
+  -
+    status: tentative
+    text: Smoke test for standalone team-llm-wiki-packet skill.
+dataset:
+  hash: none
+  name: not-applicable
+  version: none
+date: "2026-05-28"
+id: 2026-05-28-skill-smoke-meeting
+intended_wiki_targets:
+  - wiki/sources/2026-05-28-skill-smoke-meeting.md
+metrics_to_verify:
+  []
+mode: markdown_first
+model:
+  family: not-applicable
+  weights_in_repo: false
+owner: codex-smoke
+packet_type: meeting
+raw_paths:
+  notes: packet.md
+route: wiki/sources
+schema: wiki-packet/v1
+source_refs:
+  []
+split:
+  fold_file: null
+  group_key: null
+  name: none
+status: submitted
+summary: Smoke test for standalone team-llm-wiki-packet skill.
+task: source-ingest
+title: Skill Smoke Meeting
