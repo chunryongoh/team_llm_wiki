@@ -37,3 +37,8 @@ Append-only ingest and maintenance events belong here.
 - Chose a separate GitHub repository as the source of truth for the standalone `team-llm-wiki-packet` skill.
 - Clarified that local `~/.codex/skills/...` directories are installation targets, not the canonical source.
 - Kept `team_llm_wiki` as the packet target repository only.
+
+## [2026-05-28] design | packet-skill-repo-name
+
+- Set the standalone packet skill source repository to `chunryongoh/team-llm-wiki-packet-skill`.
+- Kept `~/.codex/skills/team-llm-wiki-packet/` as the local install/use location.

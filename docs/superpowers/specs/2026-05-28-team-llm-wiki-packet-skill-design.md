@@ -41,7 +41,13 @@ The skill's terminal outcome is a GitHub pull request containing the approved pa
 ~/.codex/skills/team-llm-wiki-packet/
 ```
 
-The source of truth for the skill should be a separate GitHub repository. The local `~/.codex/skills/team-llm-wiki-packet/` directory is an install/use location, not the canonical source.
+The source of truth for the skill should be a separate GitHub repository:
+
+```text
+https://github.com/chunryongoh/team-llm-wiki-packet-skill
+```
+
+The local `~/.codex/skills/team-llm-wiki-packet/` directory is an install/use location, not the canonical source.
 
 The `team_llm_wiki` repository remains the target repository that the skill reads from and writes packets into. The skill may read that repo's `AGENTS.md`, `CLAUDE.md`, `wiki/`, templates, and CLI, but v1 should not add skill implementation files under `team_llm_wiki`.
 
@@ -813,7 +819,7 @@ flowchart TD
 - The skill package is standalone and must not be implemented inside `team_llm_wiki`.
 - Helper scripts live inside the skill package for v1, not inside the project CLI.
 - Helper script failure contracts are part of v1 scope.
-- The standalone skill's canonical source is a separate GitHub repository; local skill directories are installs.
+- The standalone skill's canonical source is `chunryongoh/team-llm-wiki-packet-skill`; local skill directories are installs.
 
 ## Open Implementation Decisions
 
@@ -822,7 +828,6 @@ These can be resolved during implementation planning:
 - Whether `raw/users/<owner>/<packet-type>/<date-slug>/` should replace the README examples immediately.
 - Whether evidence copied from local attachments should go under `evidence/` by default for structured packets.
 - Whether packet preview should show full generated files or a compact summary plus file paths.
-- What the separate skill repository owner/name should be.
 - How teammates should install or update the skill from the separate repository.
 
 ## Recommended Next Step
