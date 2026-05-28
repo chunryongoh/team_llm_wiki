@@ -31,3 +31,9 @@ Append-only ingest and maintenance events belong here.
 - Added a named JSON success/failure contract for standalone packet skill helper scripts.
 - Defined failure codes and recovery actions for draft creation, packet rendering, preview generation, and PR upload helpers.
 - Required helper failures to stop the skill unless the recovery path is explicit.
+
+## [2026-05-28] design | packet-skill-separate-repo
+
+- Chose a separate GitHub repository as the source of truth for the standalone `team-llm-wiki-packet` skill.
+- Clarified that local `~/.codex/skills/...` directories are installation targets, not the canonical source.
+- Kept `team_llm_wiki` as the packet target repository only.

@@ -9,7 +9,7 @@ The team decided to scope the next AI-assistant workflow as a packet creation sk
 
 After CEO review, the v1 direction is markdown-first hybrid mode: the user-facing artifact is `packet.md`, and a helper-generated minimal `manifest.yaml` keeps the packet compatible with the existing ingest pipeline. Structured YAML and raw metric evidence are required only for performance, experiment, metric, split-sensitive, or strong claims.
 
-The skill itself must be standalone. `team_llm_wiki` is the target repo the skill reads from and writes packets into, not the location where the skill package is implemented.
+The skill itself must be standalone. `team_llm_wiki` is the target repo the skill reads from and writes packets into, not the location where the skill package is implemented. The skill's source of truth should be a separate GitHub repository; local skill directories are installs.
 
 ## Key Direction
 
@@ -22,6 +22,7 @@ The skill itself must be standalone. `team_llm_wiki` is the target repo the skil
 - Structured path: type-specific YAML/evidence only when the claim requires validation
 - Packaging boundary: standalone skill package, not a subdirectory of `team_llm_wiki`
 - Helper reliability: standalone scripts must return JSON success/failure contracts with named failure codes
+- Skill source: separate GitHub repository
 
 ## Design Spec
 
@@ -29,4 +30,4 @@ The skill itself must be standalone. `team_llm_wiki` is the target repo the skil
 
 ## Next Action
 
-Turn the design into an implementation plan for a standalone reusable skill package with deterministic helper scripts and named failure contracts.
+Turn the design into an implementation plan for a standalone reusable skill package in a separate GitHub repository, with deterministic helper scripts and named failure contracts.

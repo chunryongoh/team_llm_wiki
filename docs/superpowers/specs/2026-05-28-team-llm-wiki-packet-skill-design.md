@@ -41,6 +41,8 @@ The skill's terminal outcome is a GitHub pull request containing the approved pa
 ~/.codex/skills/team-llm-wiki-packet/
 ```
 
+The source of truth for the skill should be a separate GitHub repository. The local `~/.codex/skills/team-llm-wiki-packet/` directory is an install/use location, not the canonical source.
+
 The `team_llm_wiki` repository remains the target repository that the skill reads from and writes packets into. The skill may read that repo's `AGENTS.md`, `CLAUDE.md`, `wiki/`, templates, and CLI, but v1 should not add skill implementation files under `team_llm_wiki`.
 
 Helper scripts belong inside the skill bundle:
@@ -811,6 +813,7 @@ flowchart TD
 - The skill package is standalone and must not be implemented inside `team_llm_wiki`.
 - Helper scripts live inside the skill package for v1, not inside the project CLI.
 - Helper script failure contracts are part of v1 scope.
+- The standalone skill's canonical source is a separate GitHub repository; local skill directories are installs.
 
 ## Open Implementation Decisions
 
@@ -819,8 +822,9 @@ These can be resolved during implementation planning:
 - Whether `raw/users/<owner>/<packet-type>/<date-slug>/` should replace the README examples immediately.
 - Whether evidence copied from local attachments should go under `evidence/` by default for structured packets.
 - Whether packet preview should show full generated files or a compact summary plus file paths.
-- Whether the standalone skill should be packaged from a local skill directory, a separate GitHub repo, or both.
+- What the separate skill repository owner/name should be.
+- How teammates should install or update the skill from the separate repository.
 
 ## Recommended Next Step
 
-Write an implementation plan for creating the standalone `team-llm-wiki-packet` skill package. The plan should treat `team_llm_wiki` as the target repo and should not place skill implementation files inside it.
+Write an implementation plan for creating the standalone `team-llm-wiki-packet` skill package in a separate GitHub repository. The plan should treat `team_llm_wiki` as the target repo and should not place skill implementation files inside it.
