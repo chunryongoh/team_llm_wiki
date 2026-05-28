@@ -13,3 +13,9 @@ Append-only ingest and maintenance events belong here.
 - Added a design spec for `team-llm-wiki-packet`, an interview-driven skill for creating and uploading raw wiki packets.
 - Scoped v1 away from team-member profile generation and toward approved packet creation, local validation, commit, and GitHub push.
 - Filed a wiki report linking the durable design summary.
+
+## [2026-05-28] design | packet-skill-hybrid-mode-review
+
+- Updated the packet skill design after CEO review to use markdown-first hybrid mode.
+- Clarified that default packets create `packet.md` plus helper-generated `manifest.yaml`, while structured YAML/evidence is reserved for performance, experiment, metric, split-sensitive, or strong claims.
+- Set PR-first upload as the default path and deferred markdown-to-structured promotion from v1.

@@ -6,17 +6,21 @@ Scope: design spec
 
 ## Summary
 
-Create a reusable AI skill named `team-llm-wiki-packet` that helps teammates turn machine learning and deep learning work into valid wiki packets. The skill does not act as a passive form filler. It acts as an ML/DL research interviewer: it reads the repo policy, asks expert questions, calibrates claims, previews the packet, gets explicit approval, then creates and uploads a raw packet to the GitHub repository.
+Create a reusable AI skill named `team-llm-wiki-packet` that helps teammates turn machine learning and deep learning work into GitHub-uploaded raw wiki packets. The skill does not act as a passive form filler. It acts as an ML/DL research interviewer: it reads the repo policy, asks expert questions, calibrates claims, previews the packet, gets explicit approval, then creates and uploads a raw packet to the GitHub repository.
 
-The skill's terminal outcome is a Git commit pushed to GitHub that contains the approved packet under `raw/users/...`. The skill must not directly edit generated wiki synthesis pages. Wiki updates remain the responsibility of the existing GitHub Actions ingest workflows.
+The default user-facing packet is markdown-first: `packet.md` plus a helper-generated minimal `manifest.yaml` so the existing manifest-based ingest pipeline can discover it. Structured packets add type-specific YAML and raw evidence only when the work contains performance, experiment, or strong claims that need validation.
+
+The skill's terminal outcome is a GitHub pull request containing the approved packet under `raw/users/...`. The skill must not directly edit generated wiki synthesis pages. Wiki updates remain the responsibility of the existing GitHub Actions ingest workflows.
 
 ## Goals
 
 - Provide one consistent workflow that teammates can use from Codex, Claude Code, Cursor, ChatGPT, or another AI coding assistant.
 - Convert diverse research outputs into a standard `raw/` packet format without forcing teammates to manually understand every schema detail.
+- Make the default writing surface `packet.md`, while preserving compatibility with the current `manifest.yaml` ingest system.
+- Escalate to structured YAML and raw metric evidence only for packet types or claim strengths that require it.
 - Use an interview flow inspired by `superpowers:brainstorming` and `gstack-office-hours`: one decision at a time, explicit options, expert challenge, preview, and approval gate.
 - Keep packet creation evidence-backed: raw files, metrics, split definitions, logs, model notes, and claim boundaries must be explicit.
-- End by uploading the approved raw packet to the GitHub repo.
+- End by opening a GitHub pull request for the approved raw packet.
 
 ## Non-Goals
 
@@ -26,6 +30,7 @@ The skill's terminal outcome is a Git commit pushed to GitHub that contains the 
 - Do not infer supported performance claims when raw evidence is missing.
 - Do not store model weights, secrets, private keys, credential files, or PII-like artifacts.
 - Do not create a full CLI wizard in v1. The skill can later delegate deterministic steps to a CLI, but the first design target is an AI-guided skill.
+- Do not require every lightweight note, meeting, or reference packet to become a full structured YAML packet.
 
 ## Skill Name and Trigger
 
@@ -37,9 +42,9 @@ description: >
   Use when a teammate wants to turn ML/DL work, experiment results, features,
   preprocessing notes, model configuration, performance metrics, meeting notes,
   or references into a validated Team LLM Wiki raw packet and upload it to GitHub.
-  The skill interviews the user as an ML/DL research expert, fills the packet
-  template with explicit approval, validates locally, commits only the approved
-  raw packet, and pushes it to the repository.
+  The skill interviews the user as an ML/DL research expert, creates a
+  markdown-first packet with explicit approval, validates locally, commits only
+  the approved raw packet, and opens a pull request.
 ```
 
 Typical user triggers:
@@ -91,9 +96,34 @@ The skill must show a preview before writing or uploading packet files:
 
 The skill proceeds only after explicit user approval.
 
+### Markdown-First, Structured When Needed
+
+The skill should default to a lightweight markdown packet:
+
+```text
+raw/users/<owner>/<packet-type>/<yyyy-mm-dd>-<short-slug>/
+  packet.md
+  manifest.yaml
+```
+
+The human-facing artifact is `packet.md`. The machine-facing `manifest.yaml` is still created because the current ingest automation discovers packets through `manifest.yaml`.
+
+Structured evidence is added only when the selected packet type or claim strength requires it:
+
+```text
+raw/users/<owner>/<packet-type>/<yyyy-mm-dd>-<short-slug>/
+  packet.md
+  manifest.yaml
+  performance.yaml
+  metrics.json
+  folds.csv
+```
+
+Default markdown packets should use cautious claim boundaries and `tentative` claim status unless the user provides verifiable evidence.
+
 ### Raw Upload Is the End State
 
-After approval, the skill creates the packet under `raw/users/...`, validates it locally, commits only the approved packet files, and pushes the branch or commit to GitHub.
+After approval, the skill creates the packet under `raw/users/...`, validates it locally, commits only the approved packet files, pushes a packet branch, and opens a GitHub pull request.
 
 The skill does not directly commit generated `wiki/` changes.
 
@@ -115,6 +145,52 @@ raw/users/chunoh/meetings/2026-05-28-packet-skill-design/
 ```
 
 Compatibility note: the current README describes `raw/users/<user>/<packet-id>/`. The typed path is a compatible refinement because the packet root is still determined by the `manifest.yaml` location.
+
+## Packet Modes
+
+### Mode 1: Markdown-First Packet
+
+Use this mode for meeting notes, references, exploratory ideas, early feature hypotheses, lightweight model notes, and low-risk research handoffs.
+
+Files:
+
+```text
+packet.md
+manifest.yaml
+```
+
+`packet.md` must include minimal frontmatter:
+
+```yaml
+---
+packet_type: meeting
+owner: chunoh
+date: 2026-05-28
+claim_status: tentative
+summary: "회의 결과를 packet skill 설계로 정리"
+---
+```
+
+The helper script creates a manifest that is minimal from the user's perspective but complete enough for the current ingest schema. It should use safe defaults such as `split.name: none`, `model.family: not-applicable`, and `raw_paths.notes: packet.md` when the packet is not experiment/model/performance evidence.
+
+### Mode 2: Structured Packet
+
+Use this mode for performance packets, experiment packets, `supported` claims, metric comparisons, split-sensitive claims, or any packet that should be machine-verified.
+
+Files:
+
+```text
+packet.md
+manifest.yaml
+<type-specific>.yaml
+<raw evidence files>
+```
+
+Structured packet rendering starts from an intermediate draft contract created during the interview. The deterministic renderer converts that draft into schema-valid packet files.
+
+### Future Mode: Promote Markdown to Structured
+
+Promoting an existing markdown-first packet into a structured packet is useful but deferred from v1. It should be tracked as follow-up work rather than included in this skill release.
 
 ## Workflow
 
@@ -159,6 +235,12 @@ If the user's material spans multiple packet types, the skill recommends either:
 
 It should avoid making one oversized packet that mixes unrelated claims.
 
+The triage result also selects a packet mode:
+
+- Markdown-first is the default for meeting, reference, exploratory feature, and early model notes.
+- Structured is required for performance, experiment, supported/disputed/superseded claims, metric comparisons, and split-sensitive claims.
+- When uncertain, choose markdown-first with `claim_status: tentative`.
+
 ### Phase 2: Evidence Inventory
 
 Ask what files or artifacts exist.
@@ -179,7 +261,7 @@ Evidence categories:
 - External reference
 - Plot or figure
 
-The skill should prefer packet-local copies or generated summaries over links to unstable local paths.
+The skill should prefer packet-local copies or generated summaries over links to unstable local paths. For markdown-first packets, raw evidence can be summarized inside `packet.md` if the source file is too large or inappropriate to commit. For structured packets, evidence required for validation must be packet-local and referenced from `manifest.yaml` or type-specific YAML.
 
 ### Phase 3: Type-Specific Expert Interview
 
@@ -360,13 +442,17 @@ Before file writes, show:
 ```text
 Packet preview
 
+Mode:
+markdown-first
+
 Target path:
 raw/users/<owner>/<packet-type>/<date-slug>/
 
 Files:
+- packet.md
 - manifest.yaml
-- <type-specific>.yaml
-- evidence/<file>
+- <type-specific>.yaml, only if structured mode
+- <raw evidence files>, only if structured mode
 
 Claim status:
 tentative
@@ -381,8 +467,9 @@ Risks:
 Validation expected:
 - path locality
 - manifest schema
-- type-specific YAML schema
-- metric raw evidence check
+- markdown frontmatter/manifest sync
+- type-specific YAML schema, only if structured mode
+- metric raw evidence check, only if structured mode
 - route check
 ```
 
@@ -401,11 +488,12 @@ C. 중단 - 파일을 만들지 않음
 After approval:
 
 1. Create the packet directory.
-2. Write `manifest.yaml`.
-3. Write the type-specific YAML.
-4. Copy or create packet-local evidence files.
-5. Do not modify `wiki/` directly.
-6. Do not modify unrelated files.
+2. Write `packet.md`.
+3. Write a minimal but ingest-compatible `manifest.yaml`.
+4. Write type-specific YAML only for structured mode.
+5. Copy or create packet-local evidence files only after approval.
+6. Do not modify `wiki/` directly.
+7. Do not modify unrelated files.
 
 If evidence files are outside the repository, copy them into the packet only after approval.
 
@@ -439,17 +527,17 @@ Default upload behavior:
 
 1. Check `git status --short`.
 2. Preserve unrelated user changes.
-3. Create or use a packet branch unless the user explicitly requests direct main push.
+3. Create or use a packet branch.
 4. Commit with a clear message:
 
 ```text
 data: add <packet-id> wiki packet
 ```
 
-5. Push to GitHub.
-6. If `gh` is available and the repo policy prefers PRs, offer to open a PR.
+5. Push the packet branch to GitHub.
+6. Open a pull request when `gh` is available.
 
-Direct push to `main` requires explicit confirmation because it can trigger main-branch ingest.
+Direct push to `main` requires explicit confirmation because it can trigger main-branch ingest. PR-first is the default.
 
 ## Skill File Structure
 
@@ -460,6 +548,11 @@ team-llm-wiki-packet/
   SKILL.md
   agents/
     openai.yaml
+  scripts/
+    make_packet_draft.py
+    render_packet.py
+    preview_packet.py
+    upload_packet_pr.py
   references/
     packet-types.md
     interview-prompts.md
@@ -467,7 +560,7 @@ team-llm-wiki-packet/
     github-upload.md
 ```
 
-`SKILL.md` should stay short and procedural. Detailed per-type question lists belong in `references/`.
+`SKILL.md` should stay short and procedural. Detailed per-type question lists belong in `references/`. Helper scripts handle deterministic path generation, draft validation, markdown/manifest rendering, preview formatting, and PR-first upload mechanics.
 
 ## Data Flow
 
@@ -475,20 +568,23 @@ team-llm-wiki-packet/
 flowchart TD
     A["User has research output"] --> B["Skill reads repo policy and templates"]
     B --> C["Packet type triage"]
-    C --> D["Evidence inventory"]
-    D --> E["Type-specific ML/DL expert interview"]
-    E --> F["Claim calibration"]
-    F --> G["Packet preview"]
-    G --> H{"User approves?"}
-    H -->|No, revise| E
-    H -->|No, stop| Z["No files written"]
-    H -->|Yes| I["Create raw packet"]
-    I --> J["Local validation"]
-    J --> K{"Validation passes?"}
-    K -->|No| E
-    K -->|Yes| L["Commit raw packet only"]
-    L --> M["Push to GitHub"]
-    M --> N["GitHub Actions validates and ingests"]
+    C --> D["Select markdown-first or structured mode"]
+    D --> E["Evidence inventory"]
+    E --> F["Type-specific ML/DL expert interview"]
+    F --> G["Claim calibration"]
+    G --> H["Draft contract"]
+    H --> I["Packet preview"]
+    I --> J{"User approves?"}
+    J -->|No, revise| F
+    J -->|No, stop| Z["No files written"]
+    J -->|Yes| K["Render packet.md + manifest.yaml"]
+    K --> L["Add structured YAML/evidence if needed"]
+    L --> M["Local validation"]
+    M --> N{"Validation passes?"}
+    N -->|No| F
+    N -->|Yes| O["Commit raw packet only"]
+    O --> P["Push branch and open PR"]
+    P --> Q["GitHub Actions validates and ingests after merge"]
 ```
 
 ## Error Handling
@@ -496,12 +592,15 @@ flowchart TD
 - Missing policy/template files: stop and report missing files.
 - Ambiguous packet type: ask the packet triage question again with examples.
 - Missing required evidence: mark the claim `tentative` or ask for evidence.
+- Markdown frontmatter/manifest mismatch: stop and regenerate both from the draft contract.
+- Draft contract invalid: stop before file writes and ask the missing interview question.
 - Metric mismatch: stop, show the raw value and reported value, ask which is correct.
 - Split leakage risk: require explicit risk note before approval.
 - Model weights found: reject the file and ask for a model config or external reference instead.
 - Secret or PII-like content: reject and explain that the file cannot be added.
 - Dirty git worktree: commit only the new packet files; do not touch unrelated changes.
 - Push failure: leave the local commit intact and report the remote error.
+- Pull request creation failure: leave the pushed branch intact and show the user the branch URL or command to create the PR.
 
 ## Acceptance Criteria
 
@@ -509,24 +608,34 @@ flowchart TD
 - The skill asks type-specific ML/DL questions instead of mechanically filling fields.
 - The user explicitly approves before packet files are written or uploaded.
 - The created packet lives under `raw/users/<owner>/<packet-type>/<date-slug>/`.
-- The packet includes a valid `manifest.yaml`.
-- Packet-specific YAML is created when required by packet type.
-- Raw evidence paths are packet-local.
+- Every packet includes `packet.md`.
+- Every packet includes an ingest-compatible `manifest.yaml`.
+- Markdown-first packets include minimal frontmatter synchronized with the manifest.
+- Packet-specific YAML is created only when required by packet type or claim strength.
+- Structured packet raw evidence paths are packet-local.
 - Performance metrics are linked to raw YAML/JSON evidence when claim strength depends on them.
 - The skill runs local validation before pushing.
 - The commit contains only the approved raw packet files.
-- The skill pushes the commit or branch to GitHub.
+- The skill pushes the packet branch to GitHub and opens a pull request by default.
 - The skill does not directly edit generated wiki synthesis pages.
+
+## Resolved Review Decisions
+
+- Default upload behavior is PR-first. Direct main push requires explicit user confirmation.
+- Default packet mode is markdown-first.
+- Structured mode is required for performance, experiment, metric, split-sensitive, or strong claims.
+- Markdown-first packets still include helper-generated `manifest.yaml` for existing ingest compatibility.
+- Markdown-first packets use minimal frontmatter in `packet.md`.
+- Promote markdown packet to structured packet is deferred from v1.
 
 ## Open Implementation Decisions
 
 These can be resolved during implementation planning:
 
-- Whether direct main push is ever allowed by default, or always requires a branch and PR.
 - Whether `raw/users/<owner>/<packet-type>/<date-slug>/` should replace the README examples immediately.
-- Whether evidence copied from local attachments should go under `evidence/` by default.
-- Whether the skill should generate `notes.md` for every packet or only meeting/reference packets.
-- Whether packet preview should show full YAML or a compact summary plus file paths.
+- Whether evidence copied from local attachments should go under `evidence/` by default for structured packets.
+- Whether packet preview should show full generated files or a compact summary plus file paths.
+- Whether helper scripts should live inside the skill package only or also be mirrored into the project CLI later.
 
 ## Recommended Next Step
 
