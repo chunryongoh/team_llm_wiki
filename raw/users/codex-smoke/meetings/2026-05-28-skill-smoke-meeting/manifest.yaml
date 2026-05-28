@@ -1,0 +1,15 @@
+claim_boundary: meeting_decision_not_experimentally_verified
+claim_status: tentative
+date: 2026-05-28
+metrics_to_verify:
+
+mode: markdown_first
+owner: codex-smoke
+packet_type: meeting
+raw_paths:
+  notes: packet.md
+route: wiki/sources
+schema: wiki-packet/v1
+source_refs:
+
+title: Skill Smoke Meeting
