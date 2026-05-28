@@ -19,3 +19,9 @@ Append-only ingest and maintenance events belong here.
 - Updated the packet skill design after CEO review to use markdown-first hybrid mode.
 - Clarified that default packets create `packet.md` plus helper-generated `manifest.yaml`, while structured YAML/evidence is reserved for performance, experiment, metric, split-sensitive, or strong claims.
 - Set PR-first upload as the default path and deferred markdown-to-structured promotion from v1.
+
+## [2026-05-28] design | packet-skill-standalone-boundary
+
+- Clarified that `team-llm-wiki-packet` is a standalone skill package, not an implementation subdirectory of `team_llm_wiki`.
+- Defined `team_llm_wiki` as the target repository that the skill reads from and writes raw packets into.
+- Kept helper scripts inside the standalone skill bundle for v1.

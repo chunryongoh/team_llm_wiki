@@ -9,6 +9,8 @@ The team decided to scope the next AI-assistant workflow as a packet creation sk
 
 After CEO review, the v1 direction is markdown-first hybrid mode: the user-facing artifact is `packet.md`, and a helper-generated minimal `manifest.yaml` keeps the packet compatible with the existing ingest pipeline. Structured YAML and raw metric evidence are required only for performance, experiment, metric, split-sensitive, or strong claims.
 
+The skill itself must be standalone. `team_llm_wiki` is the target repo the skill reads from and writes packets into, not the location where the skill package is implemented.
+
 ## Key Direction
 
 - Skill name: `team-llm-wiki-packet`
@@ -18,6 +20,7 @@ After CEO review, the v1 direction is markdown-first hybrid mode: the user-facin
 - Expert stance: challenge weak ML/DL claims, leakage risks, missing baseline evidence, and unsupported performance claims
 - Default artifact: `packet.md` plus ingest-compatible `manifest.yaml`
 - Structured path: type-specific YAML/evidence only when the claim requires validation
+- Packaging boundary: standalone skill package, not a subdirectory of `team_llm_wiki`
 
 ## Design Spec
 
@@ -25,4 +28,4 @@ After CEO review, the v1 direction is markdown-first hybrid mode: the user-facin
 
 ## Next Action
 
-Turn the design into an implementation plan for a reusable skill package.
+Turn the design into an implementation plan for a standalone reusable skill package.

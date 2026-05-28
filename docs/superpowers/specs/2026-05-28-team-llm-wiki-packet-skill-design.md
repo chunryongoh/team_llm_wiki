@@ -31,6 +31,29 @@ The skill's terminal outcome is a GitHub pull request containing the approved pa
 - Do not store model weights, secrets, private keys, credential files, or PII-like artifacts.
 - Do not create a full CLI wizard in v1. The skill can later delegate deterministic steps to a CLI, but the first design target is an AI-guided skill.
 - Do not require every lightweight note, meeting, or reference packet to become a full structured YAML packet.
+- Do not implement the skill inside the `team_llm_wiki` repository. The repository is the packet target, not the skill host.
+
+## Packaging Boundary
+
+`team-llm-wiki-packet` must be a standalone skill package. It should live in a skill installation location or separate skill repository, for example:
+
+```text
+~/.codex/skills/team-llm-wiki-packet/
+```
+
+The `team_llm_wiki` repository remains the target repository that the skill reads from and writes packets into. The skill may read that repo's `AGENTS.md`, `CLAUDE.md`, `wiki/`, templates, and CLI, but v1 should not add skill implementation files under `team_llm_wiki`.
+
+Helper scripts belong inside the skill bundle:
+
+```text
+team-llm-wiki-packet/
+  SKILL.md
+  scripts/
+  references/
+  agents/
+```
+
+This keeps the workflow portable across teammates and AI tools. A teammate installs or shares the skill once, then points it at the active wiki repo.
 
 ## Skill Name and Trigger
 
@@ -562,6 +585,8 @@ team-llm-wiki-packet/
 
 `SKILL.md` should stay short and procedural. Detailed per-type question lists belong in `references/`. Helper scripts handle deterministic path generation, draft validation, markdown/manifest rendering, preview formatting, and PR-first upload mechanics.
 
+The package above is not created under `team_llm_wiki/`. It is installed as a standalone skill and treats `team_llm_wiki` as an external target repo.
+
 ## Data Flow
 
 ```mermaid
@@ -627,6 +652,8 @@ flowchart TD
 - Markdown-first packets still include helper-generated `manifest.yaml` for existing ingest compatibility.
 - Markdown-first packets use minimal frontmatter in `packet.md`.
 - Promote markdown packet to structured packet is deferred from v1.
+- The skill package is standalone and must not be implemented inside `team_llm_wiki`.
+- Helper scripts live inside the skill package for v1, not inside the project CLI.
 
 ## Open Implementation Decisions
 
@@ -635,8 +662,8 @@ These can be resolved during implementation planning:
 - Whether `raw/users/<owner>/<packet-type>/<date-slug>/` should replace the README examples immediately.
 - Whether evidence copied from local attachments should go under `evidence/` by default for structured packets.
 - Whether packet preview should show full generated files or a compact summary plus file paths.
-- Whether helper scripts should live inside the skill package only or also be mirrored into the project CLI later.
+- Whether the standalone skill should be packaged from a local skill directory, a separate GitHub repo, or both.
 
 ## Recommended Next Step
 
-Write an implementation plan for creating the `team-llm-wiki-packet` skill package and updating the repo docs/templates so teammates can invoke it consistently.
+Write an implementation plan for creating the standalone `team-llm-wiki-packet` skill package. The plan should treat `team_llm_wiki` as the target repo and should not place skill implementation files inside it.
