@@ -54,3 +54,9 @@ Append-only ingest and maintenance events belong here.
 - Added fixture-based self-tests to the standalone packet skill v1 scope.
 - Required tests cover markdown-first rendering, structured performance rendering, markdown safety blocks/warnings, path containment, staging safety, PR failure recovery, and optional target repo CLI validation.
 - Clarified that these tests live in the separate skill repository, not in `team_llm_wiki`.
+
+## [2026-05-28] plan | packet-skill-implementation
+
+- Added an implementation plan for the standalone `team-llm-wiki-packet` skill source repo.
+- Planned local skill installation under `~/.codex/skills/team-llm-wiki-packet`.
+- Required a fresh subagent smoke test that installs the skill, creates a real raw packet PR against `team_llm_wiki`, validates it, and closes the smoke PR without merge.
