@@ -8,6 +8,7 @@ Core pages:
 - [Ingest Policy](team/wiki-ingest-policy.md)
 - [Contribution Workflow](team/contribution-workflow.md)
 - [Packet Skill Design Summary](reports/2026-05-28-packet-skill-design.md)
+- [Packet Skill Implementation Report](reports/2026-05-28-packet-skill-implementation.md)
 
 <!-- wiki-ingest:index:start -->
 <!-- wiki-ingest:index:end -->

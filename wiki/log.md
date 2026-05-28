@@ -60,3 +60,11 @@ Append-only ingest and maintenance events belong here.
 - Added an implementation plan for the standalone `team-llm-wiki-packet` skill source repo.
 - Planned local skill installation under `~/.codex/skills/team-llm-wiki-packet`.
 - Required a fresh subagent smoke test that installs the skill, creates a real raw packet PR against `team_llm_wiki`, validates it, and closes the smoke PR without merge.
+
+## [2026-05-28] implementation | packet-skill-smoke-verified
+
+- Implemented the standalone `team-llm-wiki-packet` skill in `chunryongoh/team-llm-wiki-packet-skill`.
+- Installed the skill under `/home/chunoh/.codex/skills/team-llm-wiki-packet`.
+- Verified a fresh subagent smoke PR against `team_llm_wiki`: `https://github.com/chunryongoh/team_llm_wiki/pull/2`.
+- Smoke PR validation passed for both `wiki-pr-validate / preview` and `tests / pytest`, then the PR was closed without merge and its branch deleted.
+- Recorded implementation evidence in `wiki/reports/2026-05-28-packet-skill-implementation.md`.
