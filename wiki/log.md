@@ -25,3 +25,9 @@ Append-only ingest and maintenance events belong here.
 - Clarified that `team-llm-wiki-packet` is a standalone skill package, not an implementation subdirectory of `team_llm_wiki`.
 - Defined `team_llm_wiki` as the target repository that the skill reads from and writes raw packets into.
 - Kept helper scripts inside the standalone skill bundle for v1.
+
+## [2026-05-28] design | packet-skill-helper-failure-contract
+
+- Added a named JSON success/failure contract for standalone packet skill helper scripts.
+- Defined failure codes and recovery actions for draft creation, packet rendering, preview generation, and PR upload helpers.
+- Required helper failures to stop the skill unless the recovery path is explicit.

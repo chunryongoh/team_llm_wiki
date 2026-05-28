@@ -21,6 +21,7 @@ The skill itself must be standalone. `team_llm_wiki` is the target repo the skil
 - Default artifact: `packet.md` plus ingest-compatible `manifest.yaml`
 - Structured path: type-specific YAML/evidence only when the claim requires validation
 - Packaging boundary: standalone skill package, not a subdirectory of `team_llm_wiki`
+- Helper reliability: standalone scripts must return JSON success/failure contracts with named failure codes
 
 ## Design Spec
 
@@ -28,4 +29,4 @@ The skill itself must be standalone. `team_llm_wiki` is the target repo the skil
 
 ## Next Action
 
-Turn the design into an implementation plan for a standalone reusable skill package.
+Turn the design into an implementation plan for a standalone reusable skill package with deterministic helper scripts and named failure contracts.

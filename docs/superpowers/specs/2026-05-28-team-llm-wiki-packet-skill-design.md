@@ -587,6 +587,160 @@ team-llm-wiki-packet/
 
 The package above is not created under `team_llm_wiki/`. It is installed as a standalone skill and treats `team_llm_wiki` as an external target repo.
 
+## Standalone Helper Failure Contract
+
+Helper scripts must use explicit failure codes and machine-readable JSON output. The skill should never depend on parsing free-form stderr to decide what to do next.
+
+All helper scripts should return:
+
+```json
+{
+  "ok": false,
+  "code": "invalid_draft",
+  "message": "Human-readable summary.",
+  "recovery": "Ask for the missing split name and rerun make_packet_draft.py.",
+  "details": {}
+}
+```
+
+Successful helpers should return:
+
+```json
+{
+  "ok": true,
+  "outputs": {}
+}
+```
+
+### `make_packet_draft.py`
+
+Purpose: convert interview answers into a draft contract. It must not write packet files.
+
+Inputs:
+
+- target repo root
+- owner
+- packet type
+- packet title or short topic
+- packet mode: `markdown_first` or `structured`
+- interview answers
+- optional source artifact paths
+
+Outputs:
+
+- `packet-draft.json` or stdout JSON
+- suggested target packet path
+- selected packet mode
+- missing interview questions, if any
+
+Failure codes:
+
+| Code | Trigger | Recovery |
+| --- | --- | --- |
+| `missing_repo_context` | Target repo lacks required policy/template files | Ask the user to point to the correct repo or stop. |
+| `invalid_packet_type` | Packet type is absent or unsupported | Re-ask packet triage with valid packet types. |
+| `invalid_owner` | Owner is empty, unsafe, or not ASCII kebab-case compatible | Ask for the GitHub handle or owner slug. |
+| `invalid_packet_mode` | Mode is not `markdown_first` or `structured` | Re-run triage and choose a valid mode. |
+| `unsupported_claim_status` | Claim status is not one of the repo-supported statuses | Re-ask claim calibration. |
+| `structured_required` | User wants a strong claim that cannot stay markdown-only | Explain why structured mode is required and ask for evidence. |
+
+### `render_packet.py`
+
+Purpose: render approved draft data into `packet.md`, `manifest.yaml`, and optional structured evidence files. It writes only inside the approved packet root.
+
+Inputs:
+
+- target repo root
+- approved draft contract
+- optional source artifact paths
+- output packet root
+
+Outputs:
+
+- created file list
+- changed path list for validation
+- normalized manifest summary
+
+Failure codes:
+
+| Code | Trigger | Recovery |
+| --- | --- | --- |
+| `invalid_draft` | Draft contract is missing required fields or has inconsistent mode/type fields | Return to the interview step and repair the draft. |
+| `unsafe_packet_path` | Target path escapes `raw/users/` or includes unsafe path segments | Regenerate owner/type/slug and show the corrected path. |
+| `packet_already_exists` | Target packet root already exists | Ask whether to choose a new slug or stop. |
+| `frontmatter_manifest_mismatch` | `packet.md` frontmatter disagrees with generated manifest fields | Regenerate both from the same draft contract. |
+| `unsafe_raw_path` | Source or rendered raw path escapes the packet root | Reject the path and ask for a packet-local copy. |
+| `missing_structured_evidence` | Structured packet lacks required type YAML or metric/split evidence | Ask for the missing evidence or downgrade claim status. |
+| `secret_or_pii_detected` | Source artifact or markdown contains secret-like or PII-like content | Reject the file and ask for a sanitized summary. |
+| `model_weight_rejected` | Source artifact appears to be model weights or forbidden binary | Reject the file and ask for config or external reference only. |
+
+### `preview_packet.py`
+
+Purpose: show the user exactly what will be created before writes or upload. Preview should be deterministic and bounded.
+
+Inputs:
+
+- draft contract
+- proposed rendered file summaries
+- validation plan
+
+Outputs:
+
+- target path
+- packet mode
+- file list
+- claim status and claim boundary
+- missing evidence list
+- commands that will run after approval
+
+Failure codes:
+
+| Code | Trigger | Recovery |
+| --- | --- | --- |
+| `preview_too_large` | Preview exceeds a bounded size | Show compact summary plus file paths instead of full content. |
+| `preview_missing_required_section` | Preview lacks target path, files, claim status, or validation plan | Regenerate preview from draft contract. |
+| `unsupported_preview_mode` | Preview mode is neither compact nor full | Use compact preview by default. |
+
+### `upload_packet_pr.py`
+
+Purpose: commit only approved packet files, push a packet branch, and open a GitHub pull request. It must not commit generated `wiki/` files.
+
+Inputs:
+
+- target repo root
+- packet file paths to stage
+- branch name
+- commit message
+- PR title/body
+
+Outputs:
+
+- branch name
+- commit SHA
+- PR URL when created
+- fallback command when PR creation fails
+
+Failure codes:
+
+| Code | Trigger | Recovery |
+| --- | --- | --- |
+| `dirty_worktree_conflict` | Unrelated dirty files overlap with packet files or required git state | Stop and ask the user to resolve or approve a new branch from current state. |
+| `no_packet_files` | No approved packet files are present to commit | Stop before git actions and rerun render. |
+| `unexpected_staged_files` | Files outside the approved packet list are staged | Unstage unrelated files and show the user what was skipped. |
+| `branch_exists` | Proposed packet branch already exists locally or remotely | Ask to reuse it or generate a new branch suffix. |
+| `commit_failed` | Git commit fails | Leave files in place and report the git error. |
+| `push_failed` | Branch push fails | Leave the local commit intact and show retry instructions. |
+| `gh_missing` | GitHub CLI is unavailable | Push branch if possible and show manual PR URL/instructions. |
+| `pr_create_failed` | `gh pr create` fails | Leave the pushed branch intact and show the exact command to retry. |
+
+## Failure Handling Rules
+
+- The skill must stop on helper failure unless the failure contract explicitly says it can continue.
+- The skill must show the failure code, short message, and recovery action to the user.
+- The skill must not retry destructive git operations automatically.
+- The skill must not silently downgrade structured packets to markdown-first. Downgrade requires user approval.
+- The skill must not proceed to upload after validation failure unless the user explicitly asks for a draft PR with known failures.
+
 ## Data Flow
 
 ```mermaid
@@ -626,6 +780,7 @@ flowchart TD
 - Dirty git worktree: commit only the new packet files; do not touch unrelated changes.
 - Push failure: leave the local commit intact and report the remote error.
 - Pull request creation failure: leave the pushed branch intact and show the user the branch URL or command to create the PR.
+- Helper script failure: stop, display the helper failure code and recovery action, then return to the relevant interview, preview, render, or upload step.
 
 ## Acceptance Criteria
 
@@ -642,6 +797,7 @@ flowchart TD
 - The skill runs local validation before pushing.
 - The commit contains only the approved raw packet files.
 - The skill pushes the packet branch to GitHub and opens a pull request by default.
+- Standalone helper scripts emit explicit JSON success/failure contracts with named failure codes.
 - The skill does not directly edit generated wiki synthesis pages.
 
 ## Resolved Review Decisions
@@ -654,6 +810,7 @@ flowchart TD
 - Promote markdown packet to structured packet is deferred from v1.
 - The skill package is standalone and must not be implemented inside `team_llm_wiki`.
 - Helper scripts live inside the skill package for v1, not inside the project CLI.
+- Helper script failure contracts are part of v1 scope.
 
 ## Open Implementation Decisions
 
