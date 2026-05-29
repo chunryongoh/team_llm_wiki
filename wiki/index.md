@@ -12,4 +12,6 @@ Core pages:
 - [Packet Skill Implementation Report](reports/2026-05-28-packet-skill-implementation.md)
 
 <!-- wiki-ingest:index:start -->
+- [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`
+- [Sleep Lifelog 2024 Dataset Definition](datasets/sleep-lifelog-2024.md) - `dataset`
 <!-- wiki-ingest:index:end -->
