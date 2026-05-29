@@ -27,10 +27,10 @@ jobs:
   ingest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - name: Check wiki bot loop guard
@@ -116,6 +116,7 @@ jobs:
           })
           summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
           summary_path.write_text(render_workflow_summary(raw), encoding="utf-8")
+          Path("ingest-summary-written").write_text("1\n", encoding="utf-8")
           PY
           if [ "$status" -ne 0 ]; then
             cat ingest-output.json
@@ -125,12 +126,12 @@ jobs:
       - name: Fallback summary
         if: always() && steps.skip.outputs.skip != 'true'
         run: |
-          if [ ! -s "$GITHUB_STEP_SUMMARY" ]; then
+          if [ ! -f ingest-summary-written ]; then
             printf "## Wiki ingest\n\nMissing ingest output.\n" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Upload wiki ingest report
         if: always() && steps.skip.outputs.skip != 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wiki-ingest-report
           path: raw/results/wiki-ingest/*/report.json
