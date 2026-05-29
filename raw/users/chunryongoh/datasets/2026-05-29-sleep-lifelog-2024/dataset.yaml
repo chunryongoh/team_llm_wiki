@@ -1,0 +1,46 @@
+name: sleep-lifelog-2024
+version: v0
+modalities:
+  - smartphone:mACStatus
+  - smartphone:mActivity
+  - smartphone:mAmbience
+  - smartphone:mBle
+  - smartphone:mGps
+  - smartphone:mLight
+  - smartphone:mScreenStatus
+  - smartphone:mUsagestats
+  - smartphone:mWifi
+  - smartwatch:wHr
+  - smartwatch:wLight
+  - smartwatch:wPedo
+  - sleep-sensor:placeholder
+  - self-report:bedtime-questionnaire
+package_files:
+  - ch2025_data_items/
+  - ch2026_metrics_train.csv
+  - ch2026_submission_sample.csv
+  - ch2026_metrics_description.pdf
+  - data.zip
+splits:
+  policy: groupkfold-subject
+  group_key: subject_id
+  n_folds: 3
+  source: local-canonical-sprint1
+  organizer_official_split_available: false
+  modeling_table_rows: 450
+  notes: Same-subject temporal split is recorded as a separate candidate track, not as the canonical sprint-1 split.
+leakage_risks:
+  - very_high_for_Q_under_same_subject_split_participant_relative_averages
+  - subjective_label_reporting_style_bias
+  - nested_modality_payloads_require_aggregation_before_tabular_models
+  - paper_vs_released_package_target_count_mismatch_six_vs_seven
+  - minute_level_streams_must_aggregate_before_most_models
+provenance:
+  source_type: released-package-plus-team-summary
+  primary_raw_paths:
+    - raw/datasets/sleep-lifelog-2024/
+  supporting_sources:
+    - raw/references/chatgpt-share-2026-04-28-sleep-hackathon/transcript.md
+    - raw/references/kick-off.md
+  notes: ETRI source repo paths recorded for traceability; this packet itself ships only its own manifest, dataset.yaml, and packet.md.
+claim_status: tentative
