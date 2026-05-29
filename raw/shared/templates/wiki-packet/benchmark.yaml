@@ -1,0 +1,48 @@
+id: example-benchmark
+packet_type: benchmark
+title: Example Benchmark
+date: "2026-05-29"
+owner: replace-with-owner
+status: submitted
+task: benchmark-definition
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: replace-with-split
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: Benchmark definition lists targets, metric, and evaluation policy only; no result is claimed.
+claim_status: tentative
+summary: First-class benchmark definition with target taxonomy, primary metric, and evaluation policy.
+raw_paths:
+  benchmark: benchmark.yaml
+intended_wiki_targets:
+  - wiki/benchmarks/example-benchmark.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Replace with a careful benchmark claim.
+name: replace-with-benchmark
+dataset_ref: replace-with-dataset
+task_family: replace-with-task-family
+targets:
+  - id: replace-with-target-id
+    kind: replace-with-target-kind
+    description: Replace with target description.
+    label_source: Replace with the column or file the label comes from.
+primary_metric:
+  name: replace-with-metric
+  definition: Replace with metric definition.
+  averaging_policy: Replace with averaging policy or none.
+evaluation_policy:
+  split: replace-with-split-policy
+  group_key: none
+  aggregation: Replace with aggregation policy.
+claim_boundaries:
+  - local_oof_diagnostic_only
+claim_status: tentative

@@ -18,6 +18,8 @@ REVIEW_TYPES = {
     PacketType.MODEL,
     PacketType.FEATURE,
     PacketType.EXPERIMENT,
+    PacketType.DATASET,
+    PacketType.BENCHMARK,
 }
 
 

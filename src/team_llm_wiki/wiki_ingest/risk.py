@@ -10,8 +10,17 @@ HIGH_RISK_TYPES = {
     PacketType.FEATURE,
     PacketType.PREPROCESSING,
     PacketType.AUGMENTATION,
+    PacketType.DATASET,
+    PacketType.BENCHMARK,
 }
-HIGH_RISK_PATH_PREFIXES = ("wiki/performance/", "wiki/models/", "wiki/features/", "wiki/experiments/", "wiki/datasets/")
+HIGH_RISK_PATH_PREFIXES = (
+    "wiki/performance/",
+    "wiki/models/",
+    "wiki/features/",
+    "wiki/experiments/",
+    "wiki/datasets/",
+    "wiki/benchmarks/",
+)
 GOVERNANCE_CLAIM_STATUSES = {"supported", "disputed", "superseded"}
 
 

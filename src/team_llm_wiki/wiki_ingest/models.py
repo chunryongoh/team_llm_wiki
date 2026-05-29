@@ -17,6 +17,8 @@ class PacketType(str, Enum):
     PERFORMANCE = "performance"
     PREPROCESSING = "preprocessing"
     AUGMENTATION = "augmentation"
+    DATASET = "dataset"
+    BENCHMARK = "benchmark"
 
 
 class RiskTier(str, Enum):

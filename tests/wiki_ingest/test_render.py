@@ -18,6 +18,8 @@ def manifest(**overrides):
         "augmentation": "wiki/datasets",
         "experiment": "wiki/experiments",
         "reference": "wiki/sources",
+        "dataset": "wiki/datasets",
+        "benchmark": "wiki/benchmarks",
         PacketType.MEETING: "wiki/sources",
         PacketType.FEATURE: "wiki/features",
         PacketType.MODEL: "wiki/models",
@@ -26,6 +28,8 @@ def manifest(**overrides):
         PacketType.AUGMENTATION: "wiki/datasets",
         PacketType.EXPERIMENT: "wiki/experiments",
         PacketType.REFERENCE: "wiki/sources",
+        PacketType.DATASET: "wiki/datasets",
+        PacketType.BENCHMARK: "wiki/benchmarks",
     }[packet_type]
     data = {
         "id": packet_id,

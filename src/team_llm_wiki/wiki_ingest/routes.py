@@ -13,6 +13,8 @@ PACKET_ROUTE_MAP = {
     PacketType.PERFORMANCE: "wiki/performance",
     PacketType.PREPROCESSING: "wiki/datasets",
     PacketType.AUGMENTATION: "wiki/datasets",
+    PacketType.DATASET: "wiki/datasets",
+    PacketType.BENCHMARK: "wiki/benchmarks",
 }
 
 
