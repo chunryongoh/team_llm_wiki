@@ -1,0 +1,81 @@
+{
+  "changed_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-05-29-sleep-health-hackathon-v0.json",
+    "automation/.cache/compiled/2026-05-29-sleep-lifelog-2024.json",
+    "raw/results/wiki-ingest/26628582638-1/report.json"
+  ],
+  "claim_statuses": [
+    {
+      "packet": "2026-05-29-sleep-health-hackathon-v0",
+      "status": "tentative"
+    },
+    {
+      "packet": "2026-05-29-sleep-lifelog-2024",
+      "status": "tentative"
+    }
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-05-29-sleep-health-hackathon-v0.json",
+    "automation/.cache/compiled/2026-05-29-sleep-lifelog-2024.json"
+  ],
+  "input_changed_paths": [
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/benchmark.yaml",
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/manifest.yaml",
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/packet.md",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/packet.md"
+  ],
+  "link_lint_errors": [],
+  "metric_changes": [],
+  "packet_roots": [
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024"
+  ],
+  "packets": [
+    {
+      "claim_status": "tentative",
+      "id": "2026-05-29-sleep-health-hackathon-v0",
+      "packet_root": "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: benchmark",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "benchmark"
+    },
+    {
+      "claim_status": "tentative",
+      "id": "2026-05-29-sleep-lifelog-2024",
+      "packet_root": "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: dataset",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "dataset"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/26628582638-1/report.json",
+  "risk_tier": "tier2-interpretation",
+  "run_id": "26628582638-1",
+  "status": "bot_pr",
+  "timing_ms": 52,
+  "warnings": []
+}

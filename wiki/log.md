@@ -68,3 +68,13 @@ Append-only ingest and maintenance events belong here.
 - Verified a fresh subagent smoke PR against `team_llm_wiki`: `https://github.com/chunryongoh/team_llm_wiki/pull/2`.
 - Smoke PR validation passed for both `wiki-pr-validate / preview` and `tests / pytest`, then the PR was closed without merge and its branch deleted.
 - Recorded implementation evidence in `wiki/reports/2026-05-28-packet-skill-implementation.md`.
+
+## [2026-05-29] ingest | 2026-05-29-sleep-health-hackathon-v0
+
+- target: `wiki/benchmarks/sleep-health-hackathon-v0.md`
+- run: `26628582638-1`
+
+## [2026-05-29] ingest | 2026-05-29-sleep-lifelog-2024
+
+- target: `wiki/datasets/sleep-lifelog-2024.md`
+- run: `26628582638-1`
