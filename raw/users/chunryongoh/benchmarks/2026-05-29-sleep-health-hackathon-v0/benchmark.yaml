@@ -1,0 +1,72 @@
+name: sleep-health-hackathon-v0
+dataset_ref: sleep-lifelog-2024
+task_family: sleep-health-prediction
+targets:
+  - id: Q1
+    kind: subjective-binary
+    description: Perceived sleep quality, participant-relative.
+    label_source: ch2026_metrics_train.csv column Q1
+  - id: Q2
+    kind: subjective-binary
+    description: Bedtime physical fatigue, participant-relative.
+    label_source: ch2026_metrics_train.csv column Q2
+  - id: Q3
+    kind: subjective-binary
+    description: Bedtime stress level, participant-relative.
+    label_source: ch2026_metrics_train.csv column Q3
+  - id: S1
+    kind: objective-binary
+    description: Total sleep time guideline compliance.
+    label_source: ch2026_metrics_train.csv column S1
+  - id: S2
+    kind: objective-binary
+    description: Sleep efficiency compliance.
+    label_source: ch2026_metrics_train.csv column S2
+  - id: S3
+    kind: objective-binary
+    description: Sleep onset latency compliance.
+    label_source: ch2026_metrics_train.csv column S3
+  - id: S4
+    kind: objective-binary
+    description: Wakefulness after sleep onset compliance.
+    label_source: ch2026_metrics_train.csv column S4
+primary_metric:
+  name: grouped_macro_logloss
+  definition: Mean across the seven targets of subject-grouped log-loss computed on out-of-fold validation predictions.
+  averaging_policy: macro-mean over targets
+  loss_basis: log-loss per target
+  aggregation_basis: subject-grouped fold-level predictions concatenated into an OOF dataset before per-target log-loss
+secondary_metrics:
+  - name: macro_f1
+    definition: Macro F1 across the seven prediction targets.
+  - name: macro_roc_auc
+    definition: Macro ROC-AUC across the seven prediction targets.
+  - name: macro_brier
+    definition: Macro Brier score across the seven prediction targets.
+evaluation_policy:
+  split: groupkfold-subject
+  group_key: subject_id
+  n_folds: 3
+  aggregation: macro-mean over targets
+  tracks:
+    - id: A
+      name: unseen-subject-generalization
+      recommended: true
+      description: Main track. Protects against person-identity leakage for the Q-family participant-relative labels.
+    - id: B
+      name: same-subject-temporal-forecasting
+      recommended: false
+      description: Candidate alternative track. Must not be conflated with Track A; Q-family targets are especially dangerous to evaluate under Track B alone.
+claim_boundaries:
+  - local_oof_diagnostic_only
+  - same_split_baseline_comparison
+  - public_lb_observation_only
+public_leaderboard:
+  policy: public-and-private-leaderboard-on-DACON
+  public_share_of_test: 0.44
+  notes: Public leaderboard movement is noisy directional feedback, not the final truth signal. Public and private aggregations are average log-loss.
+working_implications:
+  - Improvements must be interpreted separately for subjective Q-family and objective S-family targets.
+  - Strong-local performance is not a public claim unless a DACON submission is recorded and compared at the same split policy.
+  - Same-split baseline comparisons stay valid only when the baseline and the candidate share the canonical GroupKFold-by-subject 3-fold policy.
+claim_status: tentative
