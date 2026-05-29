@@ -12,9 +12,8 @@ from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
 from .models import FailureCode, IngestFailure, IngestReport, RiskDecision, RiskTier, RiskTierLabel, as_jsonable
 from .policy import load_policy
-from .render import render_packets
+from .render import render_packets, render_target_path
 from .risk import classify_risk
-from .routes import packet_target_path
 
 
 def _rel(repo_root: Path, path: Path) -> str:
@@ -60,10 +59,12 @@ def _write_compiled_packets(staging: Path, packets: list[tuple], packet_roots: l
     return compiled_paths
 
 
-def _predicted_generated_paths(packets: list[tuple]) -> list[str]:
+def _predicted_generated_paths(repo_root: Path, packets: list[tuple], packet_roots: list[str] | None = None) -> list[str]:
     paths: list[str] = []
-    for manifest, _risk in packets:
-        paths.append(packet_target_path(manifest.type, manifest.id))
+    roots = packet_roots or []
+    for index, (manifest, _risk) in enumerate(packets):
+        packet_root = repo_root / roots[index] if index < len(roots) else None
+        paths.append(render_target_path(manifest, packet_root))
     if packets:
         paths.extend(["wiki/index.md", "wiki/log.md", "wiki/latest-context.md"])
         paths.extend(_compiled_packet_path(manifest.id) for manifest, _risk in packets)
@@ -184,7 +185,7 @@ def _max_risk_tier(risks: list[RiskDecision]) -> str | None:
 def plan_wiki_main_ingest(repo_root: Path, changed_paths: list[str], run_id: str = "plan") -> IngestReport:
     report, packets = _build_report(repo_root, changed_paths, run_id)
     if report.status not in {"skipped", "hard_fail"}:
-        report.generated_paths = _predicted_generated_paths(packets)
+        report.generated_paths = _predicted_generated_paths(repo_root, packets, report.packet_roots)
         report.changed_paths = list(report.generated_paths)
     return report
 
@@ -223,6 +224,10 @@ def run_wiki_main_ingest(
             [(manifest, risk.tier, risk.risk_tier) for manifest, risk in packets],
             run_id=run_id,
             policy=policy,
+            packet_roots={
+                manifest.id: staging / packet_root
+                for (manifest, _risk), packet_root in zip(packets, report.packet_roots, strict=True)
+            },
         )
         compiled_paths = _write_compiled_packets(staging, packets, report.packet_roots)
         link_errors = lint_wiki_links(staging, rendered.changed_paths)

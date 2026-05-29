@@ -10,4 +10,5 @@ status: active
 - Do not promote performance, model, feature, or supported claims without raw evidence and metric validation.
 - Use ASCII kebab-case filenames and stable machine-readable fields.
 - Keep `wiki/latest-context.md` bounded and use it as an agent session entrypoint, not as a wiki dump.
-
+- Render `wiki/` as synthesized memory, not raw packet mirroring. Dataset and benchmark pages should use stable entity filenames such as `wiki/datasets/<dataset-name>.md` and `wiki/benchmarks/<benchmark-name>.md`; packet ids belong in provenance.
+- When LLM-assisted synthesis is enabled, use `gpt-5.5` as the default high-accuracy model and keep all LLM output review-required. Merge-time ingest must still be reproducible without an API key.

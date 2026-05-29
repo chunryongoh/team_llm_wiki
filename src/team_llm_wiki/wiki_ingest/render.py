@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import html
 from pathlib import Path
+import re
+from typing import Any
 
 import yaml
 
-from .models import PacketManifest, PacketType, RenderResult, RiskTier, RiskTierLabel, as_jsonable
+from .models import PacketManifest, PacketType, RenderResult, RiskTier, RiskTierLabel, _validate_kebab_id, as_jsonable
 from .policy import IngestPolicy
 from .routes import packet_target_path
 
@@ -105,6 +107,45 @@ def _packet_frontmatter(manifest: PacketManifest, publish_action: RiskTier, risk
     return yaml.safe_dump(as_jsonable(frontmatter), sort_keys=False).strip()
 
 
+def _load_packet_mapping(packet_root: Path | None, manifest: PacketManifest, label: str) -> dict[str, Any]:
+    if packet_root is None:
+        return {}
+    raw_path = manifest.raw_path_map.get(label)
+    if not raw_path:
+        return {}
+    source = packet_root / raw_path
+    if not source.exists() or not source.is_file():
+        return {}
+    try:
+        data = yaml.safe_load(source.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _slug_from_value(value: Any, fallback: str) -> str:
+    if isinstance(value, str):
+        candidate = value.strip().lower()
+    else:
+        candidate = ""
+    candidate = re.sub(r"[^a-z0-9]+", "-", candidate).strip("-")
+    candidate = candidate or fallback
+    _validate_kebab_id(candidate)
+    return candidate
+
+
+def render_target_path(manifest: PacketManifest, packet_root: Path | None = None) -> str:
+    if manifest.type is PacketType.DATASET:
+        data = _load_packet_mapping(packet_root, manifest, "dataset")
+        page_id = _slug_from_value(data.get("name") or manifest.dataset.name, manifest.id)
+        return packet_target_path(manifest.type, page_id)
+    if manifest.type is PacketType.BENCHMARK:
+        data = _load_packet_mapping(packet_root, manifest, "benchmark")
+        page_id = _slug_from_value(data.get("name"), manifest.id)
+        return packet_target_path(manifest.type, page_id)
+    return packet_target_path(manifest.type, manifest.id)
+
+
 def _lineage_lines(manifest: PacketManifest) -> list[str]:
     dataset = manifest.dataset
     split = manifest.split
@@ -121,7 +162,145 @@ def _lineage_lines(manifest: PacketManifest) -> list[str]:
     ]
 
 
-def _packet_page(manifest: PacketManifest, publish_action: RiskTier, risk_tier: str, run_id: str) -> str:
+def _format_scalar(value: Any) -> str:
+    if value is None:
+        return "`null`"
+    if isinstance(value, bool):
+        return "`true`" if value else "`false`"
+    if isinstance(value, (int, float)):
+        return f"`{value}`"
+    return f"`{str(value)}`"
+
+
+def _mapping_lines(data: dict[str, Any], skip: set[str] | None = None) -> list[str]:
+    skip = skip or set()
+    lines: list[str] = []
+    for key, value in data.items():
+        if key in skip:
+            continue
+        if isinstance(value, dict):
+            lines.append(f"- {key}:")
+            lines.extend(f"  - {inner_key}: {_format_scalar(inner_value)}" for inner_key, inner_value in value.items())
+        elif isinstance(value, list):
+            lines.append(f"- {key}:")
+            lines.extend(f"  - {_format_scalar(item)}" for item in value)
+        else:
+            lines.append(f"- {key}: {_format_scalar(value)}")
+    return lines
+
+
+def _dataset_entity_section(data: dict[str, Any]) -> list[str]:
+    if not data:
+        return []
+    lines = ["", "## Dataset Entity", ""]
+    for key in ["name", "version"]:
+        if key in data:
+            lines.append(f"- {key}: {_format_scalar(data[key])}")
+    if data.get("modalities"):
+        lines.extend(["", "### Modalities", ""])
+        lines.extend(f"- {_format_scalar(item)}" for item in data["modalities"])
+    if data.get("package_files"):
+        lines.extend(["", "### Package Files", ""])
+        lines.extend(f"- {_format_scalar(item)}" for item in data["package_files"])
+    if isinstance(data.get("splits"), dict):
+        lines.extend(["", "### Split Policy", ""])
+        lines.extend(_mapping_lines(data["splits"]))
+    if data.get("leakage_risks"):
+        lines.extend(["", "### Leakage Risks", ""])
+        lines.extend(f"- {_format_scalar(item)}" for item in data["leakage_risks"])
+    if isinstance(data.get("provenance"), dict):
+        lines.extend(["", "### Provenance", ""])
+        lines.extend(_mapping_lines(data["provenance"]))
+    return lines
+
+
+def _benchmark_entity_section(data: dict[str, Any]) -> list[str]:
+    if not data:
+        return []
+    lines = ["", "## Benchmark Entity", ""]
+    for key in ["name", "dataset_ref", "task_family"]:
+        if key in data:
+            lines.append(f"- {key}: {_format_scalar(data[key])}")
+    targets = data.get("targets")
+    if isinstance(targets, list) and targets:
+        lines.extend(["", "### Targets", "", "| id | kind | description |", "| --- | --- | --- |"])
+        for target in targets:
+            if isinstance(target, dict):
+                lines.append(
+                    f"| {target.get('id', '')} | {target.get('kind', '')} | {target.get('description', '')} |"
+                )
+            else:
+                lines.append(f"| {target} |  |  |")
+    if isinstance(data.get("primary_metric"), dict):
+        lines.extend(["", "### Primary Metric", ""])
+        lines.extend(_mapping_lines(data["primary_metric"]))
+    if isinstance(data.get("evaluation_policy"), dict):
+        lines.extend(["", "### Evaluation Policy", ""])
+        lines.extend(_mapping_lines(data["evaluation_policy"]))
+    if data.get("claim_boundaries"):
+        lines.extend(["", "### Claim Boundaries", ""])
+        lines.extend(f"- {_format_scalar(item)}" for item in data["claim_boundaries"])
+    if isinstance(data.get("public_leaderboard"), dict):
+        lines.extend(["", "### Public Leaderboard", ""])
+        lines.extend(_mapping_lines(data["public_leaderboard"]))
+    if data.get("working_implications"):
+        lines.extend(["", "### Working Implications", ""])
+        lines.extend(f"- {_format_scalar(item)}" for item in data["working_implications"])
+    return lines
+
+
+def _strip_packet_markdown(text: str, title: str) -> str:
+    lines = text.splitlines()
+    if lines and lines[0].strip() == "---":
+        end_index = None
+        for index, line in enumerate(lines[1:], start=1):
+            if line.strip() == "---":
+                end_index = index
+                break
+        if end_index is not None:
+            lines = lines[end_index + 1 :]
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    if lines and lines[0].startswith("# "):
+        heading = lines[0][2:].strip()
+        if heading == title:
+            lines = lines[1:]
+    return "\n".join(lines).strip()
+
+
+def _packet_markdown_body(packet_root: Path | None, title: str, target_by_packet_id: dict[str, str]) -> str:
+    if packet_root is None:
+        return ""
+    packet_path = packet_root / "packet.md"
+    if not packet_path.exists() or not packet_path.is_file():
+        return ""
+    try:
+        body = _strip_packet_markdown(packet_path.read_text(encoding="utf-8"), title)
+    except (OSError, UnicodeDecodeError):
+        return ""
+    for packet_id, target in target_by_packet_id.items():
+        body = body.replace(f"[[datasets/{packet_id}]]", f"[[{target}]]")
+        body = body.replace(f"[[benchmarks/{packet_id}]]", f"[[{target}]]")
+        body = body.replace(f"[[sources/{packet_id}]]", f"[[{target}]]")
+    return body
+
+
+def _structured_sections(manifest: PacketManifest, packet_root: Path | None) -> list[str]:
+    if manifest.type is PacketType.DATASET:
+        return _dataset_entity_section(_load_packet_mapping(packet_root, manifest, "dataset"))
+    if manifest.type is PacketType.BENCHMARK:
+        return _benchmark_entity_section(_load_packet_mapping(packet_root, manifest, "benchmark"))
+    return []
+
+
+def _packet_page(
+    manifest: PacketManifest,
+    publish_action: RiskTier,
+    risk_tier: str,
+    run_id: str,
+    packet_root: Path | None,
+    target_by_packet_id: dict[str, str],
+) -> str:
     lines = [
         "---",
         _packet_frontmatter(manifest, publish_action, risk_tier),
@@ -144,6 +323,10 @@ def _packet_page(manifest: PacketManifest, publish_action: RiskTier, risk_tier: 
     if manifest.type in REVIEW_TYPES or any(claim.status == "supported" for claim in manifest.claims):
         lines.append("- review-required: true")
     lines.extend(["", "## Summary", "", manifest.summary or "No summary provided."])
+    lines.extend(_structured_sections(manifest, packet_root))
+    packet_body = _packet_markdown_body(packet_root, manifest.title, target_by_packet_id)
+    if packet_body:
+        lines.extend(["", "## Packet Synthesis", "", packet_body])
     if manifest.metrics_to_verify:
         lines.extend(["", "## Metrics", "", "raw-evidence-backed metric checks:"])
         lines.extend(
@@ -165,6 +348,10 @@ def _markdown_link_text(value: str) -> str:
     return escaped.replace("[", "\\[").replace("]", "\\]").replace("\n", " ")
 
 
+def _wiki_index_href(rel: str) -> str:
+    return rel.removeprefix("wiki/")
+
+
 def _bounded_latest_page(prefix: str, entries: list[str], policy: IngestPolicy | None) -> str:
     max_entries = policy.latest_context_max_entries if policy else IngestPolicy(agents_text="").latest_context_max_entries
     max_chars = policy.latest_context_max_chars if policy else IngestPolicy(agents_text="").latest_context_max_chars
@@ -182,17 +369,30 @@ def render_packets(
     packets: list[PacketRenderInput],
     run_id: str,
     policy: IngestPolicy | None = None,
+    packet_roots: dict[str, Path] | None = None,
 ) -> RenderResult:
     changed: list[str] = []
     wiki = repo_root / "wiki"
     wiki.mkdir(exist_ok=True)
     rendered_targets: list[tuple[PacketManifest, str]] = []
     normalized_packets = [_normalize_packet_input(packet) for packet in packets]
+    roots = packet_roots or {}
+    target_by_packet_id = {
+        manifest.id: Path(render_target_path(manifest, roots.get(manifest.id)))
+        .with_suffix("")
+        .as_posix()
+        .removeprefix("wiki/")
+        for manifest, _publish_action, _risk_tier in normalized_packets
+    }
     for manifest, publish_action, risk_tier in normalized_packets:
-        rel = packet_target_path(manifest.type, manifest.id)
+        packet_root = roots.get(manifest.id)
+        rel = render_target_path(manifest, packet_root)
         target = repo_root / rel
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(_packet_page(manifest, publish_action, risk_tier, run_id), encoding="utf-8")
+        target.write_text(
+            _packet_page(manifest, publish_action, risk_tier, run_id, packet_root, target_by_packet_id),
+            encoding="utf-8",
+        )
         rendered_targets.append((manifest, rel))
         changed.append(rel)
 
@@ -202,7 +402,10 @@ def render_packets(
         set(
             [
                 *_existing_block_lines(index_text, INDEX_START, INDEX_END),
-                *[f"- [{_markdown_link_text(manifest.title)}]({rel}) - `{manifest.type.value}`" for manifest, rel in rendered_targets],
+                *[
+                    f"- [{_markdown_link_text(manifest.title)}]({_wiki_index_href(rel)}) - `{manifest.type.value}`"
+                    for manifest, rel in rendered_targets
+                ],
             ]
         )
     )
@@ -221,8 +424,9 @@ def render_packets(
     if LATEST_START in latest_text and LATEST_END in latest_text and latest_text.index(LATEST_START) < latest_text.index(LATEST_END):
         previous = latest_text[latest_text.index(LATEST_START) + len(LATEST_START) : latest_text.index(LATEST_END)].strip()
     new_entries = []
+    rendered_rel_by_id = {manifest.id: rel for manifest, rel in rendered_targets}
     for manifest, publish_action, risk_tier in normalized_packets:
-        rel = packet_target_path(manifest.type, manifest.id)
+        rel = rendered_rel_by_id[manifest.id]
         lines = [
             f"### {run_id} | {manifest.id}",
             "",

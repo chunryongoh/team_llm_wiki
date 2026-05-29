@@ -336,6 +336,105 @@ def test_runner_missing_manifest_under_raw_users_hard_fails(tmp_path):
     assert payload["failures"][0]["code"] == "invalid_manifest"
 
 
+def test_runner_dataset_and_benchmark_ingest_use_canonical_entity_pages(tmp_path):
+    seed_repo(tmp_path)
+    dataset_manifest = {
+        "id": "2026-05-29-sleep-lifelog-2024",
+        "packet_type": "dataset",
+        "title": "Sleep Lifelog 2024 Dataset Definition",
+        "date": "2026-05-29",
+        "owner": "alice",
+        "status": "submitted",
+        "task": "dataset-definition",
+        "dataset": {"name": "sleep-lifelog-2024", "version": "v0"},
+        "split": {"name": "groupkfold-subject-3fold-oof"},
+        "model": {"family": "not-applicable"},
+        "claim_boundary": "dataset definition only",
+        "claim_status": "tentative",
+        "summary": "Dataset summary.",
+        "raw_paths": {"dataset": "dataset.yaml"},
+        "intended_wiki_targets": ["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+    }
+    benchmark_manifest = {
+        "id": "2026-05-29-sleep-health-hackathon-v0",
+        "packet_type": "benchmark",
+        "title": "Sleep Health Hackathon Benchmark v0 Definition",
+        "date": "2026-05-29",
+        "owner": "alice",
+        "status": "submitted",
+        "task": "benchmark-definition",
+        "dataset": {"name": "sleep-lifelog-2024", "version": "v0"},
+        "split": {"name": "groupkfold-subject-3fold-oof"},
+        "model": {"family": "not-applicable"},
+        "claim_boundary": "benchmark definition only",
+        "claim_status": "tentative",
+        "summary": "Benchmark summary.",
+        "raw_paths": {"benchmark": "benchmark.yaml"},
+        "intended_wiki_targets": ["wiki/benchmarks/2026-05-29-sleep-health-hackathon-v0.md"],
+    }
+    dataset_root = packet_with_manifest(
+        tmp_path,
+        "datasets/2026-05-29-sleep-lifelog-2024",
+        dataset_manifest,
+        {
+            "dataset.yaml": (
+                "name: sleep-lifelog-2024\n"
+                "version: v0\n"
+                "modalities: [smartphone:mActivity]\n"
+                "package_files: [ch2026_metrics_train.csv]\n"
+                "splits: {policy: groupkfold-subject}\n"
+                "leakage_risks: [q-family-identity-leakage]\n"
+                "provenance: {source_type: released-package}\n"
+                "claim_status: tentative\n"
+            ),
+            "packet.md": "# Dataset\n\n## Working Implications\n\n- Use grouped subject splits.\n",
+        },
+    )
+    benchmark_root = packet_with_manifest(
+        tmp_path,
+        "benchmarks/2026-05-29-sleep-health-hackathon-v0",
+        benchmark_manifest,
+        {
+            "benchmark.yaml": (
+                "name: sleep-health-hackathon-v0\n"
+                "dataset_ref: sleep-lifelog-2024\n"
+                "task_family: sleep-health-prediction\n"
+                "targets:\n"
+                "  - id: Q1\n"
+                "    kind: subjective-binary\n"
+                "    description: perceived sleep quality\n"
+                "primary_metric: {name: grouped_macro_logloss}\n"
+                "evaluation_policy: {split: groupkfold-subject}\n"
+                "claim_boundaries: [local_oof_diagnostic_only]\n"
+                "claim_status: tentative\n"
+            ),
+            "packet.md": (
+                "# Benchmark\n\n"
+                "This uses [[datasets/2026-05-29-sleep-lifelog-2024]].\n"
+            ),
+        },
+    )
+
+    report = run_wiki_main_ingest(
+        tmp_path,
+        changed_paths=[
+            str(dataset_root.relative_to(tmp_path) / "manifest.yaml"),
+            str(benchmark_root.relative_to(tmp_path) / "manifest.yaml"),
+        ],
+        report_path=tmp_path / "raw" / "results" / "wiki-ingest" / "canonical" / "report.json",
+        run_id="canonical",
+    )
+
+    assert report.status == "bot_pr"
+    assert "wiki/datasets/sleep-lifelog-2024.md" in report.generated_paths
+    assert "wiki/benchmarks/sleep-health-hackathon-v0.md" in report.generated_paths
+    assert "wiki/datasets/2026-05-29-sleep-lifelog-2024.md" not in report.generated_paths
+    assert (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").exists()
+    benchmark_text = (tmp_path / "wiki" / "benchmarks" / "sleep-health-hackathon-v0.md").read_text(encoding="utf-8")
+    assert "## Benchmark Entity" in benchmark_text
+    assert "[[datasets/sleep-lifelog-2024]]" in benchmark_text
+
+
 def test_runner_invalid_manifest_writes_hard_fail_report_without_mutation(tmp_path):
     seed_repo(tmp_path)
     packet_root = tmp_path / "raw" / "users" / "alice" / "bad-packet"

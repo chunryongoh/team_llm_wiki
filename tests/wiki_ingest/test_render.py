@@ -78,7 +78,7 @@ def test_render_source_index_log_and_latest_context(tmp_path):
     target = tmp_path / "wiki" / "sources" / "ref-1.md"
     assert target.exists()
     assert "Reference One" in target.read_text(encoding="utf-8")
-    assert "wiki/sources/ref-1.md" in (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+    assert "sources/ref-1.md" in (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
     assert "## [2026-05-26] ingest | ref-1" in (tmp_path / "wiki" / "log.md").read_text(encoding="utf-8")
     latest_text = latest.read_text(encoding="utf-8")
     assert "old generated entry" in latest_text
@@ -216,7 +216,7 @@ def test_render_preserves_existing_generated_index_entries(tmp_path):
 
     index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
     assert "- [Existing](wiki/sources/existing.md) - `reference`" in index
-    assert "- [New Ref](wiki/sources/new-ref.md) - `reference`" in index
+    assert "- [New Ref](sources/new-ref.md) - `reference`" in index
 
 
 def test_render_escapes_manifest_title_in_generated_index(tmp_path):
@@ -296,3 +296,144 @@ def test_latest_context_defaults_to_12_entries_and_6000_chars(tmp_path):
     assert "[[index]]" in latest
     assert "[[overview]]" in latest
     assert "[[log]]" in latest
+
+
+def test_render_dataset_packet_uses_canonical_entity_page_and_promotes_packet_markdown(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    packet_root = tmp_path / "raw" / "users" / "alice" / "datasets" / "2026-05-29-sleep-lifelog-2024"
+    packet_root.mkdir(parents=True)
+    (packet_root / "dataset.yaml").write_text(
+        "name: sleep-lifelog-2024\n"
+        "version: v0\n"
+        "modalities:\n"
+        "  - smartphone:mActivity\n"
+        "package_files:\n"
+        "  - ch2026_metrics_train.csv\n"
+        "splits:\n"
+        "  policy: groupkfold-subject\n"
+        "  group_key: subject_id\n"
+        "  n_folds: 3\n"
+        "leakage_risks:\n"
+        "  - q-family-identity-leakage\n"
+        "provenance:\n"
+        "  source_type: released-package\n"
+        "claim_status: tentative\n",
+        encoding="utf-8",
+    )
+    (packet_root / "packet.md").write_text(
+        "---\n"
+        "id: 2026-05-29-sleep-lifelog-2024\n"
+        "---\n"
+        "# Sleep Lifelog 2024 Dataset Definition\n\n"
+        "## Released Package Contents\n\n"
+        "- `ch2026_metrics_train.csv`\n\n"
+        "## Known Leakage and Bias Risks\n\n"
+        "- Q-family labels are participant-relative averages.\n",
+        encoding="utf-8",
+    )
+    packet = manifest(
+        id="2026-05-29-sleep-lifelog-2024",
+        type=PacketType.DATASET,
+        title="Sleep Lifelog 2024 Dataset Definition",
+        dataset={"name": "sleep-lifelog-2024", "version": "v0"},
+        raw_paths={"dataset": "dataset.yaml"},
+        intended_wiki_targets=["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+    )
+
+    result = render_packets(
+        tmp_path,
+        [(packet, RiskTier.BOT_PR, RiskTierLabel.TIER2_INTERPRETATION)],
+        run_id="run-dataset",
+        packet_roots={packet.id: packet_root},
+    )
+
+    target = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    assert target.exists()
+    assert not (tmp_path / "wiki" / "datasets" / "2026-05-29-sleep-lifelog-2024.md").exists()
+    text = target.read_text(encoding="utf-8")
+    assert "## Dataset Entity" in text
+    assert "`smartphone:mActivity`" in text
+    assert "`ch2026_metrics_train.csv`" in text
+    assert "## Released Package Contents" in text
+    assert "Q-family labels are participant-relative averages." in text
+    index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+    assert "(datasets/sleep-lifelog-2024.md)" in index
+    assert "(wiki/datasets/sleep-lifelog-2024.md)" not in index
+    assert "wiki/datasets/sleep-lifelog-2024.md" in result.changed_paths
+
+
+def test_render_benchmark_packet_uses_canonical_page_structured_sections_and_rewrites_packet_links(tmp_path):
+    (tmp_path / "wiki").mkdir()
+    dataset_root = tmp_path / "raw" / "users" / "alice" / "datasets" / "2026-05-29-sleep-lifelog-2024"
+    benchmark_root = tmp_path / "raw" / "users" / "alice" / "benchmarks" / "2026-05-29-sleep-health-hackathon-v0"
+    dataset_root.mkdir(parents=True)
+    benchmark_root.mkdir(parents=True)
+    (dataset_root / "dataset.yaml").write_text(
+        "name: sleep-lifelog-2024\n"
+        "version: v0\n"
+        "modalities: [smartphone:mActivity]\n"
+        "package_files: [ch2026_metrics_train.csv]\n"
+        "splits: {policy: groupkfold-subject}\n"
+        "leakage_risks: [q-family-identity-leakage]\n"
+        "provenance: {source_type: released-package}\n"
+        "claim_status: tentative\n",
+        encoding="utf-8",
+    )
+    (benchmark_root / "benchmark.yaml").write_text(
+        "name: sleep-health-hackathon-v0\n"
+        "dataset_ref: sleep-lifelog-2024\n"
+        "task_family: sleep-health-prediction\n"
+        "targets:\n"
+        "  - id: Q1\n"
+        "    kind: subjective-binary\n"
+        "    description: perceived sleep quality\n"
+        "primary_metric:\n"
+        "  name: grouped_macro_logloss\n"
+        "  definition: subject-grouped OOF log-loss macro mean\n"
+        "evaluation_policy:\n"
+        "  split: groupkfold-subject\n"
+        "  group_key: subject_id\n"
+        "  n_folds: 3\n"
+        "claim_boundaries:\n"
+        "  - local_oof_diagnostic_only\n"
+        "claim_status: tentative\n",
+        encoding="utf-8",
+    )
+    (benchmark_root / "packet.md").write_text(
+        "# Sleep Health Hackathon Benchmark v0 Definition\n\n"
+        "## Dataset Anchor\n\n"
+        "This benchmark evaluates [[datasets/2026-05-29-sleep-lifelog-2024]].\n",
+        encoding="utf-8",
+    )
+    dataset_packet = manifest(
+        id="2026-05-29-sleep-lifelog-2024",
+        type=PacketType.DATASET,
+        title="Sleep Lifelog 2024 Dataset Definition",
+        dataset={"name": "sleep-lifelog-2024", "version": "v0"},
+        raw_paths={"dataset": "dataset.yaml"},
+        intended_wiki_targets=["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+    )
+    benchmark_packet = manifest(
+        id="2026-05-29-sleep-health-hackathon-v0",
+        type=PacketType.BENCHMARK,
+        title="Sleep Health Hackathon Benchmark v0 Definition",
+        raw_paths={"benchmark": "benchmark.yaml"},
+        intended_wiki_targets=["wiki/benchmarks/2026-05-29-sleep-health-hackathon-v0.md"],
+    )
+
+    render_packets(
+        tmp_path,
+        [
+            (dataset_packet, RiskTier.BOT_PR, RiskTierLabel.TIER2_INTERPRETATION),
+            (benchmark_packet, RiskTier.BOT_PR, RiskTierLabel.TIER2_INTERPRETATION),
+        ],
+        run_id="run-benchmark",
+        packet_roots={dataset_packet.id: dataset_root, benchmark_packet.id: benchmark_root},
+    )
+
+    text = (tmp_path / "wiki" / "benchmarks" / "sleep-health-hackathon-v0.md").read_text(encoding="utf-8")
+    assert "## Benchmark Entity" in text
+    assert "`grouped_macro_logloss`" in text
+    assert "| Q1 | subjective-binary | perceived sleep quality |" in text
+    assert "[[datasets/sleep-lifelog-2024]]" in text
+    assert "[[datasets/2026-05-29-sleep-lifelog-2024]]" not in text

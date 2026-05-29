@@ -1,6 +1,6 @@
 # Wiki Ingest Policy
 
-The ingest runner accepts packet manifests under changed raw packet roots and writes deterministic synthesis pages under `wiki/`.
+The ingest runner accepts packet manifests under changed raw packet roots and writes deterministic synthesis pages under `wiki/`. `wiki/` pages are maintained team memory, not raw packet mirrors. Packet ids stay in provenance; stable entities such as datasets and benchmarks use stable page ids.
 
 Low-risk reference and meeting packets may be direct-commit candidates. Experiment, performance, model, feature, augmentation, dataset, benchmark, supported, disputed, and superseded claims require bot PR review. Guard failures hard-fail and must not mutate `wiki/`.
 
@@ -8,7 +8,11 @@ Packets must keep raw evidence local to the packet root. Secret-like content, se
 
 Full manifests require these fields: `id`, `packet_type` or legacy `type`, `title`, `date`, `owner`, `status`, `task`, `dataset`, `split`, `model`, `claim_boundary`, `claim_status`, `summary`, `raw_paths`, and `intended_wiki_targets`. `dataset` requires `name` and `version`; `split` requires `name`; `model` requires `family`.
 
-Packet-specific YAML is required for preprocessing, feature, model, performance, augmentation, dataset, and benchmark packets through labeled entries in `raw_paths`. Required labels are `preprocessing`, `features`, `model`, `performance`, `augmentation`, `dataset`, and `benchmark` respectively. The required packet YAML fields are enforced by the ingest guard before any wiki mutation. Dataset and benchmark packets route to `wiki/datasets/` and `wiki/benchmarks/` and mirror `claim_status` between the manifest and the packet-specific YAML.
+Packet-specific YAML is required for preprocessing, feature, model, performance, augmentation, dataset, and benchmark packets through labeled entries in `raw_paths`. Required labels are `preprocessing`, `features`, `model`, `performance`, `augmentation`, `dataset`, and `benchmark` respectively. The required packet YAML fields are enforced by the ingest guard before any wiki mutation. Dataset and benchmark packets route to `wiki/datasets/` and `wiki/benchmarks/`, mirror `claim_status` between the manifest and the packet-specific YAML, and render to canonical entity pages such as `wiki/datasets/<dataset-name>.md` and `wiki/benchmarks/<benchmark-name>.md`.
+
+When `packet.md` exists in a packet root, ingest promotes the approved packet narrative into the rendered wiki page after stripping packet-local frontmatter and duplicate H1 headings. Packet-specific YAML renders into structured entity sections before that narrative so downstream agents can scan stable fields quickly.
+
+LLM-assisted synthesis is optional and review-required. The default model policy is `gpt-5.5` for high-accuracy synthesis, but merge-time ingest must remain deterministic and pass without an API key. See `wiki/team/llm-synthesis-policy.md`.
 
 Metrics are raw-only evidence checks. `metrics_to_verify` entries must point to YAML or JSON in the packet with `raw_path`, identify a value by `metric_key`, and declare the manifest-side `reported_value`; optional `tolerance` controls numeric comparison.
 
