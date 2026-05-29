@@ -53,6 +53,9 @@ class FailureCode(str, Enum):
     BROKEN_WIKI_LINK = "broken_wiki_link"
     UNBALANCED_GENERATED_BLOCK = "unbalanced_generated_block"
     MISSING_REQUIRED_LATEST_LINK = "missing_required_latest_link"
+    MISSING_API_KEY = "missing_api_key"
+    LLM_SYNTHESIS_FAILED = "llm_synthesis_failed"
+    INVALID_LLM_OUTPUT = "invalid_llm_output"
 
 
 PACKET_STATUS_VALUES = {"submitted", "validated", "ingested", "rejected", "superseded"}
@@ -306,6 +309,10 @@ class IngestReport:
     risk_tier: str | None = None
     report_path: str | None = None
     timing_ms: int = 0
+    llm_synthesis: bool = False
+    model: str | None = None
+    review_notes: list[str] = field(default_factory=list)
+    synthesis_summary: str | None = None
 
 
 @dataclass

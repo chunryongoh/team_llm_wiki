@@ -1,0 +1,117 @@
+name: wiki-llm-synthesis
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "raw/results/wiki-ingest/**"
+  workflow_dispatch:
+    inputs:
+      changed_paths:
+        description: "Newline-separated raw packet paths or wiki-ingest report paths"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: wiki-llm-synthesis-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  synthesize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -e .[test]
+      - name: Collect changed paths
+        env:
+          INPUT_CHANGED_PATHS: ${{ inputs.changed_paths || '' }}
+          PYTHONPATH: src
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            base="${{ github.event.before }}"
+            head="${{ github.sha }}"
+            if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+              git diff-tree --no-commit-id --name-only -r "$head" > changed-paths.txt
+            else
+              git diff --name-only "$base" "$head" > changed-paths.txt
+            fi
+          else
+            python - <<'PY'
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import workflow_dispatch_changed_paths
+
+          paths = workflow_dispatch_changed_paths(os.environ, repo_root=Path("."))
+          Path("changed-paths.txt").write_text("\n".join(paths) + ("\n" if paths else ""), encoding="utf-8")
+          PY
+          fi
+      - name: Run GPT-5.5 wiki synthesis
+        id: synth
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PYTHONPATH: src
+          RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            printf "status=skipped\n" >> "$GITHUB_OUTPUT"
+            printf "## LLM wiki synthesis\n\nSkipped: OPENAI_API_KEY repository secret is not configured.\n" >> "$GITHUB_STEP_SUMMARY"
+            touch add-paths.txt
+            exit 0
+          fi
+          set +e
+          output=$(python -m team_llm_wiki.cli run-llm-wiki-synthesis \
+            --repo-root . \
+            --changed-path-file changed-paths.txt \
+            --run-id "$RUN_ID" \
+            --model gpt-5.5 \
+            --reasoning-effort high \
+            --report-path "raw/results/llm-synthesis/$RUN_ID/report.json" 2>error.json)
+          status=$?
+          printf "%s\n" "$output" > llm-output.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import render_bot_pr_body, render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
+
+          raw = Path("llm-output.json").read_text(encoding="utf-8") if Path("llm-output.json").exists() else None
+          payload = json.loads(raw) if raw else {}
+          paths = safe_add_paths_file_from_payload(payload, Path("add-paths.txt"))
+          body = "## LLM synthesis model\n\n- `gpt-5.5`\n\n" + render_bot_pr_body(payload)
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
+              "status": payload.get("status", "missing"),
+              "add_paths": "\n".join(paths),
+              "pr_body": body,
+          })
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(render_workflow_summary(raw).replace("Wiki ingest", "LLM wiki synthesis"), encoding="utf-8")
+          PY
+          if [ "$status" -ne 0 ]; then
+            cat llm-output.json
+            cat error.json
+            exit "$status"
+          fi
+      - name: Upload LLM synthesis report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: wiki-llm-synthesis-report
+          path: raw/results/llm-synthesis/*/report.json
+          if-no-files-found: ignore
+      - name: Create bot PR for LLM synthesis
+        if: steps.synth.outputs.status == 'bot_pr'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          title: "[llm-wiki-bot][review-required] GPT-5.5 wiki synthesis"
+          commit-message: "[llm-wiki-bot] GPT-5.5 wiki synthesis"
+          body: ${{ steps.synth.outputs.pr_body }}
+          branch: "bot/llm-synthesis-${{ github.run_id }}-${{ github.run_attempt }}"
+          add-paths: ${{ steps.synth.outputs.add_paths }}

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .wiki_ingest.brief import generate_daily_brief, generate_weekly_brief
 from .wiki_ingest.health import check_wiki_health
+from .wiki_ingest.llm_synthesis import DEFAULT_MODEL, DEFAULT_REASONING_EFFORT, run_llm_wiki_synthesis
 from .wiki_ingest.manifest import read_changed_paths_file
 from .wiki_ingest.models import IngestFailure, as_jsonable
 from .wiki_ingest.runner import plan_wiki_main_ingest, run_wiki_main_ingest
@@ -46,6 +47,15 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--report-path")
     run.add_argument("--run-id", default="run")
 
+    llm = sub.add_parser("run-llm-wiki-synthesis")
+    llm.add_argument("--repo-root", required=True)
+    llm.add_argument("--changed-path", action="append")
+    llm.add_argument("--changed-path-file")
+    llm.add_argument("--report-path")
+    llm.add_argument("--run-id", default="llm-synthesis")
+    llm.add_argument("--model", default=DEFAULT_MODEL)
+    llm.add_argument("--reasoning-effort", default=DEFAULT_REASONING_EFFORT)
+
     health = sub.add_parser("check-wiki-health")
     health.add_argument("--repo-root", required=True)
     health.add_argument("--report-path")
@@ -78,6 +88,17 @@ def main(argv: list[str] | None = None) -> int:
                 _changed_paths(args),
                 report_path=Path(args.report_path) if args.report_path else None,
                 run_id=args.run_id,
+            )
+            _print_json(report, sys.stdout)
+            return 1 if report.status == "hard_fail" else 0
+        if args.command == "run-llm-wiki-synthesis":
+            report = run_llm_wiki_synthesis(
+                Path(args.repo_root),
+                _changed_paths(args),
+                report_path=Path(args.report_path) if args.report_path else None,
+                run_id=args.run_id,
+                model=args.model,
+                reasoning_effort=args.reasoning_effort,
             )
             _print_json(report, sys.stdout)
             return 1 if report.status == "hard_fail" else 0

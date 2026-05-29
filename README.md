@@ -72,6 +72,17 @@ PYTHONPATH=src python -m team_llm_wiki.cli run-wiki-main-ingest \
 PYTHONPATH=src python -m team_llm_wiki.cli check-wiki-health --repo-root .
 ```
 
+6. review-required wiki page를 GPT-5.5로 한 번 더 합성합니다.
+
+```bash
+OPENAI_API_KEY=... PYTHONPATH=src python -m team_llm_wiki.cli run-llm-wiki-synthesis \
+  --repo-root . \
+  --changed-path raw/users/alice/example-packet/manifest.yaml \
+  --run-id local-llm-run
+```
+
+LLM synthesis는 `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, packet manifest, packet-specific YAML, `packet.md`, 기존 wiki page를 모두 prompt context에 넣고 OpenAI Responses API의 `gpt-5.5`를 호출합니다. 결과는 `wiki/` page만 수정할 수 있으며 항상 review-required bot PR 대상으로 취급합니다.
+
 ## Packet 작성 규칙
 
 새 packet은 `packet_type`을 사용합니다. 기존 호환성을 위해 legacy `type`도 읽지만 새 문서에는 `packet_type`을 권장합니다.
@@ -144,10 +155,13 @@ Bot commit/PR은 다음 prefix를 사용합니다.
 | --- | --- | --- |
 | `tests` | `push` to `main`, PR, manual | 전체 pytest 실행 |
 | `wiki-main-ingest` | `main`의 `raw/users/**`, policy/schema 변경, manual | packet ingest 후 direct commit 또는 bot PR 생성 |
+| `wiki-llm-synthesis` | `raw/results/wiki-ingest/**`가 main에 merge된 뒤, manual | `gpt-5.5`로 고차원 wiki synthesis를 작성하고 review-required bot PR 생성 |
 | `wiki-pr-validate` | PR의 packet/policy/schema 변경 | canonical wiki를 쓰지 않고 preview comment 작성 |
 | `wiki-health-check` | schedule, manual | wiki health, daily/weekly brief, stale-claim report 생성 |
 
 PR이 없으면 `wiki-pr-validate` run history가 비어 있는 것이 정상입니다.
+
+`wiki-llm-synthesis`를 자동 실행하려면 repo secret `OPENAI_API_KEY`가 필요합니다. secret이 없으면 workflow는 skip summary만 남기고 성공 종료합니다. 이 workflow는 deterministic ingest 결과인 `raw/results/wiki-ingest/**/report.json`에서 packet roots를 다시 찾아 읽기 때문에, raw packet merge 직후가 아니라 ingest bot PR이 merge된 뒤 고차원 합성을 수행합니다.
 
 ## 유지보수 명령
 
@@ -173,6 +187,16 @@ Weekly brief와 stale claim report 생성:
 PYTHONPATH=src python -m team_llm_wiki.cli generate-wiki-weekly-brief \
   --repo-root . \
   --date "$(date -u +%F)"
+```
+
+GPT-5.5 synthesis를 수동 실행:
+
+```bash
+PYTHONPATH=src python -m team_llm_wiki.cli run-llm-wiki-synthesis \
+  --repo-root . \
+  --changed-path-file changed-paths.txt \
+  --model gpt-5.5 \
+  --reasoning-effort high
 ```
 
 Brief 출력:

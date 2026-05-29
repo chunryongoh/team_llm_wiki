@@ -10,6 +10,7 @@ Core pages:
 - [LLM Synthesis Policy](team/llm-synthesis-policy.md)
 - [Packet Skill Design Summary](reports/2026-05-28-packet-skill-design.md)
 - [Packet Skill Implementation Report](reports/2026-05-28-packet-skill-implementation.md)
+- [GPT-5.5 LLM Synthesis Implementation](reports/2026-05-29-llm-synthesis-implementation.md)
 
 <!-- wiki-ingest:index:start -->
 - [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`

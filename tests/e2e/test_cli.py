@@ -103,6 +103,28 @@ def test_cli_expected_error_is_machine_readable_json(tmp_path):
     assert payload["error"]["code"] == "invalid_changed_path"
 
 
+def test_cli_run_llm_wiki_synthesis_requires_api_key(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    packet = seed_repo(tmp_path)
+
+    result = run_cli(
+        [
+            "run-llm-wiki-synthesis",
+            "--repo-root",
+            str(tmp_path),
+            "--changed-path",
+            str(packet.relative_to(tmp_path) / "manifest.yaml"),
+            "--run-id",
+            "llm-cli",
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stderr)
+    assert payload["error"]["code"] == "missing_api_key"
+
+
 def test_cli_check_wiki_health_nonzero_on_failure(tmp_path):
     (tmp_path / "wiki").mkdir()
     (tmp_path / "wiki" / "index.md").write_text("[[missing]]", encoding="utf-8")

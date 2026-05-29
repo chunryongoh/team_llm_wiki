@@ -78,3 +78,10 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/datasets/sleep-lifelog-2024.md`
 - run: `26628582638-1`
+
+## [2026-05-29] implementation | gpt-5-5-llm-synthesis
+
+- Added `run-llm-wiki-synthesis` as the actual GPT-5.5 synthesis path.
+- The runner reads `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, raw packet files, and current target wiki pages before calling OpenAI Responses API.
+- Added `.github/workflows/wiki-llm-synthesis.yml` to create review-required bot PRs after deterministic ingest reports reach `main`.
+- Local and repository `OPENAI_API_KEY` were missing during implementation, so the live GPT-5.5 call remains pending secret configuration.

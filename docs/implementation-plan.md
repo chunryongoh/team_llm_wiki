@@ -9,3 +9,4 @@
 7. Add CLI commands for plan, run, and full wiki health checks.
 8. Add GitHub Actions helpers and workflows for merge-time ingest and scheduled health checks.
 9. Cover critical paths with deterministic pytest tests.
+10. Add `run-llm-wiki-synthesis` as the review-required GPT-5.5 path. It reads policy, latest context, raw packet files, and existing wiki pages; calls OpenAI Responses API; validates that the model only returns approved `wiki/` page replacements; writes an LLM report; and drives a separate bot PR through `.github/workflows/wiki-llm-synthesis.yml`.

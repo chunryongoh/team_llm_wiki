@@ -61,3 +61,12 @@ Workflow policy:
 - Manual `workflow_dispatch` accepts optional newline-separated `changed_paths`. When omitted, the helper falls back to tracked `raw/users/**/manifest.yaml` files, then filesystem glob discovery. The caveat is that a manual dispatch without input can intentionally scan more packets than a push event.
 - `.github/workflows/wiki-pr-validate.yml` runs `preview-wiki-ingest` on packet PRs and updates a single marked preview comment with status, failures, packet roots, affected pages, detected packet types, proposed claim statuses, missing evidence, and expected review questions.
 - `.github/workflows/wiki-health-check.yml` runs scheduled/manual health checks, writes a JSON report, generates daily and weekly briefs, refreshes `wiki/briefs/latest.md`, and uploads the health report plus brief artifacts.
+- `.github/workflows/wiki-llm-synthesis.yml` runs after `raw/results/wiki-ingest/**` changes reach `main` or by manual dispatch. It requires `OPENAI_API_KEY`, calls `run-llm-wiki-synthesis`, uses `gpt-5.5` with high reasoning effort, and creates a review-required bot PR containing only approved `wiki/` page replacements and an LLM synthesis report.
+
+LLM synthesis policy:
+
+- Deterministic ingest remains the merge-time baseline and cannot require an LLM key.
+- LLM synthesis reads `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, packet manifests, packet-specific YAML, `packet.md`, and current target wiki pages.
+- The LLM output must be structured JSON with `summary`, `review_notes`, and `pages`.
+- The runner rejects attempts to write outside the approved target `wiki/` paths.
+- The default model is `gpt-5.5`; the default reasoning effort is `high`.
