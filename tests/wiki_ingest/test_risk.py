@@ -49,6 +49,35 @@ def test_preprocessing_packet_requires_review():
     assert decision.tier is RiskTier.BOT_PR
 
 
+def test_dataset_packet_requires_review():
+    packet = manifest(
+        id="ds",
+        type="dataset",
+        title="Dataset",
+        intended_wiki_targets=["wiki/datasets/ds.md"],
+    )
+
+    decision = classify_risk(packet, GuardResult())
+
+    assert decision.tier is RiskTier.BOT_PR
+    assert "high-risk packet type: dataset" in decision.reasons
+
+
+def test_benchmark_packet_requires_review():
+    packet = manifest(
+        id="bm",
+        type="benchmark",
+        title="Benchmark",
+        intended_wiki_targets=["wiki/benchmarks/bm.md"],
+    )
+
+    decision = classify_risk(packet, GuardResult())
+
+    assert decision.tier is RiskTier.BOT_PR
+    assert "high-risk packet type: benchmark" in decision.reasons
+    assert "high-risk wiki target path" in decision.reasons
+
+
 def test_guard_failure_hard_fail():
     packet = manifest(id="ref", type="reference", title="Reference", intended_wiki_targets=["wiki/sources/ref.md"])
     guard = GuardResult(failures=[GuardViolation(code="missing_raw_file", message="missing")])

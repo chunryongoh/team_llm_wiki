@@ -105,6 +105,38 @@ def augmentation_payload(**overrides):
     return payload
 
 
+def dataset_payload(**overrides):
+    payload = {
+        "name": "benchmark-set",
+        "version": "v1",
+        "modalities": ["tabular"],
+        "package_files": ["data.csv"],
+        "splits": {"policy": "groupkfold", "group_key": "subject_id", "source": "local-canonical"},
+        "leakage_risks": ["participant-level leakage"],
+        "provenance": {"source_type": "released-package", "primary_raw_paths": ["raw/datasets/example/"]},
+        "claim_status": "tentative",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def benchmark_payload(**overrides):
+    payload = {
+        "name": "example-benchmark",
+        "dataset_ref": "benchmark-set",
+        "task_family": "classification",
+        "targets": [
+            {"id": "Y1", "kind": "subjective", "description": "Example target."},
+        ],
+        "primary_metric": {"name": "macro-f1", "definition": "macro F1 over targets"},
+        "evaluation_policy": {"split": "groupkfold", "aggregation": "macro-mean"},
+        "claim_boundaries": ["local_oof_diagnostic_only"],
+        "claim_status": "tentative",
+    }
+    payload.update(overrides)
+    return payload
+
+
 def test_feature_missing_source_modalities_fails(tmp_path):
     packet = tmp_path / "packet"
     write_manifest(packet, "feature", {"features": "features.yaml"})
@@ -380,6 +412,8 @@ def test_packet_specific_schema_rejects_non_mapping_feature_family_entry(tmp_pat
         ("preprocessing", "preprocessing", preprocessing_payload(), "input_sources"),
         ("model", "model", model_payload(), "family"),
         ("augmentation", "augmentation", augmentation_payload(), "source_data_scope"),
+        ("dataset", "dataset", dataset_payload(), "modalities"),
+        ("benchmark", "benchmark", benchmark_payload(), "targets"),
     ],
 )
 def test_packet_specific_schema_rejects_missing_required_keys(tmp_path, packet_type, label, payload, missing_key):
@@ -397,11 +431,68 @@ def test_packet_specific_schema_rejects_missing_required_keys(tmp_path, packet_t
     assert missing_key in exc.value.message
 
 
+def test_dataset_packet_valid_payload_passes(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "dataset", {"dataset": "dataset.yaml"})
+    (packet / "dataset.yaml").write_text(yaml.safe_dump(dataset_payload()), encoding="utf-8")
+    manifest = load_packet_manifest(packet)
+
+    validate_packet_specific_schema(packet, manifest)
+
+
+def test_benchmark_packet_valid_payload_passes(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "benchmark", {"benchmark": "benchmark.yaml"})
+    (packet / "benchmark.yaml").write_text(yaml.safe_dump(benchmark_payload()), encoding="utf-8")
+    manifest = load_packet_manifest(packet)
+
+    validate_packet_specific_schema(packet, manifest)
+
+
+def test_dataset_claim_status_must_match_manifest(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "dataset", {"dataset": "dataset.yaml"})
+    (packet / "dataset.yaml").write_text(
+        yaml.safe_dump(dataset_payload(claim_status="supported")),
+        encoding="utf-8",
+    )
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "claim_status" in exc.value.message
+
+
+def test_benchmark_targets_entries_must_have_id_kind_description(tmp_path):
+    packet = tmp_path / "packet"
+    write_manifest(packet, "benchmark", {"benchmark": "benchmark.yaml"})
+    payload = benchmark_payload()
+    payload["targets"][0].pop("kind")
+    (packet / "benchmark.yaml").write_text(yaml.safe_dump(payload), encoding="utf-8")
+    manifest = load_packet_manifest(packet)
+
+    with pytest.raises(IngestFailure) as exc:
+        validate_packet_specific_schema(packet, manifest)
+
+    assert exc.value.code is FailureCode.INVALID_MANIFEST
+    assert "kind" in exc.value.message
+
+
 def test_packet_templates_validate_against_packet_specific_schemas(tmp_path):
     repo_root = Path(__file__).resolve().parents[2]
     template_dir = repo_root / "raw" / "shared" / "templates" / "wiki-packet"
 
-    for template_name in ["preprocessing.yaml", "features.yaml", "model.yaml", "performance.yaml", "augmentation.yaml"]:
+    for template_name in [
+        "preprocessing.yaml",
+        "features.yaml",
+        "model.yaml",
+        "performance.yaml",
+        "augmentation.yaml",
+        "dataset.yaml",
+        "benchmark.yaml",
+    ]:
         packet = tmp_path / template_name.removesuffix(".yaml")
         packet.mkdir()
         template_text = (template_dir / template_name).read_text(encoding="utf-8")

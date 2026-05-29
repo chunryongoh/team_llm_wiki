@@ -14,6 +14,8 @@ PACKET_SCHEMA_LABELS: dict[PacketType, str] = {
     PacketType.MODEL: "model",
     PacketType.PERFORMANCE: "performance",
     PacketType.AUGMENTATION: "augmentation",
+    PacketType.DATASET: "dataset",
+    PacketType.BENCHMARK: "benchmark",
 }
 
 PACKET_REQUIRED_KEYS: dict[PacketType, tuple[str, ...]] = {
@@ -66,6 +68,26 @@ PACKET_REQUIRED_KEYS: dict[PacketType, tuple[str, ...]] = {
         "label_policy",
         "validation_policy",
         "failure_modes",
+    ),
+    PacketType.DATASET: (
+        "name",
+        "version",
+        "modalities",
+        "package_files",
+        "splits",
+        "leakage_risks",
+        "provenance",
+        "claim_status",
+    ),
+    PacketType.BENCHMARK: (
+        "name",
+        "dataset_ref",
+        "task_family",
+        "targets",
+        "primary_metric",
+        "evaluation_policy",
+        "claim_boundaries",
+        "claim_status",
     ),
 }
 
@@ -120,6 +142,10 @@ def validate_packet_specific_schema(packet_root: Path, manifest: PacketManifest)
         _validate_model_packet(data, label)
     elif packet_type is PacketType.PERFORMANCE:
         _validate_performance_packet(data, manifest, label)
+    elif packet_type is PacketType.DATASET:
+        _validate_dataset_packet(data, manifest, label)
+    elif packet_type is PacketType.BENCHMARK:
+        _validate_benchmark_packet(data, manifest, label)
 
 
 def _resolve_packet_raw_path(packet_root: Path, raw_path: str) -> Path:
@@ -225,3 +251,70 @@ def _validate_performance_packet(data: dict[str, Any], manifest: PacketManifest,
             f"{label}.claim_status must match manifest claim_status",
             {"manifest": manifest.claim_status, "performance": claim_status},
         )
+
+
+def _validate_claim_status_mirror(data: dict[str, Any], manifest: PacketManifest, label: str) -> None:
+    claim_status = data["claim_status"]
+    if not isinstance(claim_status, str) or claim_status not in CLAIM_STATUS_VALUES:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"{label}.claim_status must be one of: {', '.join(sorted(CLAIM_STATUS_VALUES))}",
+            {"value": str(claim_status)},
+        )
+    if claim_status != manifest.claim_status:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"{label}.claim_status must match manifest claim_status",
+            {"manifest": manifest.claim_status, label: claim_status},
+        )
+
+
+def _require_non_empty_list(value: Any, label: str) -> None:
+    if not isinstance(value, list) or not value:
+        raise IngestFailure(
+            FailureCode.INVALID_MANIFEST,
+            f"{label} must be a non-empty list",
+            {"value": str(type(value).__name__)},
+        )
+
+
+def _validate_dataset_packet(data: dict[str, Any], manifest: PacketManifest, label: str) -> None:
+    _validate_claim_status_mirror(data, manifest, label)
+    _require_non_empty_list(data.get("modalities"), f"{label}.modalities")
+    _require_non_empty_list(data.get("package_files"), f"{label}.package_files")
+    _require_non_empty_list(data.get("leakage_risks"), f"{label}.leakage_risks")
+    if not isinstance(data.get("splits"), dict) or not data["splits"]:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.splits must be a non-empty mapping")
+    if not isinstance(data.get("provenance"), dict) or not data["provenance"]:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.provenance must be a non-empty mapping")
+    if not isinstance(data.get("name"), str) or not data["name"].strip():
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.name must be a non-empty string")
+    if not isinstance(data.get("version"), str) or not data["version"].strip():
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.version must be a non-empty string")
+
+
+def _validate_benchmark_packet(data: dict[str, Any], manifest: PacketManifest, label: str) -> None:
+    _validate_claim_status_mirror(data, manifest, label)
+    if not isinstance(data.get("name"), str) or not data["name"].strip():
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.name must be a non-empty string")
+    if not isinstance(data.get("dataset_ref"), str) or not data["dataset_ref"].strip():
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.dataset_ref must be a non-empty string")
+    if not isinstance(data.get("task_family"), str) or not data["task_family"].strip():
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.task_family must be a non-empty string")
+    targets = data.get("targets")
+    _require_non_empty_list(targets, f"{label}.targets")
+    for index, target in enumerate(targets):
+        if not isinstance(target, dict):
+            raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.targets[{index}] must be a mapping")
+        missing = [key for key in ("id", "kind", "description") if key not in target]
+        if missing:
+            raise IngestFailure(
+                FailureCode.INVALID_MANIFEST,
+                f"{label}.targets[{index}] missing fields: {', '.join(missing)}",
+                {"index": index, "missing": missing},
+            )
+    if not isinstance(data.get("primary_metric"), dict) or not data["primary_metric"]:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.primary_metric must be a non-empty mapping")
+    if not isinstance(data.get("evaluation_policy"), dict) or not data["evaluation_policy"]:
+        raise IngestFailure(FailureCode.INVALID_MANIFEST, f"{label}.evaluation_policy must be a non-empty mapping")
+    _require_non_empty_list(data.get("claim_boundaries"), f"{label}.claim_boundaries")

@@ -1,0 +1,48 @@
+id: example-dataset
+packet_type: dataset
+title: Example Dataset
+date: "2026-05-29"
+owner: replace-with-owner
+status: submitted
+task: dataset-definition
+dataset:
+  name: replace-with-dataset
+  version: replace-with-version
+  hash: replace-with-dataset-hash
+split:
+  name: none
+  group_key: none
+  fold_file: folds/example.txt
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: Dataset definition describes released package contents only; no metric claim is made.
+claim_status: tentative
+summary: First-class dataset definition with modalities, splits, and known leakage risks.
+raw_paths:
+  dataset: dataset.yaml
+intended_wiki_targets:
+  - wiki/datasets/example-dataset.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Replace with a careful dataset claim.
+name: replace-with-dataset
+version: replace-with-version
+modalities:
+  - replace-with-modality
+package_files:
+  - replace-with-package-file
+splits:
+  policy: replace-with-split-policy
+  group_key: none
+  source: replace-with-split-source
+leakage_risks:
+  - Replace with a leakage risk.
+provenance:
+  source_type: replace-with-source-type
+  primary_raw_paths:
+    - Replace with primary raw path.
+  supporting_sources:
+    - Replace with supporting source.
+claim_status: tentative
