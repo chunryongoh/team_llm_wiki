@@ -116,3 +116,8 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/experiments/2026-06-01-lifelog-section07-working-notes.md`
 - run: `local-run-section07`
+
+## [2026-06-01] ingest | 2026-06-01-lifelog-section07-notebook-overview
+
+- target: `wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md`
+- run: `local-run-section07-notebook`
