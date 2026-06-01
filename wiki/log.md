@@ -96,3 +96,8 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/sources/2026-06-01-full-chain-smoke-packet.md`
 - run: `26739124273-1`
+
+## [2026-06-01] ingest | 2026-06-01-workflow-run-chain-smoke-packet
+
+- target: `wiki/sources/2026-06-01-workflow-run-chain-smoke-packet.md`
+- run: `26739337778-1`

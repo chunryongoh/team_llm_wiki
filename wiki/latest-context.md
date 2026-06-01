@@ -3,6 +3,12 @@
 [[index]] [[overview]] [[log]]
 
 <!-- wiki-ingest:latest:start -->
+### 26739337778-1 | 2026-06-01-workflow-run-chain-smoke-packet
+
+- link: [[sources/2026-06-01-workflow-run-chain-smoke-packet]]
+- publish_action: `direct_commit`
+- risk_tier: `tier0-catalog`
+
 ### 26739124273-1 | 2026-06-01-full-chain-smoke-packet
 
 - link: [[sources/2026-06-01-full-chain-smoke-packet]]

@@ -16,4 +16,5 @@ Core pages:
 - [Full Chain Actions Smoke Packet](sources/2026-06-01-full-chain-smoke-packet.md) - `reference`
 - [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`
 - [Sleep Lifelog 2024 Dataset Definition](datasets/sleep-lifelog-2024.md) - `dataset`
+- [Workflow Run Chain Smoke Packet](sources/2026-06-01-workflow-run-chain-smoke-packet.md) - `reference`
 <!-- wiki-ingest:index:end -->
