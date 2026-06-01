@@ -1,0 +1,27 @@
+id: 2026-06-01-full-chain-smoke-packet
+packet_type: reference
+title: Full Chain Actions Smoke Packet
+date: "2026-06-01"
+owner: chunryongoh
+status: submitted
+task: full-chain-actions-smoke-test
+dataset:
+  name: team-llm-wiki-actions
+  version: full-chain-smoke
+split:
+  name: none
+  group_key: none
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: This packet only verifies the GitHub Actions automation chain from packet PR merge to deterministic ingest and GPT-5.5 synthesis.
+claim_status: tentative
+summary: Smoke-test packet used to verify the full wiki-main-ingest to wiki-llm-synthesis automation chain after packet lifecycle workflow changes.
+raw_paths:
+  notes: notes.md
+intended_wiki_targets:
+  - wiki/sources/2026-06-01-full-chain-smoke-packet.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: This packet verifies whether the full GitHub Actions chain runs after a packet PR is merged.
