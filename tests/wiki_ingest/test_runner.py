@@ -94,6 +94,12 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert compiled_payload["risk_tier"] == "tier0-catalog"
     assert payload["packets"][0]["publish_action"] == "direct_commit"
     assert payload["packets"][0]["risk_tier"] == "tier0-catalog"
+    assert payload["packets"][0]["claim_boundary"] == "Only applies to the dev split."
+    assert payload["packet_skill_compatibility"]["status"] == "warning"
+    assert any(
+        check["id"] == "packet_root_shape" and check["status"] == "warning"
+        for check in payload["packet_skill_compatibility"]["checks"]
+    )
     assert payload["risk_tier"] == "tier0-catalog"
 
 

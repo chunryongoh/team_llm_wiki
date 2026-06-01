@@ -59,24 +59,28 @@ def _failure_line(failure: Any) -> str:
 
 
 def _append_packet_type_section(lines: list[str], packets: list[Any]) -> None:
-    lines.extend(["", "### Detected packet types"])
+    lines.extend(["", "### 감지된 packet"])
     clean = [packet for packet in packets if isinstance(packet, dict)]
     if not clean:
-        lines.append("- none")
+        lines.append("- 없음")
         return
     for packet in clean[:MAX_LIST_ITEMS]:
         packet_id = _bounded_text(packet.get("id", "unknown"), MAX_PATH_CHARS)
         packet_type = _bounded_text(packet.get("type", "unknown"), MAX_PATH_CHARS)
         publish_action = _bounded_text(packet.get("publish_action", "unknown"), MAX_PATH_CHARS)
         risk = _bounded_text(packet.get("risk_tier", "unknown"), MAX_PATH_CHARS)
-        lines.append(f"- `{packet_id}` {packet_type} (publish: `{publish_action}`, risk: `{risk}`)")
+        boundary = _bounded_text(packet.get("claim_boundary", "unknown"), MAX_PATH_CHARS)
+        lines.append(
+            f"- `{packet_id}` {packet_type} "
+            f"(publish: `{publish_action}`, risk: `{risk}`, claim_boundary: `{boundary}`)"
+        )
     remaining = len(clean) - MAX_LIST_ITEMS
     if remaining > 0:
-        lines.append(f"- and {remaining} more")
+        lines.append(f"- 외 {remaining}개 더")
 
 
 def _append_claim_status_section(lines: list[str], payload: dict[str, Any]) -> None:
-    lines.extend(["", "### Proposed claim statuses"])
+    lines.extend(["", "### 제안된 claim 상태"])
     statuses = [item for item in payload.get("claim_statuses") or [] if isinstance(item, dict)]
     if not statuses:
         statuses = [
@@ -85,7 +89,7 @@ def _append_claim_status_section(lines: list[str], payload: dict[str, Any]) -> N
             if isinstance(packet, dict) and packet.get("claim_status")
         ]
     if not statuses:
-        lines.append("- none")
+        lines.append("- 없음")
         return
     for item in statuses[:MAX_LIST_ITEMS]:
         packet_id = _bounded_text(item.get("packet", item.get("id", "unknown")), MAX_PATH_CHARS)
@@ -93,11 +97,11 @@ def _append_claim_status_section(lines: list[str], payload: dict[str, Any]) -> N
         lines.append(f"- `{packet_id}` `{status}`")
     remaining = len(statuses) - MAX_LIST_ITEMS
     if remaining > 0:
-        lines.append(f"- and {remaining} more")
+        lines.append(f"- 외 {remaining}개 더")
 
 
 def _append_missing_evidence_section(lines: list[str], failures: list[Any]) -> None:
-    lines.extend(["", "### Missing evidence"])
+    lines.extend(["", "### 누락되었거나 확인할 evidence"])
     missing = [
         failure
         for failure in failures
@@ -105,17 +109,17 @@ def _append_missing_evidence_section(lines: list[str], failures: list[Any]) -> N
         and str(failure.get("code", "")) in {"missing_raw_file", "metric_mismatch", "invalid_manifest"}
     ]
     if not missing:
-        lines.append("- none")
+        lines.append("- 없음")
         return
     for failure in missing[:MAX_LIST_ITEMS]:
         lines.append(_failure_line(failure))
     remaining = len(missing) - MAX_LIST_ITEMS
     if remaining > 0:
-        lines.append(f"- and {remaining} more")
+        lines.append(f"- 외 {remaining}개 더")
 
 
 def _append_review_question_section(lines: list[str], payload: dict[str, Any], failures: list[Any]) -> None:
-    lines.extend(["", "### Expected PR review questions"])
+    lines.extend(["", "### 팀원이 확인할 것"])
     questions: list[str] = []
     questions.extend(str(warning) for warning in payload.get("warnings") or [] if str(warning).strip())
     for packet in payload.get("packets") or []:
@@ -125,9 +129,9 @@ def _append_review_question_section(lines: list[str], payload: dict[str, Any], f
             if str(reason).strip():
                 questions.append(str(reason))
     if failures and not questions:
-        questions.append("Resolve hard-fail items before merge.")
+        questions.append("merge 전 hard-fail 항목을 해결해야 합니다.")
     if not questions:
-        questions.append("Confirm the packet claim boundary and evidence are sufficient for the proposed status.")
+        questions.append("packet claim boundary와 evidence가 제안된 claim 상태에 충분한지 확인합니다.")
     for question in list(dict.fromkeys(questions))[:MAX_LIST_ITEMS]:
         lines.append(f"- {_bounded_text(question)}")
 
@@ -140,11 +144,15 @@ def should_skip_wiki_ingest(actor: str, commit_message: str | None = None, pr_ti
 
 def render_pr_comment(payload: dict[str, Any]) -> str:
     status = payload.get("status", "unknown")
+    compatibility = payload.get("packet_skill_compatibility") or {}
+    compatibility_status = compatibility.get("status", "unknown") if isinstance(compatibility, dict) else "unknown"
     lines = [
         "<!-- team-llm-wiki-preview -->",
-        "## Wiki ingest preview",
+        "## Packet 검증 결과",
         "",
-        f"- status: `{status}`",
+        f"- 상태: `{status}`",
+        f"- merge 후 다음 단계: deterministic ingest -> GPT-5.5 synthesis PR",
+        f"- packet skill compatibility: `{compatibility_status}`",
     ]
     if payload.get("run_id"):
         lines.append(f"- run id: `{payload['run_id']}`")
@@ -153,8 +161,9 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
 
     failures = list(payload.get("failures") or [])
     _append_packet_type_section(lines, list(payload.get("packets") or []))
-    _append_path_section(lines, "Affected wiki pages", list(payload.get("generated_paths") or payload.get("changed_paths") or []))
+    _append_path_section(lines, "영향받을 wiki 페이지", list(payload.get("generated_paths") or payload.get("changed_paths") or []))
     _append_claim_status_section(lines, payload)
+    _append_compatibility_section(lines, compatibility)
     _append_missing_evidence_section(lines, failures)
     _append_review_question_section(lines, payload, failures)
     lines.extend(["", "### Failures"])
@@ -165,7 +174,7 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
             lines.append(_failure_line(failure))
         remaining = len(failures) - MAX_LIST_ITEMS
         if remaining > 0:
-            lines.append(f"- and {remaining} more")
+            lines.append(f"- 외 {remaining}개 더")
 
     _append_path_section(lines, "Packet roots", list(payload.get("packet_roots") or []))
     _append_path_section(lines, "Generated paths", list(payload.get("generated_paths") or []))
@@ -174,6 +183,22 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
     if len(comment) <= MAX_COMMENT_CHARS:
         return comment
     return comment[: MAX_COMMENT_CHARS - 80].rstrip() + "\n\n_Comment truncated to fit GitHub limits._\n"
+
+
+def _append_compatibility_section(lines: list[str], compatibility: Any) -> None:
+    if not isinstance(compatibility, dict) or not compatibility:
+        return
+    checks = [check for check in compatibility.get("checks") or [] if isinstance(check, dict)]
+    if not checks:
+        return
+    lines.extend(["", "### Packet skill compatibility checks"])
+    for check in checks[:MAX_LIST_ITEMS]:
+        check_id = _bounded_text(check.get("id", "unknown"), MAX_PATH_CHARS)
+        status = _bounded_text(check.get("status", "unknown"), MAX_PATH_CHARS)
+        message = _bounded_text(check.get("message", ""))
+        packet_root = check.get("packet_root")
+        suffix = f" ({_bounded_text(packet_root, MAX_PATH_CHARS)})" if packet_root else ""
+        lines.append(f"- `{check_id}` `{status}` {message}{suffix}".rstrip())
 
 
 def render_bot_pr_body(payload: dict[str, Any]) -> str:
@@ -191,6 +216,8 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
     else:
         lines.append("- 없음")
 
+    _append_bot_compatibility_section(lines, payload.get("packet_skill_compatibility"))
+
     if payload.get("llm_synthesis"):
         lines.extend(["", "## LLM 통합 정리", ""])
         summary = payload.get("synthesis_summary") or payload.get("summary") or "없음"
@@ -201,10 +228,10 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
             lines.extend(f"- {_bounded_text(item, 300)}" for item in integration_plan[:MAX_LIST_ITEMS])
         _append_path_section(lines, "새로 생성된 wiki 페이지", list(payload.get("created_pages") or []))
         _append_path_section(lines, "수정된 wiki 페이지", list(payload.get("updated_pages") or []))
-        open_questions = [item for item in payload.get("open_questions") or [] if str(item).strip()]
+        open_questions = [item for item in payload.get("open_questions") or [] if item]
         if open_questions:
             lines.extend(["", "### 확인해야 할 질문"])
-            lines.extend(f"- {_bounded_text(item, 300)}" for item in open_questions[:MAX_LIST_ITEMS])
+            lines.extend(_open_question_line(item) for item in open_questions[:MAX_LIST_ITEMS])
         conflicts = [item for item in payload.get("superseded_or_conflicting_claims") or [] if str(item).strip()]
         if conflicts:
             lines.extend(["", "### 충돌하거나 대체된 claim"])
@@ -258,6 +285,8 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
     else:
         lines.append("- 없음")
 
+    _append_validation_section(lines, payload.get("validation"))
+
     lines.extend(
         [
             "",
@@ -273,6 +302,54 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
     if len(body) <= MAX_COMMENT_CHARS:
         return body
     return body[: MAX_COMMENT_CHARS - 80].rstrip() + "\n\n_Body truncated to fit GitHub limits._\n"
+
+
+def _append_bot_compatibility_section(lines: list[str], compatibility: Any) -> None:
+    if not isinstance(compatibility, dict) or not compatibility:
+        return
+    lines.extend(["", "## packet skill 입력과의 연결", ""])
+    lines.append(f"- compatibility: `{_bounded_text(compatibility.get('status', 'unknown'), MAX_PATH_CHARS)}`")
+    checks = [check for check in compatibility.get("checks") or [] if isinstance(check, dict)]
+    for check in checks[:MAX_LIST_ITEMS]:
+        lines.append(
+            f"- `{_bounded_text(check.get('id', 'unknown'), MAX_PATH_CHARS)}` "
+            f"`{_bounded_text(check.get('status', 'unknown'), MAX_PATH_CHARS)}` "
+            f"{_bounded_text(check.get('message', ''))}".rstrip()
+        )
+
+
+def _open_question_line(item: Any) -> str:
+    if not isinstance(item, dict):
+        return f"- {_bounded_text(item, 300)}"
+    question_id = _bounded_text(item.get("id", "unknown"), MAX_PATH_CHARS)
+    priority = _bounded_text(item.get("priority", "unknown"), MAX_PATH_CHARS)
+    owner = _bounded_text(item.get("owner_role", "unknown"), MAX_PATH_CHARS)
+    blocker = _bounded_text(item.get("merge_blocker", "unknown"), MAX_PATH_CHARS)
+    question = _bounded_text(item.get("question", ""), 240)
+    evidence = _bounded_text(item.get("needed_evidence", ""), 240)
+    close = _bounded_text(item.get("close_condition", ""), 240)
+    return (
+        f"- `{question_id}` priority=`{priority}` owner=`{owner}` merge_blocker=`{blocker}`: {question} "
+        f"needed_evidence=`{evidence}` close_condition=`{close}`"
+    ).rstrip()
+
+
+def _append_validation_section(lines: list[str], validation: Any) -> None:
+    lines.extend(["", "## 자동 검증 결과", ""])
+    if not isinstance(validation, dict) or not validation:
+        lines.append("- 없음")
+        return
+    lines.append(f"- status: `{_bounded_text(validation.get('status', 'unknown'), MAX_PATH_CHARS)}`")
+    checks = [check for check in validation.get("checks") or [] if isinstance(check, dict)]
+    if not checks:
+        lines.append("- checks: 없음")
+        return
+    for check in checks[:MAX_LIST_ITEMS]:
+        check_id = _bounded_text(check.get("id", "unknown"), MAX_PATH_CHARS)
+        status = _bounded_text(check.get("status", "unknown"), MAX_PATH_CHARS)
+        summary = _bounded_text(check.get("summary", ""), 300)
+        command = _bounded_text(check.get("command", ""), 300)
+        lines.append(f"- `{check_id}` `{status}` {summary} (`{command}`)".rstrip())
 
 
 def preview_payload_from_streams(raw_stdout: str, raw_stderr: str, run_id: str = "preview") -> dict[str, Any]:
@@ -343,6 +420,59 @@ def safe_add_paths_file_from_payload(payload: dict[str, Any], path: Path) -> lis
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(paths) + ("\n" if paths else ""), encoding="utf-8")
     return paths
+
+
+def validation_payload_from_outputs(
+    *,
+    health_stdout: str,
+    health_stderr: str,
+    health_status: int,
+    health_command: str,
+    pytest_stdout: str,
+    pytest_status: int,
+    pytest_command: str,
+) -> dict[str, Any]:
+    checks = [
+        {
+            "id": "wiki_health",
+            "status": "pass" if health_status == 0 else "fail",
+            "command": health_command,
+            "summary": _health_summary(health_stdout, health_stderr),
+            "exit_status": health_status,
+        },
+        {
+            "id": "targeted_pytest",
+            "status": "pass" if pytest_status == 0 else "fail",
+            "command": pytest_command,
+            "summary": _last_nonempty_line(pytest_stdout) or "no pytest output",
+            "exit_status": pytest_status,
+        },
+    ]
+    status = "fail" if any(check["status"] == "fail" for check in checks) else "pass"
+    return {"status": status, "checks": checks}
+
+
+def _health_summary(stdout: str, stderr: str) -> str:
+    raw = stdout.strip()
+    if raw:
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            return _last_nonempty_line(raw) or "health output was not JSON"
+        if isinstance(payload, dict):
+            ok = payload.get("ok")
+            errors = payload.get("errors") or []
+            if ok is True:
+                return "ok"
+            return f"errors={len(errors)}"
+    return _last_nonempty_line(stderr) or "no health output"
+
+
+def _last_nonempty_line(text: str) -> str:
+    for line in reversed(text.splitlines()):
+        if line.strip():
+            return _bounded_text(line.strip(), 300)
+    return ""
 
 
 def write_github_outputs(path: Path, outputs: dict[str, str]) -> None:

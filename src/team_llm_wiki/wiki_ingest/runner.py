@@ -11,6 +11,7 @@ from .guards import run_guard_checks
 from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
 from .models import FailureCode, IngestFailure, IngestReport, RiskDecision, RiskTier, RiskTierLabel, as_jsonable
+from .packet_skill_compatibility import evaluate_packet_skill_compatibility
 from .policy import load_policy
 from .render import render_packets, render_target_path
 from .risk import classify_risk
@@ -109,6 +110,7 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
 
     packets = []
     report_packets = []
+    manifests_by_root = {}
     failures = [as_jsonable(failure) for failure in policy.failures]
     warnings = list(policy.warnings)
     for packet_root in packet_roots:
@@ -123,11 +125,13 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
         guard = run_guard_checks(repo_root, packet_root, manifest, policy)
         risk = classify_risk(manifest, guard)
         packets.append((manifest, risk))
+        manifests_by_root[packet_root] = manifest
         report_packets.append(
             {
                 "id": manifest.id,
                 "type": manifest.type.value,
                 "claim_status": manifest.claim_status,
+                "claim_boundary": manifest.claim_boundary,
                 "packet_root": _rel(repo_root, packet_root),
                 "publish_action": risk.tier.value,
                 "risk_tier": risk.risk_tier.value,
@@ -161,6 +165,12 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
         failures=failures,
         warnings=list(dict.fromkeys(warnings)),
         policy_warnings=list(dict.fromkeys(policy.warnings)),
+        packet_skill_compatibility=evaluate_packet_skill_compatibility(
+            repo_root,
+            changed_paths=input_changed_paths,
+            packet_roots=packet_roots,
+            manifests_by_root=manifests_by_root,
+        ),
         risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value
         if failures
         else _max_risk_tier([risk for _manifest, risk in packets]),

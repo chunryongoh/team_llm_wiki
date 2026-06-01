@@ -163,6 +163,12 @@ PR이 없으면 `wiki-pr-validate` run history가 비어 있는 것이 정상입
 
 `wiki-llm-synthesis`를 자동 실행하려면 repo secret `OPENAI_API_KEY`가 필요합니다. secret이 없으면 workflow는 skip summary만 남기고 성공 종료합니다. 이 workflow는 deterministic ingest 결과인 `raw/results/wiki-ingest/**/report.json`에서 packet roots를 다시 찾아 읽기 때문에, raw packet merge 직후가 아니라 ingest bot PR이 merge된 뒤 고차원 합성을 수행합니다.
 
+Packet PR preview는 packet skill과 맞는지 별도로 표시합니다. `packet_skill_compatibility`는 `pass`, `warning`, `fail` 중 하나이며, `raw/users/<owner>/<category>/<date-slug>/` 형태, `packet.md`, `claim_boundary`, metric evidence 같은 항목을 확인합니다. 첫 버전은 adoption을 막지 않도록 warning-first로 운영합니다.
+
+Bot PR은 GitHub가 후속 checks를 자동으로 붙이지 않는 경우를 대비해 생성 전에 self-validation을 수행합니다. `wiki-main-ingest`와 `wiki-llm-synthesis`는 bot PR 또는 direct commit을 만들기 전에 `check-wiki-health`와 targeted pytest를 실행하고, bot PR 본문에 `자동 검증 결과`를 남깁니다.
+
+GPT-5.5 synthesis의 `open_questions`는 단순 문장이 아니라 backlog item입니다. 각 질문은 `id`, `question`, `priority`, `owner_role`, `merge_blocker`, `needed_evidence`, `close_condition`을 가져야 하며, 팀원이 무엇을 확인하면 닫을 수 있는지까지 기록합니다.
+
 ## 유지보수 명령
 
 PR preview를 로컬에서 확인:

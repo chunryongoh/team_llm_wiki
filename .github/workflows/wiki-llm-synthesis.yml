@@ -81,16 +81,14 @@ jobs:
           import json
           import os
           from pathlib import Path
-          from team_llm_wiki.wiki_ingest.github_actions import render_bot_pr_body, render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
+          from team_llm_wiki.wiki_ingest.github_actions import render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
 
           raw = Path("llm-output.json").read_text(encoding="utf-8") if Path("llm-output.json").exists() else None
           payload = json.loads(raw) if raw else {}
           paths = safe_add_paths_file_from_payload(payload, Path("add-paths.txt"))
-          body = "## 사용한 LLM 모델\n\n- `gpt-5.5`\n\n" + render_bot_pr_body(payload)
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
               "status": payload.get("status", "missing"),
               "add_paths": "\n".join(paths),
-              "pr_body": body,
           })
           Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(render_workflow_summary(raw).replace("Wiki ingest", "LLM wiki synthesis"), encoding="utf-8")
           PY
@@ -106,12 +104,67 @@ jobs:
           name: wiki-llm-synthesis-report
           path: raw/results/llm-synthesis/*/report.json
           if-no-files-found: ignore
+      - name: Validate LLM wiki output
+        if: steps.synth.outputs.status == 'bot_pr'
+        id: validate
+        env:
+          PYTHONPATH: src
+        run: |
+          health_command="python -m team_llm_wiki.cli check-wiki-health --repo-root ."
+          test_command="python -m pytest tests/wiki_ingest/test_github_actions.py tests/wiki_ingest/test_llm_synthesis.py tests/wiki_ingest/test_workflows.py -q"
+          set +e
+          $health_command > wiki-health.json 2> wiki-health.err
+          health_status=$?
+          PYTHONDONTWRITEBYTECODE=1 $test_command > pytest-output.txt 2>&1
+          test_status=$?
+          HEALTH_STATUS="$health_status" TEST_STATUS="$test_status" HEALTH_COMMAND="$health_command" TEST_COMMAND="$test_command" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import validation_payload_from_outputs, write_github_outputs
+
+          validation = validation_payload_from_outputs(
+              health_stdout=Path("wiki-health.json").read_text(encoding="utf-8") if Path("wiki-health.json").exists() else "",
+              health_stderr=Path("wiki-health.err").read_text(encoding="utf-8") if Path("wiki-health.err").exists() else "",
+              health_status=int(os.environ["HEALTH_STATUS"]),
+              health_command=os.environ["HEALTH_COMMAND"],
+              pytest_stdout=Path("pytest-output.txt").read_text(encoding="utf-8") if Path("pytest-output.txt").exists() else "",
+              pytest_status=int(os.environ["TEST_STATUS"]),
+              pytest_command=os.environ["TEST_COMMAND"],
+          )
+          Path("validation-output.json").write_text(json.dumps(validation, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {"status": validation["status"]})
+          PY
+          cat validation-output.json
+          if [ "$health_status" -ne 0 ] || [ "$test_status" -ne 0 ]; then
+            cat pytest-output.txt
+            exit 1
+          fi
+      - name: Render LLM synthesis PR body
+        if: steps.synth.outputs.status == 'bot_pr'
+        id: pr_body
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import render_bot_pr_body, write_github_outputs
+
+          payload = json.loads(Path("llm-output.json").read_text(encoding="utf-8"))
+          validation_path = Path("validation-output.json")
+          if validation_path.exists():
+              payload["validation"] = json.loads(validation_path.read_text(encoding="utf-8"))
+          body = "## 사용한 LLM 모델\n\n- `gpt-5.5`\n\n" + render_bot_pr_body(payload)
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {"pr_body": body})
+          PY
       - name: Create bot PR for LLM synthesis
         if: steps.synth.outputs.status == 'bot_pr'
         uses: peter-evans/create-pull-request@v8
         with:
           title: "[llm-wiki-bot][검토 필요] GPT-5.5 팀 위키 통합 정리"
           commit-message: "[llm-wiki-bot] GPT-5.5 팀 위키 통합 정리"
-          body: ${{ steps.synth.outputs.pr_body }}
+          body: ${{ steps.pr_body.outputs.pr_body }}
           branch: "bot/llm-synthesis-${{ github.run_id }}-${{ github.run_attempt }}"
           add-paths: ${{ steps.synth.outputs.add_paths }}

@@ -14,6 +14,12 @@ For grouped splits, set `split.group_key` and `split.fold_file`. The fold file m
 
 Pull requests that change `raw/users/**` get a preview comment from `preview-wiki-ingest`. Main-branch ingest direct commits use `[wiki-bot] ingest wiki packets`; reviewed bot PRs use `[wiki-bot][review-required] ingest wiki packets`. These prefixes prevent bot loops. Default `GITHUB_TOKEN` bot commits may suppress follow-up workflows, so use a PAT or GitHub App token if the team requires follow-up workflow execution from bot output.
 
+Preview comments are Korean-first and include a packet lifecycle summary. Reviewers should check the displayed `packet skill compatibility`, `claim_boundary`, claim status, risk tier, affected wiki pages, and the "merge 후 다음 단계" line before merging.
+
+The packet skill compatibility result is an adoption signal, not a second manifest validator. `warning` means the packet can still be useful but the reviewer should inspect shape or evidence quality, such as a legacy packet root, missing `packet.md`, or performance packet without `metrics_to_verify`.
+
 Supported packet types are `reference`, `meeting`, `experiment`, `feature`, `model`, `performance`, `preprocessing`, `augmentation`, `dataset`, and `benchmark`. Dataset packets define modalities, splits, package files, and leakage risks; benchmark packets define target taxonomy, primary metric, and evaluation policy. Both require packet-specific YAML labeled as `dataset` or `benchmark` in `raw_paths`, route to `wiki/datasets/` and `wiki/benchmarks/` respectively, render to stable entity pages, and go through bot PR review.
 
 Use `packet.md` for the human-readable synthesis narrative that should be promoted into the target wiki page. The manifest and packet-specific YAML provide machine-checkable fields; `packet.md` provides the explanatory context that teammates and agents should read.
+
+Bot PRs include an `자동 검증 결과` section. Do not merge a bot PR if self-validation failed or if validation evidence is missing without a clear reason in the workflow summary.
