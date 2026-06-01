@@ -126,6 +126,11 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert "LLM synthesized page" in (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").read_text(
         encoding="utf-8"
     )
+    generated_text = (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").read_text(encoding="utf-8")
+    assert "raw_evidence:" in generated_text
+    assert "raw/users/alice/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml" in generated_text
+    assert "raw/users/alice/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml" in generated_text
+    assert "raw/users/alice/datasets/2026-05-29-sleep-lifelog-2024/packet.md" in generated_text
     payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "llm-run" / "report.json").read_text())
     assert payload["model"] == "gpt-5.5"
     assert payload["llm_synthesis"] is True
@@ -176,6 +181,43 @@ def test_llm_synthesis_hard_fail_does_not_mutate_wiki_on_broken_generated_link(t
 
     assert report.status == "hard_fail"
     assert target.read_text(encoding="utf-8") == before
+
+
+def test_llm_synthesis_staging_preserves_existing_docs_links(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    docs_target = tmp_path / "docs" / "superpowers" / "specs" / "design.md"
+    docs_target.parent.mkdir(parents=True)
+    docs_target.write_text("# Design\n", encoding="utf-8")
+    reports = tmp_path / "wiki" / "reports"
+    reports.mkdir()
+    (reports / "design-summary.md").write_text(
+        "# Design Summary\n\n[Design](../../docs/superpowers/specs/design.md)\n",
+        encoding="utf-8",
+    )
+    index = tmp_path / "wiki" / "index.md"
+    index.write_text(index.read_text(encoding="utf-8") + "\n- [Design Summary](reports/design-summary.md)\n", encoding="utf-8")
+    client = FakeClient(
+        {
+            "summary": "ok",
+            "review_notes": [],
+            "pages": [
+                {
+                    "path": "wiki/datasets/sleep-lifelog-2024.md",
+                    "content": "---\nid: 2026-05-29-sleep-lifelog-2024\nclaim_status: tentative\n---\n# Sleep Lifelog 2024\n\nLLM synthesized page.\n",
+                }
+            ],
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="docs-link",
+        client=client,
+    )
+
+    assert report.status == "bot_pr"
 
 
 def test_openai_responses_client_posts_structured_gpt55_request(monkeypatch):
