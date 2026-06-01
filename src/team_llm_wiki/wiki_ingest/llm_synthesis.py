@@ -115,6 +115,7 @@ def run_llm_wiki_synthesis(
     load_policy(repo_root)
     manifests = [(load_packet_manifest(root), root) for root in packet_roots]
     target_paths = _target_paths(manifests)
+    evidence_by_target = _raw_evidence_by_target(repo_root, manifests)
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
     synthesis_client = client or OpenAIResponsesClient()
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
@@ -125,7 +126,8 @@ def run_llm_wiki_synthesis(
         for page in pages:
             target = staging / page["path"]
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(page["content"].rstrip() + "\n", encoding="utf-8")
+            content = _ensure_raw_evidence(page["content"], evidence_by_target.get(page["path"], []))
+            target.write_text(content.rstrip() + "\n", encoding="utf-8")
             changed.append(page["path"])
         link_errors = lint_wiki_links(staging, changed)
         health = check_wiki_health(staging)
@@ -255,12 +257,46 @@ def _packet_file_blocks(repo_root: Path, packet_root: Path) -> list[str]:
 
 def _staged_wiki(repo_root: Path) -> Path:
     staging = Path(tempfile.mkdtemp(prefix="llm-wiki-synthesis-stage-"))
-    wiki = repo_root / "wiki"
-    if wiki.exists():
-        shutil.copytree(wiki, staging / "wiki")
-    else:
-        (staging / "wiki").mkdir(parents=True)
+    for rel in ["wiki", "docs", "automation"]:
+        source = repo_root / rel
+        target = staging / rel
+        if source.exists():
+            shutil.copytree(source, target)
+        elif rel == "wiki":
+            target.mkdir(parents=True)
     return staging
+
+
+def _raw_evidence_by_target(repo_root: Path, manifests: list[tuple[PacketManifest, Path]]) -> dict[str, list[str]]:
+    evidence: dict[str, list[str]] = {}
+    for manifest, packet_root in manifests:
+        paths = [packet_root / "manifest.yaml"]
+        raw_paths = manifest.raw_paths.values() if isinstance(manifest.raw_paths, dict) else manifest.raw_paths
+        for raw_path in raw_paths:
+            paths.append(packet_root / raw_path)
+        packet_md = packet_root / "packet.md"
+        if packet_md.exists():
+            paths.append(packet_md)
+        seen: list[str] = []
+        for path in paths:
+            rel = _rel(repo_root, path)
+            if rel not in seen:
+                seen.append(rel)
+        evidence[render_target_path(manifest, packet_root)] = seen
+    return evidence
+
+
+def _ensure_raw_evidence(content: str, evidence_paths: list[str]) -> str:
+    if not evidence_paths or "raw_evidence:" in content:
+        return content
+    lines = content.splitlines()
+    if lines and lines[0].strip() == "---":
+        for index, line in enumerate(lines[1:], start=1):
+            if line.strip() == "---":
+                evidence_lines = ["raw_evidence:", *(f"- {path}" for path in evidence_paths)]
+                return "\n".join([*lines[:index], *evidence_lines, *lines[index:]]) + ("\n" if content.endswith("\n") else "")
+    evidence_block = "\n".join(["## Raw Evidence", "", "raw_evidence:", *(f"- {path}" for path in evidence_paths)])
+    return content.rstrip() + "\n\n" + evidence_block + ("\n" if content.endswith("\n") else "")
 
 
 def _file_block(repo_root: Path, rel: str, *, missing_ok: bool = False) -> str:
