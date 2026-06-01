@@ -1,0 +1,27 @@
+id: 2026-06-01-actions-smoke-packet
+packet_type: reference
+title: Actions Smoke Packet for Packet Skill Preview
+date: "2026-06-01"
+owner: chunryongoh
+status: submitted
+task: actions-smoke-test
+dataset:
+  name: team-llm-wiki-actions
+  version: smoke
+split:
+  name: none
+  group_key: none
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: This packet only verifies packet-skill PR preview automation and does not make research claims.
+claim_status: tentative
+summary: Smoke-test packet used to verify packet-skill PR preview Actions after packet lifecycle workflow changes.
+raw_paths:
+  notes: notes.md
+intended_wiki_targets:
+  - wiki/sources/2026-06-01-actions-smoke-packet.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: This packet verifies that the packet PR preview workflow renders packet lifecycle and compatibility feedback.
