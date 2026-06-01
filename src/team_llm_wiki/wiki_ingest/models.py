@@ -313,6 +313,12 @@ class IngestReport:
     model: str | None = None
     review_notes: list[str] = field(default_factory=list)
     synthesis_summary: str | None = None
+    integration_plan: list[str] = field(default_factory=list)
+    created_pages: list[str] = field(default_factory=list)
+    updated_pages: list[str] = field(default_factory=list)
+    claim_register: list[dict[str, Any]] = field(default_factory=list)
+    open_questions: list[str] = field(default_factory=list)
+    superseded_or_conflicting_claims: list[str] = field(default_factory=list)
 
 
 @dataclass

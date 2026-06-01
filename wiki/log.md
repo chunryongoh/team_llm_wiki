@@ -85,3 +85,9 @@ Append-only ingest and maintenance events belong here.
 - The runner reads `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, raw packet files, and current target wiki pages before calling OpenAI Responses API.
 - Added `.github/workflows/wiki-llm-synthesis.yml` to create review-required bot PRs after deterministic ingest reports reach `main`.
 - Local and repository `OPENAI_API_KEY` were missing during implementation, so the live GPT-5.5 call remains pending secret configuration.
+
+## [2026-06-01] implementation | llm-wiki-integration-scope
+
+- Expanded `wiki-llm-synthesis` from entity-page rewrite to multi-page wiki integration.
+- Required GPT-5.5 output to cover stable entity pages, feature landscape, evaluation decision, open questions, synthesis report, overview, latest context, index, and log.
+- Added structured integration metadata to the LLM report and bot PR body.
