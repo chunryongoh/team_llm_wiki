@@ -310,7 +310,92 @@ Brief 출력:
 3. packet PR을 merge하면 `wiki-main-ingest`가 packet을 compile하고 deterministic wiki bot PR을 만듭니다.
 4. ingest bot PR을 리뷰/merge하면 `wiki-llm-synthesis`가 `gpt-5.5`로 고차원 topic/decision/question/report page를 작성하는 bot PR을 만듭니다.
 5. synthesis bot PR을 리뷰/merge하면 `wiki/latest-context.md`, `wiki/index.md`, `wiki/overview.md`가 최신 팀 맥락의 entrypoint가 됩니다.
-6. agent나 LLM은 `wiki/latest-context.md`, `wiki/index.md`, compiled JSON을 읽어 최신 팀 맥락을 가져갑니다.
+6. 팀원은 자기 AI 도구가 아래 방식 중 하나로 최신 wiki를 먼저 읽게 한 뒤 연구, 실험, packet 작성을 시작합니다.
+
+## AI 도구가 최신 wiki를 참조하는 방법
+
+가장 중요한 원칙은 **매 session 시작 전에 최신 main을 가져오고, `AGENTS.md -> wiki/latest-context.md -> wiki/index.md -> 관련 wiki page -> raw/compiled evidence` 순서로 읽히는 것**입니다. 채팅창에 복사해 둔 오래된 요약만 믿지 않습니다.
+
+### 1. 작업 디렉토리 안에 local cache로 clone/pull
+
+팀원이 자기 실험 repo에서 Codex, Claude, Cursor 같은 agent를 쓸 때 가장 단순하고 안정적인 방식입니다. 작업 repo에 commit하지 않는 local cache 디렉토리로 wiki repo를 둡니다.
+
+```bash
+mkdir -p .team_context
+git clone https://github.com/chunryongoh/team_llm_wiki.git .team_context/team_llm_wiki
+```
+
+매 작업 시작 전에는 최신 상태로 당깁니다.
+
+```bash
+git -C .team_context/team_llm_wiki pull --ff-only
+```
+
+AI에게는 이렇게 지시합니다.
+
+```text
+먼저 .team_context/team_llm_wiki/AGENTS.md,
+.team_context/team_llm_wiki/wiki/latest-context.md,
+.team_context/team_llm_wiki/wiki/index.md를 읽고,
+현재 작업과 관련된 wiki page와 automation/.cache/compiled/*.json을 따라가서
+최신 팀 맥락을 반영한 뒤 작업해줘.
+```
+
+팀원의 작업 repo에 `.team_context/`가 생기는 것이 싫다면 sibling directory를 써도 됩니다.
+
+```bash
+git clone https://github.com/chunryongoh/team_llm_wiki.git ../team_llm_wiki
+git -C ../team_llm_wiki pull --ff-only
+```
+
+### 2. GitHub connector, MCP, 또는 `gh` CLI로 실시간 조회
+
+AI 도구가 GitHub connector나 MCP를 지원하면 local clone 없이도 repo 파일을 바로 읽게 할 수 있습니다. 이 경우 agent에게 repo와 entrypoint를 명시합니다.
+
+```text
+GitHub repo chunryongoh/team_llm_wiki의 main branch에서
+AGENTS.md, wiki/latest-context.md, wiki/index.md를 읽고,
+관련 wiki page와 automation/.cache/compiled/*.json을 추가로 조회한 뒤 답해줘.
+성능 claim은 raw evidence와 claim_boundary를 확인하기 전까지 승격하지 마.
+```
+
+CLI 기반으로는 필요한 파일만 확인할 수 있습니다.
+
+```bash
+gh repo clone chunryongoh/team_llm_wiki /tmp/team_llm_wiki
+git -C /tmp/team_llm_wiki pull --ff-only
+sed -n '1,220p' /tmp/team_llm_wiki/wiki/latest-context.md
+```
+
+### 3. Packet skill 사용 시 자동 참조
+
+`team-llm-wiki-packet-skill`은 packet 작성 전에 target repo의 다음 파일을 읽도록 설계되어 있습니다.
+
+- `AGENTS.md`
+- `wiki/index.md`
+- `wiki/latest-context.md`
+- `wiki/team/wiki-ingest-policy.md`
+- `wiki/team/contribution-workflow.md`
+- `raw/shared/templates/wiki-packet/manifest.yaml`
+
+따라서 팀원이 packet skill로 인터뷰를 시작할 때는 target repo를 최신 상태로 pull한 뒤 진행해야 합니다.
+
+```text
+team-llm-wiki-packet skill을 사용해서 packet을 만들어줘.
+target repo는 최신 main으로 pull한 chunryongoh/team_llm_wiki이고,
+먼저 AGENTS.md, wiki/latest-context.md, wiki/index.md를 읽은 뒤
+내 실험 내용을 인터뷰해서 raw/users/<owner>/<category>/<date-slug>/ PR로 올려줘.
+```
+
+### 4. 추가 도구화 후보: read-only context skill / MCP
+
+팀 사용량이 늘어나면 packet 작성 skill과 별도로 read-only 참조 도구를 만들 수 있습니다.
+
+- `team-llm-wiki-context` skill: repo URL을 받아 `git pull`, entrypoint 읽기, 관련 page 탐색, 요약 context pack 생성을 수행
+- MCP server: `latest_context`, `search_wiki`, `get_compiled_packet`, `get_open_questions`, `get_claims_by_status` 같은 read-only endpoint 제공
+- GitHub Actions artifact/brief bridge: 매일 `wiki/briefs/latest.md`와 stale claim report를 생성해 agent가 짧은 daily context로 시작
+
+현재 배포 기준의 필수 경로는 local clone/pull 또는 GitHub connector 조회입니다. 별도 context skill/MCP는 편의 기능이며, source-of-truth는 항상 이 repo의 `main`입니다.
 
 배포 전 PR hygiene:
 
