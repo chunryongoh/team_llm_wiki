@@ -1,98 +1,60 @@
 ---
-id: 2026-05-29-sleep-lifelog-2024
-packet_type: dataset
 type: dataset
-title: Sleep Lifelog 2024 Dataset Definition
-date: '2026-05-29'
-owner: chunryongoh
-status: submitted
-task: dataset-definition
-dataset:
-  name: sleep-lifelog-2024
-  version: v0
-  hash: null
-split:
-  name: groupkfold-subject-3fold-oof
-  group_key: subject_id
-  fold_file: null
-model:
-  family: not-applicable
-  weights_in_repo: false
-claim_boundary: dataset_definition_not_metric_claim
+entity_id: sleep-lifelog-2024
+title: Sleep Lifelog 2024
+version: v0
 claim_status: tentative
-summary: First-class definition of the sleep-lifelog-2024 dataset used by the team.
-  Lists released package contents, sensor modalities, the locally locked GroupKFold-by-subject
-  split policy, and known leakage risks. No metric claim is made.
-raw_paths:
-- dataset.yaml
-intended_wiki_targets:
-- wiki/datasets/2026-05-29-sleep-lifelog-2024.md
-metrics_to_verify: []
-claims:
-- status: tentative
-  text: sleep-lifelog-2024 is a multimodal smartphone, smartwatch, sleep-sensor, and
-    self-report dataset of about 700 days recorded in 2024 with seven prediction targets
-    (Q1, Q2, Q3, S1, S2, S3, S4). The released training labels are in ch2026_metrics_train.csv
-    and produce a 450-row modeling table grouped by subject_id.
-- status: tentative
-  text: The local canonical evaluation split for sprint 1 is GroupKFold by subject_id
-    with 3 folds on the released training labels. Some older docs framed only six
-    targets; the released package takes precedence over those older notes.
-- status: tentative
-  text: Q-family labels are participant-relative averages and therefore at very high
-    leakage risk under same-subject splits; objective S-family labels reflect guideline
-    compliance.
-publish_action: bot_pr
-risk_tier: tier2-interpretation
+claim_boundary: dataset_definition_not_metric_claim
+review_required: true
+packet_ids:
+  - 2026-05-29-sleep-lifelog-2024
+source_paths:
+  - raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml
+  - raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml
+  - raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/packet.md
+related_pages:
+  - wiki/benchmarks/sleep-health-hackathon-v0.md
+  - wiki/features/sleep-lifelog-feature-landscape.md
+  - wiki/decisions/sleep-lifelog-evaluation-protocol.md
+  - wiki/questions/sleep-lifelog-open-questions.md
+  - wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md
+raw_evidence:
+- raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml
+- raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml
+- raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/packet.md
 ---
 
-# Sleep Lifelog 2024 Dataset Definition
+# Sleep Lifelog 2024
 
-- packet: `2026-05-29-sleep-lifelog-2024`
-- generated_by_run: `26628582638-1`
-- publish_action: `bot_pr`
-- risk_tier: `tier2-interpretation`
-- compiled_packet: [automation/.cache/compiled/2026-05-29-sleep-lifelog-2024.json](../../automation/.cache/compiled/2026-05-29-sleep-lifelog-2024.json)
-- owner: `chunryongoh`
-- status: `submitted`
-- task: `dataset-definition`
-- dataset: `sleep-lifelog-2024` (`v0`)
-- split: `groupkfold-subject-3fold-oof`
-- model: `not-applicable`
-- claim_boundary: dataset_definition_not_metric_claim
-- claim_status: `tentative`
-- date: `2026-05-29`
-- raw_evidence:
-  - `dataset.yaml`
-- review-required: true
+This is the stable dataset entity page for `sleep-lifelog-2024`. It anchors the [Sleep Health Hackathon v0 benchmark](../benchmarks/sleep-health-hackathon-v0.md), the [feature landscape](../features/sleep-lifelog-feature-landscape.md), and the [evaluation protocol decision](../decisions/sleep-lifelog-evaluation-protocol.md). It is not a performance or leaderboard page.
 
-## Summary
+## Provenance
 
-First-class definition of the sleep-lifelog-2024 dataset used by the team. Lists released package contents, sensor modalities, the locally locked GroupKFold-by-subject split policy, and known leakage risks. No metric claim is made.
+| field | value |
+| --- | --- |
+| packet id | `2026-05-29-sleep-lifelog-2024` |
+| owner | `chunryongoh` |
+| packet type | `dataset` |
+| packet status | `submitted` |
+| deterministic ingest run | `26628582638-1` |
+| claim status | `tentative` |
+| claim boundary | `dataset_definition_not_metric_claim` |
+| raw sources | `manifest.yaml`, `dataset.yaml`, `packet.md` under `raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/` |
+| referenced released package location | `raw/datasets/sleep-lifelog-2024/` |
 
-## Dataset Entity
+## Dataset identity
 
-- name: `sleep-lifelog-2024`
-- version: `v0`
+- Name: `sleep-lifelog-2024`
+- Version: `v0`
+- Source type in packet: `released-package-plus-team-summary`
+- Claimed scope: multimodal smartphone, smartwatch, sleep-sensor, and self-report data recorded in 2024.
+- Claimed size: about 700 days, with a 450-row modeling table after joining released training labels to canonical lifelog and sleep date keys.
 
-### Modalities
+The size and scope statements are preserved as tentative packet claims.
 
-- `smartphone:mACStatus`
-- `smartphone:mActivity`
-- `smartphone:mAmbience`
-- `smartphone:mBle`
-- `smartphone:mGps`
-- `smartphone:mLight`
-- `smartphone:mScreenStatus`
-- `smartphone:mUsagestats`
-- `smartphone:mWifi`
-- `smartwatch:wHr`
-- `smartwatch:wLight`
-- `smartwatch:wPedo`
-- `sleep-sensor:placeholder`
-- `self-report:bedtime-questionnaire`
+## Released package contents
 
-### Package Files
+The packet records these package files:
 
 - `ch2025_data_items/`
 - `ch2026_metrics_train.csv`
@@ -100,102 +62,79 @@ First-class definition of the sleep-lifelog-2024 dataset used by the team. Lists
 - `ch2026_metrics_description.pdf`
 - `data.zip`
 
-### Split Policy
-
-- policy: `groupkfold-subject`
-- group_key: `subject_id`
-- n_folds: `3`
-- source: `local-canonical-sprint1`
-- organizer_official_split_available: `false`
-- modeling_table_rows: `450`
-- notes: `Same-subject temporal split is recorded as a separate candidate track, not as the canonical sprint-1 split.`
-
-### Leakage Risks
-
-- `very_high_for_Q_under_same_subject_split_participant_relative_averages`
-- `subjective_label_reporting_style_bias`
-- `nested_modality_payloads_require_aggregation_before_tabular_models`
-- `paper_vs_released_package_target_count_mismatch_six_vs_seven`
-- `minute_level_streams_must_aggregate_before_most_models`
-
-### Provenance
-
-- source_type: `released-package-plus-team-summary`
-- primary_raw_paths:
-  - `raw/datasets/sleep-lifelog-2024/`
-- supporting_sources:
-  - `raw/references/chatgpt-share-2026-04-28-sleep-hackathon/transcript.md`
-  - `raw/references/kick-off.md`
-- notes: `ETRI source repo paths recorded for traceability; this packet itself ships only its own manifest, dataset.yaml, and packet.md.`
-
-## Packet Synthesis
-
-This packet locks the first-class definition of `sleep-lifelog-2024` in the team wiki so downstream feature, model, experiment, and performance packets can reference a stable entity instead of re-describing the dataset.
-
-## Released Package Contents
-
-Confirmed under `raw/datasets/sleep-lifelog-2024/` (ETRI source repo):
-
-- `ch2025_data_items/` with 12 parquet files (one per modality table)
-- `ch2026_metrics_train.csv` (label source for current training pipeline)
-- `ch2026_submission_sample.csv` (submission schema reference)
-- `ch2026_metrics_description.pdf` (organizer metric description)
-- `data.zip` (original archive)
-
-The released training labels produce a 450-row modeling table when joined to the canonical lifelog/sleep date keys.
+The packet narrative further says `ch2025_data_items/` contains 12 parquet files, one per modality table. That detail remains tentative until reviewed directly against the released package.
 
 ## Modalities
 
-Smartphone: `mACStatus`, `mActivity`, `mAmbience`, `mBle`, `mGps`, `mLight`, `mScreenStatus`, `mUsagestats`, `mWifi`.
+### Smartphone
 
-Smartwatch: `wHr`, `wLight`, `wPedo`.
+- `mACStatus`
+- `mActivity`
+- `mAmbience`
+- `mBle`
+- `mGps`
+- `mLight`
+- `mScreenStatus`
+- `mUsagestats`
+- `mWifi`
 
-Sleep sensor and self-report modalities are referenced by the released package and team notes but are not exhaustively schema-mapped in this packet.
+### Smartwatch
 
-## Targets
+- `wHr`
+- `wLight`
+- `wPedo`
 
-Seven labels live alongside `subject_id`, `sleep_date`, and `lifelog_date` in `ch2026_metrics_train.csv`:
+### Other referenced sources
 
-- `Q1` perceived sleep quality (subjective)
-- `Q2` bedtime physical fatigue (subjective)
-- `Q3` bedtime stress level (subjective)
-- `S1` total sleep time guideline compliance (objective)
-- `S2` sleep efficiency compliance (objective)
-- `S3` sleep onset latency compliance (objective)
-- `S4` wakefulness after sleep onset compliance (objective)
+- `sleep-sensor:placeholder`
+- `self-report:bedtime-questionnaire`
 
-A separate `benchmark` packet defines the target taxonomy in more detail and the canonical metric policy that consumes them.
+The packet does not exhaustively schema-map sleep-sensor or self-report payloads. This is tracked in [open questions](../questions/sleep-lifelog-open-questions.md).
 
-## Splits
+## Labels and targets
 
-The local canonical evaluation policy for sprint 1 is locked to:
+The released training labels are in `ch2026_metrics_train.csv`. Seven target columns are recorded:
 
-- `GroupKFold` by `subject_id`
-- 3 folds on the released training labels
-- 450 rows in the canonical modeling table
+- `Q1`: perceived sleep quality, subjective.
+- `Q2`: bedtime physical fatigue, subjective.
+- `Q3`: bedtime stress level, subjective.
+- `S1`: total sleep time guideline compliance, objective.
+- `S2`: sleep efficiency compliance, objective.
+- `S3`: sleep onset latency compliance, objective.
+- `S4`: wakefulness after sleep onset compliance, objective.
 
-Same-subject temporal forecasting is recorded as a candidate alternative track in the benchmark packet, not as the canonical split. No organizer-official split protocol has been published for the released package; if one appears it should supersede this entry rather than silently overwrite it.
+The benchmark page owns the scoring taxonomy and metric policy for these targets.
 
-## Known Leakage and Bias Risks
+## Local split policy
 
-- Q-family labels are participant-relative averages and carry very high leakage risk under same-subject splits.
+The packet locks the sprint-1 local canonical policy as:
+
+- Split policy: `groupkfold-subject`.
+- Group key: `subject_id`.
+- Number of folds: 3.
+- Source: `local-canonical-sprint1`.
+- Modeling table rows: 450.
+- Organizer-official split available: false.
+
+Same-subject temporal forecasting is recorded as a separate candidate track in the benchmark page, not as this dataset page default.
+
+## Known risks
+
+- Q-family labels are participant-relative averages and have very high leakage risk under same-subject splits.
 - Subjective labels may encode participant-specific reporting style.
-- Several modality payloads are nested list or struct values and must be aggregated before tabular models consume them.
-- Minute-level raw streams must be aggregated before most tabular models can use them.
-- At least one older dataset paper summary uses a six-target framing; the released package and its metric description PDF take precedence and confirm seven targets including `S4`.
+- Several modality payloads are nested list or struct values and need aggregation before tabular models consume them.
+- Minute-level streams need aggregation before most tabular models can use them.
+- Older paper or summary material may describe six targets; the current packet says the released package and metric description take precedence and include seven targets.
 
-## Working Implications
+## Working implications
 
-- Treat Q-family and S-family targets as related but separate tasks; feature engineering should be tracked per family.
-- For sprint-1 local comparisons, always use the locked canonical grouped-subject split rather than an ad hoc split.
-- Do not claim organizer-official validation semantics beyond this local canonical policy unless an organizer-published split protocol appears.
-- Future feature manifests and experiment packets must include `S4`.
+- Use stable links to this page rather than re-describing the dataset in experiment packets.
+- Include `S4` in future feature manifests and experiment outputs unless a reviewed source says otherwise.
+- Report Q-family and S-family behavior separately when result packets arrive.
+- Treat the local GroupKFold policy as local sprint-1 semantics, not organizer-official validation semantics.
+- See the [feature landscape](../features/sleep-lifelog-feature-landscape.md) before adding feature packets.
 
-## Claim Boundary
-
-This packet only defines the dataset entity. No metric, baseline, or leaderboard claim is made. Performance, experiment, and model packets that reference this dataset must carry their own raw evidence and split-aware metric verification.
-
-## Claims
+## Claims preserved from source
 
 - tentative: sleep-lifelog-2024 is a multimodal smartphone, smartwatch, sleep-sensor, and self-report dataset of about 700 days recorded in 2024 with seven prediction targets (Q1, Q2, Q3, S1, S2, S3, S4). The released training labels are in ch2026_metrics_train.csv and produce a 450-row modeling table grouped by subject_id.
 - tentative: The local canonical evaluation split for sprint 1 is GroupKFold by subject_id with 3 folds on the released training labels. Some older docs framed only six targets; the released package takes precedence over those older notes.

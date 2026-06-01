@@ -1,0 +1,130 @@
+{
+  "changed_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "claim_register": [
+    {
+      "status": "tentative",
+      "text": "sleep-health-hackathon-v0 evaluates seven sleep-health prediction targets (Q1, Q2, Q3, S1, S2, S3, S4) on sleep-lifelog-2024 under a locally locked GroupKFold-by-subject-id sprint-1 policy with 3 folds, and reports a grouped macro log-loss aggregated as a macro mean across targets."
+    },
+    {
+      "status": "tentative",
+      "text": "Allowed claim boundaries against this benchmark are local_oof_diagnostic_only, same_split_baseline_comparison, and public_lb_observation_only. Public leaderboard scores require a DACON submission and are reported separately from local OOF diagnostic scores."
+    },
+    {
+      "status": "tentative",
+      "text": "An unseen-subject generalization track (Track A) is the recommended main track; a same-subject temporal forecasting track (Track B) is recorded as a separate candidate and must not be conflated with Track A, especially for Q-family targets that are participant-relative averages."
+    },
+    {
+      "status": "tentative",
+      "text": "sleep-lifelog-2024 is a multimodal smartphone, smartwatch, sleep-sensor, and self-report dataset of about 700 days recorded in 2024 with seven prediction targets (Q1, Q2, Q3, S1, S2, S3, S4). The released training labels are in ch2026_metrics_train.csv and produce a 450-row modeling table grouped by subject_id."
+    },
+    {
+      "status": "tentative",
+      "text": "The local canonical evaluation split for sprint 1 is GroupKFold by subject_id with 3 folds on the released training labels. Some older docs framed only six targets; the released package takes precedence over those older notes."
+    },
+    {
+      "status": "tentative",
+      "text": "Q-family labels are participant-relative averages and therefore at very high leakage risk under same-subject splits; objective S-family labels reflect guideline compliance."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26628582638-1/report.json"
+  ],
+  "integration_plan": [
+    "Use stable entity pages for `sleep-lifelog-2024` and `sleep-health-hackathon-v0` instead of dated packet mirrors.",
+    "Create compounding topic pages for feature landscape, evaluation protocol, unresolved questions, and a synthesis report.",
+    "Cross-link dataset, benchmark, feature, decision, question, and report pages from overview, index, latest context, and each topic page.",
+    "Preserve packet ids, raw source paths, claim boundaries, claim statuses, and review-required flags.",
+    "Record contradictions and supersession notes, especially six-target versus seven-target framing, local OOF versus public leaderboard semantics, and Track A versus Track B evaluation semantics.",
+    "Avoid raw, automation, and policy writes; output only the allowed wiki paths."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    "Has an organizer-official validation or split protocol been published after the local sprint-1 GroupKFold policy was recorded?",
+    "Where is the durable fold assignment artifact for the canonical 3-fold GroupKFold split, and should it be versioned separately from the decision page?",
+    "Are the sleep-sensor and self-report schemas fully available beyond the placeholder and bedtime-questionnaire references in the packet?",
+    "What exact aggregation recipes should be used for nested modality payloads and minute-level streams before tabular modeling?",
+    "Which historical notes or paper summaries contain the six-target framing, and should they be annotated as superseded by the released package and metric description?",
+    "Do future experiment packets report Q-family and S-family metrics separately in addition to grouped macro log-loss?",
+    "Which DACON submission ids, if any, correspond to public leaderboard observations, and are private leaderboard results available?",
+    "How should Track B same-subject temporal forecasting be evaluated without being confused with Track A unseen-subject generalization?"
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024"
+  ],
+  "packets": [
+    {
+      "id": "2026-05-29-sleep-health-hackathon-v0",
+      "packet_root": "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+      "type": "benchmark"
+    },
+    {
+      "id": "2026-05-29-sleep-lifelog-2024",
+      "packet_root": "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024",
+      "type": "dataset"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26734340828-1/report.json",
+  "review_notes": [
+    "All raw packet claims keep `tentative` status. No claim was promoted to supported.",
+    "No metric values, model rankings, leaderboard scores, or performance comparisons are introduced.",
+    "The synthesis is review-required because it interprets leakage risk, evaluation boundaries, and cross-page wiki structure.",
+    "The allowed output surface is limited to the ten requested wiki pages; no raw, automation, or policy file is written.",
+    "Entity pages now emphasize stable dataset and benchmark memory, while packet ids and raw provenance are preserved in provenance sections."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "26734340828-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "The packets record a six-target older-summary framing as superseded by the released package and metric description that include seven targets, including S4. This supersession remains packet-level tentative evidence until reviewed against the raw released package.",
+    "Track A unseen-subject generalization and Track B same-subject temporal forecasting answer different questions and must not be merged into one benchmark claim.",
+    "Public leaderboard observations on the DACON public split are noisy directional observations and do not supersede local OOF diagnostic claims or private leaderboard outcomes.",
+    "The local canonical GroupKFold-by-subject split is not an organizer-official split protocol; an organizer-published protocol would supersede or amend the current decision page."
+  ],
+  "synthesis_summary": "Integrated the 2026-05-29 Sleep Lifelog dataset and Sleep Health Hackathon benchmark packets into stable wiki memory. The pass rewrites both entity pages, creates cross-cutting feature, evaluation-decision, open-question, and synthesis-report pages, and updates overview, latest context, index, and log. All source claims remain tentative; no performance, leaderboard, or model-quality claim is promoted.",
+  "timing_ms": 179408,
+  "updated_pages": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "warnings": []
+}

@@ -91,3 +91,10 @@ Append-only ingest and maintenance events belong here.
 - Expanded `wiki-llm-synthesis` from entity-page rewrite to multi-page wiki integration.
 - Required GPT-5.5 output to cover stable entity pages, feature landscape, evaluation decision, open questions, synthesis report, overview, latest context, index, and log.
 - Added structured integration metadata to the LLM report and bot PR body.
+
+## [2026-06-01] synthesis | sleep-lifelog-benchmark-integration
+
+- Integrated the tentative packets `2026-05-29-sleep-lifelog-2024` and `2026-05-29-sleep-health-hackathon-v0` into stable dataset and benchmark pages plus cross-cutting topic pages.
+- Created feature landscape, evaluation protocol decision, open questions, and synthesis report pages for the Sleep Lifelog cluster.
+- Updated overview, latest context, and index so future agents enter through the synthesized cluster rather than dated packet mirrors.
+- Preserved claim status as `tentative` and did not introduce metric values, leaderboard rankings, or model-performance claims.
