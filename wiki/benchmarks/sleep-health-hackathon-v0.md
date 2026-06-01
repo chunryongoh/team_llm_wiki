@@ -41,47 +41,49 @@ publish_action: bot_pr
 risk_tier: tier2-interpretation
 ---
 
-# Sleep Health Hackathon Benchmark v0 Definition
+# Sleep Health Hackathon Benchmark v0
 
 ## Page Status
 
+- stable_page: `wiki/benchmarks/sleep-health-hackathon-v0.md`
 - packet_id: `2026-05-29-sleep-health-hackathon-v0`
 - generated_by_run: `26628582638-1`
 - publish_action: `bot_pr`
 - risk_tier: `tier2-interpretation`
 - review_required: `true`
 - owner: `chunryongoh`
-- status: `submitted`
+- source_status: `submitted`
 - task: `benchmark-definition`
-- dataset: `sleep-lifelog-2024` (`v0`)
-- split: `groupkfold-subject-3fold-oof`
-- model: `not-applicable`
 - claim_boundary: `benchmark_definition_not_metric_claim`
-- claim_status: `tentative`
-- date: `2026-05-29`
-- compiled_packet: [automation/.cache/compiled/2026-05-29-sleep-health-hackathon-v0.json](../../automation/.cache/compiled/2026-05-29-sleep-health-hackathon-v0.json)
-
-## Synthesis
-
-`sleep-health-hackathon-v0` is the stable benchmark entity for sleep-health prediction on `sleep-lifelog-2024`. It defines the target taxonomy, local primary metric, evaluation split, track semantics, and allowed result-claim boundaries. It does not claim any model score, baseline win, leaderboard rank, or production performance.
-
-한국어 메모: 이 벤치마크의 핵심은 로컬 OOF 진단, 동일 split 비교, DACON public LB 관찰을 서로 분리해 기록하는 것이다. 특히 Q 계열 라벨은 참가자 상대값이므로 Track A와 Track B 결과를 섞어 해석하면 안 된다.
-
-## Stable Entity Fields
-
-- name: `sleep-health-hackathon-v0`
-- dataset_ref: `sleep-lifelog-2024`
-- task_family: `sleep-health-prediction`
-- primary_metric: `grouped_macro_logloss`
-- canonical_local_split: `groupkfold-subject-3fold-oof`
-- group_key: `subject_id`
-- n_folds: `3`
 - claim_status: `tentative`
 - metrics_to_verify: `[]`
 
+## What This Page Is
+
+`sleep-health-hackathon-v0` is the stable benchmark entity for sleep-health prediction on `[[datasets/sleep-lifelog-2024]]`. It records the target set, local primary metric, local split policy, track semantics, public leaderboard interpretation, and allowed result-claim boundaries.
+
+This page is a benchmark definition, not a result page. It makes no claim about any model score, baseline win, leaderboard rank, or production readiness. Downstream experiment or performance packets must carry their own raw evidence and metric verification before any numeric score can be treated as checked.
+
+## Stable Entity Fields
+
+| field | value |
+| --- | --- |
+| benchmark_name | `sleep-health-hackathon-v0` |
+| dataset_ref | `sleep-lifelog-2024` |
+| task_family | `sleep-health-prediction` |
+| primary_metric | `grouped_macro_logloss` |
+| canonical_local_split | `groupkfold-subject-3fold-oof` |
+| split_policy | `GroupKFold` by `subject_id` |
+| n_folds | `3` |
+| main_track | Track A, `unseen-subject-generalization` |
+| alternative_track | Track B, `same-subject-temporal-forecasting` |
+| claim_status | `tentative` |
+
 ## Dataset Anchor
 
-This benchmark evaluates the stable dataset entity `[[datasets/sleep-lifelog-2024]]`. The benchmark inherits the dataset packet's local sprint-1 grouped-subject split policy and leakage cautions. Any later packet that changes the dataset target set, split policy, or organizer-official evaluation protocol should explicitly supersede this benchmark page or create a new benchmark version.
+The benchmark evaluates models on the stable dataset entity `[[datasets/sleep-lifelog-2024]]` with dataset version `v0`. The benchmark inherits the dataset packet's local sprint-1 grouped-subject split policy and leakage cautions.
+
+If a later packet changes the dataset target set, split policy, released package interpretation, or organizer-official evaluation protocol, that packet should explicitly supersede this benchmark page or create a new benchmark version. The current page should not be silently overwritten with incompatible evaluation semantics.
 
 ## Target Taxonomy
 
@@ -97,66 +99,70 @@ The benchmark scores seven binary targets from `ch2026_metrics_train.csv`:
 | `S3` | `objective-binary` | `ch2026_metrics_train.csv` column `S3` | sleep onset latency compliance |
 | `S4` | `objective-binary` | `ch2026_metrics_train.csv` column `S4` | wakefulness after sleep onset compliance |
 
-`S4` is part of the current benchmark definition. Older six-target descriptions should not be used for new benchmark or feature claims unless a later packet adjudicates the difference.
+`S4` is part of the current benchmark definition. Older six-target summaries are treated as superseded for current team work unless later raw evidence adjudicates the target-count conflict differently.
 
 ## Metric Policy
 
 Primary metric:
 
 - name: `grouped_macro_logloss`
-- definition: mean across the seven targets of subject-grouped log-loss computed on out-of-fold validation predictions.
+- definition: mean across the seven targets of subject-grouped log-loss computed on out-of-fold validation predictions
 - averaging_policy: `macro-mean over targets`
 - loss_basis: `log-loss per target`
-- aggregation_order: `subject-grouped fold predictions -> concatenated OOF predictions -> per-target log-loss -> macro mean across targets`
+- aggregation_order: `subject-grouped fold-level predictions -> concatenate OOF predictions -> compute log-loss per target -> macro mean across targets`
 
-Secondary diagnostic metrics may be reported alongside the primary metric when raw evidence is supplied by a result packet:
+Secondary diagnostic metrics may be reported alongside the primary metric when a result packet supplies raw evidence:
 
-- `macro_f1`
-- `macro_roc_auc`
-- `macro_brier`
+- `macro_f1`: macro F1 across the seven targets
+- `macro_roc_auc`: macro ROC-AUC across the seven targets
+- `macro_brier`: macro Brier score across the seven targets
 
-This benchmark definition includes no numeric metric values. Any future result packet must provide raw YAML or JSON evidence through `metrics_to_verify` before a score can be treated as checked.
+This benchmark packet includes no numeric metric values. Any future result packet should record enough raw evidence to verify the split, target set, prediction rows, and metric implementation before a score is used for comparison.
 
 ## Evaluation Tracks
 
 | track | name | status | interpretation |
 | --- | --- | --- | --- |
 | `A` | `unseen-subject-generalization` | recommended main track | Uses grouped-subject validation to reduce person-identity leakage, especially for Q-family participant-relative labels. |
-| `B` | `same-subject-temporal-forecasting` | candidate alternative | May answer a temporal forecasting question, but must not be conflated with Track A or used alone to imply unseen-subject generalization. |
+| `B` | `same-subject-temporal-forecasting` | candidate alternative | May answer a same-subject temporal forecasting question, but must not be conflated with Track A or used alone to imply unseen-subject generalization. |
 
-Canonical sprint-1 local comparisons should use Track A with 3-fold `GroupKFold` by `subject_id`. Track B can be useful for a separate product or forecasting question, but it has different leakage semantics and needs its own claim boundary.
+Canonical sprint-1 local comparisons should use Track A with 3-fold `GroupKFold` by `subject_id`. Track B has different leakage semantics and requires explicit labeling in downstream claims.
 
 ## Public Leaderboard Semantics
 
-The benchmark YAML records DACON public and private leaderboards, with the public leaderboard using 44 percent of the test set. Public and private aggregations are described as average log-loss.
+The benchmark YAML records a DACON public/private leaderboard policy:
 
-A public leaderboard score is only a `public_lb_observation_only` claim unless the specific DACON submission, timestamp or submission id, and score evidence are recorded in a downstream packet. Public leaderboard movement should not promote a local OOF diagnostic result into a model-ranking claim.
+- public leaderboard share of test: `0.44`
+- public and private aggregation: average log-loss
+- interpretation: public leaderboard movement is noisy directional feedback, not the final truth signal
 
-## Allowed Claim Boundaries
+A public leaderboard score is only a `public_lb_observation_only` claim unless a downstream packet records the specific submission evidence, such as the submission identifier or timestamp and the observed score. Public leaderboard movement must not promote a local OOF diagnostic result into a supported model-ranking claim.
 
-Downstream packets that reference this benchmark should declare one of these boundaries:
+## Allowed Downstream Claim Boundaries
+
+Downstream packets that reference this benchmark should use one of these boundaries:
 
 - `local_oof_diagnostic_only`: a local canonical `GroupKFold` OOF result with raw metric evidence.
-- `same_split_baseline_comparison`: a comparison where baseline and candidate use the same dataset, target set, split, folds, and metric implementation.
+- `same_split_baseline_comparison`: a comparison where baseline and candidate share the same dataset, target set, split policy, folds, and metric implementation.
 - `public_lb_observation_only`: a recorded DACON public leaderboard observation, kept separate from local OOF diagnostics.
 
-Any benchmark result that changes split policy, excludes targets, uses Track B, or reports only public LB movement should say so directly rather than inheriting the main Track A interpretation.
+Any result that changes split policy, excludes targets, uses Track B, or reports only public leaderboard movement should state that directly instead of inheriting the main Track A interpretation.
 
 ## Interpretation Rules
 
 - Do not compare Track A and Track B scores as if they measure the same generalization problem.
-- Interpret Q-family and S-family improvements separately; subjective participant-relative labels and objective guideline-compliance labels have different leakage and error-analysis risks.
-- Strong local performance is not a public leaderboard claim without submission evidence.
-- A same-split comparison is valid only when the baseline and candidate share the canonical `GroupKFold` by `subject_id` 3-fold policy and the same target set.
+- Interpret Q-family and S-family changes separately; subjective participant-relative labels and objective guideline-compliance labels have different leakage and error-analysis risks.
+- Strong local performance is not a public leaderboard claim without DACON submission evidence.
+- Same-split comparisons are valid only when baseline and candidate use the same canonical `GroupKFold` by `subject_id` 3-fold policy and the same seven-target set.
 - This page defines evaluation semantics only; it does not establish that any model is good, best, or production-ready.
 
 ## Claim Register
 
 All current benchmark claims remain `tentative`:
 
-- `tentative`: the benchmark evaluates seven targets on `sleep-lifelog-2024` under the local 3-fold `GroupKFold` by `subject_id` policy and uses grouped macro log-loss as the primary local metric.
+- `tentative`: `sleep-health-hackathon-v0` evaluates seven targets (`Q1`, `Q2`, `Q3`, `S1`, `S2`, `S3`, `S4`) on `sleep-lifelog-2024` under a locally locked 3-fold `GroupKFold` by `subject_id` sprint-1 policy, and reports grouped macro log-loss as a macro mean across targets.
 - `tentative`: allowed claim boundaries are `local_oof_diagnostic_only`, `same_split_baseline_comparison`, and `public_lb_observation_only`; DACON public leaderboard observations are separate from local OOF diagnostics.
-- `tentative`: Track A is the recommended unseen-subject generalization track, while Track B is a same-subject temporal forecasting candidate that must not be conflated with Track A.
+- `tentative`: Track A is the recommended unseen-subject generalization track, while Track B is a same-subject temporal forecasting candidate that must not be conflated with Track A, especially for Q-family participant-relative labels.
 
 ## Provenance
 
@@ -166,13 +172,22 @@ All current benchmark claims remain `tentative`:
   - `raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/manifest.yaml`
   - `raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/benchmark.yaml`
   - `raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/packet.md`
-- dataset_page: `[[datasets/sleep-lifelog-2024]]`
-- generated_by_run: `26628582638-1`
+- packet_raw_paths:
+  - `benchmark.yaml`
+- related_dataset: `[[datasets/sleep-lifelog-2024]]`
+- latest_context_run: `26628582638-1`
 
-## Open Questions, Conflicts, and Supersession Notes
+## Open Questions and Supersession Notes
 
-- Six-target versus seven-target framing: current benchmark work should include `S4`; older six-target notes are superseded unless later packet evidence disputes this.
 - Official organizer protocol: this page records the local sprint-1 split policy. If DACON or the organizer publishes a more specific official validation protocol, a new packet should supersede or version this benchmark.
-- Metric implementation details: future result packets should record the exact log-loss implementation details they used, including probability clipping or library defaults, before metric values are compared.
-- Public LB evidence: a public leaderboard observation requires downstream raw evidence for the specific submission. This benchmark definition itself has no public score.
-- Stable path: the manifest's `intended_wiki_targets` contains a dated path, but repository policy renders benchmark entities to stable paths such as `wiki/benchmarks/sleep-health-hackathon-v0.md`; the packet id remains in provenance.
+- Six-target versus seven-target framing: current benchmark work includes `S4`; older six-target notes are treated as superseded unless later packet evidence disputes this.
+- Metric implementation details: future result packets should record exact log-loss implementation details, including probability clipping or library defaults, before metric values are compared.
+- Public leaderboard evidence: this benchmark definition has no public score. Public leaderboard claims require downstream raw evidence for a specific DACON submission.
+- Stable path note: the packet manifest lists a dated intended wiki target, but repository policy renders benchmark entities to stable paths. The packet id remains in provenance.
+
+## Reviewer Checklist
+
+- Confirm that no numeric performance claim was added to this benchmark definition.
+- Confirm that future result pages using this benchmark cite one of the allowed claim boundaries.
+- Confirm that Track B results, if any, are not summarized as Track A unseen-subject generalization results.
+- Confirm that downstream comparisons include all seven targets unless a later packet explicitly supersedes the target set.

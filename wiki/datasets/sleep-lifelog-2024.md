@@ -41,49 +41,47 @@ publish_action: bot_pr
 risk_tier: tier2-interpretation
 ---
 
-# Sleep Lifelog 2024 Dataset Definition
+# Sleep Lifelog 2024 Dataset
 
 ## Page Status
 
+- stable_page: `wiki/datasets/sleep-lifelog-2024.md`
 - packet_id: `2026-05-29-sleep-lifelog-2024`
 - generated_by_run: `26628582638-1`
 - publish_action: `bot_pr`
 - risk_tier: `tier2-interpretation`
 - review_required: `true`
 - owner: `chunryongoh`
-- status: `submitted`
+- source_status: `submitted`
 - task: `dataset-definition`
-- dataset: `sleep-lifelog-2024` (`v0`)
-- split: `groupkfold-subject-3fold-oof`
-- model: `not-applicable`
 - claim_boundary: `dataset_definition_not_metric_claim`
 - claim_status: `tentative`
-- date: `2026-05-29`
-- compiled_packet: [automation/.cache/compiled/2026-05-29-sleep-lifelog-2024.json](../../automation/.cache/compiled/2026-05-29-sleep-lifelog-2024.json)
+- metrics_to_verify: `[]`
 
-## Synthesis
+## What This Page Is
 
-`sleep-lifelog-2024` is the stable dataset entity for the team's 2024 sleep-health lifelog work. This page should be used as a dataset anchor for downstream feature, model, benchmark, and experiment packets; it is not a performance-result page.
+`sleep-lifelog-2024` is the stable dataset entity for the team's sleep-health lifelog work. Downstream benchmark, feature, model, experiment, and performance packets should cite this page instead of re-describing the dataset or linking to a dated packet mirror.
 
-The packet evidence supports a tentative description of the released package, modality families, seven-label target set, local grouped-subject split policy, and leakage risks. It does not support any model-quality, leaderboard, or baseline claim.
-
-한국어 메모: 현재 팀 기준은 `subject_id` 기준 3-fold `GroupKFold`를 sprint-1 로컬 기준으로 삼는 것이다. 같은 사람의 다른 날짜를 train/validation에 섞는 평가는 Q 계열 라벨에서 특히 누수 위험이 크므로 별도 트랙으로만 다룬다.
+This page is a dataset definition, not a performance-result page. It records the released package contents, modality families, seven-label target set, local sprint-1 split policy, and known leakage risks. It does not claim any model quality, baseline result, public leaderboard score, or organizer-official validation semantics.
 
 ## Stable Entity Fields
 
-- name: `sleep-lifelog-2024`
-- version: `v0`
-- packet_type: `dataset`
-- source_type: `released-package-plus-team-summary`
-- primary_label_file: `ch2026_metrics_train.csv`
-- canonical_modeling_rows: `450`
-- canonical_group_key: `subject_id`
-- canonical_local_split: `groupkfold-subject-3fold-oof`
-- organizer_official_split_available: `false`
+| field | value |
+| --- | --- |
+| dataset_name | `sleep-lifelog-2024` |
+| version | `v0` |
+| source_type | `released-package-plus-team-summary` |
+| primary_label_file | `ch2026_metrics_train.csv` |
+| canonical_modeling_rows | `450` |
+| canonical_group_key | `subject_id` |
+| canonical_local_split | `groupkfold-subject-3fold-oof` |
+| n_folds | `3` |
+| organizer_official_split_available | `false` |
+| claim_status | `tentative` |
 
 ## Released Package Contents
 
-The packet records these released-package artifacts as the current source of record:
+The dataset packet records these released-package artifacts as the current source of record:
 
 - `ch2025_data_items/`: modality tables; the packet narrative describes 12 parquet files.
 - `ch2026_metrics_train.csv`: released training labels and the source of the current modeling table.
@@ -91,7 +89,7 @@ The packet records these released-package artifacts as the current source of rec
 - `ch2026_metrics_description.pdf`: organizer metric and label description reference.
 - `data.zip`: original archive.
 
-The manifest's tentative claim describes the dataset as about 700 days from 2024. The structured dataset YAML separately records that the current joined modeling table has 450 rows grouped by `subject_id`.
+The manifest claim describes the dataset as approximately 700 days recorded in 2024. The structured dataset YAML records that the current joined modeling table has 450 rows grouped by `subject_id`. Both statements remain `tentative` because this page is preserving the packet status rather than independently revalidating the raw package.
 
 ## Modalities
 
@@ -99,12 +97,12 @@ The manifest's tentative claim describes the dataset as about 700 days from 2024
 | --- | --- |
 | smartphone | `mACStatus`, `mActivity`, `mAmbience`, `mBle`, `mGps`, `mLight`, `mScreenStatus`, `mUsagestats`, `mWifi` |
 | smartwatch | `wHr`, `wLight`, `wPedo` |
-| sleep-sensor | referenced as `sleep-sensor:placeholder`; schema is not exhaustively mapped in this packet |
+| sleep sensor | recorded as `sleep-sensor:placeholder`; schema is not exhaustively mapped in this packet |
 | self-report | `bedtime-questionnaire` |
 
 Several modality payloads are nested or minute-level streams. The packet flags these as requiring aggregation before most tabular modeling workflows can consume them safely.
 
-## Targets
+## Target Set
 
 Seven labels live with `subject_id`, `sleep_date`, and `lifelog_date` in `ch2026_metrics_train.csv`:
 
@@ -118,7 +116,7 @@ Seven labels live with `subject_id`, `sleep_date`, and `lifelog_date` in `ch2026
 | `S3` | objective | sleep onset latency compliance |
 | `S4` | objective | wakefulness after sleep onset compliance |
 
-The Q-family labels are participant-relative averages and therefore high risk for identity leakage under same-subject validation. The S-family labels are framed as guideline-compliance targets, but this dataset page does not validate any metric value for them.
+The Q-family labels are participant-relative and therefore carry very high identity-leakage risk under same-subject validation. The S-family labels are framed as objective guideline-compliance targets. This dataset page does not validate any target-specific metric value.
 
 ## Split Policy
 
@@ -129,25 +127,42 @@ For sprint-1 local comparisons, the canonical local split is:
 - group_key: `subject_id`
 - n_folds: `3`
 - source: `local-canonical-sprint1`
+- modeling_table_rows: `450`
+- organizer_official_split_available: `false`
 - fold_file: `null`
 
-Same-subject temporal forecasting is recorded as a candidate alternative in the related benchmark, not as the canonical dataset split. Downstream result packets should name the split they used and should not compare same-subject temporal results against grouped-subject OOF results as if they were the same protocol.
+Same-subject temporal forecasting is recorded as a candidate alternative track in the related benchmark, not as the canonical dataset split. Downstream result packets should name the split they used and should not compare same-subject temporal results against grouped-subject OOF results as if they were the same protocol.
+
+## Known Leakage and Bias Risks
+
+The packet records these risks:
+
+- Q-family labels are participant-relative averages and have very high leakage risk under same-subject splits.
+- Subjective labels may encode participant-specific reporting style.
+- Nested modality payloads require aggregation before tabular models consume them.
+- Minute-level streams must be aggregated before most tabular models can use them.
+- Older paper or summary material may frame the task as six targets; the released package and metric description take precedence for current work and include `S4`.
 
 ## Working Implications
 
-- Use this stable page, `wiki/datasets/sleep-lifelog-2024.md`, as the dataset reference rather than a dated packet mirror.
+- Use this stable page, `wiki/datasets/sleep-lifelog-2024.md`, as the dataset reference.
 - Include all seven targets, including `S4`, in future feature manifests, benchmark references, and experiment packets unless a later packet explicitly supersedes the target set.
 - Treat Q-family and S-family targets as related but analytically different tasks.
+- Use the locked grouped-subject split for sprint-1 local comparisons unless a downstream packet explicitly declares a different split and claim boundary.
 - Do not infer organizer-official validation semantics from the local `GroupKFold` policy.
-- Do not attach model performance to this dataset page; result-bearing packets must provide their own raw evidence and metric verification.
+- Do not attach model performance to this dataset page; result-bearing packets must provide their own raw evidence and split-aware metric verification.
+
+## Related Benchmark
+
+The benchmark entity `[[benchmarks/sleep-health-hackathon-v0]]` defines the target taxonomy in more detail, the primary local metric (`grouped_macro_logloss`), evaluation tracks, and allowed downstream claim boundaries for results on this dataset.
 
 ## Claim Register
 
-All current claims from this packet remain `tentative`:
+All current dataset claims remain `tentative`:
 
-- `tentative`: the dataset is a multimodal smartphone, smartwatch, sleep-sensor, and self-report release from 2024 with seven targets and a 450-row modeling table from `ch2026_metrics_train.csv`.
-- `tentative`: the sprint-1 local canonical split is 3-fold `GroupKFold` by `subject_id`; older six-target notes are lower priority than the released package and metric description.
-- `tentative`: Q-family labels carry very high same-subject leakage risk because they are participant-relative; S-family labels reflect objective guideline compliance.
+- `tentative`: `sleep-lifelog-2024` is a multimodal smartphone, smartwatch, sleep-sensor, and self-report dataset of about 700 days recorded in 2024 with seven prediction targets (`Q1`, `Q2`, `Q3`, `S1`, `S2`, `S3`, `S4`); the released training labels are in `ch2026_metrics_train.csv` and produce a 450-row modeling table grouped by `subject_id`.
+- `tentative`: the sprint-1 local canonical split is 3-fold `GroupKFold` by `subject_id` on the released training labels; older six-target notes are lower priority than the released package framing.
+- `tentative`: Q-family labels are participant-relative averages and therefore at very high leakage risk under same-subject splits; S-family labels reflect objective guideline compliance.
 
 ## Provenance
 
@@ -157,15 +172,27 @@ All current claims from this packet remain `tentative`:
   - `raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml`
   - `raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml`
   - `raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/packet.md`
-- packet-recorded primary source path: `raw/datasets/sleep-lifelog-2024/`
-- packet-recorded supporting sources:
+- packet_raw_paths:
+  - `dataset.yaml`
+- packet_recorded_primary_source_path:
+  - `raw/datasets/sleep-lifelog-2024/`
+- packet_recorded_supporting_sources:
   - `raw/references/chatgpt-share-2026-04-28-sleep-hackathon/transcript.md`
   - `raw/references/kick-off.md`
-- related benchmark: `[[benchmarks/sleep-health-hackathon-v0]]`
+- related_benchmark: `[[benchmarks/sleep-health-hackathon-v0]]`
+- latest_context_run: `26628582638-1`
 
-## Open Questions, Conflicts, and Supersession Notes
+## Open Questions and Supersession Notes
 
 - Organizer official split: the dataset YAML records `organizer_official_split_available: false`. A later organizer-published split protocol should supersede the local split note through a new packet.
-- Six-target versus seven-target notes: older summaries that omit `S4` are superseded for current team work by this packet's released-package framing.
+- Six-target versus seven-target framing: older summaries that omit `S4` are superseded for current team work by this packet's released-package framing unless later evidence says otherwise.
 - Sleep-sensor schema: the packet only records a placeholder; a later schema packet should map sleep-sensor fields before feature claims depend on them.
-- Stable path: the manifest's `intended_wiki_targets` contains a dated path, but repository policy renders dataset entities to stable paths such as `wiki/datasets/sleep-lifelog-2024.md`; the packet id remains in provenance.
+- Package-level validation: this page preserves packet claims about package contents and modeling rows, but it does not independently hash or audit the full released package.
+- Stable path note: the packet manifest lists a dated intended wiki target, but repository policy renders dataset entities to stable paths. The packet id remains in provenance.
+
+## Reviewer Checklist
+
+- Confirm that no model performance, baseline, or leaderboard claim was added to this dataset definition.
+- Confirm that downstream result pages cite their split policy and do not rely on this page for organizer-official semantics.
+- Confirm that future feature and experiment packets include `S4` unless a later packet explicitly changes the target set.
+- Confirm that any same-subject temporal analysis is treated as a separate track from grouped-subject local OOF evaluation.

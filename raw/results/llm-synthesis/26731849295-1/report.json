@@ -1,0 +1,49 @@
+{
+  "changed_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md"
+  ],
+  "claim_statuses": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26628582638-1/report.json"
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "packet_roots": [
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024"
+  ],
+  "packets": [
+    {
+      "id": "2026-05-29-sleep-health-hackathon-v0",
+      "packet_root": "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+      "type": "benchmark"
+    },
+    {
+      "id": "2026-05-29-sleep-lifelog-2024",
+      "packet_root": "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024",
+      "type": "dataset"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26731849295-1/report.json",
+  "review_notes": [
+    "All claims remain `tentative`; no claim was promoted to `supported`.",
+    "No raw, automation, or policy files are included as output pages.",
+    "The pages intentionally use stable entity paths (`wiki/datasets/sleep-lifelog-2024.md` and `wiki/benchmarks/sleep-health-hackathon-v0.md`) while retaining dated packet ids and dated intended targets as provenance.",
+    "Reviewer should verify whether future organizer/DACON official split guidance supersedes the local sprint-1 `GroupKFold` policy."
+  ],
+  "risk_tier": "tier2-interpretation",
+  "run_id": "26731849295-1",
+  "status": "bot_pr",
+  "synthesis_summary": "Rewrote the two allowed stable entity wiki pages for the sleep lifelog dataset and sleep health benchmark. Both pages preserve packet ids, raw provenance, claim boundaries, and tentative claim statuses, and avoid adding any model-performance or metric-result claims.",
+  "timing_ms": 70790,
+  "warnings": []
+}
