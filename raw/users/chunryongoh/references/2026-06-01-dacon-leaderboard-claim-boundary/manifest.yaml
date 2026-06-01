@@ -1,0 +1,29 @@
+id: 2026-06-01-dacon-leaderboard-claim-boundary
+packet_type: reference
+title: DACON Leaderboard and Local OOF Claim Boundary
+date: "2026-06-01"
+owner: chunryongoh
+status: submitted
+task: dacon-sleep-health-reporting-policy
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+split:
+  name: local-groupkfold-subject-3fold-oof-vs-dacon-public-private
+  group_key: subject_id
+model:
+  family: not-applicable
+  weights_in_repo: false
+claim_boundary: Team reporting convention for the DACON/ETRI sleep-health hackathon; not organizer-official split evidence.
+claim_status: tentative
+summary: Records how to separate local OOF evidence from DACON public/private leaderboard evidence when reporting sleep-health hackathon results.
+raw_paths:
+  notes: notes.md
+intended_wiki_targets:
+  - wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: Local GroupKFold OOF metrics and DACON public/private leaderboard results should be recorded as separate evidence classes.
+  - status: tentative
+    text: DACON public leaderboard feedback should not automatically supersede local validation conclusions without matching submission metadata and private leaderboard evidence.
