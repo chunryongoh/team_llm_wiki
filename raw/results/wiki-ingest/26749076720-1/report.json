@@ -1,0 +1,128 @@
+{
+  "changed_paths": [
+    "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-lifelog-section07-notebook-overview.json",
+    "raw/results/wiki-ingest/26749076720-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-01-lifelog-section07-notebook-overview",
+      "status": "tentative"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-lifelog-section07-notebook-overview.json"
+  ],
+  "input_changed_paths": [
+    "automation/.cache/compiled/2026-06-01-lifelog-section07-notebook-overview.json",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview/manifest.yaml",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview/packet.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview/source/07_labelwise_feature_generation_integrated.no-output.ipynb",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview/source/notebook-outline.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview/source/notebook-output-summary.md",
+    "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+    "wiki/index.md",
+    "wiki/latest-context.md",
+    "wiki/log.md"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "packet skill PR should normally touch only raw/users/** packet files",
+        "paths": [
+          "automation/.cache/compiled/2026-06-01-lifelog-section07-notebook-overview.json",
+          "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+          "wiki/index.md",
+          "wiki/latest-context.md",
+          "wiki/log.md"
+        ],
+        "status": "warning"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric-bearing packet has no metrics_to_verify entries",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+        "status": "warning"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+        "status": "pass"
+      }
+    ],
+    "status": "warning"
+  },
+  "packets": [
+    {
+      "claim_boundary": "Existing 07_labelwise_feature_generation_integrated.ipynb structure and saved notebook-output summary only; data files, model weights, submission CSVs, full Optuna logs, rerun evidence, and verified leaderboard claims are excluded.",
+      "claim_status": "tentative",
+      "id": "2026-06-01-lifelog-section07-notebook-overview",
+      "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: experiment",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "experiment"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/26749076720-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier2-interpretation",
+  "run_id": "26749076720-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": null,
+  "timing_ms": 32,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}

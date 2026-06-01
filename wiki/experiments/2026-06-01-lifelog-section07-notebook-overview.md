@@ -59,7 +59,7 @@ risk_tier: tier2-interpretation
 # LifeLog Section 07 Notebook Overview
 
 - packet: `2026-06-01-lifelog-section07-notebook-overview`
-- generated_by_run: `local-run-section07-notebook`
+- generated_by_run: `26749076720-1`
 - publish_action: `bot_pr`
 - risk_tier: `tier2-interpretation`
 - compiled_packet: [automation/.cache/compiled/2026-06-01-lifelog-section07-notebook-overview.json](../../automation/.cache/compiled/2026-06-01-lifelog-section07-notebook-overview.json)
