@@ -96,3 +96,8 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md`
 - run: `26740055632-1`
+
+## [2026-06-01] ingest | 2026-06-01-lgb-cb-reproduction-local-oof-diagnostic
+
+- target: `wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md`
+- run: `26741704818-1`
