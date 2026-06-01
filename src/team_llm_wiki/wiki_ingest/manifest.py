@@ -161,7 +161,7 @@ def discover_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
                 break
         if not found:
             fallback = _fallback_raw_user_packet_root(repo, changed_rel)
-            if fallback is not None and fallback not in seen:
+            if fallback is not None and fallback.exists() and fallback not in seen:
                 roots.append(fallback)
                 seen.add(fallback)
     return roots

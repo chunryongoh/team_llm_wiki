@@ -574,3 +574,12 @@ def test_discover_packet_roots_only_accepts_raw_user_manifest_changes(tmp_path):
     )
 
     assert roots == [packet]
+
+
+def test_discover_packet_roots_ignores_deleted_raw_user_packet_root(tmp_path):
+    roots = discover_packet_roots(
+        tmp_path,
+        ["raw/users/alice/references/2026-06-01-deleted-packet/manifest.yaml"],
+    )
+
+    assert roots == []
