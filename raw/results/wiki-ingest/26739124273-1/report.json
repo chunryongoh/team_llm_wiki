@@ -1,0 +1,110 @@
+{
+  "changed_paths": [
+    "wiki/sources/2026-06-01-full-chain-smoke-packet.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-full-chain-smoke-packet.json",
+    "raw/results/wiki-ingest/26739124273-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-01-full-chain-smoke-packet",
+      "status": "tentative"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/sources/2026-06-01-full-chain-smoke-packet.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-full-chain-smoke-packet.json"
+  ],
+  "input_changed_paths": [
+    "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet/manifest.yaml",
+    "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet/notes.md",
+    "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet/packet.md"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "changed paths are limited to raw/users/**",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+        "status": "pass"
+      }
+    ],
+    "status": "pass"
+  },
+  "packets": [
+    {
+      "claim_boundary": "This packet only verifies the GitHub Actions automation chain from packet PR merge to deterministic ingest and GPT-5.5 synthesis.",
+      "claim_status": "tentative",
+      "id": "2026-06-01-full-chain-smoke-packet",
+      "packet_root": "raw/users/chunryongoh/references/2026-06-01-full-chain-smoke-packet",
+      "publish_action": "direct_commit",
+      "risk_reasons": [],
+      "risk_tier": "tier0-catalog",
+      "type": "reference"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/26739124273-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier0-catalog",
+  "run_id": "26739124273-1",
+  "status": "direct_commit",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": null,
+  "timing_ms": 14,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}
