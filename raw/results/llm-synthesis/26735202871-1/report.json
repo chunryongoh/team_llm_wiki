@@ -1,0 +1,127 @@
+{
+  "changed_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "claim_register": [
+    {
+      "status": "tentative",
+      "text": "sleep-health-hackathon-v0\ub294 sleep-lifelog-2024 \uc704\uc5d0\uc11c Q1, Q2, Q3, S1, S2, S3, S4\uc758 seven sleep-health prediction targets\ub97c \ud3c9\uac00\ud558\uba70, local sprint-1 \uc815\ucc45\uc740 `GroupKFold` by `subject_id` 3 folds\uc640 `grouped_macro_logloss` macro mean\uc785\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "sleep-health-hackathon-v0\uc758 \ud5c8\uc6a9 claim boundaries\ub294 `local_oof_diagnostic_only`, `same_split_baseline_comparison`, `public_lb_observation_only`\uc774\uba70 public leaderboard score\ub294 DACON submission \uc99d\uac70\uac00 \uc788\uc744 \ub54c\ub9cc local OOF\uc640 \ubd84\ub9ac\ud574 \uae30\ub85d\ud569\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "Track A `unseen-subject-generalization`\uc774 \uad8c\uc7a5 main track\uc774\uace0, Track B `same-subject-temporal-forecasting`\uc740 \ubcc4\ub3c4 candidate track\uc73c\ub85c Q-family participant-relative labels\uc5d0\uc11c \ud2b9\ud788 Track A\uc640 \ud63c\ub3d9\ud558\uba74 \uc548 \ub429\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "sleep-lifelog-2024\ub294 smartphone, smartwatch, sleep-sensor, self-report modalities\ub97c \ud3ec\ud568\ud558\uace0, released training labels `ch2026_metrics_train.csv`\ub294 Q1-Q3 \ubc0f S1-S4 seven targets\uc640 450-row modeling table\uc744 \uc81c\uacf5\ud569\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "sprint-1 local canonical split\uc740 released training labels\uc5d0\uc11c `subject_id` \uae30\uc900 3-fold `GroupKFold`\uc774\uba70, older six-target docs\ubcf4\ub2e4 released package\uc640 `ch2026_metrics_description.pdf`\uac00 \uc6b0\uc120\ud569\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "Q-family labels\ub294 participant-relative averages\ub77c same-subject splits\uc5d0\uc11c very high leakage risk\uac00 \uc788\uace0, S-family labels\ub294 objective guideline compliance \uc131\uaca9\uc785\ub2c8\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26628582638-1/report.json"
+  ],
+  "integration_plan": [
+    "\ub450 raw packet\uc744 \ub0a0\uc9dc\ubcc4 \ubbf8\ub7ec\uac00 \uc544\ub2c8\ub77c \uc548\uc815 \uc5d4\ud2f0\ud2f0 \ud398\uc774\uc9c0\uc778 `wiki/datasets/sleep-lifelog-2024.md`\uc640 `wiki/benchmarks/sleep-health-hackathon-v0.md`\uc5d0 \ud1b5\ud569\ud588\uc2b5\ub2c8\ub2e4.",
+    "\ub370\uc774\ud130\uc14b\u00b7\ubca4\uce58\ub9c8\ud06c\uc5d0\uc11c \ubc18\ubcf5\ub418\ub294 \uc9c0\uc2dd\uc744 `wiki/features/sleep-lifelog-feature-landscape.md`, `wiki/decisions/sleep-lifelog-evaluation-protocol.md`, `wiki/questions/sleep-lifelog-open-questions.md`\ub85c \ubd84\ud574\ud588\uc2b5\ub2c8\ub2e4.",
+    "`S4` \ud3ec\ud568 seven-target released package\uc640 older six-target framing\uc758 supersession, Track A/Track B \ud63c\ub3d9 \uc704\ud5d8, public leaderboard\uc640 local OOF\uc758 claim boundary \ucc28\uc774\ub97c \ubcc4\ub3c4 \uc139\uc158\uc73c\ub85c \ub0a8\uacbc\uc2b5\ub2c8\ub2e4.",
+    "overview, latest-context, index, log\ub97c \uac31\uc2e0\ud574 \ub2e4\uc74c \uc5d0\uc774\uc804\ud2b8\uac00 \uad00\ub828 \ud398\uc774\uc9c0\ub97c \ub530\ub77c\uac08 \uc218 \uc788\uac8c \ud588\uc2b5\ub2c8\ub2e4.",
+    "\ubaa8\ub4e0 raw claim\uc740 `tentative`\ub85c \uc720\uc9c0\ud588\uace0, metric/split \uac80\uc99d \uc5c6\ub294 \uc131\ub2a5 claim\uc740 \uc0dd\uc131\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    "Organizer-official split protocol \ub610\ub294 private leaderboard \ud574\uc11d \uae30\uc900\uc774 \uacf5\uac1c\ub418\uba74 \ud604\uc7ac local canonical sprint-1 policy\ub97c \uc5b4\ub5bb\uac8c supersede\ud560\uc9c0 \uc815\ud574\uc57c \ud569\ub2c8\ub2e4.",
+    "`sleep-sensor:placeholder`\uc640 `self-report:bedtime-questionnaire`\uc758 \uc2e4\uc81c schema mapping \ubc0f feature extraction \ubc94\uc704\ub97c \ud655\uc778\ud574\uc57c \ud569\ub2c8\ub2e4.",
+    "`about 700 days` \uc6d0\ucc9c \uc124\uba85\uacfc `450` modeling rows \uc0ac\uc774\uc758 join/filter lineage\ub97c \ubcc4\ub3c4 raw evidence\ub85c \uac80\uc99d\ud574\uc57c \ud569\ub2c8\ub2e4.",
+    "`sleep_date`\uc640 `lifelog_date`\ub97c \uae30\uc900\uc73c\ub85c modality\ubcc4 aggregation window\ub97c \ud45c\uc900\ud654\ud574\uc57c \ud569\ub2c8\ub2e4.",
+    "Track B same-subject temporal forecasting\uc744 \uc2e4\uc81c\ub85c \uc0ac\uc6a9\ud560 \uacbd\uc6b0 Q-family leakage\ub97c \uc5b4\ub5bb\uac8c \uc81c\ud55c\ud558\uace0 Track A\uc640 \uc5b4\ub5bb\uac8c \ubcc4\ub3c4 \ubcf4\uace0\ud560\uc9c0 \uc815\ud574\uc57c \ud569\ub2c8\ub2e4.",
+    "DACON public/private leaderboard submission \uae30\ub85d \uc591\uc2dd\uacfc local OOF \uacb0\uacfc\uc758 \ubcd1\uae30 \uaddc\uce59\uc744 \uc815\ud574\uc57c \ud569\ub2c8\ub2e4."
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024"
+  ],
+  "packets": [
+    {
+      "id": "2026-05-29-sleep-health-hackathon-v0",
+      "packet_root": "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+      "type": "benchmark"
+    },
+    {
+      "id": "2026-05-29-sleep-lifelog-2024",
+      "packet_root": "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024",
+      "type": "dataset"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26735202871-1/report.json",
+  "review_notes": [
+    "LLM-assisted synthesis \uacb0\uacfc\uc774\ubbc0\ub85c \ubaa8\ub4e0 \ubcc0\uacbd\uc740 review-required\uc785\ub2c8\ub2e4.",
+    "`claim_status: tentative`\ub97c \uc720\uc9c0\ud588\uace0 `supported`\ub85c \uc2b9\uaca9\ud55c claim\uc740 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    "\uc131\ub2a5 metric value, model ranking, leaderboard rank\ub294 raw metric/split evidence\uac00 \uc5c6\uc5b4 \ucd94\uac00\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.",
+    "`raw/`, `automation/`, policy files\ub294 \ucd9c\ub825 \ub300\uc0c1\uc5d0 \ud3ec\ud568\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.",
+    "\ud398\uc774\uc9c0 \ubcf8\ubb38\uacfc metadata summary\ub294 \ud55c\uad6d\uc5b4\ub85c \uc791\uc131\ud558\ub418, file paths, ids, field names, metrics, model names\ub294 \uc6d0\ubb38 \uadf8\ub300\ub85c \ubcf4\uc874\ud588\uc2b5\ub2c8\ub2e4."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "26735202871-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "Older dataset paper summaries\uc758 six-target framing\uc740 released package \ubc0f `ch2026_metrics_description.pdf`\uc758 seven-target framing, \ud2b9\ud788 `S4`,\uc5d0 \uc758\ud574 \ud604\uc7ac wiki\uc5d0\uc11c\ub294 superseded note\ub85c \ucde8\uae09\ud569\ub2c8\ub2e4.",
+    "Track B same-subject temporal forecasting\uc740 Track A unseen-subject generalization\uc744 \ub300\uccb4\ud558\uc9c0 \uc54a\uc73c\uba70 \ub450 track\uc758 \uacb0\uacfc\ub294 \ubcd1\ud569\ud558\uac70\ub098 \uc9c1\uc811 ranking\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.",
+    "DACON public leaderboard\ub294 test set 44%\uc5d0 \ub300\ud55c noisy directional feedback\uc73c\ub85c \uae30\ub85d\ud558\uba70, local GroupKFold OOF metric claim\uc744 public/private leaderboard claim\uc73c\ub85c \uc2b9\uaca9\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.",
+    "Organizer-official split\uc774 \uc544\uc9c1 raw evidence\ub85c \ud655\uc778\ub418\uc9c0 \uc54a\uc558\uc73c\ubbc0\ub85c \ud604\uc7ac `groupkfold-subject-3fold-oof`\ub294 local canonical sprint-1 policy\uc77c \ubfd0 official validation semantics\uac00 \uc544\ub2d9\ub2c8\ub2e4."
+  ],
+  "synthesis_summary": "sleep-lifelog-2024 \ub370\uc774\ud130\uc14b\uacfc sleep-health-hackathon-v0 \ubca4\uce58\ub9c8\ud06c\ub97c \uc548\uc815 \uc5d4\ud2f0\ud2f0 \uc911\uc2ec\uc73c\ub85c \uc7ac\ud1b5\ud569\ud588\uc2b5\ub2c8\ub2e4. \uc6d0\uc2dc packet id, raw provenance, claim_boundary, claim_status\ub294 \ubcf4\uc874\ud588\uace0, \uc131\ub2a5\u00b7\uc21c\uc704\u00b7\ubaa8\ub378 \uc6b0\uc5f4 \uc8fc\uc7a5\uc740 \ucd94\uac00\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc0c8 \ud569\uc131 \ud398\uc774\uc9c0\ub85c feature landscape, evaluation protocol \uacb0\uc815 \uae30\ub85d, open questions, synthesis report\ub97c \ub9cc\ub4e4\uace0 overview/latest-context/index/log\uae4c\uc9c0 \uad50\ucc28 \ub9c1\ud06c\ud588\uc2b5\ub2c8\ub2e4.",
+  "timing_ms": 186180,
+  "updated_pages": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "warnings": []
+}

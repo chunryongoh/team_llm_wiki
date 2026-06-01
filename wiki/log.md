@@ -91,3 +91,11 @@ Append-only ingest and maintenance events belong here.
 - Expanded `wiki-llm-synthesis` from entity-page rewrite to multi-page wiki integration.
 - Required GPT-5.5 output to cover stable entity pages, feature landscape, evaluation decision, open questions, synthesis report, overview, latest context, index, and log.
 - Added structured integration metadata to the LLM report and bot PR body.
+
+## [2026-06-01] synthesis | sleep-lifelog-benchmark-integration
+
+- `2026-05-29-sleep-lifelog-2024`와 `2026-05-29-sleep-health-hackathon-v0` raw packets를 안정 dataset/benchmark entity와 cross-cutting topic pages로 통합했습니다.
+- Created pages: `wiki/features/sleep-lifelog-feature-landscape.md`, `wiki/decisions/sleep-lifelog-evaluation-protocol.md`, `wiki/questions/sleep-lifelog-open-questions.md`, `wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md`.
+- Updated pages: `wiki/datasets/sleep-lifelog-2024.md`, `wiki/benchmarks/sleep-health-hackathon-v0.md`, `wiki/overview.md`, `wiki/latest-context.md`, `wiki/index.md`, `wiki/log.md`.
+- Raw provenance, packet ids, claim boundaries, and `claim_status: tentative`를 보존했습니다.
+- Metric value, model ranking, feature importance, leaderboard superiority claim은 raw metric/split evidence가 없어 추가하지 않았습니다.
