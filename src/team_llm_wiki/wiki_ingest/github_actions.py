@@ -191,6 +191,25 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
     else:
         lines.append("- none")
 
+    if payload.get("llm_synthesis"):
+        lines.extend(["", "## LLM integration summary", ""])
+        summary = payload.get("synthesis_summary") or payload.get("summary") or "none"
+        lines.append(_bounded_text(summary, 1000))
+        integration_plan = [item for item in payload.get("integration_plan") or [] if str(item).strip()]
+        if integration_plan:
+            lines.extend(["", "### Integration plan"])
+            lines.extend(f"- {_bounded_text(item, 300)}" for item in integration_plan[:MAX_LIST_ITEMS])
+        _append_path_section(lines, "Created wiki pages", list(payload.get("created_pages") or []))
+        _append_path_section(lines, "Updated wiki pages", list(payload.get("updated_pages") or []))
+        open_questions = [item for item in payload.get("open_questions") or [] if str(item).strip()]
+        if open_questions:
+            lines.extend(["", "### Open questions"])
+            lines.extend(f"- {_bounded_text(item, 300)}" for item in open_questions[:MAX_LIST_ITEMS])
+        conflicts = [item for item in payload.get("superseded_or_conflicting_claims") or [] if str(item).strip()]
+        if conflicts:
+            lines.extend(["", "### Superseded or conflicting claims"])
+            lines.extend(f"- {_bounded_text(item, 300)}" for item in conflicts[:MAX_LIST_ITEMS])
+
     lines.extend(["", "## Affected wiki pages", ""])
     wiki_paths = [path for path in payload.get("generated_paths") or payload.get("changed_paths") or [] if str(path).startswith("wiki/")]
     if wiki_paths:

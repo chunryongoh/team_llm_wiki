@@ -1,6 +1,6 @@
 # LLM Synthesis Policy
 
-This repository uses deterministic ingest as the default merge-time path. LLM-assisted synthesis is allowed only as a review-required enhancement that creates or updates a bot PR.
+This repository uses deterministic ingest as the default merge-time path. LLM-assisted synthesis is allowed only as a review-required integration pass that creates or updates a bot PR.
 
 ## Default Model
 
@@ -17,6 +17,7 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 - LLM output must never mutate `raw/`.
 - LLM output that changes `wiki/` must be review-required unless the change is only a low-risk summary with no claim promotion.
 - The LLM must read `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, target packet manifests, packet-specific YAML, and packet narratives before writing synthesis.
+- The LLM must run a wiki integration pass, not a two-page formatter pass. A source can update stable entity pages plus feature, decision, question, report, overview, latest-context, index, and log pages.
 - The LLM must preserve claim statuses and must not promote `tentative` to `supported` without raw evidence and metric/split validation.
 - The LLM must output structured JSON containing only allowed replacement wiki pages, not free-form repository edits.
 - The workflow requires `OPENAI_API_KEY`. If the secret is missing, the workflow must skip without breaking deterministic ingest.
@@ -26,6 +27,7 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 The synthesis prompt should ask for:
 
 - stable entity page updates rather than dated packet mirrors
+- compounding topic pages when a packet creates durable cross-cutting knowledge
 - explicit provenance back to packet ids and raw evidence
 - conflicts, supersession, and open questions
 - reviewer checklist items for risky interpretation
@@ -36,5 +38,5 @@ The synthesis prompt should ask for:
 - CLI: `python -m team_llm_wiki.cli run-llm-wiki-synthesis`
 - Model default: `gpt-5.5`
 - Reasoning default: `high`
-- Allowed write surface: target `wiki/` pages computed from the changed packets
+- Allowed write surface: stable entity pages plus deterministic integration pages computed from the changed packets
 - Report path: `raw/results/llm-synthesis/<run-id>/report.json`

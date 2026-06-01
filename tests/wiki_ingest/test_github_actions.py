@@ -124,6 +124,40 @@ def test_render_bot_pr_body_includes_required_review_sections():
     assert "## Reviewer checklist" in body
 
 
+def test_render_bot_pr_body_surfaces_llm_integration_metadata():
+    body = render_bot_pr_body(
+        {
+            "llm_synthesis": True,
+            "report_path": "raw/results/llm-synthesis/1/report.json",
+            "packets": [{"id": "dataset-a", "type": "dataset"}],
+            "generated_paths": [
+                "wiki/datasets/dataset-a.md",
+                "wiki/features/dataset-feature-landscape.md",
+                "wiki/decisions/dataset-evaluation-protocol.md",
+                "wiki/questions/dataset-open-questions.md",
+            ],
+            "synthesis_summary": "Integrated source into the wiki graph.",
+            "integration_plan": ["Create topic pages", "Refresh core pages"],
+            "created_pages": ["wiki/features/dataset-feature-landscape.md"],
+            "updated_pages": ["wiki/datasets/dataset-a.md", "wiki/index.md"],
+            "open_questions": ["How should temporal validation be separated?"],
+            "superseded_or_conflicting_claims": ["Older target count notes may be superseded."],
+        }
+    )
+
+    assert "## LLM integration summary" in body
+    assert "Integrated source into the wiki graph." in body
+    assert "### Integration plan" in body
+    assert "Create topic pages" in body
+    assert "### Created wiki pages" in body
+    assert "wiki/features/dataset-feature-landscape.md" in body
+    assert "### Updated wiki pages" in body
+    assert "wiki/index.md" in body
+    assert "### Open questions" in body
+    assert "temporal validation" in body
+    assert "### Superseded or conflicting claims" in body
+
+
 def test_render_pr_comment_includes_preview_details():
     comment = render_pr_comment(
         {
