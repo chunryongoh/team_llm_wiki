@@ -1,0 +1,11 @@
+{
+  "baseline_wave41_macro_log_loss": 0.6198684545582471,
+  "catboost_macro_log_loss": 0.6538557592728997,
+  "delta_vs_wave41": -3.19332341584e-05,
+  "fixed_lgb_cb_blend_macro_log_loss": 0.6536839393073466,
+  "lightgbm_macro_log_loss": 0.6657586405095428,
+  "macro_brier_score": 0.21542505839915055,
+  "macro_f1": 0.7405528941404763,
+  "macro_roc_auc": 0.6796841416960083,
+  "targetwise_reblend_macro_log_loss": 0.6198365213240887
+}

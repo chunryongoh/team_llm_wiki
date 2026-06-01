@@ -1,0 +1,300 @@
+{
+  "blend_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+  "blend_strategy": "target_wise_greedy",
+  "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+  "selected_candidate_ids": [
+    "lgb-cb-notebook-reproduction-v1-fixed-blend",
+    "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+  ],
+  "source_candidates": [
+    {
+      "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+      "run_id": "2026-05-21-wave41-all-seed-plus-wave40-targetwise-reblend-min0-v1"
+    },
+    {
+      "candidate_id": "lgb-cb-notebook-reproduction-v1-fixed-blend",
+      "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-lgb-cb-fixed-blend-v1"
+    }
+  ],
+  "target_blends": {
+    "Q1": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.6227600448650603,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.6227600448650603,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+      }
+    },
+    "Q2": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.6558594136377601,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        },
+        {
+          "action": "add",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-fixed-blend",
+          "new_candidate_weight": 0.1,
+          "score": 0.6556358809986518,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-fixed-blend": 0.1,
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 0.9
+          }
+        }
+      ],
+      "score": 0.6556358809986518,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "lgb-cb-notebook-reproduction-v1-fixed-blend"
+      ],
+      "weights": {
+        "lgb-cb-notebook-reproduction-v1-fixed-blend": 0.1,
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 0.9
+      }
+    },
+    "Q3": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.6309857415368405,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.6309857415368405,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S1": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.562996471228798,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.562996471228798,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S2": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.6113857154018603,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.6113857154018603,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S3": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.595105227779678,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.595105227779678,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S4": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+          "score": 0.6599865674577321,
+          "weights": {
+            "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.6599865674577321,
+      "selected_candidate_ids": [
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+      }
+    }
+  },
+  "target_histories": {
+    "Q1": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.6227600448650603,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "Q2": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.6558594136377601,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      },
+      {
+        "action": "add",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-fixed-blend",
+        "new_candidate_weight": 0.1,
+        "score": 0.6556358809986518,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-fixed-blend": 0.1,
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 0.9
+        }
+      }
+    ],
+    "Q3": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.6309857415368405,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S1": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.562996471228798,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S2": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.6113857154018603,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S3": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.595105227779678,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S4": [
+      {
+        "action": "initial",
+        "candidate_id": "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+        "score": 0.6599865674577321,
+        "weights": {
+          "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+        }
+      }
+    ]
+  },
+  "target_selected_candidate_ids": {
+    "Q1": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+    ],
+    "Q2": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0",
+      "lgb-cb-notebook-reproduction-v1-fixed-blend"
+    ],
+    "Q3": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+    ],
+    "S1": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+    ],
+    "S2": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+    ],
+    "S3": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+    ],
+    "S4": [
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0"
+    ]
+  },
+  "target_weights": {
+    "Q1": {
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+    },
+    "Q2": {
+      "lgb-cb-notebook-reproduction-v1-fixed-blend": 0.1,
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 0.9
+    },
+    "Q3": {
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+    },
+    "S1": {
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+    },
+    "S2": {
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+    },
+    "S3": {
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+    },
+    "S4": {
+      "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 1.0
+    }
+  },
+  "weights": {
+    "lgb-cb-notebook-reproduction-v1-fixed-blend": 0.014285714285714287,
+    "wave41-all-seed-plus-wave40-targetwise-reblend-min0": 0.9857142857142858
+  }
+}
