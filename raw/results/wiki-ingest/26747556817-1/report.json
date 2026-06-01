@@ -1,0 +1,130 @@
+{
+  "changed_paths": [
+    "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-lifelog-section07-working-notes.json",
+    "raw/results/wiki-ingest/26747556817-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-01-lifelog-section07-working-notes",
+      "status": "tentative"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-lifelog-section07-working-notes.json"
+  ],
+  "input_changed_paths": [
+    "automation/.cache/compiled/2026-06-01-lifelog-section07-working-notes.json",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/manifest.yaml",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/packet.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/01_preprocessing.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/02_feature.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/03_model.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/04_performance.md",
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/FEATURES.md",
+    "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+    "wiki/index.md",
+    "wiki/latest-context.md",
+    "wiki/log.md"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "packet skill PR should normally touch only raw/users/** packet files",
+        "paths": [
+          "automation/.cache/compiled/2026-06-01-lifelog-section07-working-notes.json",
+          "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+          "wiki/index.md",
+          "wiki/latest-context.md",
+          "wiki/log.md"
+        ],
+        "status": "warning"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric-bearing packet has no metrics_to_verify entries",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+        "status": "warning"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+        "status": "pass"
+      }
+    ],
+    "status": "warning"
+  },
+  "packets": [
+    {
+      "claim_boundary": "Local Y2025LifeLogDB working notes only; public scores are user-reported notes and are not verified leaderboard or organizer-official evidence.",
+      "claim_status": "tentative",
+      "id": "2026-06-01-lifelog-section07-working-notes",
+      "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: experiment",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "experiment"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/26747556817-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier2-interpretation",
+  "run_id": "26747556817-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": null,
+  "timing_ms": 29,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}

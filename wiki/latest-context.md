@@ -3,6 +3,13 @@
 [[index]] [[overview]] [[log]]
 
 <!-- wiki-ingest:latest:start -->
+### 26747556817-1 | 2026-06-01-lifelog-section07-working-notes
+
+- link: [[experiments/2026-06-01-lifelog-section07-working-notes]]
+- publish_action: `bot_pr`
+- risk_tier: `tier2-interpretation`
+- review-required: true
+
 ### local-run-section07 | 2026-06-01-lifelog-section07-working-notes
 
 - link: [[experiments/2026-06-01-lifelog-section07-working-notes]]
