@@ -101,3 +101,10 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/sources/2026-06-01-workflow-run-chain-smoke-packet.md`
 - run: `26739337778-1`
+
+## [2026-06-01] synthesis | team-llm-wiki-actions-workflow-run-chain
+
+- `2026-06-01-workflow-run-chain-smoke-packet`을 source mirror에만 두지 않고 `team-llm-wiki-actions` feature landscape, evaluation protocol, open question backlog, synthesis report에 연결했다.
+- `claim_status: tentative`를 유지했고 `workflow_run` trigger verified claim을 supported로 승격하지 않았다.
+- downstream `wiki-llm-synthesis` run URL, `gpt-5.5` run log, review-required bot PR evidence를 open question으로 남겼다.
+- overview, latest context, index에 새 stable topic pages를 연결했다.

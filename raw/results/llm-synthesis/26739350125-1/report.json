@@ -1,0 +1,135 @@
+{
+  "changed_paths": [
+    "wiki/sources/2026-06-01-workflow-run-chain-smoke-packet.md",
+    "wiki/features/team-llm-wiki-actions-feature-landscape.md",
+    "wiki/decisions/team-llm-wiki-actions-evaluation-protocol.md",
+    "wiki/questions/team-llm-wiki-actions-open-questions.md",
+    "wiki/reports/2026-06-01-team-llm-wiki-actions-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "claim_register": [
+    {
+      "status": "tentative",
+      "text": "2026-06-01-workflow-run-chain-smoke-packet manifest claim: This packet verifies the workflow_run trigger connecting deterministic ingest to GPT-5.5 synthesis."
+    },
+    {
+      "status": "tentative",
+      "text": "packet-level claim_boundary: This packet only verifies that wiki-main-ingest completion triggers wiki-llm-synthesis through workflow_run."
+    },
+    {
+      "status": "scope-boundary",
+      "text": "raw notes state: This is not evidence for a sleep-health modeling claim. \uc774 \ubc94\uc704 \uc81c\ud55c\uc740 \uadf8\ub300\ub85c \uc720\uc9c0\ub418\uba70 sleep-health dataset \ub610\ub294 benchmark \uc131\ub2a5 claim\uc73c\ub85c \ud655\uc7a5\ud558\uc9c0 \uc54a\uc558\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/features/team-llm-wiki-actions-feature-landscape.md",
+    "wiki/decisions/team-llm-wiki-actions-evaluation-protocol.md",
+    "wiki/questions/team-llm-wiki-actions-open-questions.md",
+    "wiki/reports/2026-06-01-team-llm-wiki-actions-packet-synthesis.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/sources/2026-06-01-workflow-run-chain-smoke-packet.md",
+    "wiki/features/team-llm-wiki-actions-feature-landscape.md",
+    "wiki/decisions/team-llm-wiki-actions-evaluation-protocol.md",
+    "wiki/questions/team-llm-wiki-actions-open-questions.md",
+    "wiki/reports/2026-06-01-team-llm-wiki-actions-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26739337778-1/report.json"
+  ],
+  "integration_plan": [
+    "`2026-06-01-workflow-run-chain-smoke-packet`\uc744 dated mirror\uac00 \uc544\ub2c8\ub77c `team-llm-wiki-actions` \uc790\ub3d9\ud654 \uccb4\uc778\uc758 stable source evidence\ub85c \uc7ac\ud574\uc11d\ud574 source page\uc5d0 provenance\uc640 cross-link\ub97c \ubcf4\uac15\ud588\ub2e4.",
+    "\uc0c8 stable topic page\uc778 feature landscape, evaluation protocol, open questions, synthesis report\ub97c \ub9cc\ub4e4\uace0 source, dataset, benchmark, policy, report \ub9c1\ud06c\ub97c \uc5f0\uacb0\ud588\ub2e4.",
+    "`workflow_run` trigger \uac80\uc99d claim\uc740 raw manifest\uc758 `tentative` \uc0c1\ud0dc\ub97c \uc720\uc9c0\ud558\uace0, \uc2e4\ud589 \ub85c\uadf8\uc640 bot PR URL\uc774 \ud544\uc694\ud55c open question\uc73c\ub85c \ubd84\ub9ac\ud588\ub2e4.",
+    "overview, latest-context, index, log\ub97c \ucd5c\uc2e0 agent entrypoint\uc640 navigation layer\ub85c \uac31\uc2e0\ud558\ub418 `raw/`, `automation/`, policy file\uc740 \uc218\uc815\ud558\uc9c0 \uc54a\uc558\ub2e4."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    {
+      "close_condition": "\ub450 workflow run \uc0ac\uc774\uc758 `workflow_run` causality\uac00 raw evidence \ub610\ub294 reviewed report\uc5d0 \uae30\ub85d\ub418\uace0 source page claim \uc0c1\ud0dc \ubcc0\uacbd \uc5ec\ubd80\uac00 \uc7ac\uac80\ud1a0\ub41c\ub2e4.",
+      "id": "Q-TAWA-001",
+      "merge_blocker": true,
+      "needed_evidence": "GitHub Actions run URL, upstream `wiki-main-ingest` run id, downstream `wiki-llm-synthesis` run id, event payload \ub610\ub294 run log excerpt.",
+      "owner_role": "github-actions-maintainer",
+      "priority": "high",
+      "question": "\uc5b4\ub5a4 `wiki-main-ingest` run\uc774 `wiki-llm-synthesis`\ub97c `workflow_run`\uc73c\ub85c \uc2e4\uc81c \ubc1c\uc0dd\uc2dc\ucf30\ub294\uac00?"
+    },
+    {
+      "close_condition": "bot PR URL\uacfc run artifact\uac00 wiki report\uc5d0 \ub9c1\ud06c\ub418\uace0, `OPENAI_API_KEY` \ub204\ub77d \uc0c1\ud0dc\uac00 \ub354 \uc774\uc0c1 \ud604\uc7ac blocker\uac00 \uc544\ub2d8\uc774 \ud655\uc778\ub41c\ub2e4.",
+      "id": "Q-TAWA-002",
+      "merge_blocker": true,
+      "needed_evidence": "`wiki-llm-synthesis` log\uc5d0\uc11c model `gpt-5.5`, `reasoning.effort=high`, created PR URL, review-required label \ub610\ub294 PR body evidence.",
+      "owner_role": "llm-synthesis-maintainer",
+      "priority": "high",
+      "question": "\ud574\ub2f9 `wiki-llm-synthesis` run\uc774 `gpt-5.5`\ub97c \uc0ac\uc6a9\ud558\uace0 review-required bot PR\uc744 \uc5f4\uc5c8\ub294\uac00?"
+    },
+    {
+      "close_condition": "evaluation protocol page\uac00 reviewer-approved acceptance checklist\ub97c \uac16\uace0 \uc774\ud6c4 smoke packet\ub4e4\uc774 \uac19\uc740 schema\ub85c \uc81c\ucd9c\ub41c\ub2e4.",
+      "id": "Q-TAWA-003",
+      "merge_blocker": false,
+      "needed_evidence": "\ud544\uc218 \ud544\ub4dc \ubaa9\ub85d, run id chain, artifact path, PR URL, failure handling\uc744 \ub2f4\uc740 reviewed schema \ub610\ub294 policy update.",
+      "owner_role": "wiki-ingest-maintainer",
+      "priority": "medium",
+      "question": "automation smoke packet\uc744 `supported`\ub85c \uc62c\ub9b4 \ub54c \ud544\uc694\ud55c \ucd5c\uc18c artifact schema\ub294 \ubb34\uc5c7\uc778\uac00?"
+    },
+    {
+      "close_condition": "feature landscape\uc758 chain map\uc5d0 \ub450 packet\uc774 \ubcc4\ub3c4 \ub2e8\uacc4 evidence\uc778\uc9c0, \ub610\ub294 \uc77c\ubd80 claim\uc774 superseded \ub418\uc5c8\ub294\uc9c0 \uba85\uc2dc\ub41c\ub2e4.",
+      "id": "Q-TAWA-004",
+      "merge_blocker": false,
+      "needed_evidence": "\ub450 packet\uc758 raw manifest, notes, generated runs, \uadf8\ub9ac\uace0 \uc5b4\ub290 packet\uc774 \uc5b4\ub5a4 chain segment\ub97c \uac80\uc99d\ud558\ub294\uc9c0\uc5d0 \ub300\ud55c reviewer note.",
+      "owner_role": "wiki-curator",
+      "priority": "medium",
+      "question": "`2026-06-01-full-chain-smoke-packet`\uc640 `2026-06-01-workflow-run-chain-smoke-packet`\uc758 \uc5ed\ud560 \uacbd\uacc4\uc640 supersession \uad00\uacc4\ub97c \uc5b4\ub5bb\uac8c \uae30\ub85d\ud560 \uac83\uc778\uac00?"
+    }
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/references/2026-06-01-workflow-run-chain-smoke-packet"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-01-workflow-run-chain-smoke-packet",
+      "packet_root": "raw/users/chunryongoh/references/2026-06-01-workflow-run-chain-smoke-packet",
+      "type": "reference"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26739350125-1/report.json",
+  "review_notes": [
+    "LLM-assisted synthesis \uacb0\uacfc\uc774\ubbc0\ub85c review-required\ub85c \ub2e4\ub904\uc57c \ud55c\ub2e4.",
+    "\uc131\ub2a5, \ubaa8\ub378 ranking, sleep-health benchmark metric claim\uc740 \ucd94\uac00\ud558\uac70\ub098 \uc2b9\uaca9\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+    "`metrics_to_verify: []`\uc774\ubbc0\ub85c metric/split validation\uc774 \ud544\uc694\ud55c claim\uc740 \uc5c6\ub2e4.",
+    "allowed output page 9\uac1c\ub9cc \uc791\uc131\ud588\uace0 `raw/`, `automation/`, policy file\uc740 \uc791\uc131\ud558\uc9c0 \uc54a\uc558\ub2e4."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "26739350125-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "\uc9c0\uc6d0 \uc0c1\ud0dc\ub85c supersede\ub41c claim\uc740 \uc5c6\ub2e4. \uc774\ubc88 \ud1b5\ud569\uc740 `tentative` automation smoke claim\uc744 stable topic pages\uc5d0 \uc5f0\uacb0\ud55c \uac83\uc774\ub2e4.",
+    "\uc7a0\uc7ac \uae34\uc7a5: manifest\uc758 claim text\ub294 trigger\ub97c verifies\ud55c\ub2e4\uace0 \ud45c\ud604\ud558\uc9c0\ub9cc notes.md\ub294 expected result \uc808\ucc28\ub97c \uc124\uba85\ud55c\ub2e4. raw \uc2e4\ud589 \ub85c\uadf8\uac00 \uc5c6\uc73c\ubbc0\ub85c claim\uc740 `tentative`\ub85c \uc720\uc9c0\ud55c\ub2e4.",
+    "2026-05-29 log\uc758 `OPENAI_API_KEY` \ub204\ub77d \ubc0f live GPT-5.5 call pending \uae30\ub85d\uc740 \uc774\ubc88 packet\ub9cc\uc73c\ub85c supersede\ub418\uc9c0 \uc54a\ub294\ub2e4."
+  ],
+  "synthesis_summary": "2026-06-01 workflow_run chain smoke packet\uc744 stable source page, team-llm-wiki-actions feature landscape, evaluation protocol decision, open question backlog, synthesis report, overview, latest context, index, log\uc5d0 \ud1b5\ud569\ud588\ub2e4. packet\uc758 `claim_status: tentative`\uc640 claim boundary\ub294 \uadf8\ub300\ub85c \uc720\uc9c0\ud588\uace0, workflow_run \ubc0f `gpt-5.5` bot PR \uc131\uacf5 \uc5ec\ubd80\ub294 raw \uc2e4\ud589 \ub85c\uadf8\uac00 \uc5c6\uc73c\ubbc0\ub85c \uc9c0\uc6d0 claim\uc73c\ub85c \uc2b9\uaca9\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+  "timing_ms": 250560,
+  "updated_pages": [
+    "wiki/sources/2026-06-01-workflow-run-chain-smoke-packet.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "validation": {},
+  "warnings": []
+}
