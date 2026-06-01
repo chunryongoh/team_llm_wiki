@@ -287,7 +287,17 @@ def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path
                 "wiki/log.md",
             ],
             "claim_register": [{"status": "tentative", "text": "Track A is the local comparison default."}],
-            "open_questions": ["How should Track B be evaluated separately?"],
+            "open_questions": [
+                {
+                    "id": "Q-SL-006",
+                    "question": "How should Track B be evaluated separately?",
+                    "priority": "high",
+                    "owner_role": "modeling",
+                    "merge_blocker": False,
+                    "needed_evidence": "Track B leakage analysis packet",
+                    "close_condition": "Track B decision page links accepted raw evidence",
+                }
+            ],
             "superseded_or_conflicting_claims": ["Older six-target notes may be superseded by seven-target packets."],
             "review_notes": ["Review the expanded wiki graph, not only entity pages."],
             "pages": integration_pages(),
@@ -329,7 +339,33 @@ def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path
     assert (tmp_path / "wiki" / "questions" / "sleep-lifelog-open-questions.md").exists()
     payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "graph-run" / "report.json").read_text())
     assert payload["integration_plan"][1] == "Create feature, decision, question, and synthesis report pages."
-    assert payload["open_questions"] == ["How should Track B be evaluated separately?"]
+    assert payload["open_questions"] == [
+        {
+            "id": "Q-SL-006",
+            "question": "How should Track B be evaluated separately?",
+            "priority": "high",
+            "owner_role": "modeling",
+            "merge_blocker": False,
+            "needed_evidence": "Track B leakage analysis packet",
+            "close_condition": "Track B decision page links accepted raw evidence",
+        }
+    ]
+
+
+def test_llm_response_schema_requires_structured_open_questions():
+    schema = llm_synthesis._response_schema()["schema"]
+    open_question_schema = schema["properties"]["open_questions"]["items"]
+
+    assert open_question_schema["type"] == "object"
+    assert open_question_schema["required"] == [
+        "id",
+        "question",
+        "priority",
+        "owner_role",
+        "merge_blocker",
+        "needed_evidence",
+        "close_condition",
+    ]
 
 
 def test_llm_synthesis_merges_log_output_append_only(tmp_path):

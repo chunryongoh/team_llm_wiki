@@ -171,7 +171,7 @@ def run_llm_wiki_synthesis(
         created_pages=[str(item) for item in llm_payload.get("created_pages") or []],
         updated_pages=[str(item) for item in llm_payload.get("updated_pages") or []],
         claim_register=[item for item in llm_payload.get("claim_register") or [] if isinstance(item, dict)],
-        open_questions=[str(item) for item in llm_payload.get("open_questions") or []],
+        open_questions=[item for item in llm_payload.get("open_questions") or [] if isinstance(item, dict)],
         superseded_or_conflicting_claims=[
             str(item) for item in llm_payload.get("superseded_or_conflicting_claims") or []
         ],
@@ -215,7 +215,9 @@ def build_llm_synthesis_prompt(
         "- Write narrative prose and all metadata summaries in Korean so every teammate can review the PR; "
         "keep file paths, ids, field names, metrics, and model names verbatim.\n"
         "- Return JSON with keys: summary, integration_plan, created_pages, updated_pages, claim_register, "
-        "open_questions, superseded_or_conflicting_claims, review_notes, pages.\n\n"
+        "open_questions, superseded_or_conflicting_claims, review_notes, pages.\n"
+        "- Each open_questions item must be an actionable backlog object with id, question, priority, "
+        "owner_role, merge_blocker, needed_evidence, and close_condition.\n\n"
         "Allowed output pages:\n"
         f"{allowed}\n\n"
         "Context files:\n\n"
@@ -510,7 +512,31 @@ def _response_schema() -> dict[str, Any]:
                         },
                     },
                 },
-                "open_questions": {"type": "array", "items": {"type": "string"}},
+                "open_questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "required": [
+                            "id",
+                            "question",
+                            "priority",
+                            "owner_role",
+                            "merge_blocker",
+                            "needed_evidence",
+                            "close_condition",
+                        ],
+                        "properties": {
+                            "id": {"type": "string"},
+                            "question": {"type": "string"},
+                            "priority": {"type": "string"},
+                            "owner_role": {"type": "string"},
+                            "merge_blocker": {"type": "boolean"},
+                            "needed_evidence": {"type": "string"},
+                            "close_condition": {"type": "string"},
+                        },
+                    },
+                },
                 "superseded_or_conflicting_claims": {"type": "array", "items": {"type": "string"}},
                 "review_notes": {"type": "array", "items": {"type": "string"}},
                 "pages": {

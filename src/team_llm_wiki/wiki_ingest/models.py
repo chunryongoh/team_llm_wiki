@@ -306,6 +306,8 @@ class IngestReport:
     generated_paths: list[str] = field(default_factory=list)
     changed_paths: list[str] = field(default_factory=list)
     link_lint_errors: list[dict[str, Any]] = field(default_factory=list)
+    packet_skill_compatibility: dict[str, Any] = field(default_factory=dict)
+    validation: dict[str, Any] = field(default_factory=dict)
     risk_tier: str | None = None
     report_path: str | None = None
     timing_ms: int = 0
@@ -317,7 +319,7 @@ class IngestReport:
     created_pages: list[str] = field(default_factory=list)
     updated_pages: list[str] = field(default_factory=list)
     claim_register: list[dict[str, Any]] = field(default_factory=list)
-    open_questions: list[str] = field(default_factory=list)
+    open_questions: list[dict[str, Any]] = field(default_factory=list)
     superseded_or_conflicting_claims: list[str] = field(default_factory=list)
 
 

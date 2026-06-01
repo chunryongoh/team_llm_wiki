@@ -100,11 +100,22 @@ def test_render_bot_pr_body_includes_required_review_sections():
         {
             "report_path": "raw/results/wiki-ingest/1/report.json",
             "packet_roots": ["raw/users/alice/pkt-1"],
-            "packets": [{"id": "pkt-1", "type": "performance"}],
+            "packets": [{"id": "pkt-1", "type": "performance", "claim_boundary": "local_oof_diagnostic_only"}],
             "generated_paths": ["wiki/performance/pkt-1.md", "automation/.cache/compiled/pkt-1.json"],
             "claim_statuses": [{"packet": "pkt-1", "status": "supported"}],
             "metric_changes": [{"packet": "pkt-1", "metric": "accuracy", "reported_value": 0.82}],
             "warnings": ["possible leakage warning"],
+            "validation": {
+                "status": "pass",
+                "checks": [
+                    {
+                        "id": "wiki_health",
+                        "status": "pass",
+                        "command": "PYTHONPATH=src python -m team_llm_wiki.cli check-wiki-health --repo-root .",
+                        "summary": "ok",
+                    }
+                ],
+            },
         }
     )
 
@@ -121,6 +132,8 @@ def test_render_bot_pr_body_includes_required_review_sections():
     assert "accuracy" in body
     assert "## leakage/security 경고" in body
     assert "possible leakage warning" in body
+    assert "## 자동 검증 결과" in body
+    assert "`wiki_health` `pass`" in body
     assert "## 리뷰어 체크리스트" in body
 
 
@@ -140,7 +153,17 @@ def test_render_bot_pr_body_surfaces_llm_integration_metadata():
             "integration_plan": ["Create topic pages", "Refresh core pages"],
             "created_pages": ["wiki/features/dataset-feature-landscape.md"],
             "updated_pages": ["wiki/datasets/dataset-a.md", "wiki/index.md"],
-            "open_questions": ["How should temporal validation be separated?"],
+            "open_questions": [
+                {
+                    "id": "Q-DATASET-001",
+                    "question": "How should temporal validation be separated?",
+                    "priority": "high",
+                    "owner_role": "modeling",
+                    "merge_blocker": False,
+                    "needed_evidence": "validated split packet",
+                    "close_condition": "decision page links accepted split evidence",
+                }
+            ],
             "superseded_or_conflicting_claims": ["Older target count notes may be superseded."],
         }
     )
@@ -154,11 +177,12 @@ def test_render_bot_pr_body_surfaces_llm_integration_metadata():
     assert "### 수정된 wiki 페이지" in body
     assert "wiki/index.md" in body
     assert "### 확인해야 할 질문" in body
-    assert "temporal validation" in body
+    assert "Q-DATASET-001" in body
+    assert "validated split packet" in body
     assert "### 충돌하거나 대체된 claim" in body
 
 
-def test_render_pr_comment_includes_preview_details():
+def test_render_pr_comment_includes_korean_packet_lifecycle_preview():
     comment = render_pr_comment(
         {
             "status": "hard_fail",
@@ -167,6 +191,7 @@ def test_render_pr_comment_includes_preview_details():
                 {
                     "id": "pkt-1",
                     "type": "performance",
+                    "claim_boundary": "local_oof_diagnostic_only",
                     "publish_action": "bot_pr",
                     "risk_tier": "tier3-performance",
                     "risk_reasons": ["performance evidence requires review"],
@@ -174,25 +199,32 @@ def test_render_pr_comment_includes_preview_details():
             ],
             "generated_paths": ["wiki/sources/pkt-1.md"],
             "claim_statuses": [{"packet": "pkt-1", "status": "tentative"}],
+            "packet_skill_compatibility": {
+                "status": "warning",
+                "checks": [{"id": "packet_root_shape", "status": "warning", "message": "legacy root"}],
+            },
             "failures": [{"code": "invalid_manifest", "message": "missing title"}],
             "warnings": ["review calibration evidence"],
         }
     )
 
-    assert "Wiki ingest preview" in comment
+    assert "## Packet 검증 결과" in comment
+    assert "packet skill compatibility: `warning`" in comment
+    assert "merge 후 다음 단계" in comment
     assert "raw/users/alice/pkt-1" in comment
     assert "wiki/sources/pkt-1.md" in comment
     assert "invalid_manifest" in comment
-    assert "### Detected packet types" in comment
+    assert "### 감지된 packet" in comment
     assert "`pkt-1` performance" in comment
     assert "publish: `bot_pr`" in comment
     assert "risk: `tier3-performance`" in comment
-    assert "### Affected wiki pages" in comment
-    assert "### Proposed claim statuses" in comment
+    assert "claim_boundary: `local_oof_diagnostic_only`" in comment
+    assert "### 영향받을 wiki 페이지" in comment
+    assert "### 제안된 claim 상태" in comment
     assert "`pkt-1` `tentative`" in comment
-    assert "### Missing evidence" in comment
+    assert "### 누락되었거나 확인할 evidence" in comment
     assert "missing title" in comment
-    assert "### Expected PR review questions" in comment
+    assert "### 팀원이 확인할 것" in comment
     assert "review calibration evidence" in comment
 
 
@@ -244,7 +276,7 @@ def test_main_ingest_workflow_uses_review_required_pr_title_and_body():
     workflow = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
 
     assert 'title: "[wiki-bot][review-required] ingest wiki packets"' in workflow
-    assert "body: ${{ steps.ingest.outputs.pr_body }}" in workflow
+    assert "body: ${{ steps.pr_body.outputs.pr_body }}" in workflow
     assert "name: Upload wiki ingest report" in workflow
     assert "raw/results/wiki-ingest/*/report.json" in workflow
     assert "if-no-files-found: error" in workflow
