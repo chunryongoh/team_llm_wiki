@@ -1,0 +1,42 @@
+{
+  "run_id": "codex-oauth-2026-06-01",
+  "status": "bot_pr",
+  "provider": "codex-oauth/codex-exec",
+  "model": "gpt-5.5",
+  "reasoning_effort": "xhigh",
+  "codex_session_id": "019e80c2-2611-7803-89b0-8fe63d8d6089",
+  "generated_at": "2026-06-01T01:23:32.613266+00:00",
+  "auth_mode": "local_codex_oauth",
+  "llm_synthesis": true,
+  "policy_files_requested": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "wiki/latest-context.md",
+    "wiki/team/llm-synthesis-policy.md"
+  ],
+  "source_packets_requested": [
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024/packet.md",
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/manifest.yaml",
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/benchmark.yaml",
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/packet.md"
+  ],
+  "target_pages": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md"
+  ],
+  "summary": "Synthesized replacement pages for the two requested stable wiki paths, preserving review-required metadata and tentative claim status.",
+  "review_notes": [
+    "Both pages keep the packet ids, publish_action, risk_tier, claim_boundary, and claim_status metadata.",
+    "No files were written. No metric values, model rankings, leaderboard positions, or performance claims were added."
+  ],
+  "artifacts": {
+    "prompt": "prompt.md",
+    "schema": "schema.json",
+    "response": "response.json"
+  },
+  "postprocess_adjustments": [
+    "Added explicit raw_evidence frontmatter entries to the two generated wiki pages so repository health checks can recognize packet provenance."
+  ]
+}

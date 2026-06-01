@@ -85,3 +85,10 @@ Append-only ingest and maintenance events belong here.
 - The runner reads `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, raw packet files, and current target wiki pages before calling OpenAI Responses API.
 - Added `.github/workflows/wiki-llm-synthesis.yml` to create review-required bot PRs after deterministic ingest reports reach `main`.
 - Local and repository `OPENAI_API_KEY` were missing during implementation, so the live GPT-5.5 call remains pending secret configuration.
+
+## [2026-06-01] synthesis | codex-oauth-gpt-5-5
+
+- Ran `codex exec -m gpt-5.5` through the local Codex OAuth session.
+- The model read `AGENTS.md`, `CLAUDE.md`, LLM synthesis policy, raw dataset/benchmark packets, and current stable wiki pages.
+- Rewrote the stable dataset and benchmark entity pages as review-required LLM synthesis output.
+- Recorded audit artifacts in `raw/results/llm-synthesis/codex-oauth-2026-06-01/`.

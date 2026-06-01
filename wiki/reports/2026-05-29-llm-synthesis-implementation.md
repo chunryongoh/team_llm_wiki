@@ -1,6 +1,6 @@
 # GPT-5.5 LLM Synthesis Implementation
 
-Status: implemented, pending live API key verification
+Status: implemented, live Codex OAuth verification completed, GitHub-hosted API key path pending secret configuration
 
 ## Summary
 
@@ -41,4 +41,13 @@ It then calls OpenAI Responses API with `gpt-5.5` and `reasoning.effort=high`, r
 
 ## Open Item
 
-The live GPT-5.5 call could not be executed during implementation because neither the local environment nor the GitHub repository had `OPENAI_API_KEY` configured. Add the repository secret, then dispatch `wiki-llm-synthesis` against `raw/results/wiki-ingest/26628582638-1/report.json` to produce the first LLM-authored synthesis PR.
+The GitHub-hosted workflow still needs an `OPENAI_API_KEY` repository secret before it can run GPT-5.5 in Actions. Add the repository secret, then dispatch `wiki-llm-synthesis` against `raw/results/wiki-ingest/26628582638-1/report.json` to produce hosted LLM-authored synthesis PRs.
+
+## Codex OAuth Verification
+
+On 2026-06-01, a local `codex exec -m gpt-5.5` run used the existing Codex OAuth session to read the policy files, packet files, and current target wiki pages, then returned structured JSON replacements for:
+
+- `wiki/datasets/sleep-lifelog-2024.md`
+- `wiki/benchmarks/sleep-health-hackathon-v0.md`
+
+The audit artifacts are stored under `raw/results/llm-synthesis/codex-oauth-2026-06-01/`. This verifies the OAuth-backed local path, but it does not remove the need for `OPENAI_API_KEY` in GitHub-hosted Actions.

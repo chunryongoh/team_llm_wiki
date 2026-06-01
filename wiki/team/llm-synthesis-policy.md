@@ -21,6 +21,13 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 - The LLM must output structured JSON containing only allowed replacement wiki pages, not free-form repository edits.
 - The workflow requires `OPENAI_API_KEY`. If the secret is missing, the workflow must skip without breaking deterministic ingest.
 
+## Auth Modes
+
+- GitHub-hosted automation: use `OPENAI_API_KEY` as the repository secret. This is the recommended path for repeatable hosted GitHub Actions because hosted runners do not have the user's Codex OAuth session.
+- Local or self-hosted Codex automation: `codex exec -m gpt-5.5` can use the existing Codex OAuth login and should run in read-only mode to generate structured synthesis output for a review-required branch or PR.
+- Codex app server: the local `codex app-server` can drive Codex turns through its internal protocol, but it should be treated as experimental integration surface. Prefer `codex exec` for now because it gives a simpler command boundary, output schema support, and easier audit artifacts.
+- Do not copy Codex OAuth tokens into GitHub secrets. OAuth-backed synthesis is acceptable only where the runtime already has an authenticated Codex session, such as the user's machine or a controlled self-hosted runner.
+
 ## Prompt Contract
 
 The synthesis prompt should ask for:
