@@ -1,201 +1,183 @@
 ---
-id: 2026-05-29-sleep-health-hackathon-v0
-packet_type: benchmark
+id: sleep-health-hackathon-v0
 type: benchmark
-title: Sleep Health Hackathon Benchmark v0 Definition
-date: '2026-05-29'
-owner: chunryongoh
-status: submitted
-task: benchmark-definition
+title: Sleep Health Hackathon v0
+entity_name: sleep-health-hackathon-v0
 dataset:
   name: sleep-lifelog-2024
   version: v0
-  hash: null
-split:
-  name: groupkfold-subject-3fold-oof
-  group_key: subject_id
-  fold_file: null
-model:
-  family: not-applicable
-  weights_in_repo: false
+task_family: sleep-health-prediction
+owner: chunryongoh
+status: submitted
 claim_boundary: benchmark_definition_not_metric_claim
 claim_status: tentative
-summary: First-class definition of the sleep-health-hackathon-v0 benchmark on sleep-lifelog-2024.
-  Locks the seven prediction targets (Q1-Q3 subjective, S1-S4 objective), the primary
-  local metric (grouped macro log-loss under GroupKFold by subject_id with 3 folds),
-  and the allowed claim boundaries for downstream results.
-raw_paths:
-- benchmark.yaml
-intended_wiki_targets:
-- wiki/benchmarks/2026-05-29-sleep-health-hackathon-v0.md
-metrics_to_verify: []
-claims:
-- status: tentative
-  text: sleep-health-hackathon-v0 evaluates seven sleep-health prediction targets
-    (Q1, Q2, Q3, S1, S2, S3, S4) on sleep-lifelog-2024 under a locally locked GroupKFold-by-subject-id
-    sprint-1 policy with 3 folds, and reports a grouped macro log-loss aggregated
-    as a macro mean across targets.
-- status: tentative
-  text: Allowed claim boundaries against this benchmark are local_oof_diagnostic_only,
-    same_split_baseline_comparison, and public_lb_observation_only. Public leaderboard
-    scores require a DACON submission and are reported separately from local OOF diagnostic
-    scores.
-- status: tentative
-  text: An unseen-subject generalization track (Track A) is the recommended main track;
-    a same-subject temporal forecasting track (Track B) is recorded as a separate
-    candidate and must not be conflated with Track A, especially for Q-family targets
-    that are participant-relative averages.
+review_required: true
 publish_action: bot_pr
 risk_tier: tier2-interpretation
+latest_packet_id: 2026-05-29-sleep-health-hackathon-v0
+latest_packet_date: '2026-05-29'
+source_packets:
+  - id: 2026-05-29-sleep-health-hackathon-v0
+    packet_type: benchmark
+    title: Sleep Health Hackathon Benchmark v0 Definition
+    date: '2026-05-29'
+    owner: chunryongoh
+    status: submitted
+    claim_boundary: benchmark_definition_not_metric_claim
+    claim_status: tentative
+    raw_paths:
+      - raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/manifest.yaml
+      - raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/benchmark.yaml
+      - raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/packet.md
+metrics_to_verify: []
+claims:
+  - status: tentative
+    text: sleep-health-hackathon-v0 evaluates seven sleep-health prediction targets (Q1, Q2, Q3, S1, S2, S3, S4) on sleep-lifelog-2024 under a locally locked GroupKFold-by-subject-id sprint-1 policy with 3 folds, and reports a grouped macro log-loss aggregated as a macro mean across targets.
+  - status: tentative
+    text: Allowed claim boundaries against this benchmark are local_oof_diagnostic_only, same_split_baseline_comparison, and public_lb_observation_only. Public leaderboard scores require a DACON submission and are reported separately from local OOF diagnostic scores.
+  - status: tentative
+    text: An unseen-subject generalization track (Track A) is the recommended main track; a same-subject temporal forecasting track (Track B) is recorded as a separate candidate and must not be conflated with Track A, especially for Q-family targets that are participant-relative averages.
+raw_evidence:
+- raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/manifest.yaml
+- raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/benchmark.yaml
+- raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/packet.md
 ---
 
-# Sleep Health Hackathon Benchmark v0 Definition
+# Sleep Health Hackathon v0
 
-- packet: `2026-05-29-sleep-health-hackathon-v0`
-- generated_by_run: `26628582638-1`
-- publish_action: `bot_pr`
-- risk_tier: `tier2-interpretation`
-- compiled_packet: [automation/.cache/compiled/2026-05-29-sleep-health-hackathon-v0.json](../../automation/.cache/compiled/2026-05-29-sleep-health-hackathon-v0.json)
-- owner: `chunryongoh`
-- status: `submitted`
-- task: `benchmark-definition`
-- dataset: `sleep-lifelog-2024` (`v0`)
-- split: `groupkfold-subject-3fold-oof`
-- model: `not-applicable`
-- claim_boundary: benchmark_definition_not_metric_claim
-- claim_status: `tentative`
-- date: `2026-05-29`
-- raw_evidence:
-  - `benchmark.yaml`
-- review-required: true
+This page is the stable team-memory page for the `sleep-health-hackathon-v0` benchmark. It synthesizes the submitted benchmark packet rather than mirroring packet files directly.
 
-## Summary
+**Current status:** review-required, `tentative`. This page defines a benchmark entity and its evaluation policy. It does **not** claim any model score, leaderboard rank, or baseline result.
 
-First-class definition of the sleep-health-hackathon-v0 benchmark on sleep-lifelog-2024. Locks the seven prediction targets (Q1-Q3 subjective, S1-S4 objective), the primary local metric (grouped macro log-loss under GroupKFold by subject_id with 3 folds), and the allowed claim boundaries for downstream results.
+## Entity Summary
 
-## Benchmark Entity
+`sleep-health-hackathon-v0` is the team benchmark for seven binary sleep-health prediction targets on [[datasets/sleep-lifelog-2024]]. Its sprint-1 local evaluation policy is GroupKFold by `subject_id` with 3 folds, and its primary local diagnostic metric is grouped macro log-loss over the seven targets.
 
-- name: `sleep-health-hackathon-v0`
-- dataset_ref: `sleep-lifelog-2024`
-- task_family: `sleep-health-prediction`
+Downstream experiment or performance packets that cite this benchmark must provide their own raw evidence and split-aware metric verification. Strong local results remain local diagnostic claims unless a DACON submission is recorded and explicitly scoped as a public leaderboard observation.
 
-### Targets
+## Provenance
 
-| id | kind | description |
-| --- | --- | --- |
-| Q1 | subjective-binary | Perceived sleep quality, participant-relative. |
-| Q2 | subjective-binary | Bedtime physical fatigue, participant-relative. |
-| Q3 | subjective-binary | Bedtime stress level, participant-relative. |
-| S1 | objective-binary | Total sleep time guideline compliance. |
-| S2 | objective-binary | Sleep efficiency compliance. |
-| S3 | objective-binary | Sleep onset latency compliance. |
-| S4 | objective-binary | Wakefulness after sleep onset compliance. |
+| field | value |
+| --- | --- |
+| latest packet id | `2026-05-29-sleep-health-hackathon-v0` |
+| packet type | `benchmark` |
+| owner | `chunryongoh` |
+| packet date | `2026-05-29` |
+| packet status | `submitted` |
+| claim boundary | `benchmark_definition_not_metric_claim` |
+| claim status | `tentative` |
 
-### Primary Metric
+Raw evidence paths:
 
-- name: `grouped_macro_logloss`
-- definition: `Mean across the seven targets of subject-grouped log-loss computed on out-of-fold validation predictions.`
-- averaging_policy: `macro-mean over targets`
-- loss_basis: `log-loss per target`
-- aggregation_basis: `subject-grouped fold-level predictions concatenated into an OOF dataset before per-target log-loss`
-
-### Evaluation Policy
-
-- split: `groupkfold-subject`
-- group_key: `subject_id`
-- n_folds: `3`
-- aggregation: `macro-mean over targets`
-- tracks:
-  - `{'id': 'A', 'name': 'unseen-subject-generalization', 'recommended': True, 'description': 'Main track. Protects against person-identity leakage for the Q-family participant-relative labels.'}`
-  - `{'id': 'B', 'name': 'same-subject-temporal-forecasting', 'recommended': False, 'description': 'Candidate alternative track. Must not be conflated with Track A; Q-family targets are especially dangerous to evaluate under Track B alone.'}`
-
-### Claim Boundaries
-
-- `local_oof_diagnostic_only`
-- `same_split_baseline_comparison`
-- `public_lb_observation_only`
-
-### Public Leaderboard
-
-- policy: `public-and-private-leaderboard-on-DACON`
-- public_share_of_test: `0.44`
-- notes: `Public leaderboard movement is noisy directional feedback, not the final truth signal. Public and private aggregations are average log-loss.`
-
-### Working Implications
-
-- `Improvements must be interpreted separately for subjective Q-family and objective S-family targets.`
-- `Strong-local performance is not a public claim unless a DACON submission is recorded and compared at the same split policy.`
-- `Same-split baseline comparisons stay valid only when the baseline and the candidate share the canonical GroupKFold-by-subject 3-fold policy.`
-
-## Packet Synthesis
-
-This packet locks the benchmark entity that downstream experiment, performance, and decision packets reference when reporting sleep-health prediction results. It defines the seven targets, the primary metric and its definition, the canonical evaluation split, the alternative track, and the allowed claim boundaries.
+- `raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/manifest.yaml`
+- `raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/benchmark.yaml`
+- `raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0/packet.md`
 
 ## Dataset Anchor
 
-This benchmark evaluates models on the [[datasets/sleep-lifelog-2024]] dataset under its locally locked GroupKFold-by-subject sprint-1 split policy.
+- dataset: [[datasets/sleep-lifelog-2024]]
+- dataset version in packet: `v0`
+- task family: `sleep-health-prediction`
+- label source: `ch2026_metrics_train.csv`
 
-## Targets
+## Prediction Targets
 
-The benchmark scores seven binary targets on `ch2026_metrics_train.csv`:
+The benchmark scores seven binary targets. The source packet separates subjective Q-family targets from objective S-family targets because their interpretation and leakage risks differ.
 
-| id | family | description |
-| --- | --- | --- |
-| Q1 | subjective | perceived sleep quality (participant-relative) |
-| Q2 | subjective | bedtime physical fatigue (participant-relative) |
-| Q3 | subjective | bedtime stress level (participant-relative) |
-| S1 | objective | total sleep time guideline compliance |
-| S2 | objective | sleep efficiency compliance |
-| S3 | objective | sleep onset latency compliance |
-| S4 | objective | wakefulness after sleep onset compliance |
+| target | kind | label source | description |
+| --- | --- | --- | --- |
+| `Q1` | subjective-binary | `ch2026_metrics_train.csv` column `Q1` | Perceived sleep quality, participant-relative. |
+| `Q2` | subjective-binary | `ch2026_metrics_train.csv` column `Q2` | Bedtime physical fatigue, participant-relative. |
+| `Q3` | subjective-binary | `ch2026_metrics_train.csv` column `Q3` | Bedtime stress level, participant-relative. |
+| `S1` | objective-binary | `ch2026_metrics_train.csv` column `S1` | Total sleep time guideline compliance. |
+| `S2` | objective-binary | `ch2026_metrics_train.csv` column `S2` | Sleep efficiency compliance. |
+| `S3` | objective-binary | `ch2026_metrics_train.csv` column `S3` | Sleep onset latency compliance. |
+| `S4` | objective-binary | `ch2026_metrics_train.csv` column `S4` | Wakefulness after sleep onset compliance. |
 
-`S4` is included in the released package; older dataset paper summaries with only six targets are superseded by the released metric description.
-
-## Primary Metric
-
-`grouped_macro_logloss`: mean across the seven targets of subject-grouped log-loss computed on out-of-fold validation predictions. Aggregation order is `OOF-concat per target -> log-loss per target -> macro mean across targets`.
-
-Secondary metrics reported alongside the primary:
-
-- `macro_f1` macro F1 across the seven targets
-- `macro_roc_auc` macro ROC-AUC across the seven targets
-- `macro_brier` macro Brier across the seven targets
+The source packet records that `S4` is included in the released package and that older six-target summaries are superseded by the released metric description. This remains part of the tentative dataset/benchmark definition, not a performance claim.
 
 ## Evaluation Policy
 
-- Split: `GroupKFold` by `subject_id`
-- Folds: 3
-- Aggregation: macro mean across targets
-- Tracks:
-  - Track A unseen-subject generalization (recommended main track; protects against person-identity leakage of Q-family participant-relative labels)
-  - Track B same-subject temporal forecasting (candidate alternative; must not be conflated with Track A, especially for Q-family targets)
+### Canonical sprint-1 local policy
 
-## Public Leaderboard
+| field | value |
+| --- | --- |
+| split | `groupkfold-subject` |
+| group key | `subject_id` |
+| folds | `3` |
+| aggregation | macro mean over targets |
+| primary local result form | out-of-fold validation predictions |
 
-DACON publishes a public leaderboard on 44 percent of the test set and a private leaderboard on the full test set. Both report average log-loss. Public leaderboard movement is treated as noisy directional feedback, not the final truth signal.
+The canonical local policy is designed to evaluate unseen-subject generalization and to reduce person-identity leakage risk, especially for participant-relative Q-family labels.
 
-## Allowed Claim Boundaries
+### Tracks
 
-Downstream packets that reference this benchmark must declare one of:
+| track | name | recommended | interpretation |
+| --- | --- | --- | --- |
+| `A` | `unseen-subject-generalization` | yes | Main track. Uses subject grouping to protect against person-identity leakage for Q-family labels. |
+| `B` | `same-subject-temporal-forecasting` | no | Candidate alternative track. Must be reported separately and must not be conflated with Track A. Q-family targets are especially risky under this track alone. |
 
-- `local_oof_diagnostic_only` for results that only ran the canonical GroupKFold OOF locally
-- `same_split_baseline_comparison` for baseline-vs-candidate comparisons under an identical split policy
-- `public_lb_observation_only` for results that observed the DACON public leaderboard score for a specific submission
+## Metrics
 
-Performance and experiment packets that target this benchmark must carry raw evidence inside their own packet root and verify the primary metric numerically via `metrics_to_verify`.
+### Primary metric: `grouped_macro_logloss`
 
-## Interpretation Rules
+Definition from the benchmark packet: mean across the seven targets of subject-grouped log-loss computed on out-of-fold validation predictions.
 
-- Strong local performance is not meaningful if the split policy permits identity leakage.
-- Improvements should be interpreted separately for subjective Q-family and objective S-family targets.
+Aggregation order:
+
+1. Generate fold-level validation predictions under GroupKFold by `subject_id`.
+2. Concatenate the fold-level validation predictions into one out-of-fold prediction table.
+3. Compute log-loss separately for each target.
+4. Report the macro mean across the seven target log-loss values.
+
+### Secondary metrics
+
+The packet also records these secondary metrics for reporting alongside the primary metric:
+
+- `macro_f1`: macro F1 across the seven prediction targets.
+- `macro_roc_auc`: macro ROC-AUC across the seven prediction targets.
+- `macro_brier`: macro Brier score across the seven prediction targets.
+
+No numeric metric value is claimed on this page.
+
+## Public Leaderboard Scope
+
+The benchmark packet records a DACON public/private leaderboard policy:
+
+- public leaderboard share of test set: `0.44`
+- public and private aggregation: average log-loss
+- interpretation: public leaderboard movement is noisy directional feedback, not the final truth signal
+
+A public leaderboard score is only a `public_lb_observation_only` claim when a specific DACON submission is recorded. It must not be merged into, or used to promote, local OOF diagnostic claims.
+
+## Allowed Claim Boundaries for Downstream Results
+
+Downstream result packets referencing this benchmark must stay inside one of these boundaries unless new raw evidence justifies a different reviewed boundary:
+
+- `local_oof_diagnostic_only`: result only ran the canonical local GroupKFold OOF evaluation.
+- `same_split_baseline_comparison`: baseline and candidate use the same canonical GroupKFold-by-subject 3-fold split policy.
+- `public_lb_observation_only`: result records a DACON public leaderboard score for a specific submission.
+
+Same-split comparisons are valid only when the compared runs share the same split policy and metric computation. Track A and Track B results must be kept separate.
+
+## Working Interpretation Rules
+
+- Interpret subjective Q-family targets and objective S-family targets separately; a change that helps one family may not carry the same meaning for the other.
+- Strong local performance is not a public leaderboard claim unless a DACON submission and score are recorded in a result-bearing packet.
 - Public leaderboard movement must not promote a local result above its declared claim boundary.
+- Any model, feature, or performance page citing this benchmark needs raw evidence and numeric metric verification in its own packet root.
 
-## Claim Boundary
+## Preserved Source Claims
 
-This packet only defines the benchmark entity. No specific run, metric value, or ranking is claimed here. Result-bearing packets are required to carry their own raw evidence and split-aware metric verification.
+All source claims remain `tentative`:
 
-## Claims
+- **tentative:** sleep-health-hackathon-v0 evaluates seven sleep-health prediction targets (Q1, Q2, Q3, S1, S2, S3, S4) on sleep-lifelog-2024 under a locally locked GroupKFold-by-subject-id sprint-1 policy with 3 folds, and reports a grouped macro log-loss aggregated as a macro mean across targets.
+- **tentative:** Allowed claim boundaries against this benchmark are local_oof_diagnostic_only, same_split_baseline_comparison, and public_lb_observation_only. Public leaderboard scores require a DACON submission and are reported separately from local OOF diagnostic scores.
+- **tentative:** An unseen-subject generalization track (Track A) is the recommended main track; a same-subject temporal forecasting track (Track B) is recorded as a separate candidate and must not be conflated with Track A, especially for Q-family targets that are participant-relative averages.
 
-- tentative: sleep-health-hackathon-v0 evaluates seven sleep-health prediction targets (Q1, Q2, Q3, S1, S2, S3, S4) on sleep-lifelog-2024 under a locally locked GroupKFold-by-subject-id sprint-1 policy with 3 folds, and reports a grouped macro log-loss aggregated as a macro mean across targets.
-- tentative: Allowed claim boundaries against this benchmark are local_oof_diagnostic_only, same_split_baseline_comparison, and public_lb_observation_only. Public leaderboard scores require a DACON submission and are reported separately from local OOF diagnostic scores.
-- tentative: An unseen-subject generalization track (Track A) is the recommended main track; a same-subject temporal forecasting track (Track B) is recorded as a separate candidate and must not be conflated with Track A, especially for Q-family targets that are participant-relative averages.
+## Reviewer Checklist
+
+- Confirm any future result packet uses the same `subject_id` GroupKFold 3-fold policy before accepting `same_split_baseline_comparison` claims.
+- Require explicit raw metric tables or predictions before recording any numeric score.
+- Keep DACON public leaderboard observations separate from local OOF diagnostics.
+- Revisit this benchmark page if an organizer-official split protocol supersedes the local sprint-1 policy.

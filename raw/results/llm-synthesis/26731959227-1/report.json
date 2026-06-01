@@ -1,0 +1,49 @@
+{
+  "changed_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md"
+  ],
+  "claim_statuses": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26628582638-1/report.json"
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "packet_roots": [
+    "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+    "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024"
+  ],
+  "packets": [
+    {
+      "id": "2026-05-29-sleep-health-hackathon-v0",
+      "packet_root": "raw/users/chunryongoh/benchmarks/2026-05-29-sleep-health-hackathon-v0",
+      "type": "benchmark"
+    },
+    {
+      "id": "2026-05-29-sleep-lifelog-2024",
+      "packet_root": "raw/users/chunryongoh/datasets/2026-05-29-sleep-lifelog-2024",
+      "type": "dataset"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26731959227-1/report.json",
+  "review_notes": [
+    "Both replacement pages are stable entity pages (`wiki/benchmarks/sleep-health-hackathon-v0.md` and `wiki/datasets/sleep-lifelog-2024.md`), not dated packet mirrors.",
+    "Claim statuses are preserved as `tentative`; no claim is promoted to supported.",
+    "No raw, automation, or policy files are modified or emitted.",
+    "The rewritten pages retain packet ids, raw packet paths, claim boundaries, and reviewer-facing caveats around local OOF diagnostics, DACON public leaderboard observations, and same-subject leakage risk."
+  ],
+  "risk_tier": "tier2-interpretation",
+  "run_id": "26731959227-1",
+  "status": "bot_pr",
+  "synthesis_summary": "Rewrote the two allowed stable entity pages as synthesized team memory. Both pages keep packet provenance, raw evidence paths, review-required status, and all source claims at `tentative` status without adding performance, model-ranking, or supported metric claims.",
+  "timing_ms": 73668,
+  "warnings": []
+}
