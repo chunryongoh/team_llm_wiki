@@ -212,6 +212,8 @@ def build_llm_synthesis_prompt(
         "- Preserve raw provenance, packet ids, claim boundaries, and claim statuses.\n"
         "- Do not write raw/, automation/, or policy files.\n"
         "- Do not promote tentative claims to supported without explicit raw metric/split evidence.\n"
+        "- Write narrative prose and all metadata summaries in Korean so every teammate can review the PR; "
+        "keep file paths, ids, field names, metrics, and model names verbatim.\n"
         "- Return JSON with keys: summary, integration_plan, created_pages, updated_pages, claim_register, "
         "open_questions, superseded_or_conflicting_claims, review_notes, pages.\n\n"
         "Allowed output pages:\n"

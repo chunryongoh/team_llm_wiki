@@ -239,6 +239,7 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert "This packet explains leakage risks." in prompt
     assert "FILE: wiki/datasets/sleep-lifelog-2024.md" in prompt
     assert "Old deterministic summary" in prompt
+    assert "metadata summaries in Korean" in prompt
     assert report.status == "bot_pr"
     assert report.risk_tier == "tier4-governance"
     assert "wiki/features/sleep-lifelog-feature-landscape.md" in report.generated_paths
