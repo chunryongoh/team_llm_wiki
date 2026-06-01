@@ -13,6 +13,7 @@ Core pages:
 - [GPT-5.5 LLM Synthesis Implementation](reports/2026-05-29-llm-synthesis-implementation.md)
 
 <!-- wiki-ingest:index:start -->
+- [DACON Leaderboard and Local OOF Claim Boundary](sources/2026-06-01-dacon-leaderboard-claim-boundary.md) - `reference`
 - [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`
 - [Sleep Lifelog 2024 Dataset Definition](datasets/sleep-lifelog-2024.md) - `dataset`
 <!-- wiki-ingest:index:end -->
