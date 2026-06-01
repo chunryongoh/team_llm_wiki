@@ -1,0 +1,73 @@
+{
+  "checks": {
+    "feature_statistics_scope": {
+      "scope": "train_test_transductive_notebook_reproduction",
+      "status": "documented_transductive_reproduction"
+    },
+    "group_overlap": {
+      "folds": [
+        {
+          "fold": 0,
+          "overlap_count": 0,
+          "overlap_groups": []
+        },
+        {
+          "fold": 1,
+          "overlap_count": 0,
+          "overlap_groups": []
+        },
+        {
+          "fold": 2,
+          "overlap_count": 0,
+          "overlap_groups": []
+        },
+        {
+          "fold": 3,
+          "overlap_count": 0,
+          "overlap_groups": []
+        },
+        {
+          "fold": 4,
+          "overlap_count": 0,
+          "overlap_groups": []
+        }
+      ],
+      "n_splits": 5,
+      "status": "passed",
+      "total_overlap_count": 0,
+      "unique_groups": 10
+    },
+    "imputer_scope": {
+      "policy": "SimpleImputer(strategy='median') is fit on all training rows before grouped OOF",
+      "status": "documented_not_fold_safe"
+    },
+    "subject_target_encoding": {
+      "columns": [
+        "Q1_subj_enc",
+        "Q2_subj_enc",
+        "Q3_subj_enc",
+        "S1_subj_enc",
+        "S2_subj_enc",
+        "S3_subj_enc",
+        "S4_subj_enc"
+      ],
+      "encoding_policy": "OOF train-fold means for train rows; full train subject means for test rows",
+      "missing_columns": [],
+      "status": "present"
+    },
+    "timing_entropy": {
+      "status": "excluded_from_default",
+      "variant": "source_with_timing_entropy"
+    }
+  },
+  "claim_boundary": "local_oof_diagnostic_only",
+  "feature_mode": "saved_output_reproduction",
+  "feature_stat_scope": "train_test_transductive_notebook_reproduction",
+  "known_risks": [
+    "train_test_transductive_feature_statistics",
+    "global_train_median_imputer_before_cv",
+    "subject_identity_and_target_encoding_features",
+    "date_and_rolling_alignment_requires_manual_review"
+  ],
+  "status": "completed_with_known_risks"
+}

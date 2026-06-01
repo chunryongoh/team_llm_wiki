@@ -1,0 +1,62 @@
+baseline_comparison: Wave41 final targetwise reblend macro log-loss 0.6198684545582471; LGB/CB targetwise reblend macro log-loss 0.6198365213240887; delta -0.0000319332341584; lower is better.
+claim_status: supported
+confusion_matrices: not computed in this packet
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+metric_definitions:
+  grouped_macro_log_loss: mean of target log-loss values across Q1, Q2, Q3, S1, S2, S3, S4 on grouped local OOF; lower is better
+  macro_brier_score: mean Brier score across targets on local OOF; lower is better
+  macro_f1: mean target F1 across local OOF targets; higher is better
+  macro_roc_auc: mean ROC-AUC across local OOF targets; higher is better
+model:
+  family: lightgbm-catboost-targetwise-reblend
+  weights_in_repo: false
+evidence_files:
+  blend_weights: blend_weights.json
+  final_reblend_summary: final_reblend_summary.json
+  leakage_audit: leakage_audit.json
+  aggregate_metrics: metrics.json
+oof_predictions: not copied; original run produced per-target OOF CSVs under ETRI/raw/results/2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1/predictions/
+overall_metrics:
+  baseline_wave41_macro_log_loss: 0.6198684545582471
+  catboost_macro_log_loss: 0.6538557592728997
+  delta_vs_wave41: -3.19332341584e-05
+  fixed_lgb_cb_blend_macro_log_loss: 0.6536839393073466
+  lightgbm_macro_log_loss: 0.6657586405095428
+  macro_brier_score: 0.21542505839915055
+  macro_f1: 0.7405528941404763
+  macro_roc_auc: 0.6796841416960083
+  targetwise_reblend_macro_log_loss: 0.6198365213240887
+primary_metric: grouped_macro_log_loss
+split:
+  group_key: subject_id
+  name: local-groupkfold-subject-5fold-oof
+split_id: local-groupkfold-subject-5fold-oof
+submission_predictions: not copied; DACON submission CSVs are outside this local OOF claim boundary
+target_metrics:
+  Q1:
+    log_loss: 0.6227600448650603
+  Q2:
+    fixed_lgb_cb_blend_weight: 0.1
+    log_loss: 0.6556358809986518
+    wave41_weight: 0.9
+  Q3:
+    log_loss: 0.6309857415368405
+  S1:
+    log_loss: 0.562996471228798
+  S2:
+    log_loss: 0.6113857154018603
+  S3:
+    log_loss: 0.595105227779678
+  S4:
+    log_loss: 0.6599865674577321
+targets:
+  - Q1
+  - Q2
+  - Q3
+  - S1
+  - S2
+  - S3
+  - S4
+uncertainty: No seed/fold uncertainty interval in packet. Known risks are documented transductive notebook reproduction features, global train median imputer before CV, subject identity/target encoding features, and date/rolling alignment requiring manual review.

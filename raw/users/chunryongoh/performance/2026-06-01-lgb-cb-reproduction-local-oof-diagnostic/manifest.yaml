@@ -1,0 +1,71 @@
+claim_boundary: local_oof_diagnostic_only
+claim_status: supported
+claims:
+  -
+    status: supported
+    text: "지원되는 local OOF diagnostic: LGB/CB reproduction은 단독 우위가 아니라 Q2에 0.1 가중치로 섞였을 때 Wave41 maintained line을 macro log-loss 0.6198365213240887까지 아주 작게 개선했다."
+dataset:
+  hash: none
+  name: sleep-lifelog-2024
+  version: released-package
+date: "2026-06-01"
+id: 2026-06-01-lgb-cb-reproduction-local-oof-diagnostic
+intended_wiki_targets:
+  - wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md
+metrics_to_verify:
+  - raw_path: metrics.json
+    metric_key: targetwise_reblend_macro_log_loss
+    reported_value: 0.6198365213240887
+  - raw_path: metrics.json
+    metric_key: baseline_wave41_macro_log_loss
+    reported_value: 0.6198684545582471
+  - raw_path: metrics.json
+    metric_key: delta_vs_wave41
+    reported_value: -0.0000319332341584
+  - raw_path: metrics.json
+    metric_key: lightgbm_macro_log_loss
+    reported_value: 0.6657586405095428
+  - raw_path: metrics.json
+    metric_key: catboost_macro_log_loss
+    reported_value: 0.6538557592728997
+  - raw_path: metrics.json
+    metric_key: fixed_lgb_cb_blend_macro_log_loss
+    reported_value: 0.6536839393073466
+  - raw_path: metrics.json
+    metric_key: macro_f1
+    reported_value: 0.7405528941404763
+  - raw_path: metrics.json
+    metric_key: macro_roc_auc
+    reported_value: 0.6796841416960083
+  - raw_path: metrics.json
+    metric_key: macro_brier_score
+    reported_value: 0.21542505839915055
+mode: structured
+model:
+  family: lightgbm-catboost-targetwise-reblend
+  weights_in_repo: false
+owner: chunryongoh
+packet_type: performance
+raw_paths:
+  blend_weights: blend_weights.json
+  final_reblend_summary: final_reblend_summary.json
+  leakage_audit: leakage_audit.json
+  metrics: metrics.json
+  notes: packet.md
+  performance: performance.yaml
+route: wiki/performance
+schema: wiki-packet/v1
+source_refs:
+  - ETRI/wiki/experiments/2026-05-26-lgb-cb-reproduction-audit-v1.md
+  - ETRI/raw/results/2026-05-26-lgb-cb-reproduction-audit-v1/metrics.json
+  - ETRI/raw/results/2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1/summary.json
+  - ETRI/raw/results/2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1/predictions/blend_weights.json
+  - ETRI/raw/results/2026-05-26-lgb-cb-reproduction-audit-v1/diagnostics/leakage_audit.json
+split:
+  fold_file: null
+  group_key: subject_id
+  name: local-groupkfold-subject-5fold-oof
+status: submitted
+summary: "LGB/CB reproduction은 standalone 모델 개선이 아니라 Q2에만 0.1 가중치로 들어가는 source-diversity 보강으로 Wave41 local OOF line을 macro log-loss 0.6198365213240887까지 미세 개선했다."
+task: dacon-sleep-lgb-cb-reproduction-local-oof
+title: LGB CB Reproduction Local OOF Diagnostic
