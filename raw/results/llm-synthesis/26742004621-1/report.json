@@ -1,0 +1,173 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "claim_register": [
+    {
+      "status": "supported",
+      "text": "`2026-06-01-lgb-cb-reproduction-local-oof-diagnostic` packet\uc740 LGB/CB reproduction\uc774 standalone \uc6b0\uc704\uac00 \uc544\ub2c8\ub77c Q2\uc5d0 `0.1` \uac00\uc911\uce58\ub85c \uc11e\uc600\uc744 \ub54c Wave41 maintained line\uc744 local GroupKFold subject OOF `grouped_macro_log_loss` `0.6198365213240887`\uae4c\uc9c0 \uc544\uc8fc \uc791\uac8c \uac1c\uc120\ud588\ub2e4\ub294 claim\uc744 \uc9c0\uc6d0\ud55c\ub2e4."
+    },
+    {
+      "status": "supported",
+      "text": "raw `metrics.json` \uae30\uc900 baseline Wave41 `baseline_wave41_macro_log_loss`\ub294 `0.6198684545582471`, targetwise reblend\ub294 `0.6198365213240887`, `delta_vs_wave41`\ub294 `-3.19332341584e-05`\uc774\ub2e4."
+    },
+    {
+      "status": "supported",
+      "text": "raw `metrics.json` \uae30\uc900 standalone `lightgbm_macro_log_loss` `0.6657586405095428`, standalone `catboost_macro_log_loss` `0.6538557592728997`, fixed LGB/CB blend `0.6536839393073466`\uc740 \ubaa8\ub450 Wave41 maintained line\ubcf4\ub2e4 \uc57d\ud588\ub2e4."
+    },
+    {
+      "status": "supported",
+      "text": "raw `final_reblend_summary.json` \ubc0f `blend_weights.json` \uae30\uc900 \ucd5c\uc885 reblend\ub294 Q2\uc5d0\uc11c\ub9cc `lgb-cb-notebook-reproduction-v1-fixed-blend` `0.1`\uacfc `wave41-all-seed-plus-wave40-targetwise-reblend-min0` `0.9`\ub97c \uc0ac\uc6a9\ud588\uace0, \ub098\uba38\uc9c0 target\uc740 Wave41 line `1.0`\uc744 \uc720\uc9c0\ud588\ub2e4."
+    },
+    {
+      "status": "supported",
+      "text": "raw `leakage_audit.json`\ub294 `feature_statistics_scope`\ub97c `train_test_transductive_notebook_reproduction`, `imputer_scope`\ub97c `documented_not_fold_safe`, `subject_target_encoding`\uc744 `present`, `timing_entropy`\ub97c `excluded_from_default`\ub85c \uae30\ub85d\ud558\uba70 \uc804\uccb4 \uc0c1\ud0dc\ub97c `completed_with_known_risks`\ub85c \ub454\ub2e4."
+    },
+    {
+      "status": "out_of_scope",
+      "text": "\uc774 packet\uc740 DACON public leaderboard, private leaderboard, organizer-official validation claim\uc744 \uc9c0\uc6d0\ud558\uc9c0 \uc54a\uc73c\uba70 claim boundary\ub294 `local_oof_diagnostic_only`\ub85c \uc720\uc9c0\ub41c\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "input_changed_paths": [
+    "automation/.cache/compiled/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.json",
+    "raw/results/wiki-ingest/26741704818-1/report.json",
+    "wiki/index.md",
+    "wiki/latest-context.md",
+    "wiki/log.md",
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md"
+  ],
+  "integration_plan": [
+    "`wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md`\ub97c raw metric, split, leakage audit, targetwise blend provenance\uac00 \ubcf4\uc774\ub294 \uc131\ub2a5 \uc9c4\ub2e8 \ud398\uc774\uc9c0\ub85c \uc7ac\uc791\uc131\ud55c\ub2e4.",
+    "`wiki/features/sleep-lifelog-feature-landscape.md`\ub97c feature family\uc640 leakage/fold-safety \uc704\ud5d8\uc744 \ub204\uc801\ud558\ub294 topic page\ub85c \uc0dd\uc131\ud55c\ub2e4.",
+    "`wiki/decisions/sleep-lifelog-evaluation-protocol.md`\uc5d0 local OOF, leaderboard, official validation claim boundary\ub97c \ubd84\ub9ac\ud558\ub294 \ud3c9\uac00 \ud504\ub85c\ud1a0\ucf5c \uacb0\uc815\uc744 \uae30\ub85d\ud55c\ub2e4.",
+    "`wiki/questions/sleep-lifelog-open-questions.md`\uc5d0 fold-safe ablation, Q2 blend, date/rolling alignment, leaderboard \ub9e4\ud551 \ub4f1 \ud6c4\uc18d \uc791\uc5c5\uc744 backlog \uac1d\uccb4\ub85c \uc815\ub9ac\ud55c\ub2e4.",
+    "`wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md`\uc5d0 \uc774\ubc88 LLM-assisted synthesis\uc758 provenance, claim register, conflict notes, reviewer checklist\ub97c \ub0a8\uae34\ub2e4.",
+    "`wiki/overview.md`, `wiki/latest-context.md`, `wiki/index.md`, `wiki/log.md`\ub97c \ucd5c\uc2e0 \uc9c4\uc785\uc810\uacfc cross-link\uac00 \ub418\ub3c4\ub85d \uac31\uc2e0\ud558\ub418 raw, automation, policy \ud30c\uc77c\uc740 \ubcc0\uacbd\ud558\uc9c0 \uc54a\ub294\ub2e4."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    {
+      "close_condition": "\ub3d9\uc77c `local-groupkfold-subject-5fold-oof` \ub610\ub294 \uba85\uc2dc\uc801\uc73c\ub85c \ube44\uad50 \uac00\ub2a5\ud55c split\uc5d0\uc11c ablation\ubcc4 `grouped_macro_log_loss`\uc640 target\ubcc4 deltas\uac00 raw packet\uc73c\ub85c \uc81c\ucd9c\ub41c\ub2e4.",
+      "id": "sleep-lifelog-oq-001",
+      "merge_blocker": false,
+      "needed_evidence": "fold-safe ablation run id, split definition, per-target OOF predictions or metric summary, raw `metrics.json`, leakage audit update",
+      "owner_role": "modeling lead",
+      "priority": "P0",
+      "question": "`train_test_transductive_notebook_reproduction`, `global_train_median_imputer_before_cv`, subject identity, subject target encoding feature\ub97c fold-safe\ud558\uac8c \ubc14\uafb8\uac70\ub098 \uc81c\uac70\ud588\uc744 \ub54c `grouped_macro_log_loss`\uc640 target\ubcc4 metric\uc774 \uc5b4\ub5bb\uac8c \ubcc0\ud558\ub294\uac00?"
+    },
+    {
+      "close_condition": "Q2 weight \uc120\ud0dd \uc808\ucc28\uc640 metric\uc774 raw evidence\ub85c \uc81c\ucd9c\ub418\uace0 \ud604\uc7ac `0.1` weight \uacb0\uacfc\uc640 \ube44\uad50\ub41c\ub2e4.",
+      "id": "sleep-lifelog-oq-002",
+      "merge_blocker": false,
+      "needed_evidence": "Q2 per-target blend-weight search log, candidate ids, validation protocol, OOF metric table, overfit \ubc29\uc9c0 \uc124\uba85",
+      "owner_role": "modeling lead",
+      "priority": "P1",
+      "question": "Q2\uc5d0\uc11c\ub9cc \uad00\uce21\ub41c LGB/CB source-diversity \uc774\ub4dd\uc774 \ubcc4\ub3c4 weight search \ub610\ub294 nested/fold-safe \uc808\ucc28\uc5d0\uc11c\ub3c4 \uc720\uc9c0\ub418\ub294\uac00?"
+    },
+    {
+      "close_condition": "leaderboard claim\uc774 local OOF\uc640 \ubd84\ub9ac\ub41c source \ub610\ub294 benchmark page\uc5d0 raw provenance\uc640 \ud568\uaed8 \uae30\ub85d\ub41c\ub2e4.",
+      "id": "sleep-lifelog-oq-003",
+      "merge_blocker": false,
+      "needed_evidence": "DACON submission ids, public/private scores, \uc81c\ucd9c \ud30c\uc77c lineage, local run ids, leaderboard claim boundary packet",
+      "owner_role": "benchmark owner",
+      "priority": "P1",
+      "question": "local OOF line\uacfc DACON public/private leaderboard \uc81c\ucd9c \uc0ac\uc774\uc758 submission id, score, cutoff, model lineage\uac00 \uc5b4\ub5bb\uac8c \ub9e4\ud551\ub418\ub294\uac00?"
+    },
+    {
+      "close_condition": "date/rolling alignment audit\uc774 \ud1b5\uacfc \ub610\ub294 \uc81c\uc678 \uacb0\uc815\uc73c\ub85c \ubb38\uc11c\ud654\ub418\uace0 feature landscape\uc758 risk status\uac00 \uac31\uc2e0\ub41c\ub2e4.",
+      "id": "sleep-lifelog-oq-004",
+      "merge_blocker": false,
+      "needed_evidence": "feature generation code review note, fold-aware alignment audit, target\ubcc4 leakage check, \uc7ac\ud604 \uac00\ub2a5\ud55c raw audit artifact",
+      "owner_role": "feature owner",
+      "priority": "P0",
+      "question": "date/rolling alignment feature\uac00 target leakage \uc5c6\uc774 fold boundary\uc640 subject boundary\ub97c \uc9c0\ud0a4\ub294\uac00?"
+    },
+    {
+      "close_condition": "seed/fold uncertainty interval\uc774 raw packet\uc73c\ub85c \uc81c\ucd9c\ub418\uc5b4 \ud604\uc7ac delta\uc758 \uc548\uc815\uc131\uc774 \ud310\ub2e8\ub41c\ub2e4.",
+      "id": "sleep-lifelog-oq-005",
+      "merge_blocker": false,
+      "needed_evidence": "multi-seed \ub610\ub294 repeated split \uacb0\uacfc, confidence interval \ub610\ub294 rank stability table, \ub3d9\uc77c metric \uc815\uc758",
+      "owner_role": "evaluation owner",
+      "priority": "P2",
+      "question": "\ud604\uc7ac local OOF delta `-3.19332341584e-05`\uac00 seed/fold \ubcc0\ub3d9 \ub300\ube44 \uc758\ubbf8 \uc788\ub294\uac00?"
+    },
+    {
+      "close_condition": "`timing_entropy` variant\uac00 fold-safe audit\uacfc metric evidence\ub85c \uc720\uc9c0 \ub610\ub294 \uc81c\uc678 \uacb0\uc815\ub41c\ub2e4.",
+      "id": "sleep-lifelog-oq-006",
+      "merge_blocker": false,
+      "needed_evidence": "`source_with_timing_entropy` variant metric, leakage audit, feature definition, inclusion/exclusion rationale",
+      "owner_role": "feature owner",
+      "priority": "P2",
+      "question": "`timing_entropy`\uac00 default\uc5d0\uc11c \uc81c\uc678\ub41c \uc774\uc720\uc640 \uc548\uc804\ud55c variant \uc870\uac74\uc740 \ubb34\uc5c7\uc778\uac00?"
+    }
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-01-lgb-cb-reproduction-local-oof-diagnostic",
+      "packet_root": "raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26742004621-1/report.json",
+  "review_notes": [
+    "\uc774\ubc88 \ucd9c\ub825\uc740 LLM-assisted synthesis\uc774\ubbc0\ub85c review-required\ub85c \ucde8\uae09\ud574\uc57c \ud55c\ub2e4.",
+    "\uc131\ub2a5 claim\uc740 raw `metrics.json`, `performance.yaml`, `final_reblend_summary.json`, `blend_weights.json`, `leakage_audit.json`\uc758 \uc218\uce58\uc640 boundary\ub97c \ub118\uc9c0 \uc54a\uc558\ub2e4.",
+    "\uc0c8 topic page\ub4e4\uc740 packet mirror\uac00 \uc544\ub2c8\ub77c \ub204\uc801 memory\ub85c \uc791\uc131\ud588\uc9c0\ub9cc, dataset\uacfc benchmark \uc548\uc815 \ud398\uc774\uc9c0 \uc790\uccb4\ub294 allowed output\uc5d0 \uc5c6\uc73c\ubbc0\ub85c \ub9c1\ud06c\ub9cc \ucd94\uac00\ud588\ub2e4.",
+    "`wiki/log.md`\ub294 append-only \uc131\uaca9\uc744 \ubcf4\uc874\ud558\uae30 \uc704\ud574 \uae30\uc874 \uc774\ubca4\ud2b8\ub97c \uc720\uc9c0\ud558\uace0 2026-06-01 synthesis \uc774\ubca4\ud2b8\ub9cc \ub4a4\uc5d0 \ucd94\uac00\ud588\ub2e4."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "26742004621-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "`LGB/CB reproduction\uc774 \uc804\uccb4\uc801\uc73c\ub85c \uac00\uc7a5 \uac15\ud558\ub2e4`\ub294 \ub113\uc740 claim\uc740 \ud604\uc7ac raw evidence\uc640 \ucda9\ub3cc\ud55c\ub2e4. standalone LightGBM, CatBoost, fixed LGB/CB blend\ub294 Wave41 maintained line\ubcf4\ub2e4 macro log-loss\uac00 \ub192\ub2e4.",
+    "`LGB/CB blend\uac00 \ubaa8\ub4e0 target\uc744 \uac1c\uc120\ud55c\ub2e4`\ub294 claim\uc740 \ud604\uc7ac raw evidence\ub85c \uc9c0\uc6d0\ub418\uc9c0 \uc54a\ub294\ub2e4. \ucd5c\uc885 targetwise reblend\ub294 Q2\ub9cc `0.1` LGB/CB fixed blend\ub97c \uc0ac\uc6a9\ud558\uace0 \ub098\uba38\uc9c0 target\uc740 Wave41 line\uc744 \uc720\uc9c0\ud55c\ub2e4.",
+    "`local OOF diagnostic\uc774 DACON public/private leaderboard \uc131\ub2a5\uc744 \ubcf4\uc7a5\ud55c\ub2e4`\ub294 claim\uc740 `local_oof_diagnostic_only` boundary \ubc16\uc774\uba70 \ud604\uc7ac packet\uc73c\ub85c \uc2b9\uaca9\ud560 \uc218 \uc5c6\ub2e4.",
+    "`leakage audit\uc774 \uae68\ub057\ud558\uac8c \ud1b5\uacfc\ud588\ub2e4`\ub294 \ud45c\ud604\uc740 \ubd80\uc815\ud655\ud558\ub2e4. group overlap\uc740 \ud1b5\uacfc\ud588\uc9c0\ub9cc transductive statistics, global train median imputer, subject target encoding, date/rolling alignment risk\uac00 \ubb38\uc11c\ud654\ub418\uc5b4 \uc788\ub2e4."
+  ],
+  "synthesis_summary": "2026-06-01 LGB/CB reproduction local OOF diagnostic packet\uc744 \ub2e8\uc21c \ubbf8\ub7ec\uac00 \uc544\ub2c8\ub77c sleep-lifelog \uc791\uc5c5 \uc804\ubc18\uc758 \uc548\uc815 \ud398\uc774\uc9c0\ub85c \ud1b5\ud569\ud588\ub2e4. \uc9c0\uc6d0\ub418\ub294 claim\uc740 `local_oof_diagnostic_only` \ubc94\uc704\uc758 `supported` \uc0c1\ud0dc\ub85c \ubcf4\uc874\ud588\uace0, leaderboard\ub098 official validation\uc73c\ub85c \uc2b9\uaca9\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+  "timing_ms": 231266,
+  "updated_pages": [
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "validation": {},
+  "warnings": []
+}

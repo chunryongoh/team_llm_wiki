@@ -101,3 +101,13 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md`
 - run: `26741704818-1`
+
+## [2026-06-01] synthesis | sleep-lifelog-packet-integration
+
+- `2026-06-01-lgb-cb-reproduction-local-oof-diagnostic` packet을 packet mirror가 아니라 안정 wiki memory로 통합했다.
+- updated: `wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md`, `wiki/overview.md`, `wiki/latest-context.md`, `wiki/index.md`, `wiki/log.md`
+- created: `wiki/features/sleep-lifelog-feature-landscape.md`, `wiki/decisions/sleep-lifelog-evaluation-protocol.md`, `wiki/questions/sleep-lifelog-open-questions.md`, `wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md`
+- 보존한 claim boundary: `local_oof_diagnostic_only`
+- 보존한 claim_status: `supported`
+- 핵심 supported metric: `targetwise_reblend_macro_log_loss` `0.6198365213240887`, `baseline_wave41_macro_log_loss` `0.6198684545582471`, `delta_vs_wave41` `-3.19332341584e-05`
+- review-required: true
