@@ -3,6 +3,13 @@
 [[index]] [[overview]] [[log]]
 
 <!-- wiki-ingest:latest:start -->
+### 26741704818-1 | 2026-06-01-lgb-cb-reproduction-local-oof-diagnostic
+
+- link: [[performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic]]
+- publish_action: `bot_pr`
+- risk_tier: `tier4-governance`
+- review-required: true
+
 ### 26740055632-1 | 2026-06-01-dacon-leaderboard-claim-boundary
 
 - link: [[sources/2026-06-01-dacon-leaderboard-claim-boundary]]
