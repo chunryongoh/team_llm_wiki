@@ -109,19 +109,19 @@ def test_render_bot_pr_body_includes_required_review_sections():
     )
 
     assert "raw/results/wiki-ingest/1/report.json" in body
-    assert "## Changed raw packet ids" in body
-    packet_id_section = body.split("## Changed raw packet ids", 1)[1].split("## Affected wiki pages", 1)[0]
+    assert "## 반영된 raw packet" in body
+    packet_id_section = body.split("## 반영된 raw packet", 1)[1].split("## 영향받은 wiki 페이지", 1)[0]
     assert "- `pkt-1`" in packet_id_section
     assert "raw/users/alice/pkt-1" not in packet_id_section
-    assert "## Affected wiki pages" in body
+    assert "## 영향받은 wiki 페이지" in body
     assert "wiki/performance/pkt-1.md" in body
-    assert "## Claim changes" in body
+    assert "## claim 상태 변경" in body
     assert "`pkt-1` `supported`" in body
-    assert "## Metric changes" in body
+    assert "## metric 변경" in body
     assert "accuracy" in body
-    assert "## Leakage/security warnings" in body
+    assert "## leakage/security 경고" in body
     assert "possible leakage warning" in body
-    assert "## Reviewer checklist" in body
+    assert "## 리뷰어 체크리스트" in body
 
 
 def test_render_bot_pr_body_surfaces_llm_integration_metadata():
@@ -145,17 +145,17 @@ def test_render_bot_pr_body_surfaces_llm_integration_metadata():
         }
     )
 
-    assert "## LLM integration summary" in body
+    assert "## LLM 통합 정리" in body
     assert "Integrated source into the wiki graph." in body
-    assert "### Integration plan" in body
+    assert "### 통합 계획" in body
     assert "Create topic pages" in body
-    assert "### Created wiki pages" in body
+    assert "### 새로 생성된 wiki 페이지" in body
     assert "wiki/features/dataset-feature-landscape.md" in body
-    assert "### Updated wiki pages" in body
+    assert "### 수정된 wiki 페이지" in body
     assert "wiki/index.md" in body
-    assert "### Open questions" in body
+    assert "### 확인해야 할 질문" in body
     assert "temporal validation" in body
-    assert "### Superseded or conflicting claims" in body
+    assert "### 충돌하거나 대체된 claim" in body
 
 
 def test_render_pr_comment_includes_preview_details():

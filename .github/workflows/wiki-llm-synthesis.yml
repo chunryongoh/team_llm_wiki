@@ -63,7 +63,7 @@ jobs:
         run: |
           if [ -z "$OPENAI_API_KEY" ]; then
             printf "status=skipped\n" >> "$GITHUB_OUTPUT"
-            printf "## LLM wiki synthesis\n\nSkipped: OPENAI_API_KEY repository secret is not configured.\n" >> "$GITHUB_STEP_SUMMARY"
+            printf "## LLM wiki synthesis\n\n건너뜀: OPENAI_API_KEY repository secret이 설정되어 있지 않습니다.\n" >> "$GITHUB_STEP_SUMMARY"
             touch add-paths.txt
             exit 0
           fi
@@ -86,7 +86,7 @@ jobs:
           raw = Path("llm-output.json").read_text(encoding="utf-8") if Path("llm-output.json").exists() else None
           payload = json.loads(raw) if raw else {}
           paths = safe_add_paths_file_from_payload(payload, Path("add-paths.txt"))
-          body = "## LLM synthesis model\n\n- `gpt-5.5`\n\n" + render_bot_pr_body(payload)
+          body = "## 사용한 LLM 모델\n\n- `gpt-5.5`\n\n" + render_bot_pr_body(payload)
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
               "status": payload.get("status", "missing"),
               "add_paths": "\n".join(paths),
@@ -110,8 +110,8 @@ jobs:
         if: steps.synth.outputs.status == 'bot_pr'
         uses: peter-evans/create-pull-request@v8
         with:
-          title: "[llm-wiki-bot][review-required] GPT-5.5 wiki synthesis"
-          commit-message: "[llm-wiki-bot] GPT-5.5 wiki synthesis"
+          title: "[llm-wiki-bot][검토 필요] GPT-5.5 팀 위키 통합 정리"
+          commit-message: "[llm-wiki-bot] GPT-5.5 팀 위키 통합 정리"
           body: ${{ steps.synth.outputs.pr_body }}
           branch: "bot/llm-synthesis-${{ github.run_id }}-${{ github.run_attempt }}"
           add-paths: ${{ steps.synth.outputs.add_paths }}

@@ -18,3 +18,5 @@ def test_llm_synthesis_workflow_runs_after_ingest_reports_and_uses_openai_key():
     assert "run-llm-wiki-synthesis" in workflow
     assert "peter-evans/create-pull-request@v8" in workflow
     assert "bot/llm-synthesis-" in workflow
+    assert "[검토 필요] GPT-5.5 팀 위키 통합 정리" in workflow
+    assert "## 사용한 LLM 모델" in workflow

@@ -23,13 +23,13 @@ def _append_path_section(lines: list[str], title: str, paths: list[Any]) -> None
     lines.extend(["", f"### {title}"])
     clean = [_bounded_text(path, MAX_PATH_CHARS) for path in paths if str(path).strip()]
     if not clean:
-        lines.append("- none")
+        lines.append("- 없음")
         return
     for path in clean[:MAX_LIST_ITEMS]:
         lines.append(f"- `{path}`")
     remaining = len(clean) - MAX_LIST_ITEMS
     if remaining > 0:
-        lines.append(f"- and {remaining} more")
+        lines.append(f"- 외 {remaining}개 더")
 
 
 def _packet_ids_from_payload(payload: dict[str, Any]) -> list[str]:
@@ -177,47 +177,47 @@ def render_pr_comment(payload: dict[str, Any]) -> str:
 
 
 def render_bot_pr_body(payload: dict[str, Any]) -> str:
-    lines = ["## Ingest report", ""]
+    lines = ["## 생성 리포트", ""]
     report_path = payload.get("report_path")
     if report_path:
         lines.append(f"- `{_bounded_text(report_path, MAX_PATH_CHARS)}`")
     else:
-        lines.append("- none")
+        lines.append("- 없음")
 
-    lines.extend(["", "## Changed raw packet ids", ""])
+    lines.extend(["", "## 반영된 raw packet", ""])
     packet_ids = _packet_ids_from_payload(payload)
     if packet_ids:
         lines.extend(f"- `{packet_id}`" for packet_id in packet_ids[:MAX_LIST_ITEMS])
     else:
-        lines.append("- none")
+        lines.append("- 없음")
 
     if payload.get("llm_synthesis"):
-        lines.extend(["", "## LLM integration summary", ""])
-        summary = payload.get("synthesis_summary") or payload.get("summary") or "none"
+        lines.extend(["", "## LLM 통합 정리", ""])
+        summary = payload.get("synthesis_summary") or payload.get("summary") or "없음"
         lines.append(_bounded_text(summary, 1000))
         integration_plan = [item for item in payload.get("integration_plan") or [] if str(item).strip()]
         if integration_plan:
-            lines.extend(["", "### Integration plan"])
+            lines.extend(["", "### 통합 계획"])
             lines.extend(f"- {_bounded_text(item, 300)}" for item in integration_plan[:MAX_LIST_ITEMS])
-        _append_path_section(lines, "Created wiki pages", list(payload.get("created_pages") or []))
-        _append_path_section(lines, "Updated wiki pages", list(payload.get("updated_pages") or []))
+        _append_path_section(lines, "새로 생성된 wiki 페이지", list(payload.get("created_pages") or []))
+        _append_path_section(lines, "수정된 wiki 페이지", list(payload.get("updated_pages") or []))
         open_questions = [item for item in payload.get("open_questions") or [] if str(item).strip()]
         if open_questions:
-            lines.extend(["", "### Open questions"])
+            lines.extend(["", "### 확인해야 할 질문"])
             lines.extend(f"- {_bounded_text(item, 300)}" for item in open_questions[:MAX_LIST_ITEMS])
         conflicts = [item for item in payload.get("superseded_or_conflicting_claims") or [] if str(item).strip()]
         if conflicts:
-            lines.extend(["", "### Superseded or conflicting claims"])
+            lines.extend(["", "### 충돌하거나 대체된 claim"])
             lines.extend(f"- {_bounded_text(item, 300)}" for item in conflicts[:MAX_LIST_ITEMS])
 
-    lines.extend(["", "## Affected wiki pages", ""])
+    lines.extend(["", "## 영향받은 wiki 페이지", ""])
     wiki_paths = [path for path in payload.get("generated_paths") or payload.get("changed_paths") or [] if str(path).startswith("wiki/")]
     if wiki_paths:
         lines.extend(f"- `{_bounded_text(path, MAX_PATH_CHARS)}`" for path in wiki_paths[:MAX_LIST_ITEMS])
     else:
-        lines.append("- none")
+        lines.append("- 없음")
 
-    lines.extend(["", "## Claim changes", ""])
+    lines.extend(["", "## claim 상태 변경", ""])
     claim_statuses = list(payload.get("claim_statuses") or [])
     if claim_statuses:
         for item in claim_statuses[:MAX_LIST_ITEMS]:
@@ -228,9 +228,9 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
             else:
                 lines.append(f"- {_bounded_text(item)}")
     else:
-        lines.append("- none")
+        lines.append("- 없음")
 
-    lines.extend(["", "## Metric changes", ""])
+    lines.extend(["", "## metric 변경", ""])
     metric_changes = list(payload.get("metric_changes") or [])
     if metric_changes:
         for item in metric_changes[:MAX_LIST_ITEMS]:
@@ -242,9 +242,9 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
             else:
                 lines.append(f"- {_bounded_text(item)}")
     else:
-        lines.append("- none")
+        lines.append("- 없음")
 
-    lines.extend(["", "## Leakage/security warnings", ""])
+    lines.extend(["", "## leakage/security 경고", ""])
     warnings = list(payload.get("warnings") or [])
     security_failures = [
         failure
@@ -256,17 +256,17 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
         lines.extend(f"- {_bounded_text(warning)}" for warning in warnings[:MAX_LIST_ITEMS])
         lines.extend(_failure_line(failure) for failure in security_failures[:MAX_LIST_ITEMS])
     else:
-        lines.append("- none")
+        lines.append("- 없음")
 
     lines.extend(
         [
             "",
-            "## Reviewer checklist",
+            "## 리뷰어 체크리스트",
             "",
-            "- [ ] Confirm raw packet ids and affected pages are expected.",
-            "- [ ] Confirm claim status changes are supported by raw evidence.",
-            "- [ ] Confirm metric changes match referenced raw result files.",
-            "- [ ] Confirm leakage, security, and PII warnings are resolved.",
+            "- [ ] 반영된 raw packet과 영향받은 wiki 페이지가 예상 범위인지 확인합니다.",
+            "- [ ] claim 상태 변경이 raw evidence로 뒷받침되는지 확인합니다.",
+            "- [ ] metric 변경이 참조한 raw result 파일과 일치하는지 확인합니다.",
+            "- [ ] leakage, security, PII 경고가 남아 있지 않은지 확인합니다.",
         ]
     )
     body = "\n".join(lines).rstrip() + "\n"
