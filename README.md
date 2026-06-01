@@ -2,15 +2,83 @@
 
 GitHub repo를 팀 실험 지식 저장소로 쓰기 위한 LLM wiki 자동 ingest 도구입니다.
 
-팀원이 `raw/users/<user>/<packet-id>/` 아래에 실험, 모델, feature, 성능, 회의 자료를 packet 형태로 올리면 GitHub Actions가 이를 검증하고 `wiki/`에 요약 페이지, 인덱스, 로그, 최신 컨텍스트, brief를 생성합니다.
+팀원이 `raw/users/<owner>/<category>/<date-slug>/` 아래에 실험, 모델, feature, 성능, 회의 자료를 packet 형태로 올리면 GitHub Actions가 이를 검증하고 `wiki/`에 요약 페이지, 인덱스, 로그, 최신 컨텍스트, brief를 생성합니다.
+
+이 repo는 팀원이 직접 wiki를 손으로 편집하는 방식이 아니라, **raw packet PR -> deterministic ingest PR -> GPT-5.5 synthesis PR** 순서로 팀 지식을 축적합니다.
+
+## 한눈에 보는 운영 흐름
+
+```mermaid
+flowchart TD
+    A["팀원 연구/실험 결과"] --> B["team-llm-wiki-packet skill 인터뷰"]
+    B --> C["raw/users/<owner>/<category>/<date-slug>/ packet 생성"]
+    C --> D["팀원 packet PR"]
+    D --> E["wiki-pr-validate preview comment"]
+    E --> F{"packet PR merge?"}
+    F -->|merge| G["wiki-main-ingest"]
+    F -->|수정 필요| B
+    G --> H{"risk / claim tier"}
+    H -->|low risk| I["direct commit 또는 낮은 위험 wiki update"]
+    H -->|review required| J["deterministic ingest bot PR"]
+    J --> K{"ingest bot PR merge?"}
+    K -->|merge| L["raw/results/wiki-ingest/** report on main"]
+    L --> M["wiki-llm-synthesis: GPT-5.5"]
+    M --> N["LLM synthesis bot PR"]
+    N --> O{"LLM PR review / merge"}
+    O -->|merge| P["최신 wiki/index, latest-context, topic pages"]
+    P --> Q["팀원 Codex/Claude/LLM agent가 최신 wiki 참조"]
+```
+
+### PR은 왜 여러 개 생기나?
+
+| PR 종류 | 누가 만드나 | 주요 변경 | 팀원이 보는 것 |
+| --- | --- | --- | --- |
+| Packet PR | 팀원 또는 packet skill | `raw/users/**` source packet | 원천 evidence, claim boundary, metric contract |
+| Ingest bot PR | `wiki-main-ingest` | deterministic wiki page, compiled JSON, ingest report | raw 기반 1차 정리와 guard 결과 |
+| LLM synthesis bot PR | `wiki-llm-synthesis` + `gpt-5.5` | topic page, decision, question, report, overview 갱신 | 고차원 통합 정리와 review-required claim register |
+
+팀 배포 전에는 오래된 bot PR, 실험용 PR, 최신 main과 겹치는 synthesis PR을 닫아 PR 목록을 비워둡니다. 최신 지식은 `main`의 `wiki/latest-context.md`와 `wiki/index.md`에서 시작합니다.
+
+## Packet Skill과의 관계
+
+Packet skill은 이 repo 안에 들어있는 기능이 아니라, 팀원이 자기 AI 도구에 설치해서 사용하는 **별도 contributor-side skill**입니다.
+
+- Skill repo: [chunryongoh/team-llm-wiki-packet-skill](https://github.com/chunryongoh/team-llm-wiki-packet-skill)
+- 역할: ML/DL 전문가 인터뷰 형식으로 packet 내용을 묻고, `manifest.yaml`, `packet.md`, `performance.yaml`, `metrics.json` 같은 raw evidence contract를 만든 뒤 PR-first 방식으로 이 repo의 `raw/users/**`에 올립니다.
+- 경계: skill은 wiki를 직접 고치지 않습니다. wiki 생성과 synthesis는 이 repo의 GitHub Actions가 담당합니다.
+
+설치 예시:
+
+```bash
+git clone https://github.com/chunryongoh/team-llm-wiki-packet-skill.git
+python team-llm-wiki-packet-skill/scripts/install_local.py --target both
+```
+
+Codex 또는 Claude에서는 repo 링크를 주고 “이 skill을 설치하고 team_llm_wiki repo에 packet PR을 만들어 달라”고 요청하면 됩니다.
+
+```text
+https://github.com/chunryongoh/team-llm-wiki-packet-skill
+```
+
+Skill 사용 후 정상 PR은 보통 다음 형태만 변경합니다.
+
+```text
+raw/users/<owner>/<category>/<date-slug>/
+  manifest.yaml
+  packet.md
+  <packet-specific>.yaml
+  <metrics-or-evidence>.json
+```
+
+`wiki-pr-validate`가 PR comment로 packet skill compatibility, risk tier, claim status, 누락 evidence, merge 후 생성될 wiki page를 보여줍니다.
 
 ## 핵심 구조
 
 ```text
-raw/users/<user>/<packet-id>/   # 사람이 올리는 원천 증거
-wiki/                           # 자동 생성/검토되는 팀 지식
-automation/.cache/compiled/     # packet별 정규화 JSON
-raw/shared/templates/wiki-packet/ # packet 작성 템플릿
+raw/users/<owner>/<category>/<date-slug>/ # 사람이 올리는 원천 증거
+wiki/                                      # 자동 생성/검토되는 팀 지식
+automation/.cache/compiled/                # packet별 정규화 JSON
+raw/shared/templates/wiki-packet/          # packet 작성 템플릿
 ```
 
 - `raw/`는 source-of-truth입니다. 원천 파일은 packet 안에 두고, 자동화는 이를 증거로만 읽습니다.
@@ -32,17 +100,19 @@ PYTHONPATH=src python -m team_llm_wiki.cli --help
 
 ## 빠른 사용법
 
+직접 수동으로 packet을 만들 수도 있지만, 팀원에게는 packet skill 사용을 권장합니다. 수동 작성이 필요한 경우에는 아래 절차를 따릅니다.
+
 1. 템플릿을 복사해 packet을 만듭니다.
 
 ```bash
-mkdir -p raw/users/alice/example-packet
-cp raw/shared/templates/wiki-packet/manifest.yaml raw/users/alice/example-packet/manifest.yaml
+mkdir -p raw/users/alice/performance/2026-06-01-example-packet
+cp raw/shared/templates/wiki-packet/manifest.yaml raw/users/alice/performance/2026-06-01-example-packet/manifest.yaml
 ```
 
 2. `manifest.yaml`과 `raw_paths`가 가리키는 packet-local 파일을 채웁니다.
 
 ```text
-raw/users/alice/example-packet/
+raw/users/alice/performance/2026-06-01-example-packet/
   manifest.yaml
   performance.yaml
   result.json
@@ -54,7 +124,7 @@ raw/users/alice/example-packet/
 ```bash
 PYTHONPATH=src python -m team_llm_wiki.cli plan-wiki-main-ingest \
   --repo-root . \
-  --changed-path raw/users/alice/example-packet/manifest.yaml
+  --changed-path raw/users/alice/performance/2026-06-01-example-packet/manifest.yaml
 ```
 
 4. 실제 wiki 생성을 실행합니다.
@@ -62,7 +132,7 @@ PYTHONPATH=src python -m team_llm_wiki.cli plan-wiki-main-ingest \
 ```bash
 PYTHONPATH=src python -m team_llm_wiki.cli run-wiki-main-ingest \
   --repo-root . \
-  --changed-path raw/users/alice/example-packet/manifest.yaml \
+  --changed-path raw/users/alice/performance/2026-06-01-example-packet/manifest.yaml \
   --run-id local-run
 ```
 
@@ -77,7 +147,7 @@ PYTHONPATH=src python -m team_llm_wiki.cli check-wiki-health --repo-root .
 ```bash
 OPENAI_API_KEY=... PYTHONPATH=src python -m team_llm_wiki.cli run-llm-wiki-synthesis \
   --repo-root . \
-  --changed-path raw/users/alice/example-packet/manifest.yaml \
+  --changed-path raw/users/alice/performance/2026-06-01-example-packet/manifest.yaml \
   --run-id local-llm-run
 ```
 
@@ -161,6 +231,27 @@ Bot commit/PR은 다음 prefix를 사용합니다.
 
 PR이 없으면 `wiki-pr-validate` run history가 비어 있는 것이 정상입니다.
 
+### Merge 순서
+
+```mermaid
+sequenceDiagram
+    participant Contributor as 팀원/packet skill
+    participant PR as GitHub PR
+    participant Preview as wiki-pr-validate
+    participant Ingest as wiki-main-ingest
+    participant LLM as wiki-llm-synthesis
+    participant Wiki as wiki pages
+
+    Contributor->>PR: raw/users packet PR 생성
+    Preview-->>PR: preview comment<br/>risk, evidence, affected pages
+    PR->>Ingest: packet PR merge to main
+    Ingest-->>PR: ingest bot PR 생성<br/>deterministic wiki + report
+    PR->>LLM: ingest bot PR merge to main
+    LLM-->>PR: GPT-5.5 synthesis bot PR 생성
+    PR->>Wiki: synthesis bot PR merge
+    Wiki-->>Contributor: latest-context/index/overview 갱신
+```
+
 `wiki-llm-synthesis`를 자동 실행하려면 repo secret `OPENAI_API_KEY`가 필요합니다. secret이 없으면 workflow는 skip summary만 남기고 성공 종료합니다. 이 workflow는 deterministic ingest 결과인 `raw/results/wiki-ingest/**/report.json`에서 packet roots를 다시 찾아 읽기 때문에, raw packet merge 직후가 아니라 ingest bot PR이 merge된 뒤 고차원 합성을 수행합니다.
 
 Packet PR preview는 packet skill과 맞는지 별도로 표시합니다. `packet_skill_compatibility`는 `pass`, `warning`, `fail` 중 하나이며, `raw/users/<owner>/<category>/<date-slug>/` 형태, `packet.md`, `claim_boundary`, metric evidence 같은 항목을 확인합니다. 첫 버전은 adoption을 막지 않도록 warning-first로 운영합니다.
@@ -214,11 +305,18 @@ Brief 출력:
 
 ## 권장 운영 흐름
 
-1. 팀원은 자신의 packet을 `raw/users/<user>/<packet-id>/`에 추가합니다.
+1. 팀원은 packet skill 인터뷰로 packet을 만들고 `raw/users/<owner>/<category>/<date-slug>/`만 수정하는 PR을 올립니다.
 2. PR에서는 `wiki-pr-validate`가 preview comment로 위험도, 누락 증거, claim status, 영향을 받는 wiki page를 보여줍니다.
-3. main merge 후 `wiki-main-ingest`가 packet을 compile하고 wiki를 갱신합니다.
-4. 낮은 위험도는 direct commit, review 필요 항목은 bot PR, 실패 항목은 hard fail report로 남습니다.
-5. agent나 LLM은 `wiki/latest-context.md`, `wiki/index.md`, compiled JSON을 읽어 최신 팀 맥락을 가져갑니다.
+3. packet PR을 merge하면 `wiki-main-ingest`가 packet을 compile하고 deterministic wiki bot PR을 만듭니다.
+4. ingest bot PR을 리뷰/merge하면 `wiki-llm-synthesis`가 `gpt-5.5`로 고차원 topic/decision/question/report page를 작성하는 bot PR을 만듭니다.
+5. synthesis bot PR을 리뷰/merge하면 `wiki/latest-context.md`, `wiki/index.md`, `wiki/overview.md`가 최신 팀 맥락의 entrypoint가 됩니다.
+6. agent나 LLM은 `wiki/latest-context.md`, `wiki/index.md`, compiled JSON을 읽어 최신 팀 맥락을 가져갑니다.
+
+배포 전 PR hygiene:
+
+- open PR 목록은 비워두거나, 현재 리뷰할 PR만 남깁니다.
+- 오래된 bot synthesis PR은 최신 main과 충돌하거나 겹치면 닫고, 필요한 경우 최신 main에서 새로 생성합니다.
+- 실험용 auth/runner PR은 운영 경로가 확정되면 닫아 팀원이 어느 workflow를 따라야 하는지 헷갈리지 않게 합니다.
 
 ## 로컬 검증
 
