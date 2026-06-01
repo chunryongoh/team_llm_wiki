@@ -96,3 +96,11 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md`
 - run: `26740055632-1`
+
+## [2026-06-01] synthesis | sleep-lifelog-claim-boundary-integration
+
+- `2026-06-01-dacon-leaderboard-claim-boundary` packet을 source page, feature landscape, evaluation decision, open questions, synthesis report, overview, latest context, index, log에 통합했다.
+- local GroupKFold OOF, DACON public leaderboard, DACON private leaderboard를 별도 evidence class로 기록한다는 convention을 정리했다.
+- packet이 organizer-official split evidence가 아니므로 모든 관련 claim은 `tentative`로 유지했다.
+- raw metric, split file, leaderboard score, feature ablation evidence가 없어 performance claim은 추가하지 않았다.
+- allowed wiki pages만 작성했고 `raw/`, `automation/`, policy file은 변경하지 않았다.

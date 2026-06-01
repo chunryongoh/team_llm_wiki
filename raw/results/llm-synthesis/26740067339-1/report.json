@@ -1,0 +1,137 @@
+{
+  "changed_paths": [
+    "wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "claim_register": [
+    {
+      "status": "tentative",
+      "text": "Local GroupKFold OOF metrics and DACON public/private leaderboard results should be recorded as separate evidence classes."
+    },
+    {
+      "status": "tentative",
+      "text": "DACON public leaderboard feedback should not automatically supersede local validation conclusions without matching submission metadata and private leaderboard evidence."
+    },
+    {
+      "status": "tentative",
+      "text": "local validation metrics, DACON public leaderboard feedback, and DACON private leaderboard results must be recorded separately unless raw submission evidence links them."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26740055632-1/report.json"
+  ],
+  "integration_plan": [
+    "AGENTS.md, CLAUDE.md, wiki/latest-context.md, \uae30\uc874 index/log/overview, raw manifest/notes/packet, \uae30\uc874 source page\ub97c \uadfc\uac70\ub85c \uc77d\uc5c8\ub2e4.",
+    "dated packet mirror\uc5d0 \uba38\ubb3c\uc9c0 \uc54a\ub3c4\ub85d source page\ub294 provenance \uc911\uc2ec\uc73c\ub85c \uc815\ub9ac\ud558\uace0, feature landscape, evaluation decision, open questions, synthesis report\ub97c compounding topic pages\ub85c \uc0dd\uc131\ud588\ub2e4.",
+    "dataset, benchmark, feature, decision, question, report, source page \uc0ac\uc774\uc758 cross-link\ub97c \ucd94\uac00\ud588\ub2e4.",
+    "raw metric/split evidence\uac00 \uc5c6\uc73c\ubbc0\ub85c \uc131\ub2a5, feature \uc6b0\uc704, leaderboard \uc21c\uc704 \uc8fc\uc7a5\uc740 \ub9cc\ub4e4\uc9c0 \uc54a\uc558\uace0 \ubaa8\ub4e0 \uad00\ub828 claim_status\ub97c `tentative`\ub85c \uc720\uc9c0\ud588\ub2e4.",
+    "organizer-official \uaddc\uce59 \ud655\uc778 \uc2dc \ud604\uc7ac \ud300 \ubcf4\uace0 convention\uc774 supersede\ub41c\ub2e4\ub294 \uc870\uac74\uacfc unresolved questions\ub97c \ubcc4\ub3c4 backlog\ub85c \uae30\ub85d\ud588\ub2e4."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    {
+      "close_condition": "\uacf5\uc2dd \uadfc\uac70\uac00 wiki source\ub85c \ub4f1\ub85d\ub418\uace0 `wiki/decisions/sleep-lifelog-evaluation-protocol.md`\uc758 supersession \ubb38\uad6c\uc640 claim_status\uac00 \uc7ac\uac80\ud1a0\ub418\uba74 \uc885\ub8cc\ud55c\ub2e4.",
+      "id": "sleep-lifelog-oq-001",
+      "merge_blocker": false,
+      "needed_evidence": "DACON/ETRI \uacf5\uc2dd \uaddc\uce59 \ubb38\uc11c, private leaderboard \uacf5\uc9c0, organizer\uac00 \uba85\uc2dc\ud55c validation/leaderboard interpretation \ubb38\uc7a5, \ud574\ub2f9 \uc6d0\ubb38 \ub9c1\ud06c \ub610\ub294 raw packet.",
+      "owner_role": "competition-lead",
+      "priority": "high",
+      "question": "DACON/ETRI organizer-official split protocol\uacfc public/private leaderboard \ud574\uc11d \uaddc\uce59\uc740 \ubb34\uc5c7\uc774\uba70, \ud604\uc7ac \ud300 reporting convention\uc744 supersede\ud574\uc57c \ud558\ub294\uac00?"
+    },
+    {
+      "close_condition": "\ud544\uc218 metadata \ud544\ub4dc\uac00 \uacb0\uc815 page\uc640 feature landscape\uc5d0 \ubc18\uc601\ub418\uace0, \ub204\ub77d \uc2dc leaderboard claim\uc744 \uae08\uc9c0\ud558\ub294 \uac80\uc99d \uae30\uc900\uc774 \uc815\ub9ac\ub418\uba74 \uc885\ub8cc\ud55c\ub2e4.",
+      "id": "sleep-lifelog-oq-002",
+      "merge_blocker": false,
+      "needed_evidence": "submission_id, timestamp, target configuration, preprocessing version, feature_set_id, model_family, local run id, fold/seed, public/private score\ub97c \ud3ec\ud568\ud55c \uc6d0\uc2dc submission log \ub610\ub294 schema packet.",
+      "owner_role": "mlops-engineer",
+      "priority": "high",
+      "question": "DACON public/private submission row\ub97c local OOF run\uacfc \uc5f0\uacb0\ud558\uae30 \uc704\ud55c \ucd5c\uc18c submission metadata schema\ub294 \ubb34\uc5c7\uc778\uac00?"
+    },
+    {
+      "close_condition": "local OOF evidence\uac00 \uc7ac\ud604 \uac00\ub2a5\ud55c split/metric provenance\ub97c \uac16\ucd94\uace0, local claim\uacfc DACON leaderboard claim\uc758 \uacbd\uacc4\uac00 \uac80\uc99d \uac00\ub2a5\ud574\uc9c0\uba74 \uc885\ub8cc\ud55c\ub2e4.",
+      "id": "sleep-lifelog-oq-003",
+      "merge_blocker": false,
+      "needed_evidence": "fold assignment file, split generation code/config, group key \uc815\uc758, metric \uacc4\uc0b0 script \ub610\ub294 raw packet, OOF row\uc640 run id \ub9e4\ud551.",
+      "owner_role": "data-scientist",
+      "priority": "high",
+      "question": "`local-groupkfold-subject-3fold-oof-vs-dacon-public-private`\uc5d0\uc11c \uc0ac\uc6a9\ud55c `subject_id` group key, fold file, seed, metric \uacc4\uc0b0 \ubc29\uc2dd\uc740 raw evidence\ub85c \uace0\uc815\ub418\uc5b4 \uc788\ub294\uac00?"
+    },
+    {
+      "close_condition": "`wiki/features/sleep-lifelog-feature-landscape.md`\uc5d0 feature provenance template\uc774 \ud655\uc815\ub418\uace0, \uc774\ud6c4 submission packet\uc774 \uac19\uc740 \ud544\ub4dc\ub97c \ucc44\uc6b0\uba74 \uc885\ub8cc\ud55c\ub2e4.",
+      "id": "sleep-lifelog-oq-004",
+      "merge_blocker": false,
+      "needed_evidence": "feature_set_id/version, preprocessing config hash, target column/config, model_family, submission timestamp\ub97c \ud3ec\ud568\ud55c feature provenance template \ub610\ub294 \uc2e4\uc81c submission example.",
+      "owner_role": "feature-engineer",
+      "priority": "medium",
+      "question": "feature set, preprocessing, target configuration \ubcc0\uacbd\uc774 DACON public leaderboard feedback \ud574\uc11d\uc5d0 \ubbf8\uce58\ub294 \uc601\ud5a5\uc744 \uc5b4\ub5bb\uac8c \uae30\ub85d\ud560 \uac83\uc778\uac00?"
+    }
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/references/2026-06-01-dacon-leaderboard-claim-boundary"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-01-dacon-leaderboard-claim-boundary",
+      "packet_root": "raw/users/chunryongoh/references/2026-06-01-dacon-leaderboard-claim-boundary",
+      "type": "reference"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26740067339-1/report.json",
+  "review_notes": [
+    "\uc774 \ud1b5\ud569 \uacb0\uacfc\ub294 LLM-assisted synthesis\uc774\ubbc0\ub85c review-required\ub85c \ucde8\uae09\ud574\uc57c \ud55c\ub2e4.",
+    "`metrics_to_verify: []`\uc774\uba70 raw metric, split file, leaderboard score\uac00 \uc5c6\uc73c\ubbc0\ub85c \uc5b4\ub5a4 \uc131\ub2a5 claim\ub3c4 \ucd94\uac00\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+    "source packet\uc758 `claim_status: tentative`\uc640 \uac01 claim\uc758 `status: tentative`\ub97c \uc720\uc9c0\ud588\ub2e4.",
+    "allowed output pages 9\uac1c\ub9cc \uc791\uc131\ud588\uace0 raw/, automation/, policy \ud30c\uc77c\uc740 \uc791\uc131\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+    "dataset \ubc0f benchmark stable pages\ub294 \ub9c1\ud06c\ub9cc \ucd94\uac00\ud588\uc73c\uba70, \ud5c8\uc6a9 \ubaa9\ub85d\uc5d0 \uc5c6\uc73c\ubbc0\ub85c \ub0b4\uc6a9\uc744 \ubcc0\uacbd\ud558\uc9c0 \uc54a\uc558\ub2e4."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "26740067339-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "\ud604\uc7ac \uc81c\uacf5\ub41c raw evidence \ub0b4\ubd80\uc5d0\ub294 supported claim\uacfc \ucda9\ub3cc\ud558\ub294 \ud56d\ubaa9\uc774 \uc5c6\ub2e4.",
+    "`2026-06-01-dacon-leaderboard-claim-boundary`\uc758 reporting convention\uc740 organizer-official split protocol \ub610\ub294 private leaderboard interpretation rule\uc774 \ud655\uc778\ub418\uba74 supersede\ub420 \uc218 \uc788\ub2e4.",
+    "DACON public leaderboard feedback\uc774 local validation conclusion\uc744 \uc790\ub3d9\uc73c\ub85c supersede\ud55c\ub2e4\ub294 \uc8fc\uc7a5\uc740 \ud604\uc7ac raw evidence\ub85c \uc9c0\uc6d0\ub418\uc9c0 \uc54a\uc73c\uba70, matching submission metadata\uc640 private leaderboard evidence\uac00 \ud544\uc694\ud558\ub2e4."
+  ],
+  "synthesis_summary": "2026-06-01 DACON leaderboard claim-boundary packet\uc744 stable source page\uc640 Sleep Lifelog \uc8fc\uc81c \ud398\uc774\uc9c0\ub4e4\ub85c \ud1b5\ud569\ud588\ub2e4. local GroupKFold OOF, DACON public leaderboard, DACON private leaderboard\ub97c \ubcc4\ub3c4 evidence class\ub85c \uae30\ub85d\ud55c\ub2e4\ub294 \ud300 \ubcf4\uace0 \uacbd\uacc4\ub294 \ubaa8\ub450 `tentative`\ub85c \uc720\uc9c0\ud588\uc73c\uba70, organizer-official split/private leaderboard \uaddc\uce59\uc774 \ud655\uc778\ub418\uba74 supersede\ub420 \uc218 \uc788\uc74c\uc744 \uba85\uc2dc\ud588\ub2e4.",
+  "timing_ms": 206824,
+  "updated_pages": [
+    "wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "validation": {},
+  "warnings": []
+}
