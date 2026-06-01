@@ -2,9 +2,21 @@
 
 [[index]] [[overview]] [[log]]
 
-이 페이지는 새 agent session의 bounded entrypoint다. 세부 raw evidence는 각 안정 페이지의 provenance를 따라가고, 성능 claim을 승격하기 전에 evaluation decision과 open questions를 확인한다.
-
 <!-- wiki-ingest:latest:start -->
+### local-run-section07-notebook | 2026-06-01-lifelog-section07-notebook-overview
+
+- link: [[experiments/2026-06-01-lifelog-section07-notebook-overview]]
+- publish_action: `bot_pr`
+- risk_tier: `tier2-interpretation`
+- review-required: true
+
+### local-run-section07 | 2026-06-01-lifelog-section07-working-notes
+
+- link: [[experiments/2026-06-01-lifelog-section07-working-notes]]
+- publish_action: `bot_pr`
+- risk_tier: `tier2-interpretation`
+- review-required: true
+
 ### 26741704818-1 | 2026-06-01-sleep-lifelog-packet-synthesis
 
 - link: [[reports/2026-06-01-sleep-lifelog-packet-synthesis]]

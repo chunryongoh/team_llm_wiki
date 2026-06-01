@@ -1,0 +1,57 @@
+{
+  "claim_boundary": "Existing 07_labelwise_feature_generation_integrated.ipynb structure and saved notebook-output summary only; data files, model weights, submission CSVs, full Optuna logs, rerun evidence, and verified leaderboard claims are excluded.",
+  "claim_status": "tentative",
+  "claims": [
+    {
+      "status": "tentative",
+      "text": "The notebook is configured to rebuild Section 07 train and test features from project label, sample, feature, entropy, anchor-parameter, and Section 11 top-feature inputs rather than from previous submissions or prediction files."
+    },
+    {
+      "status": "tentative",
+      "text": "Existing notebook outputs show all configured inputs existed at execution time and were not marked as forbidden inputs, but this packet does not include the raw audit CSV or a rerun log."
+    },
+    {
+      "status": "tentative",
+      "text": "Existing notebook outputs show global v5 feature acceptance failed, so the export policy retained the current labelwise additive policy with per-label feature counts from 922 to 1002."
+    },
+    {
+      "status": "tentative",
+      "text": "The candidate export path uses per-label LightGBM and CatBoost packs across seed offsets 0, 20000, and 40000, with probability-mean internal blending and logit-mean candidate blending."
+    }
+  ],
+  "dataset": {
+    "hash": "none",
+    "name": "sleep-lifelog-2024",
+    "version": "released-package"
+  },
+  "date": "2026-06-01",
+  "id": "2026-06-01-lifelog-section07-notebook-overview",
+  "intended_wiki_targets": [
+    "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md"
+  ],
+  "metrics_to_verify": [],
+  "model": {
+    "family": "mix-lgbm-catboost-section07-seed-ensemble-export",
+    "weights_in_repo": false
+  },
+  "owner": "hyeonseokrock",
+  "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-notebook-overview",
+  "packet_type": "experiment",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "notebook_no_output": "source/07_labelwise_feature_generation_integrated.no-output.ipynb",
+    "notebook_outline": "source/notebook-outline.md",
+    "notebook_output_summary": "source/notebook-output-summary.md",
+    "notes": "packet.md"
+  },
+  "risk_tier": "tier2-interpretation",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "existing-notebook-local-validation-probes"
+  },
+  "status": "submitted",
+  "summary": "The notebook rebuilds Section 07 LifeLog features from allowed project inputs, probes additive and v5 feature policies, keeps the current labelwise additive export policy after global v5 rejection, and exports a LightGBM/CatBoost seed-ensemble candidate; this packet includes a no-output notebook copy plus outline/output summaries, not the underlying data.",
+  "task": "dacon-sleep-lifelog-section07-notebook-overview",
+  "title": "LifeLog Section 07 Notebook Overview"
+}
