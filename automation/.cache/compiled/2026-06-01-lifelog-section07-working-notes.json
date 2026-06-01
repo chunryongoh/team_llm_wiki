@@ -1,0 +1,59 @@
+{
+  "claim_boundary": "Local Y2025LifeLogDB working notes only; public scores are user-reported notes and are not verified leaderboard or organizer-official evidence.",
+  "claim_status": "tentative",
+  "claims": [
+    {
+      "status": "tentative",
+      "text": "Section 07 rebuilds train and test features from source label/sample files and feature parquet inputs rather than using previous submission or prediction files as model input."
+    },
+    {
+      "status": "tentative",
+      "text": "The current documented Section 07 feature policy keeps the saved anchor feature list and adds labelwise Section 11 additive top-k features, while rejecting full v5 change/frequency acceptance in the 2026-05-29 notes."
+    },
+    {
+      "status": "tentative",
+      "text": "The current documented Section 07 model path uses a LightGBM and CatBoost probability-mean blend per label, with optional seed ensemble candidates blended by logit mean."
+    },
+    {
+      "status": "tentative",
+      "text": "The user-reported public score notes identify section9_labelwise_best_20260522_1239 as current best at 0.5986218188 and section07_candidate_baseline_seed_ensemble_20260529_1029 as a near-best challenger at 0.6003735255, but this packet does not verify leaderboard provenance."
+    }
+  ],
+  "dataset": {
+    "hash": "none",
+    "name": "sleep-lifelog-2024",
+    "version": "released-package"
+  },
+  "date": "2026-06-01",
+  "id": "2026-06-01-lifelog-section07-working-notes",
+  "intended_wiki_targets": [
+    "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md"
+  ],
+  "metrics_to_verify": [],
+  "model": {
+    "family": "mix-lgbm-catboost-section07-working-candidate",
+    "weights_in_repo": false
+  },
+  "owner": "hyeonseokrock",
+  "packet_root": "raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes",
+  "packet_type": "experiment",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "feature_inventory": "source/FEATURES.md",
+    "feature_notes": "source/02_feature.md",
+    "model_notes": "source/03_model.md",
+    "notes": "packet.md",
+    "performance_notes": "source/04_performance.md",
+    "preprocessing_notes": "source/01_preprocessing.md"
+  },
+  "risk_tier": "tier2-interpretation",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "local-working-notes-mixed-validation-protocols"
+  },
+  "status": "submitted",
+  "summary": "Section 07 working notes consolidate preprocessing, feature policy, model structure, and performance notes for the LifeLog sleep-health task, while keeping local validation, user-reported public scores, and final leaderboard claims separate.",
+  "task": "dacon-sleep-lifelog-section07-working-notes",
+  "title": "LifeLog Section 07 Working Notes"
+}

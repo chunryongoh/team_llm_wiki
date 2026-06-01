@@ -111,3 +111,8 @@ Append-only ingest and maintenance events belong here.
 - 보존한 claim_status: `supported`
 - 핵심 supported metric: `targetwise_reblend_macro_log_loss` `0.6198365213240887`, `baseline_wave41_macro_log_loss` `0.6198684545582471`, `delta_vs_wave41` `-3.19332341584e-05`
 - review-required: true
+
+## [2026-06-01] ingest | 2026-06-01-lifelog-section07-working-notes
+
+- target: `wiki/experiments/2026-06-01-lifelog-section07-working-notes.md`
+- run: `local-run-section07`
