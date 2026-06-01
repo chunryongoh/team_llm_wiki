@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - "raw/results/wiki-ingest/**"
+  workflow_run:
+    workflows: ["wiki-main-ingest"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       changed_paths:
@@ -22,6 +25,7 @@ concurrency:
 
 jobs:
   synthesize:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -44,6 +48,11 @@ jobs:
             else
               git diff --name-only "$base" "$head" > changed-paths.txt
             fi
+          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
+            git fetch origin main
+            git checkout -B main origin/main
+            INGEST_RUN_ID="${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}"
+            printf "raw/results/wiki-ingest/$INGEST_RUN_ID/report.json\n" > changed-paths.txt
           else
             python - <<'PY'
           import os

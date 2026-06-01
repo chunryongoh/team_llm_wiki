@@ -22,6 +22,17 @@ def test_llm_synthesis_workflow_runs_after_ingest_reports_and_uses_openai_key():
     assert "## 사용한 LLM 모델" in workflow
 
 
+def test_llm_synthesis_workflow_follows_main_ingest_completion():
+    workflow = Path(".github/workflows/wiki-llm-synthesis.yml").read_text(encoding="utf-8")
+
+    assert "workflow_run:" in workflow
+    assert 'workflows: ["wiki-main-ingest"]' in workflow
+    assert "github.event.workflow_run.conclusion == 'success'" in workflow
+    assert "github.event.workflow_run.id" in workflow
+    assert "github.event.workflow_run.run_attempt" in workflow
+    assert "raw/results/wiki-ingest/$INGEST_RUN_ID/report.json" in workflow
+
+
 def test_main_ingest_workflow_validates_before_publishing():
     workflow = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
 
