@@ -46,6 +46,7 @@ Packet skill은 이 repo 안에 들어있는 기능이 아니라, 팀원이 자�
 - Skill repo: [chunryongoh/team-llm-wiki-packet-skill](https://github.com/chunryongoh/team-llm-wiki-packet-skill)
 - 역할: ML/DL 전문가 인터뷰 형식으로 packet 내용을 묻고, `manifest.yaml`, `packet.md`, `performance.yaml`, `metrics.json` 같은 raw evidence contract를 만든 뒤 PR-first 방식으로 이 repo의 `raw/users/**`에 올립니다.
 - 경계: skill은 wiki를 직접 고치지 않습니다. wiki 생성과 synthesis는 이 repo의 GitHub Actions가 담당합니다.
+- ETRI/DACON sleep-health packet에서는 skill이 bundled `references/etri-dacon-sleep-health-context.md`를 읽어 `sleep-lifelog-2024`, `sleep-health-hackathon-v0`, Q/S targets, local OOF와 DACON leaderboard claim boundary, 현재 LGB/CB diagnostic line을 인터뷰 배경으로 사용합니다. 최신 판정은 항상 이 repo의 `wiki/latest-context.md`와 안정 entity page가 우선합니다.
 
 설치 예시:
 
@@ -377,6 +378,8 @@ sed -n '1,220p' /tmp/team_llm_wiki/wiki/latest-context.md
 - `wiki/team/wiki-ingest-policy.md`
 - `wiki/team/contribution-workflow.md`
 - `raw/shared/templates/wiki-packet/manifest.yaml`
+
+ETRI/DACON sleep-health 내용이면 skill bundled `references/etri-dacon-sleep-health-context.md`도 함께 읽습니다. 이 파일은 질문을 더 정확하게 하기 위한 primer이며, 실제 claim boundary와 최신 metric은 이 repo의 `wiki/latest-context.md`, `wiki/overview.md`, dataset/benchmark/performance/decision/question page를 기준으로 판정합니다.
 
 따라서 팀원이 packet skill로 인터뷰를 시작할 때는 target repo를 최신 상태로 pull한 뒤 진행해야 합니다.
 

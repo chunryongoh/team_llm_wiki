@@ -22,4 +22,21 @@ Supported packet types are `reference`, `meeting`, `experiment`, `feature`, `mod
 
 Use `packet.md` for the human-readable synthesis narrative that should be promoted into the target wiki page. The manifest and packet-specific YAML provide machine-checkable fields; `packet.md` provides the explanatory context that teammates and agents should read.
 
+## Packet Skill Domain Context
+
+The contributor-side packet skill is expected to read this repository before drafting any packet. For ETRI/DACON sleep-health work, it should also load its bundled `references/etri-dacon-sleep-health-context.md` primer. That primer is only an interview accelerator; this repository remains canonical.
+
+Canonical ETRI/DACON entrypoints:
+
+- `wiki/latest-context.md`
+- `wiki/overview.md`
+- `wiki/datasets/sleep-lifelog-2024.md`
+- `wiki/benchmarks/sleep-health-hackathon-v0.md`
+- `wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md`
+- `wiki/features/sleep-lifelog-feature-landscape.md`
+- `wiki/decisions/sleep-lifelog-evaluation-protocol.md`
+- `wiki/questions/sleep-lifelog-open-questions.md`
+
+When a packet skill primer conflicts with any of the pages above, reviewers should require the packet to follow the wiki page and record the conflict as an evidence gap or semantic lint item. The primer must not promote local OOF diagnostics to DACON leaderboard claims, must not call LightGBM + CatBoost globally best without the exact supported boundary, and must not conflate different GroupKFold fold counts as the same split.
+
 Bot PRs include an `자동 검증 결과` section. Do not merge a bot PR if self-validation failed or if validation evidence is missing without a clear reason in the workflow summary.
