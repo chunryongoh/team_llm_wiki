@@ -2,6 +2,11 @@
 
 Append-only ingest and maintenance events belong here.
 
+## [2026-06-02] audit | team-packet-entity-coverage
+
+- target: `wiki/reports/2026-06-02-team-packet-entity-coverage-audit.md`
+- finding: current entity-first structure works for Section07/current claims, but 문형도, 구나영, 조혜원 attachment bundles are not yet packet-local raw evidence or wiki entities.
+
 ## [2026-06-02] governance | entity-first-claim-gated-wiki
 
 - Added ML/AI hackathon entity model and packet quality standard.
