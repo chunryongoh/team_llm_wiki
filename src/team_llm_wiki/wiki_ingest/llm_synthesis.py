@@ -15,7 +15,7 @@ from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
 from .models import FailureCode, IngestFailure, IngestReport, PacketManifest, PacketType, RiskTierLabel, as_jsonable
 from .policy import load_policy
-from .render import render_target_path
+from .render import INDEX_END, INDEX_START, render_target_path
 
 DEFAULT_MODEL = "gpt-5.5"
 DEFAULT_REASONING_EFFORT = "high"
@@ -125,6 +125,7 @@ def run_llm_wiki_synthesis(
     changed: list[str] = []
     staging = _staged_wiki(repo_root)
     try:
+        generated_page_paths = [page["path"] for page in pages]
         for page in pages:
             target = staging / page["path"]
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -133,6 +134,7 @@ def run_llm_wiki_synthesis(
                 page["path"],
                 page["content"],
                 evidence_by_target.get(page["path"], []),
+                generated_page_paths,
             )
             target.write_text(content.rstrip() + "\n", encoding="utf-8")
             changed.append(page["path"])
@@ -401,12 +403,92 @@ def _ensure_raw_evidence(content: str, evidence_paths: list[str]) -> str:
     return content.rstrip() + "\n\n" + evidence_block + ("\n" if content.endswith("\n") else "")
 
 
-def _finalize_page_content(repo_root: Path, rel_path: str, content: str, evidence_paths: list[str]) -> str:
+def _finalize_page_content(
+    repo_root: Path,
+    rel_path: str,
+    content: str,
+    evidence_paths: list[str],
+    generated_page_paths: list[str] | None = None,
+) -> str:
     if rel_path == "wiki/log.md":
         return _merge_append_only_log(repo_root, content)
-    if rel_path in {"wiki/index.md", "wiki/latest-context.md"}:
+    if rel_path == "wiki/index.md":
+        return _merge_index_content(repo_root, content, generated_page_paths or [])
+    if rel_path == "wiki/latest-context.md":
         return content
     return _ensure_raw_evidence(content, evidence_paths)
+
+
+def _merge_index_content(repo_root: Path, content: str, generated_page_paths: list[str]) -> str:
+    existing_path = repo_root / "wiki" / "index.md"
+    existing = existing_path.read_text(encoding="utf-8") if existing_path.exists() else ""
+    scaffold = existing if _has_balanced_index_block(existing) else content
+    if not _has_balanced_index_block(scaffold):
+        scaffold = "# Team LLM Wiki Index\n\n" + INDEX_START + "\n" + INDEX_END + "\n"
+
+    entries: dict[str, str] = {}
+    for line in _extract_index_entries(scaffold):
+        target = _index_entry_target(line)
+        if target:
+            entries.setdefault(target, line)
+    for line in _extract_index_entries(content):
+        target = _index_entry_target(line)
+        if target:
+            entries[target] = line
+    for rel_path in generated_page_paths:
+        target = _index_target_from_wiki_path(rel_path)
+        if target:
+            entries.setdefault(target, _default_index_entry(rel_path))
+
+    merged_lines = sorted(entries.values(), key=lambda line: (_index_entry_target(line) or line).lower())
+    return _replace_index_block(scaffold, merged_lines)
+
+
+def _has_balanced_index_block(text: str) -> bool:
+    return text.count(INDEX_START) == 1 and text.count(INDEX_END) == 1 and text.index(INDEX_START) < text.index(INDEX_END)
+
+
+def _extract_index_entries(text: str) -> list[str]:
+    entries: list[str] = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("- ") and _index_entry_target(stripped):
+            entries.append(stripped)
+    return entries
+
+
+def _index_entry_target(line: str) -> str | None:
+    match = re.search(r"\(([^)]+\.md)\)", line)
+    if not match:
+        return None
+    target = match.group(1).strip()
+    if not target or target.startswith(("http://", "https://", "../")):
+        return None
+    return target.removeprefix("wiki/")
+
+
+def _index_target_from_wiki_path(rel_path: str) -> str | None:
+    if not rel_path.startswith("wiki/") or not rel_path.endswith(".md"):
+        return None
+    if rel_path in {"wiki/index.md", "wiki/log.md", "wiki/latest-context.md", "wiki/overview.md"}:
+        return None
+    if rel_path.startswith("wiki/team/") or rel_path.endswith("/README.md"):
+        return None
+    return rel_path.removeprefix("wiki/")
+
+
+def _default_index_entry(rel_path: str) -> str:
+    target = _index_target_from_wiki_path(rel_path) or rel_path.removeprefix("wiki/")
+    title = Path(target).stem.replace("-", " ").title()
+    page_type = Path(target).parent.name.rstrip("s") or "page"
+    return f"- [{title}]({target}) - `{page_type}`"
+
+
+def _replace_index_block(scaffold: str, entries: list[str]) -> str:
+    start_index = scaffold.index(INDEX_START)
+    end_index = scaffold.index(INDEX_END) + len(INDEX_END)
+    block = "\n".join([INDEX_START, *entries, INDEX_END])
+    return scaffold[:start_index].rstrip() + "\n\n" + block + scaffold[end_index:].rstrip() + "\n"
 
 
 def _merge_append_only_log(repo_root: Path, content: str) -> str:
