@@ -20,6 +20,41 @@
 - Ensure new experiment packets include `wiki_plan.yaml` stable entities, affected pages, and semantic lint so synthesis updates entity pages rather than only experiment mirrors.
 
 <!-- wiki-ingest:latest:start -->
+### 26806097236-1 | 2026-06-01-app-context-feature-engineering-20260601
+
+- link: [[performance/2026-06-01-app-context-feature-engineering-20260601]]
+- publish_action: `bot_pr`
+- risk_tier: `tier3-performance`
+- review-required: true
+
+### 26806097236-1 | 2026-05-29-labelwise-weekly-progress-target-bottlenecks
+
+- link: [[experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks]]
+- publish_action: `bot_pr`
+- risk_tier: `tier2-interpretation`
+- review-required: true
+
+### 26806097236-1 | 2026-05-28-1875-feature-domain-ablation-and-dedup
+
+- link: [[features/2026-05-28-1875-feature-domain-ablation-and-dedup]]
+- publish_action: `bot_pr`
+- risk_tier: `tier2-interpretation`
+- review-required: true
+
+### 26806097236-1 | 2026-05-29-v200-v209-sparse-splice-review
+
+- link: [[experiments/2026-05-29-v200-v209-sparse-splice-review]]
+- publish_action: `bot_pr`
+- risk_tier: `tier2-interpretation`
+- review-required: true
+
+### 26806097236-1 | 2026-05-29-v186-shap-leaderboard-analysis
+
+- link: [[performance/2026-05-29-v186-shap-leaderboard-analysis]]
+- publish_action: `bot_pr`
+- risk_tier: `tier3-performance`
+- review-required: true
+
 ### local-run-section07-notebook | 2026-06-01-lifelog-section07-notebook-overview
 
 - link: [[experiments/2026-06-01-lifelog-section07-notebook-overview]]

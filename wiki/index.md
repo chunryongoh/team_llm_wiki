@@ -41,10 +41,15 @@
 - [Team Packet Entity Coverage Audit](reports/2026-06-02-team-packet-entity-coverage-audit.md)
 
 <!-- wiki-ingest:index:start -->
+- [1875 feature domain ablation and dedup](features/2026-05-28-1875-feature-domain-ablation-and-dedup.md) - `feature`
 - [DACON Leaderboard and Local OOF Claim Boundary](sources/2026-06-01-dacon-leaderboard-claim-boundary.md) - `reference`
 - [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md) - `performance`
 - [LifeLog Section 07 Notebook Overview](experiments/2026-06-01-lifelog-section07-notebook-overview.md) - `experiment`
 - [LifeLog Section 07 Working Notes](experiments/2026-06-01-lifelog-section07-working-notes.md) - `experiment`
 - [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`
 - [Sleep Lifelog 2024 Dataset Definition](datasets/sleep-lifelog-2024.md) - `dataset`
+- [app context feature engineering 20260601](performance/2026-06-01-app-context-feature-engineering-20260601.md) - `performance`
+- [labelwise weekly progress target bottlenecks](experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md) - `experiment`
+- [v186 shap leaderboard analysis](performance/2026-05-29-v186-shap-leaderboard-analysis.md) - `performance`
+- [v200 v209 sparse splice review](experiments/2026-05-29-v200-v209-sparse-splice-review.md) - `experiment`
 <!-- wiki-ingest:index:end -->

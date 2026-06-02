@@ -1,0 +1,139 @@
+{
+  "claim_boundary": "PDF and Slack-reported v186 public leaderboard and SHAP analysis only; DACON leaderboard export, submission id, private score, submission CSV lineage, and ablation evidence are not included.",
+  "claim_status": "tentative",
+  "claims": [
+    {
+      "status": "tentative",
+      "text": "v186 is reported as the strongest submitted line with public LB 0.5922831771, mean OOF logloss 0.6167, S1 as best target, S4 as worst target, and SHAP-driven feature interpretation by Q/S target family."
+    }
+  ],
+  "dataset": {
+    "hash": "none",
+    "name": "sleep-lifelog-2024",
+    "version": "released-package"
+  },
+  "date": "2026-05-29",
+  "id": "2026-05-29-v186-shap-leaderboard-analysis",
+  "intended_wiki_targets": [
+    "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md"
+  ],
+  "metrics_to_verify": [
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "public_lb_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.5922831771,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "v186_mean_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6167,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "q1_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6406,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "q2_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6466,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "q3_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6408,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "s1_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.5597,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "s2_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6005,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "s3_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.5629,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "s4_oof_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.666,
+      "tolerance": 0.0
+    }
+  ],
+  "model": {
+    "family": "v186-target-specific-lgbm-catboost-blend",
+    "weights_in_repo": false
+  },
+  "owner": "moon-hyungdo",
+  "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+  "packet_type": "performance",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "metrics": "metrics.json",
+    "notes": "packet.md",
+    "performance": "performance.yaml",
+    "source_feature_meaning": "source/v186-top10-feature-meaning-ko.md",
+    "source_pdf": "source/etri-2026-v186-shap-analysis.pdf",
+    "source_text": "source/etri-2026-v186-shap-analysis.txt",
+    "wiki_plan": "wiki_plan.yaml"
+  },
+  "risk_tier": "tier3-performance",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "v186-report-oof-plus-public-lb-observation"
+  },
+  "status": "submitted",
+  "summary": "v186 is reported as the strongest submitted line with public LB 0.5922831771, mean OOF logloss 0.6167, S1 as best target, S4 as worst target, and SHAP-driven feature interpretation by Q/S target family.",
+  "task": "source-ingest",
+  "title": "v186 shap leaderboard analysis"
+}

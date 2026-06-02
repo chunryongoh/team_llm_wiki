@@ -1,0 +1,108 @@
+{
+  "claim_boundary": "DOCX-reported feature engineering and public LB observation only; raw metric JSON, submission id, leaderboard export, private score, and same-split local OOF evidence are not included.",
+  "claim_status": "tentative",
+  "claims": [
+    {
+      "status": "tentative",
+      "text": "\uc870\ud61c\uc6d0 bundle reports LGBM+CatBoost over 1,695 features with app-name daily/evening features improving LB 0.6218831823 to 0.6182941107, then presleep/night/early-morning app context improving to 0.6106185586."
+    }
+  ],
+  "dataset": {
+    "hash": "none",
+    "name": "sleep-lifelog-2024",
+    "version": "released-package"
+  },
+  "date": "2026-06-01",
+  "id": "2026-06-01-app-context-feature-engineering-20260601",
+  "intended_wiki_targets": [
+    "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md"
+  ],
+  "metrics_to_verify": [
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "baseline_public_lb_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6218831823,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "daily_evening_app_public_lb_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6182941107,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "final_public_lb_logloss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6106185586,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "first_delta",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": -0.0035890716,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "second_delta",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": -0.0076755521,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "total_delta",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": -0.0112646237,
+      "tolerance": 0.0
+    }
+  ],
+  "model": {
+    "family": "lgbm-catboost-app-context-ensemble",
+    "weights_in_repo": false
+  },
+  "owner": "cho-hyewon",
+  "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+  "packet_type": "performance",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "metrics": "metrics.json",
+    "notes": "packet.md",
+    "performance": "performance.yaml",
+    "source_docx": "source/feature-engineering-result-report-20260601.docx",
+    "source_docx_text": "source/feature-engineering-result-report-20260601.txt",
+    "wiki_plan": "wiki_plan.yaml"
+  },
+  "risk_tier": "tier3-performance",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "20260526-172609-lgbcat-timesplit-public-lb-observation"
+  },
+  "status": "submitted",
+  "summary": "\uc870\ud61c\uc6d0 bundle reports LGBM+CatBoost over 1,695 features with app-name daily/evening features improving LB 0.6218831823 to 0.6182941107, then presleep/night/early-morning app context improving to 0.6106185586.",
+  "task": "source-ingest",
+  "title": "app context feature engineering 20260601"
+}

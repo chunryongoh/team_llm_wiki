@@ -1,0 +1,88 @@
+{
+  "claim_boundary": "Slack/weekly-progress and existing Section07 notes only; public scores are user-reported and target metrics lack raw metric files unless separately packetized.",
+  "claim_status": "tentative",
+  "claims": [
+    {
+      "status": "tentative",
+      "text": "\uc11d\ud604\uc11d weekly update records that labelwise models reached the strongest public score note 0.5986218188, temporal overlap/window augmentation hurt more than helped, Q-feature additions had little direct impact, S1 can reach about 0.48, Q3 is stuck around 0.62, S4 worsens with broad feature additions, and frequency-based Q features remain a candidate."
+    }
+  ],
+  "dataset": {
+    "hash": "none",
+    "name": "sleep-lifelog-2024",
+    "version": "released-package"
+  },
+  "date": "2026-05-29",
+  "id": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+  "intended_wiki_targets": [
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md"
+  ],
+  "metrics_to_verify": [
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "section9_labelwise_best_public_lb",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.5986218188,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "section07_candidate_public_lb",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6003735255,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "s1_reported_best_logloss_approx",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.48,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "q3_reported_limit_logloss_approx",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.62,
+      "tolerance": 0.0
+    }
+  ],
+  "model": {
+    "family": "labelwise-lgbm-catboost-section07",
+    "weights_in_repo": false
+  },
+  "owner": "hyeonseokrock",
+  "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+  "packet_type": "experiment",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "evidence": "evidence.yaml",
+    "metrics": "metrics.json",
+    "notes": "packet.md",
+    "source_prompt": "source/prompt4llmwiki.txt",
+    "source_weekly_progress": "source/weekly-progress-20260521-20260529-ko-short.md",
+    "wiki_plan": "wiki_plan.yaml"
+  },
+  "risk_tier": "tier2-interpretation",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "section07-working-notes-and-weekly-progress-observation"
+  },
+  "status": "submitted",
+  "summary": "\uc11d\ud604\uc11d weekly update records that labelwise models reached the strongest public score note 0.5986218188, temporal overlap/window augmentation hurt more than helped, Q-feature additions had little direct impact, S1 can reach about 0.48, Q3 is stuck around 0.62, S4 worsens with broad feature additions, and frequency-based Q features remain a candidate.",
+  "task": "source-ingest",
+  "title": "labelwise weekly progress target bottlenecks"
+}
