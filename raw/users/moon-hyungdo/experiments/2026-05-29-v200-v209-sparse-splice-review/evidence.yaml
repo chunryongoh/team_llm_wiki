@@ -1,0 +1,53 @@
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+decisions:
+  - Avoid broad replacement when local proxy gain is smaller than leaderboard blind-spot scale.
+  - Use sparse splice from v189 anchor only when independent physical signals agree.
+  - Treat Q2 as conservative target because Q2 edits repeatedly hurt public score.
+evidence_gaps:
+  - No raw score CSV
+  - No local replay metric table
+  - No submission lineage
+  - No private LB evidence
+model:
+  family: v200-v209-sparse-splice-public-consensus
+papers_or_methods:
+  - DPSleep
+  - SleepMore
+  - sparse-splice
+  - public-consensus-micro-splice
+split:
+  group_key: subject_id
+  name: public-lb-observation-and-local-proxy-review
+task: dacon-sleep-lifelog-v200-v209-review
+version_scores:
+  -
+    interpretation: official best reference in review
+    public_lb: 0.5925397
+    version: v189-anchor
+  -
+    delta_vs_v189: 0.0163
+    interpretation: broad reset failure
+    public_lb: 0.608842
+    version: v200
+  -
+    delta_vs_v189: 1.7e-05
+    interpretation: S2 overprediction calibration, insufficient gain
+    public_lb: 0.592557
+    version: v204
+  -
+    delta_vs_v189: 7e-06
+    interpretation: Q2/Q3 residual and motif extension near-best
+    public_lb: 0.592547
+    version: v208
+  -
+    delta_vs_v189: 4e-06
+    interpretation: Q3-only consensus edit near-best
+    public_lb: 0.592543
+    version: v209-q3-low
+  -
+    delta_vs_v189: 1.1e-05
+    interpretation: Q2/Q3 joint edit worsened due to Q2 inclusion
+    public_lb: 0.592551
+    version: v209-q23-low

@@ -1,0 +1,86 @@
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+domain_findings:
+  light_w: reported largest noise domain, 301 features, delta -0.0209
+  q3: BLE/WiFi removal reportedly worsened Q3
+  screen_sleep: reported core domains
+feature_counts:
+  daily_feat_columns: 1870
+  duplicate_or_high_correlation_cleanup_candidates: 715
+  feature_tables: 54
+  final_x_train_features: 1875
+  sk_train_after_cross_sensor: 1913
+  sk_train_after_target_specific: 1959
+  timing_entropy_new_features: 121
+  timing_entropy_tables: 15
+feature_families:
+  -
+    anchor: subject_id + lifelog_date daily row
+    compute_cost: "high feature count: final 1875 features after 1959 intermediate features"
+    dependencies:
+      - LightGBM/CatBoost tabular models
+      - sensor parquet feature tables
+      - Timing Entropy pipeline
+    evidence: DOCX notebook output summary and Slack-reported ablation observations; raw ablation metrics not included.
+    expected_dtype: numeric
+    feature_prefixes:
+      - timing_entropy
+      - app_
+      - act_
+      - sleep_
+      - light_
+      - screen_
+      - hrv_
+      - subj_
+      - roll_
+      - lag_
+    formula: "multi-stage feature generation: sensor aggregation -> Timing Entropy -> cross-sensor composites -> target-specific features -> numeric/nonempty filter"
+    leakage_paths:
+      - subject-relative statistics may be transductive unless fold/date cutoff is proven
+      - high-correlation feature pruning may use full data if not fold-scoped
+    leakage_risk: medium
+    missing_policy: remove non-numeric/all-missing features; model-level missing handling not fully evidenced in packet
+    name: multi-stage-sensor-timing-target-feature-pool
+    normalization_policy: subject-relative mean/std/z features used; exact fold-fit scope not evidenced
+    owner: ko-nayoung
+    preprocessing_dependencies:
+      - daily aggregation
+      - subject-relative z-score/std
+      - lag/rolling transforms
+      - numeric and all-missing filter
+    raw_columns:
+      - sensor parquet daily aggregates
+      - Timing Entropy tables
+      - mUsageStats
+      - mLight
+      - wLight
+      - screen
+      - sleep proxy
+      - calendar
+    semantic_lint:
+      - Treat 715 duplicate/high-correlation count as cleanup note until raw list is added.
+      - Treat V2 CatBoost avg -0.0063 as contributor-reported until metric file is added.
+    source_modalities:
+      - smartphone
+      - smartwatch
+      - calendar
+      - derived sleep proxy
+    target_hypothesis: Screen and Sleep domain features are broadly useful; Q3 needs BLE/WiFi retention or target-specific feature set; Light-W may add noise.
+    window: daily plus evening/presleep/night/early-morning windows where available
+    windows:
+      - daily
+      - evening
+      - presleep
+      - night
+      - early_morning
+model:
+  family: catboost-v2-feature-domain-ablation
+semantic_lint:
+  - Feature count does not imply feature value.
+  - Separate SHAP/importance, ablation, and leaderboard evidence.
+  - Require target-specific feature-set policy for Q3 before broad domain removal.
+split:
+  group_key: subject_id
+  name: notebook-output-and-slack-summary-observation
+task: dacon-sleep-lifelog-feature-domain-ablation-dedup

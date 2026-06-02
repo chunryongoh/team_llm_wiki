@@ -1,0 +1,255 @@
+너는 Git 기반 AI 프로젝트 문서화 담당자다.
+
+우리 팀은 LLM Wiki를 만들기 위해 Git repository 안에 Markdown 문서를 정리하려고 한다.
+팀원 대부분은 코딩에 익숙하지 않으므로, 문서는 비전공자도 이해할 수 있게 작성하되, 실험 재현과 협업에 필요한 핵심 정보는 빠뜨리지 않아야 한다.
+
+아래 4개 테마에 대해서만 Markdown 파일을 생성하라.
+
+생성할 파일은 정확히 아래 4개다.
+
+1. `01_preprocessing.md`
+2. `02_feature.md`
+3. `03_model.md`
+4. `04_performance.md`
+
+추가 파일은 만들지 마라.
+인덱스 문서도 만들지 마라.
+전체 자료를 길게 요약하지 말고, 각 문서에 팀원이 채워 넣을 수 있는 구조와 템플릿을 만들어라.
+
+공통 작성 규칙
+
+각 Markdown 파일은 아래 구조를 반드시 포함한다.
+
+```markdown
+문서 제목
+
+작성일: YYYY-MM-DD  
+담당자: 이름  
+상태: draft / review / final  
+관련 폴더: 경로  
+관련 산출물: 파일명  
+
+## 핵심 요약
+
+## 현재 기준
+
+## 작성해야 할 내용
+
+## 기록 템플릿
+
+## 주의사항
+
+## TODO
+```
+
+문체 규칙
+
+1. 비전공자도 이해할 수 있게 쓴다.
+2. 추측하지 말고, 모르는 내용은 `확인 필요`라고 쓴다.
+3. 실험 결과와 의견을 구분한다.
+4. 장점만 쓰지 말고 한계, 위험, leakage 가능성, 재현성 문제도 함께 적는다.
+5. 코드 설명보다 “무엇을 기록해야 하는지”에 집중한다.
+6. 각 파일은 바로 Git Wiki 또는 repo 문서로 저장 가능한 Markdown 형식이어야 한다.
+
+---
+
+파일 1. `01_preprocessing.md`
+
+주제: 데이터 전처리, 데이터 분할, 검증세트 생성, feature 생성 전 시간 구간 설정
+
+이 문서에는 반드시 아래 내용을 포함하라.
+
+1. 데이터 입력 파일 목록
+2. train, validation, test 분리 기준
+3. 검증세트 생성 방식
+4. subject 기준 분리 여부
+5. 시간 기준 분리 여부
+6. public proxy 또는 tail validation을 쓰는 경우 그 이유
+7. feature 생성 전 시간 구간 정의
+   예: daytime, evening, presleep, sleep proxy, wake zone
+8. 결측치 처리 방식
+9. sensor coverage 또는 mask 처리 방식
+10. leakage 방지 규칙
+11. 전처리 산출물 목록
+12. 팀원이 확인해야 할 체크리스트
+
+기록 템플릿에는 아래 표를 포함하라.
+
+```markdown
+| 항목 | 내용 | 확인 여부 |
+|---|---|---|
+| 원천 데이터 경로 | 확인 필요 | |
+| train row 수 | 확인 필요 | |
+| test row 수 | 확인 필요 | |
+| validation 방식 | 확인 필요 | |
+| leakage 방지 규칙 | 확인 필요 | |
+| 시간 구간 정의 | 확인 필요 | |
+| 결측 처리 방식 | 확인 필요 | |
+| 산출물 파일 | 확인 필요 | |
+```
+
+---
+
+파일 2. `02_feature.md`
+
+주제: 어떤 feature를 구현했고, 어떤 의미가 있으며, 어떤 label에 쓰는지 정리
+
+이 문서에는 반드시 아래 내용을 포함하라.
+
+1. 현재 feature pool 요약
+2. feature block 구분
+   예: base feature, additive feature, subject relative feature, window feature, temporal feature
+3. label별 feature 사용 정책
+   Q1, Q2, Q3, S1, S2, S3, S4 각각 따로 작성
+4. feature domain map
+   예: 수면 시간, 일주기, HR/HRV, 활동량, 스크린, 앱, 빛, 소리, WiFi/BLE, GPS, 충전, coverage
+5. 각 feature가 의미하는 생리적 또는 행동적 해석
+6. feature가 위험할 수 있는 이유
+   예: 과적합, leakage, train/test 분포 차이, subject 편향
+7. 새 feature 제안 기록 템플릿
+8. feature 실험 결과 기록 템플릿
+
+기록 템플릿에는 아래 표를 포함하라.
+
+```markdown
+| feature 이름 | domain | 계산 방식 | 예상 label | 기대 효과 | 위험 요소 | 사용 여부 |
+|---|---|---|---|---|---|---|
+| 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+```
+
+label별 feature 정책 표도 포함하라.
+
+```markdown
+| label | 주로 볼 feature domain | 강제 포함 feature | 후보 feature | 제외 또는 주의 feature |
+|---|---|---|---|---|
+| Q1 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| Q2 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| Q3 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S1 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S2 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S3 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S4 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+```
+
+---
+
+파일 3. `03_model.md`
+
+주제: 모델 구조, label별 모델 전략, train validation 방식, objective 정리
+
+이 문서에는 반드시 아래 내용을 포함하라.
+
+1. 현재 사용 중인 모델 목록
+   예: LightGBM, CatBoost, XGBoost, CNN, LSTM, Attention
+2. 모델별 역할
+   예: tabular feature 모델, sequence 모델, attention feature generator
+3. label별 모델 전략
+   Q1, Q2, Q3, S1, S2, S3, S4 각각 따로 작성
+4. 모델 아키텍처 설명
+   단, 가중치 값은 기록하지 않는다
+5. train validation 전략
+6. objective
+   예: log loss 중심, label별 안정성, public proxy, tail stability
+7. 모델 선택 기준
+8. 모델 폐기 기준
+9. leakage 방지 규칙
+10. 최종 제출 모델과 실험 모델 구분
+
+기록 템플릿에는 아래 표를 포함하라.
+
+```markdown
+| label | 모델 후보 | 사용 feature pool | validation 방식 | 주요 metric | 채택 여부 | 채택 또는 폐기 이유 |
+|---|---|---|---|---|---|---|
+| Q1 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| Q2 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| Q3 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S1 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S2 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S3 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S4 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+```
+
+주의사항에는 아래 내용을 반드시 포함하라.
+
+```markdown
+- validation에서 선택한 feature와 submission 생성 시 사용한 feature가 달라지면 안 된다.
+- 전체 평균 성능만 보고 모델을 선택하면 안 된다.
+- 특정 label만 좋아지고 다른 label이 크게 악화되면 채택하지 않는다.
+- old validation score와 current validation score는 protocol이 다르면 직접 비교하지 않는다.
+```
+
+---
+
+파일 4. `04_performance.md`
+
+주제: 성능 기록, metric 해석, label별 개선과 악화 정리
+
+이 문서에는 반드시 아래 내용을 포함하라.
+
+1. 전체 성능 요약
+2. label별 성능
+3. validation protocol별 성능
+   예: OOF, nested validation, public proxy, subject time tail
+4. metric 설명
+   log loss, AUROC, AUPRC, confusion matrix
+5. public score와 local validation score 차이 해석
+6. label별 개선 여부
+7. label별 악화 여부
+8. 안정적인 모델과 불안정한 모델 구분
+9. 제출 후보 기록
+10. 최종 선택 근거
+
+metric 설명은 비전공자도 이해할 수 있게 한 줄씩 작성하라.
+
+예:
+
+```markdown
+- Log Loss: 예측 확률이 정답에 얼마나 잘 맞는지 보는 지표이며, 낮을수록 좋다.
+- AUROC: positive와 negative를 얼마나 잘 구분하는지 보는 지표이며, 높을수록 좋다.
+- AUPRC: positive class를 얼마나 잘 잡는지 보는 지표이며, class imbalance가 있을 때 중요하다.
+- Confusion Matrix: TP, FP, TN, FN을 나눠 어떤 오류가 많은지 확인하는 표다.
+```
+
+기록 템플릿에는 아래 표를 포함하라.
+
+```markdown
+| 실험명 | label | validation 방식 | log loss | AUROC | AUPRC | confusion matrix 경로 | 채택 여부 | 비고 |
+|---|---|---|---:|---:|---:|---|---|---|
+| 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+```
+
+label별 최종 성능 표도 포함하라.
+
+```markdown
+| label | best model | log loss | AUROC | AUPRC | 안정성 평가 | 최종 사용 여부 |
+|---|---|---:|---:|---:|---|---|
+| Q1 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| Q2 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| Q3 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S1 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S2 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S3 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+| S4 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 | 확인 필요 |
+```
+
+---
+
+최종 출력 형식은 아래처럼 하라.
+
+```markdown
+===== 01_preprocessing.md =====
+
+내용
+
+===== 02_feature.md =====
+
+내용
+
+===== 03_model.md =====
+
+내용
+
+===== 04_performance.md =====
+
+내용
+```

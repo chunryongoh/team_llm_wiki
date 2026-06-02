@@ -1,0 +1,6 @@
+{
+  "section9_labelwise_best_public_lb": 0.5986218188,
+  "section07_candidate_public_lb": 0.6003735255,
+  "s1_reported_best_logloss_approx": 0.48,
+  "q3_reported_limit_logloss_approx": 0.62
+}

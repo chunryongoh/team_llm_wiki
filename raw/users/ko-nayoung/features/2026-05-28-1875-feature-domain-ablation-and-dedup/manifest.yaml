@@ -1,0 +1,43 @@
+claim_boundary: DOCX/PDF and Slack-reported feature analysis only; raw ablation metric files, feature correlation matrix, duplicate list, and submission lineage are not included.
+claim_status: tentative
+claims:
+  -
+    status: tentative
+    text: 구나영 bundle reports a 1,875-feature pipeline, 715 duplicate/high-correlation cleanup candidates, Timing Entropy and target-specific features, noisy Light-W ablation, Screen/Sleep core domains, and target-specific feature-set needs for Q3.
+dataset:
+  hash: none
+  name: sleep-lifelog-2024
+  version: released-package
+date: "2026-05-28"
+id: 2026-05-28-1875-feature-domain-ablation-and-dedup
+intended_wiki_targets:
+  - wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md
+metrics_to_verify:
+  []
+mode: structured
+model:
+  family: catboost-v2-feature-domain-ablation
+  weights_in_repo: false
+owner: ko-nayoung
+packet_type: feature
+raw_paths:
+  features: features.yaml
+  notes: packet.md
+  source_docx: source/20260528-notebook-outputs.docx
+  source_docx_text: source/20260528-notebook-outputs.txt
+  source_pdf: source/feature-info.pdf
+  source_pdf_text: source/feature-info.txt
+  wiki_plan: wiki_plan.yaml
+route: wiki/features
+schema: wiki-packet/v1
+source_refs:
+  - attachments/20260528_notebook_outputs.docx
+  - attachments/feature_info.pdf
+split:
+  fold_file: null
+  group_key: subject_id
+  name: notebook-output-and-slack-summary-observation
+status: submitted
+summary: 구나영 bundle reports a 1,875-feature pipeline, 715 duplicate/high-correlation cleanup candidates, Timing Entropy and target-specific features, noisy Light-W ablation, Screen/Sleep core domains, and target-specific feature-set needs for Q3.
+task: source-ingest
+title: 1875 feature domain ablation and dedup

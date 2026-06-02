@@ -1,0 +1,44 @@
+affected_pages:
+  - wiki/decisions/sparse-splice-guardrails.md
+  - wiki/questions/replay-validator-blind-spot.md
+  - wiki/features/sparse-splice-feature-policy.md
+  - wiki/submissions/dacon-leaderboard-history.md
+  - wiki/claims/current-supported-claims.md
+claim_boundary: PDF review and Slack summary of v200-v209 only; score trend is user-reported public LB observation without leaderboard export, submission ids, or private score.
+claim_registry_updates:
+  - "tentative: v200-v209 review suggests broad morphology reset failed and sparse splice guardrails should be preferred, but raw validation/submission lineage is missing."
+claim_status: tentative
+decisions:
+  []
+evidence_gaps:
+  - No submission lineage for v200-v209.
+  - No local replay validator raw metrics.
+  - No private leaderboard evidence.
+open_questions:
+  -
+    close_condition: A validator policy page defines an empirical blind-spot threshold and examples.
+    id: replay-validator-blind-spot-threshold
+    merge_blocker: false
+    needed_evidence:
+      - v200-v209 submission table
+      - local replay metrics
+      - public LB deltas
+    owner_role: validation-owner
+    priority: high
+    question: What local replay or OOF proxy threshold can reliably detect public-LB movements around 0.00005?
+packet_id: 2026-05-29-v200-v209-sparse-splice-review
+packet_type: experiment
+schema: team-llm-wiki-plan/v1
+semantic_lint:
+  - Do not present DPSleep/SleepMore-inspired morphology as successful; current report frames broad reset as negative evidence.
+  - Keep v189/v200-v209 public LB notes as user-reported observations until submission lineage is added.
+stable_entities:
+  - "decision:sparse-splice-guardrails"
+  - "question:replay-validator-blind-spot"
+  - "feature:sparse-splice-feature-policy"
+  - "target:q2-conservative-edit-policy"
+  - "target:q3-residual-edit-candidate"
+supersedes_or_conflicts:
+  - Supersedes any naive plan to replace v189/v186-style anchors wholesale based only on local proxy gains.
+topic_pages:
+  []

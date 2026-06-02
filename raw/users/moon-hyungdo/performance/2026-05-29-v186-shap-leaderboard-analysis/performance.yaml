@@ -1,0 +1,69 @@
+baseline: previous submitted lines; exact same-split baseline not included in packet
+baseline_comparison:
+  note: v186 is reported as best submitted line, but packet lacks leaderboard export and submission id.
+  same_metric_definition: unclear
+  same_split: false
+claim_status: tentative
+confusion_matrices: not provided
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+metric_definitions:
+  public_lb_logloss:
+    direction: lower_is_better
+    evidence_surface: user_reported_public_score_only
+  v186_mean_oof_logloss:
+    direction: lower_is_better
+    evidence_surface: pdf_report_oof_summary
+model:
+  family: v186-target-specific-lgbm-catboost-blend
+oof_predictions: not provided
+overall_metrics:
+  primary: public_lb_logloss
+  public_lb_logloss: 0.5922831771
+  q1_oof_logloss: 0.6406
+  q2_oof_logloss: 0.6466
+  q3_oof_logloss: 0.6408
+  s1_oof_logloss: 0.5597
+  s2_oof_logloss: 0.6005
+  s3_oof_logloss: 0.5629
+  s4_oof_logloss: 0.666
+  v186_mean_oof_logloss: 0.6167
+primary_metric: public_lb_logloss
+split:
+  group_key: subject_id
+  name: v186-report-oof-plus-public-lb-observation
+split_id: v186-report-oof-plus-public-lb-observation
+submission_predictions: submission file lineage not provided
+target_metrics:
+  Q1:
+    oof_logloss: 0.6406
+  Q2:
+    oof_logloss: 0.6466
+  Q3:
+    oof_logloss: 0.6408
+  S1:
+    oof_logloss: 0.5597
+  S2:
+    oof_logloss: 0.6005
+  S3:
+    oof_logloss: 0.5629
+  S4:
+    oof_logloss: 0.666
+targets:
+  - Q1
+  - Q2
+  - Q3
+  - S1
+  - S2
+  - S3
+  - S4
+task: dacon-sleep-lifelog-v186-shap-public-lb-observation
+uncertainty:
+  judgment: useful_feature_importance_and_public_lb_observation_only
+  missing_evidence:
+    - DACON submission id
+    - leaderboard export
+    - submission CSV lineage
+    - private score
+    - ablation raw metrics

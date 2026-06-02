@@ -1,0 +1,11 @@
+{
+  "public_lb_logloss": 0.5922831771,
+  "q1_oof_logloss": 0.6406,
+  "q2_oof_logloss": 0.6466,
+  "q3_oof_logloss": 0.6408,
+  "s1_oof_logloss": 0.5597,
+  "s2_oof_logloss": 0.6005,
+  "s3_oof_logloss": 0.5629,
+  "s4_oof_logloss": 0.666,
+  "v186_mean_oof_logloss": 0.6167
+}

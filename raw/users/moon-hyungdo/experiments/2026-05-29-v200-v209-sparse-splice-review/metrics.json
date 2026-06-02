@@ -1,0 +1,13 @@
+{
+  "v189_anchor_public_lb": 0.5925397,
+  "v200_public_lb": 0.608842,
+  "v200_delta_vs_v189": 0.0163,
+  "v204_public_lb": 0.592557,
+  "v204_delta_vs_v189": 0.000017,
+  "v208_public_lb": 0.592547,
+  "v208_delta_vs_v189": 0.000007,
+  "v209_q3_low_public_lb": 0.592543,
+  "v209_q3_low_delta_vs_v189": 0.000004,
+  "v209_q23_low_public_lb": 0.592551,
+  "v209_q23_low_delta_vs_v189": 0.000011
+}
