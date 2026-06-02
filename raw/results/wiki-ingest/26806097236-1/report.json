@@ -1,0 +1,540 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md",
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+    "wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md",
+    "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+    "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-app-context-feature-engineering-20260601.json",
+    "automation/.cache/compiled/2026-05-29-labelwise-weekly-progress-target-bottlenecks.json",
+    "automation/.cache/compiled/2026-05-28-1875-feature-domain-ablation-and-dedup.json",
+    "automation/.cache/compiled/2026-05-29-v200-v209-sparse-splice-review.json",
+    "automation/.cache/compiled/2026-05-29-v186-shap-leaderboard-analysis.json",
+    "raw/results/wiki-ingest/26806097236-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "status": "tentative"
+    },
+    {
+      "packet": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "status": "tentative"
+    },
+    {
+      "packet": "2026-05-28-1875-feature-domain-ablation-and-dedup",
+      "status": "tentative"
+    },
+    {
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "status": "tentative"
+    },
+    {
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "status": "tentative"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md",
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+    "wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md",
+    "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+    "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-01-app-context-feature-engineering-20260601.json",
+    "automation/.cache/compiled/2026-05-29-labelwise-weekly-progress-target-bottlenecks.json",
+    "automation/.cache/compiled/2026-05-28-1875-feature-domain-ablation-and-dedup.json",
+    "automation/.cache/compiled/2026-05-29-v200-v209-sparse-splice-review.json",
+    "automation/.cache/compiled/2026-05-29-v186-shap-leaderboard-analysis.json"
+  ],
+  "input_changed_paths": [
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/manifest.yaml",
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/metrics.json",
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/packet.md",
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/performance.yaml",
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/source/feature-engineering-result-report-20260601.docx",
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/source/feature-engineering-result-report-20260601.txt",
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/wiki_plan.yaml",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/evidence.yaml",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/manifest.yaml",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/metrics.json",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/packet.md",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/source/prompt4llmwiki.txt",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/source/weekly-progress-20260521-20260529-ko-short.md",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/wiki_plan.yaml",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/features.yaml",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/manifest.yaml",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/packet.md",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/20260528-notebook-outputs.docx",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/20260528-notebook-outputs.txt",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/feature-info.pdf",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/feature-info.txt",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/wiki_plan.yaml",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/evidence.yaml",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/manifest.yaml",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/metrics.json",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/packet.md",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/source/etri-2026-v2-review.pdf",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/source/etri-2026-v2-review.txt",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/wiki_plan.yaml",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/manifest.yaml",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/metrics.json",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/packet.md",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/performance.yaml",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/etri-2026-v186-shap-analysis.pdf",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/etri-2026-v186-shap-analysis.txt",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/v186-top10-feature-meaning-ko.md",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/wiki_plan.yaml"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [
+    {
+      "metric": "baseline_public_lb_logloss",
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "reported_value": 0.6218831823
+    },
+    {
+      "metric": "daily_evening_app_public_lb_logloss",
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "reported_value": 0.6182941107
+    },
+    {
+      "metric": "final_public_lb_logloss",
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "reported_value": 0.6106185586
+    },
+    {
+      "metric": "first_delta",
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "reported_value": -0.0035890716
+    },
+    {
+      "metric": "second_delta",
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "reported_value": -0.0076755521
+    },
+    {
+      "metric": "total_delta",
+      "packet": "2026-06-01-app-context-feature-engineering-20260601",
+      "reported_value": -0.0112646237
+    },
+    {
+      "metric": "section9_labelwise_best_public_lb",
+      "packet": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "reported_value": 0.5986218188
+    },
+    {
+      "metric": "section07_candidate_public_lb",
+      "packet": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "reported_value": 0.6003735255
+    },
+    {
+      "metric": "s1_reported_best_logloss_approx",
+      "packet": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "reported_value": 0.48
+    },
+    {
+      "metric": "q3_reported_limit_logloss_approx",
+      "packet": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "reported_value": 0.62
+    },
+    {
+      "metric": "v189_anchor_public_lb",
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "reported_value": 0.5925397
+    },
+    {
+      "metric": "v200_public_lb",
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "reported_value": 0.608842
+    },
+    {
+      "metric": "v204_public_lb",
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "reported_value": 0.592557
+    },
+    {
+      "metric": "v208_public_lb",
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "reported_value": 0.592547
+    },
+    {
+      "metric": "v209_q3_low_public_lb",
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "reported_value": 0.592543
+    },
+    {
+      "metric": "v209_q23_low_public_lb",
+      "packet": "2026-05-29-v200-v209-sparse-splice-review",
+      "reported_value": 0.592551
+    },
+    {
+      "metric": "public_lb_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.5922831771
+    },
+    {
+      "metric": "v186_mean_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.6167
+    },
+    {
+      "metric": "q1_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.6406
+    },
+    {
+      "metric": "q2_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.6466
+    },
+    {
+      "metric": "q3_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.6408
+    },
+    {
+      "metric": "s1_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.5597
+    },
+    {
+      "metric": "s2_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.6005
+    },
+    {
+      "metric": "s3_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.5629
+    },
+    {
+      "metric": "s4_oof_logloss",
+      "packet": "2026-05-29-v186-shap-leaderboard-analysis",
+      "reported_value": 0.666
+    }
+  ],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "changed paths are limited to raw/users/**",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      },
+      {
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+        "status": "pass"
+      }
+    ],
+    "status": "pass"
+  },
+  "packets": [
+    {
+      "claim_boundary": "DOCX-reported feature engineering and public LB observation only; raw metric JSON, submission id, leaderboard export, private score, and same-split local OOF evidence are not included.",
+      "claim_status": "tentative",
+      "id": "2026-06-01-app-context-feature-engineering-20260601",
+      "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: performance",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier3-performance",
+      "type": "performance"
+    },
+    {
+      "claim_boundary": "Slack/weekly-progress and existing Section07 notes only; public scores are user-reported and target metrics lack raw metric files unless separately packetized.",
+      "claim_status": "tentative",
+      "id": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: experiment",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "experiment"
+    },
+    {
+      "claim_boundary": "DOCX/PDF and Slack-reported feature analysis only; raw ablation metric files, feature correlation matrix, duplicate list, and submission lineage are not included.",
+      "claim_status": "tentative",
+      "id": "2026-05-28-1875-feature-domain-ablation-and-dedup",
+      "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: feature",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "feature"
+    },
+    {
+      "claim_boundary": "PDF review and Slack summary of v200-v209 only; score trend is user-reported public LB observation without leaderboard export, submission ids, or private score.",
+      "claim_status": "tentative",
+      "id": "2026-05-29-v200-v209-sparse-splice-review",
+      "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: experiment",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier2-interpretation",
+      "type": "experiment"
+    },
+    {
+      "claim_boundary": "PDF and Slack-reported v186 public leaderboard and SHAP analysis only; DACON leaderboard export, submission id, private score, submission CSV lineage, and ablation evidence are not included.",
+      "claim_status": "tentative",
+      "id": "2026-05-29-v186-shap-leaderboard-analysis",
+      "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: performance",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier3-performance",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/26806097236-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier3-performance",
+  "run_id": "26806097236-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": null,
+  "timing_ms": 335,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}

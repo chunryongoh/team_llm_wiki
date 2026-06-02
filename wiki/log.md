@@ -132,3 +132,28 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md`
 - run: `local-run-section07-notebook`
+
+## [2026-06-01] ingest | 2026-06-01-app-context-feature-engineering-20260601
+
+- target: `wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md`
+- run: `26806097236-1`
+
+## [2026-05-29] ingest | 2026-05-29-labelwise-weekly-progress-target-bottlenecks
+
+- target: `wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md`
+- run: `26806097236-1`
+
+## [2026-05-28] ingest | 2026-05-28-1875-feature-domain-ablation-and-dedup
+
+- target: `wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md`
+- run: `26806097236-1`
+
+## [2026-05-29] ingest | 2026-05-29-v200-v209-sparse-splice-review
+
+- target: `wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md`
+- run: `26806097236-1`
+
+## [2026-05-29] ingest | 2026-05-29-v186-shap-leaderboard-analysis
+
+- target: `wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md`
+- run: `26806097236-1`
