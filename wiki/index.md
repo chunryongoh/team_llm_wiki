@@ -38,6 +38,7 @@
 - [Packet Skill Design Summary](reports/2026-05-28-packet-skill-design.md)
 - [Packet Skill Implementation Report](reports/2026-05-28-packet-skill-implementation.md)
 - [GPT-5.5 LLM Synthesis Implementation](reports/2026-05-29-llm-synthesis-implementation.md)
+- [Team Packet Entity Coverage Audit](reports/2026-06-02-team-packet-entity-coverage-audit.md)
 
 <!-- wiki-ingest:index:start -->
 - [DACON Leaderboard and Local OOF Claim Boundary](sources/2026-06-01-dacon-leaderboard-claim-boundary.md) - `reference`
