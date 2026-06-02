@@ -2,6 +2,12 @@
 
 Append-only ingest and maintenance events belong here.
 
+## [2026-06-02] governance | entity-first-claim-gated-wiki
+
+- Added ML/AI hackathon entity model and packet quality standard.
+- Added required claim, submission, preprocessing, model, feature, decision, and section07 backlog pages.
+- Strengthened health, preview, and LLM synthesis rules so packet ingest updates stable wiki entities rather than only experiment mirrors.
+
 ## [2026-05-28] docs | korean-readme-usage-policy
 
 - Rewrote `README.md` in Korean around setup, packet authoring, ingest commands, GitHub Actions triggers, review policy, guard policy, and local verification.

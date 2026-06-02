@@ -206,9 +206,14 @@ def build_llm_synthesis_prompt(
         "Requirements:\n"
         "- Read and obey AGENTS.md and CLAUDE.md.\n"
         "- Use stable entity pages plus compounding topic pages, not dated packet mirrors.\n"
+        "- Update the claim registry, DACON leaderboard history, submission history, and preprocessing/split policy pages when relevant; "
+        "even when no claim changes, explicitly preserve that boundary.\n"
         "- Write every allowed output page exactly once; missing pages are invalid output.\n"
         "- Cross-link related dataset, benchmark, feature, decision, question, and report pages.\n"
         "- Capture contradictions, supersession notes, and unresolved questions as first-class wiki content.\n"
+        "- `wiki/latest-context.md` latest-context must expose Current Best, Active Risks, and Next Actions.\n"
+        "- Never merge local OOF, notebook-output, user-reported public score, DACON public leaderboard, "
+        "DACON private leaderboard, or organizer-official validation into one evidence surface.\n"
         "- Preserve raw provenance, packet ids, claim boundaries, and claim statuses.\n"
         "- Do not write raw/, automation/, or policy files.\n"
         "- Do not promote tentative claims to supported without explicit raw metric/split evidence.\n"
@@ -343,6 +348,9 @@ def _integration_paths(manifests: list[tuple[PacketManifest, Path]]) -> list[str
         f"wiki/features/{topic}-feature-landscape.md",
         f"wiki/decisions/{topic}-evaluation-protocol.md",
         f"wiki/questions/{topic}-open-questions.md",
+        "wiki/claims/current-supported-claims.md",
+        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/preprocessing/canonical-split-and-leakage-policy.md",
         f"wiki/reports/{report_slug}.md",
         "wiki/overview.md",
         "wiki/latest-context.md",

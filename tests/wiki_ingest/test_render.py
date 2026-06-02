@@ -52,6 +52,20 @@ def manifest(**overrides):
     return PacketManifest(**data)
 
 
+def seed_entity_model_pages(root: Path):
+    required = [
+        "wiki/team/ml-ai-hackathon-entity-model.md",
+        "wiki/team/packet-quality-standard.md",
+        "wiki/claims/current-supported-claims.md",
+        "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+        "wiki/submissions/dacon-leaderboard-history.md",
+    ]
+    for rel_path in required:
+        path = root / rel_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"# {path.stem.replace('-', ' ').title()}\n", encoding="utf-8")
+
+
 def test_render_source_index_log_and_latest_context(tmp_path):
     (tmp_path / "wiki").mkdir()
     (tmp_path / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
@@ -187,6 +201,7 @@ def test_render_packet_page_includes_full_manifest_lineage(tmp_path):
 
 def test_render_packet_page_links_to_compiled_packet_json(tmp_path):
     (tmp_path / "wiki").mkdir()
+    seed_entity_model_pages(tmp_path)
     (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
     (tmp_path / "automation" / ".cache" / "compiled").mkdir(parents=True)
     (tmp_path / "automation" / ".cache" / "compiled" / "compiled-ref.json").write_text("{}\n", encoding="utf-8")

@@ -10,8 +10,14 @@ Sleep-lifelog 작업의 안정 entrypoint는 다음과 같다.
 - Benchmark: [Sleep Health Hackathon Benchmark v0](benchmarks/sleep-health-hackathon-v0.md)
 - Performance diagnostic: [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md)
 - Feature synthesis: [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md)
+- Claim registry: [Current Supported Claims](claims/current-supported-claims.md)
+- Submission history: [DACON Leaderboard History](submissions/dacon-leaderboard-history.md)
+- Split/leakage policy: [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md)
 - Evaluation decision: [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md)
 - Open questions: [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md)
+- Section07 feature policy: [Section07 Feature Policy](features/section07-feature-policy.md)
+- Section07 model: [Section07 Mix LGBM CatBoost](models/section07-mix-lgbm-catboost.md)
+- Section07 follow-up backlog: [Section07 Follow-Up Backlog](questions/section07-followup-backlog.md)
 - Packet synthesis report: [2026-06-01 Sleep Lifelog Packet Synthesis](reports/2026-06-01-sleep-lifelog-packet-synthesis.md)
 
 ## 최신 지원 claim
@@ -24,7 +30,9 @@ Sleep-lifelog 작업의 안정 entrypoint는 다음과 같다.
 
 - `raw/`는 append-only source evidence다.
 - `wiki/`는 packet mirror가 아니라 안정 entity page와 topic page를 중심으로 유지한다.
+- 새 `experiment`, `feature`, `model`, `performance`, `preprocessing`, `augmentation` packet은 `wiki_plan.yaml`으로 stable entity와 semantic lint를 제안해야 한다.
 - 성능, feature, model ranking claim은 raw metric, split, claim boundary가 있어야 한다.
+- local OOF, notebook-output, user-reported public score, DACON public/private leaderboard, organizer-official validation은 서로 다른 evidence surface로 관리한다.
 - LLM-assisted synthesis 결과는 review-required로 취급한다.
 
 ## Raw Evidence

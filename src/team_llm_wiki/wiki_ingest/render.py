@@ -15,6 +15,16 @@ INDEX_START = "<!-- wiki-ingest:index:start -->"
 INDEX_END = "<!-- wiki-ingest:index:end -->"
 LATEST_START = "<!-- wiki-ingest:latest:start -->"
 LATEST_END = "<!-- wiki-ingest:latest:end -->"
+DEFAULT_LATEST_PREFIX = (
+    "# Latest Context\n\n"
+    "[[index]] [[overview]] [[log]]\n\n"
+    "## Current Best\n\n"
+    "- Not yet synthesized.\n\n"
+    "## Active Risks\n\n"
+    "- Not yet synthesized.\n\n"
+    "## Next Actions\n\n"
+    "- Not yet synthesized.\n"
+)
 REVIEW_TYPES = {
     PacketType.PERFORMANCE,
     PacketType.MODEL,
@@ -364,6 +374,25 @@ def _bounded_latest_page(prefix: str, entries: list[str], policy: IngestPolicy |
     return _replace_block(prefix, LATEST_START, LATEST_END, "")
 
 
+def _latest_prefix(text: str) -> str:
+    if LATEST_START in text and LATEST_END in text and text.index(LATEST_START) < text.index(LATEST_END):
+        prefix = text[: text.index(LATEST_START)].rstrip()
+    else:
+        prefix = text.rstrip()
+    prefix = prefix or DEFAULT_LATEST_PREFIX.rstrip()
+    if "[[index]]" not in prefix or "[[overview]]" not in prefix or "[[log]]" not in prefix:
+        prefix = prefix.rstrip() + "\n\n[[index]] [[overview]] [[log]]"
+    defaults = {
+        "## Current Best": "- Not yet synthesized.",
+        "## Active Risks": "- Not yet synthesized.",
+        "## Next Actions": "- Not yet synthesized.",
+    }
+    for section, body in defaults.items():
+        if section not in prefix:
+            prefix = prefix.rstrip() + f"\n\n{section}\n\n{body}"
+    return prefix.rstrip() + "\n"
+
+
 def render_packets(
     repo_root: Path,
     packets: list[PacketRenderInput],
@@ -419,7 +448,7 @@ def render_packets(
     changed.append("wiki/log.md")
 
     latest = wiki / "latest-context.md"
-    latest_text = _read(latest, "# Latest Context\n\n[[index]] [[overview]] [[log]]\n")
+    latest_text = _read(latest, DEFAULT_LATEST_PREFIX)
     previous = ""
     if LATEST_START in latest_text and LATEST_END in latest_text and latest_text.index(LATEST_START) < latest_text.index(LATEST_END):
         previous = latest_text[latest_text.index(LATEST_START) + len(LATEST_START) : latest_text.index(LATEST_END)].strip()
@@ -437,7 +466,7 @@ def render_packets(
         if publish_action is RiskTier.BOT_PR or manifest.type in REVIEW_TYPES:
             lines.append("- review-required: true")
         new_entries.append("\n".join(lines))
-    prefix = "# Latest Context\n\n[[index]] [[overview]] [[log]]\n"
+    prefix = _latest_prefix(latest_text)
     latest.write_text(_bounded_latest_page(prefix, [*new_entries, *_split_latest_entries(previous)], policy), encoding="utf-8")
     changed.append("wiki/latest-context.md")
 

@@ -10,6 +10,18 @@ from .models import FailureCode, HealthError, HealthReport, as_jsonable
 from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START
 
 REQUIRED_LATEST_LINKS = {"[[index]]", "[[overview]]", "[[log]]"}
+REQUIRED_LATEST_OPERATING_SECTIONS = {
+    "## Current Best",
+    "## Active Risks",
+    "## Next Actions",
+}
+REQUIRED_ENTITY_MODEL_PAGES = {
+    "wiki/team/ml-ai-hackathon-entity-model.md",
+    "wiki/team/packet-quality-standard.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+}
 ORPHAN_AND_CLAIM_CHECK_EXCLUDES = {
     "wiki/index.md",
     "wiki/log.md",
@@ -53,7 +65,7 @@ def _latest_context_errors(repo_root: Path) -> list[HealthError]:
             )
         ]
     text = latest.read_text(encoding="utf-8")
-    return [
+    errors = [
         HealthError(
             FailureCode.MISSING_REQUIRED_LATEST_LINK.value,
             f"latest-context missing required link {link}",
@@ -61,6 +73,28 @@ def _latest_context_errors(repo_root: Path) -> list[HealthError]:
         )
         for link in sorted(REQUIRED_LATEST_LINKS)
         if link not in text
+    ]
+    errors.extend(
+        HealthError(
+            "missing_latest_operating_section",
+            f"latest-context missing operating section {section}",
+            "wiki/latest-context.md",
+        )
+        for section in sorted(REQUIRED_LATEST_OPERATING_SECTIONS)
+        if section not in text
+    )
+    return errors
+
+
+def _entity_model_page_errors(repo_root: Path) -> list[HealthError]:
+    return [
+        HealthError(
+            "missing_entity_model_page",
+            f"required ML/AI hackathon entity page is missing: {rel_path}",
+            rel_path,
+        )
+        for rel_path in sorted(REQUIRED_ENTITY_MODEL_PAGES)
+        if not (repo_root / rel_path).exists()
     ]
 
 
@@ -98,6 +132,7 @@ def _parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
 def _is_orphan_claim_excluded(rel_path: str) -> bool:
     return (
         rel_path in ORPHAN_AND_CLAIM_CHECK_EXCLUDES
+        or rel_path in REQUIRED_ENTITY_MODEL_PAGES
         or rel_path.startswith("wiki/briefs/")
         or rel_path.startswith("wiki/team/")
         or rel_path.startswith("wiki/") and rel_path.endswith("/README.md")
@@ -188,6 +223,7 @@ def check_wiki_health(repo_root: Path, report_path: Path | None = None) -> Healt
         *lint_wiki_links(repo_root, paths=link_checked),
         *_generated_block_errors(repo_root),
         *_latest_context_errors(repo_root),
+        *_entity_model_page_errors(repo_root),
         *_expanded_health_errors(repo_root),
     ]
     report = HealthReport(ok=not errors, errors=errors, checked_paths=sorted(checked))

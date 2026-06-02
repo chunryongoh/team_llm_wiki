@@ -3,11 +3,22 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from .models import PacketManifest, PacketType
 
 
 STRONG_CLAIM_STATUSES = {"supported", "disputed", "superseded"}
 METRIC_PACKET_TYPES = {PacketType.EXPERIMENT, PacketType.PERFORMANCE}
+ENTITY_BEARING_PACKET_TYPES = {
+    PacketType.EXPERIMENT,
+    PacketType.FEATURE,
+    PacketType.MODEL,
+    PacketType.PERFORMANCE,
+    PacketType.PREPROCESSING,
+    PacketType.AUGMENTATION,
+}
+REQUIRED_WIKI_PLAN_FIELDS = {"stable_entities", "affected_pages", "semantic_lint"}
 
 
 def evaluate_packet_skill_compatibility(
@@ -63,6 +74,7 @@ def evaluate_packet_skill_compatibility(
         )
         checks.append(_metric_claim_check(manifest, rel_root))
         checks.append(_strong_claim_evidence_check(manifest, rel_root))
+        checks.append(_entity_coverage_check(packet_root, manifest, rel_root))
 
     return {"status": _aggregate_status(checks), "checks": checks}
 
@@ -86,6 +98,40 @@ def _strong_claim_evidence_check(manifest: PacketManifest, rel_root: str) -> dic
     if manifest.claim_status in STRONG_CLAIM_STATUSES and not manifest.raw_paths:
         return _check("strong_claim_evidence", "warning", "strong claim has no raw_paths evidence", rel_root)
     return _check("strong_claim_evidence", "pass", "claim evidence level is compatible with packet skill policy", rel_root)
+
+
+def _entity_coverage_check(packet_root: Path, manifest: PacketManifest, rel_root: str) -> dict[str, Any]:
+    if manifest.type not in ENTITY_BEARING_PACKET_TYPES:
+        return _check("entity_coverage", "pass", "stable entity coverage is not required for this packet type", rel_root)
+    wiki_plan = packet_root / "wiki_plan.yaml"
+    if not wiki_plan.exists():
+        return _check(
+            "entity_coverage",
+            "warning",
+            "entity-bearing packet is missing wiki_plan.yaml stable entity coverage hints",
+            rel_root,
+        )
+    try:
+        payload = yaml.safe_load(wiki_plan.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        return _check("entity_coverage", "warning", "wiki_plan.yaml could not be parsed", rel_root)
+    if not isinstance(payload, dict):
+        return _check("entity_coverage", "warning", "wiki_plan.yaml must be a mapping", rel_root)
+    missing = sorted(field for field in REQUIRED_WIKI_PLAN_FIELDS if not payload.get(field))
+    if missing:
+        return _check(
+            "entity_coverage",
+            "warning",
+            "wiki_plan.yaml is missing required entity-first fields",
+            rel_root,
+            missing_fields=missing,
+        )
+    return _check(
+        "entity_coverage",
+        "pass",
+        "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        rel_root,
+    )
 
 
 def _aggregate_status(checks: list[dict[str, Any]]) -> str:

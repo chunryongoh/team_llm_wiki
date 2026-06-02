@@ -8,6 +8,8 @@
 - [Ingest Policy](team/wiki-ingest-policy.md)
 - [Contribution Workflow](team/contribution-workflow.md)
 - [LLM Synthesis Policy](team/llm-synthesis-policy.md)
+- [ML/AI Hackathon Entity Model](team/ml-ai-hackathon-entity-model.md)
+- [Packet Quality Standard](team/packet-quality-standard.md)
 
 ## Sleep-lifelog stable pages
 
@@ -19,6 +21,17 @@
 - [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`
 - [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md) - `open-questions`
 - [2026-06-01 Sleep Lifelog Packet Synthesis](reports/2026-06-01-sleep-lifelog-packet-synthesis.md) - `report`
+
+## Entity registries
+
+- [Current Supported Claims](claims/current-supported-claims.md) - `claim-registry`
+- [DACON Leaderboard History](submissions/dacon-leaderboard-history.md) - `submission-history`
+- [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md) - `preprocessing-policy`
+- [LightGBM CatBoost](models/lightgbm-catboost.md) - `model`
+- [Section07 Mix LGBM CatBoost](models/section07-mix-lgbm-catboost.md) - `model`
+- [Section07 Feature Policy](features/section07-feature-policy.md) - `feature-policy`
+- [Section07 Feature Policy Decision](decisions/section07-feature-policy-decision.md) - `decision`
+- [Section07 Follow-Up Backlog](questions/section07-followup-backlog.md) - `open-questions`
 
 ## Implementation and workflow reports
 
