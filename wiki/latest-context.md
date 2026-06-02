@@ -4,20 +4,30 @@
 
 ## Current Best
 
-- Supported local OOF claim: [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md) remains a narrow `local_oof_diagnostic_only` claim. It improves Wave41 by a tiny Q2 targetwise reblend contribution, not by standalone LGB/CB superiority.
-- User-reported DACON public score notes live in [DACON Leaderboard History](submissions/dacon-leaderboard-history.md) and are not verified leaderboard claims yet.
+- Supported local OOF claim: [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md)는 여전히 좁은 `local_oof_diagnostic_only` claim이다. Q2 targetwise reblend `0.1`이 Wave41 local OOF를 `0.6198684545582471`에서 `0.6198365213240887`로 미세 개선한 것만 supported다.
+- Reported public LB notes: v186 `0.5922831771`, v189 `0.5925397`, Section07 `0.5986218188`, app-context `0.6106185586` 등은 [DACON Leaderboard History](submissions/dacon-leaderboard-history.md)에 있지만 verified leaderboard claim이 아니다.
 
 ## Active Risks
 
-- Split surfaces are mixed across 3-fold GroupKFold, 5-fold local OOF, working-note validation probes, and notebook-output probes. See [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md).
-- Section07 evidence is useful but tentative: allowed input audit, feature hashes, raw metric files, rerun logs, and DACON submission lineage are missing.
-- Do not call LightGBM + CatBoost globally best without distinguishing standalone, fixed blend, and targetwise reblend boundaries. See [LightGBM CatBoost](models/lightgbm-catboost.md).
+- Split surfaces가 3-fold GroupKFold, 5-fold local OOF, PDF OOF summary, DOCX public LB observation, working-note mixed validation, notebook-output summary로 섞여 있다. [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md)를 먼저 확인한다.
+- App context, 1,875 feature pool, v186 SHAP, v200-v209 sparse splice, Section07 weekly claims는 모두 `tentative`다.
+- SHAP importance, public score note, local OOF, DACON leaderboard, private leaderboard를 한 ranking surface로 합치면 안 된다.
+- Broad feature addition과 broad morphology reset은 negative evidence가 있으므로 Q3/S4 target-specific ablation 없이 채택하지 않는다.
 
 ## Next Actions
 
-- Close [Section07 Follow-Up Backlog](questions/section07-followup-backlog.md) P0 items: allowed input audit and feature hash evidence.
-- Add a verified DACON leaderboard provenance packet if section07 public score notes should become leaderboard claims.
-- Ensure new experiment packets include `wiki_plan.yaml` stable entities, affected pages, and semantic lint so synthesis updates entity pages rather than only experiment mirrors.
+- [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md)의 `v186-leaderboard-provenance`, `app-context-raw-submission-lineage`, `dacon-submission-provenance-boundary`를 먼저 닫는다.
+- `feature-dedup-715-raw-list`와 Q3/S4 same-split ablation을 제출해 [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md)를 policy로 승격할지 판단한다.
+- `replay-validator-blind-spot-threshold`를 정의하기 전에는 `0.00005` 수준 local/public delta로 live submission trigger를 만들지 않는다.
+
+## Recent packet review links
+
+- [app context feature engineering 20260601](performance/2026-06-01-app-context-feature-engineering-20260601.md)
+- [labelwise weekly progress target bottlenecks](experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md)
+- [1875 feature domain ablation and dedup](features/2026-05-28-1875-feature-domain-ablation-and-dedup.md)
+- [v200 v209 sparse splice review](experiments/2026-05-29-v200-v209-sparse-splice-review.md)
+- [v186 shap leaderboard analysis](performance/2026-05-29-v186-shap-leaderboard-analysis.md)
+- [2026-05-28 Sleep Lifelog Packet Synthesis](reports/2026-05-28-sleep-lifelog-packet-synthesis.md)
 
 <!-- wiki-ingest:latest:start -->
 ### 26806097236-1 | 2026-06-01-app-context-feature-engineering-20260601

@@ -1,177 +1,51 @@
 ---
 id: 2026-06-01-app-context-feature-engineering-20260601
-packet_type: performance
 type: performance
+packet_type: performance
 title: app context feature engineering 20260601
-date: '2026-06-01'
+date: 2026-06-01
 owner: cho-hyewon
-status: submitted
-task: source-ingest
-dataset:
-  name: sleep-lifelog-2024
-  version: released-package
-  hash: none
-split:
-  name: 20260526-172609-lgbcat-timesplit-public-lb-observation
-  group_key: subject_id
-  fold_file: null
-model:
-  family: lgbm-catboost-app-context-ensemble
-  weights_in_repo: false
-claim_boundary: DOCX-reported feature engineering and public LB observation only;
-  raw metric JSON, submission id, leaderboard export, private score, and same-split
-  local OOF evidence are not included.
 claim_status: tentative
-summary: "\uC870\uD61C\uC6D0 bundle reports LGBM+CatBoost over 1,695 features with\
-  \ app-name daily/evening features improving LB 0.6218831823 to 0.6182941107, then\
-  \ presleep/night/early-morning app context improving to 0.6106185586."
-raw_paths:
-- metrics.json
-- packet.md
-- performance.yaml
-- source/feature-engineering-result-report-20260601.docx
-- source/feature-engineering-result-report-20260601.txt
-- wiki_plan.yaml
-intended_wiki_targets:
-- wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md
-metrics_to_verify:
-- raw_path: metrics.json
-  metric_key: baseline_public_lb_logloss
-  reported_value: 0.6218831823
-  tolerance: 0.0
-  name: null
-  key: null
-  expected: null
-  actual: null
-- raw_path: metrics.json
-  metric_key: daily_evening_app_public_lb_logloss
-  reported_value: 0.6182941107
-  tolerance: 0.0
-  name: null
-  key: null
-  expected: null
-  actual: null
-- raw_path: metrics.json
-  metric_key: final_public_lb_logloss
-  reported_value: 0.6106185586
-  tolerance: 0.0
-  name: null
-  key: null
-  expected: null
-  actual: null
-- raw_path: metrics.json
-  metric_key: first_delta
-  reported_value: -0.0035890716
-  tolerance: 0.0
-  name: null
-  key: null
-  expected: null
-  actual: null
-- raw_path: metrics.json
-  metric_key: second_delta
-  reported_value: -0.0076755521
-  tolerance: 0.0
-  name: null
-  key: null
-  expected: null
-  actual: null
-- raw_path: metrics.json
-  metric_key: total_delta
-  reported_value: -0.0112646237
-  tolerance: 0.0
-  name: null
-  key: null
-  expected: null
-  actual: null
-claims:
-- status: tentative
-  text: "\uC870\uD61C\uC6D0 bundle reports LGBM+CatBoost over 1,695 features with\
-    \ app-name daily/evening features improving LB 0.6218831823 to 0.6182941107, then\
-    \ presleep/night/early-morning app context improving to 0.6106185586."
-publish_action: bot_pr
-risk_tier: tier3-performance
+claim_boundary: DOCX-reported feature engineering and public LB observation only; raw metric JSON, submission id, leaderboard export, private score, and same-split local OOF evidence are not included.
+dataset: sleep-lifelog-2024
+benchmark: sleep-health-hackathon-v0
+model: lgbm-catboost-app-context-ensemble
+summary: app-name daily/evening feature와 presleep/night/early-morning app context feature가 public LB 관찰값을 단계적으로 개선했다는 보고지만, leaderboard lineage가 없어 tentative로 유지한다.
+review_required: true
+raw_evidence:
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/manifest.yaml
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/metrics.json
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/performance.yaml
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/packet.md
 ---
 
 # app context feature engineering 20260601
 
-- packet: `2026-06-01-app-context-feature-engineering-20260601`
-- generated_by_run: `26806097236-1`
-- publish_action: `bot_pr`
-- risk_tier: `tier3-performance`
-- compiled_packet: [automation/.cache/compiled/2026-06-01-app-context-feature-engineering-20260601.json](../../automation/.cache/compiled/2026-06-01-app-context-feature-engineering-20260601.json)
-- owner: `cho-hyewon`
-- status: `submitted`
-- task: `source-ingest`
-- dataset: `sleep-lifelog-2024` (`released-package`)
-- split: `20260526-172609-lgbcat-timesplit-public-lb-observation`
-- model: `lgbm-catboost-app-context-ensemble`
-- claim_boundary: DOCX-reported feature engineering and public LB observation only; raw metric JSON, submission id, leaderboard export, private score, and same-split local OOF evidence are not included.
-- claim_status: `tentative`
-- date: `2026-06-01`
-- raw_evidence:
-  - `metrics.json`
-  - `packet.md`
-  - `performance.yaml`
-  - `source/feature-engineering-result-report-20260601.docx`
-  - `source/feature-engineering-result-report-20260601.txt`
-  - `wiki_plan.yaml`
-- review-required: true
+이 page는 조혜원 packet `2026-06-01-app-context-feature-engineering-20260601`의 안정 review다. 관련 dataset은 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md), 평가 경계는 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)과 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)를 따른다.
 
-## Summary
+## Claim boundary
 
-조혜원 bundle reports LGBM+CatBoost over 1,695 features with app-name daily/evening features improving LB 0.6218831823 to 0.6182941107, then presleep/night/early-morning app context improving to 0.6106185586.
+- status: `tentative`
+- evidence surface: `docx_report_public_lb_observation`
+- split note: `20260526-172609-lgbcat-timesplit-public-lb-observation`
+- missing: DACON submission id, leaderboard export, private score, same-split local OOF, feature list hash
 
-## Packet Synthesis
+따라서 이 packet은 app-context feature hypothesis로는 강하지만 verified leaderboard claim이나 final best model claim이 아니다.
 
-조혜원 app-context report는 실제 앱명 기반 daily/evening feature와 취침 전·야간·새벽 app context feature가 leaderboard logloss를 두 차례 개선했다고 보고한다. 핵심 feature family는 kakao, youtube, instagram, naver, bible/religion, call/message, stimulating/reflection/task app groups, app switching, usage entropy, arousal mix 등이다. Q3는 여전히 가장 낮은 성능 target으로 남아 target-specific feature-set 정리가 필요하다.
+## 보고된 staged observation
 
-## Wiki Integration Hints
+| stage | evidence surface | logloss |
+|---|---|---:|
+| sleep/HR/sequence/entropy baseline | DOCX public LB observation | `0.6218831823` |
+| app-name daily/evening 추가 | DOCX public LB observation | `0.6182941107` |
+| presleep/night/early-morning app context 추가 | DOCX public LB observation | `0.6106185586` |
 
-### stable_entities
+핵심 feature family는 `kakao`, `youtube`, `instagram`, `naver`, `bible_religion`, `call_phone`, `message_sms`, `usage_entropy`, `app_switch_count`, `arousal_mix_index`, `reflection_vs_stim_ratio`이다. 이는 [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)의 app-context 후보로만 반영한다.
 
-- feature:app-context-features
-- performance:app-context-lgbcat-20260526
-- target:q3-app-context-next-tests
-- model:lgbm-catboost-app-context-ensemble
-- claim:app-context-public-lb-observation
+## 해석과 위험
 
-### affected_pages
+이 보고는 하루 총 앱 사용보다 수면에 가까운 시간창의 app context가 더 강한 신호일 수 있음을 제안한다. 다만 Q3는 여전히 낮은 성능 target으로 남았고, app context가 Q3를 해결했다는 증거는 없다. public LB 관찰값은 [Current Supported Claims](../claims/current-supported-claims.md)에서 tentative로만 추적한다.
 
-- wiki/features/app-context-features.md
-- wiki/performance/app-context-lgbcat-20260526.md
-- wiki/questions/q3-app-context-next-tests.md
-- wiki/models/lightgbm-catboost.md
-- wiki/claims/current-supported-claims.md
-- wiki/submissions/dacon-leaderboard-history.md
+## 다음 확인
 
-### claim_registry_updates
-
-- tentative: app-name and app-context features are reported to improve public LB from 0.6218831823 to 0.6106185586, but leaderboard/submission provenance is missing.
-
-### supersedes_or_conflicts
-
-- May supersede weaker generic app-category-only feature assumptions if raw evidence confirms the staged improvements.
-
-### open_questions
-
-- {'close_condition': 'App context performance page can promote the claim from tentative to supported or keep it as public-LB observation.', 'id': 'app-context-raw-submission-lineage', 'merge_blocker': False, 'needed_evidence': ['submission CSV lineage', 'leaderboard export', 'local OOF metric table', 'feature list hash'], 'owner_role': 'feature-performance-owner', 'priority': 'high', 'question': 'Which submission ids and raw metric files correspond to the 0.6218831823, 0.6182941107, and 0.6106185586 app-context stages?'}
-
-### semantic_lint
-
-- Do not call the app-context model final best without verified leaderboard lineage.
-- Keep public LB observation separate from local validation and private LB claims.
-- Record Q3 as a remaining bottleneck rather than solved by app context.
-
-## Metrics
-
-raw-evidence-backed metric checks:
-- `baseline_public_lb_logloss`: reported `0.6218831823`, raw_path `metrics.json`, tolerance `0.0`
-- `daily_evening_app_public_lb_logloss`: reported `0.6182941107`, raw_path `metrics.json`, tolerance `0.0`
-- `final_public_lb_logloss`: reported `0.6106185586`, raw_path `metrics.json`, tolerance `0.0`
-- `first_delta`: reported `-0.0035890716`, raw_path `metrics.json`, tolerance `0.0`
-- `second_delta`: reported `-0.0076755521`, raw_path `metrics.json`, tolerance `0.0`
-- `total_delta`: reported `-0.0112646237`, raw_path `metrics.json`, tolerance `0.0`
-
-## Claims
-
-- tentative: 조혜원 bundle reports LGBM+CatBoost over 1,695 features with app-name daily/evening features improving LB 0.6218831823 to 0.6182941107, then presleep/night/early-morning app context improving to 0.6106185586.
+Open question `app-context-raw-submission-lineage`: 세 stage의 submission CSV lineage, leaderboard export, local OOF metric table, feature list hash를 제출해야 한다.
