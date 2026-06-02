@@ -15,7 +15,7 @@ from .links import lint_wiki_links
 from .manifest import discover_packet_roots, load_packet_manifest, validate_changed_paths
 from .models import FailureCode, IngestFailure, IngestReport, PacketManifest, PacketType, RiskTierLabel, as_jsonable
 from .policy import load_policy
-from .render import INDEX_END, INDEX_START, render_target_path
+from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START, render_target_path
 
 DEFAULT_MODEL = "gpt-5.5"
 DEFAULT_REASONING_EFFORT = "high"
@@ -415,7 +415,7 @@ def _finalize_page_content(
     if rel_path == "wiki/index.md":
         return _merge_index_content(repo_root, content, generated_page_paths or [])
     if rel_path == "wiki/latest-context.md":
-        return content
+        return _merge_latest_context_content(repo_root, content)
     return _ensure_raw_evidence(content, evidence_paths)
 
 
@@ -489,6 +489,46 @@ def _replace_index_block(scaffold: str, entries: list[str]) -> str:
     end_index = scaffold.index(INDEX_END) + len(INDEX_END)
     block = "\n".join([INDEX_START, *entries, INDEX_END])
     return scaffold[:start_index].rstrip() + "\n\n" + block + scaffold[end_index:].rstrip() + "\n"
+
+
+def _merge_latest_context_content(repo_root: Path, content: str) -> str:
+    existing_path = repo_root / "wiki" / "latest-context.md"
+    existing = existing_path.read_text(encoding="utf-8") if existing_path.exists() else ""
+    scaffold = content if _has_latest_operating_sections(content) else existing
+    if not scaffold.strip():
+        scaffold = "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n## Current Best\n\n- Unknown.\n\n## Active Risks\n\n- Unknown.\n\n## Next Actions\n\n- Review latest packet.\n"
+
+    entries = _extract_latest_entries(content)
+    if not entries:
+        entries = _extract_latest_entries(existing)
+    if not entries:
+        entries = ["### llm synthesis | latest update", "", "- link: [[index]]"]
+    return _replace_latest_block(scaffold, entries)
+
+
+def _has_latest_operating_sections(text: str) -> bool:
+    return all(marker in text for marker in ("[[index]]", "[[overview]]", "[[log]]", "## Current Best", "## Active Risks", "## Next Actions"))
+
+
+def _extract_latest_entries(text: str) -> list[str]:
+    if text.count(LATEST_START) != 1 or text.count(LATEST_END) != 1 or text.index(LATEST_START) > text.index(LATEST_END):
+        return []
+    start_index = text.index(LATEST_START) + len(LATEST_START)
+    end_index = text.index(LATEST_END)
+    block = text[start_index:end_index].strip()
+    return block.splitlines() if block else []
+
+
+def _replace_latest_block(scaffold: str, entries: list[str]) -> str:
+    clean_entries = "\n".join(line.rstrip() for line in entries).strip()
+    block = "\n".join([LATEST_START, clean_entries, LATEST_END]) if clean_entries else "\n".join([LATEST_START, LATEST_END])
+    if scaffold.count(LATEST_START) == 1 and scaffold.count(LATEST_END) == 1 and scaffold.index(LATEST_START) < scaffold.index(LATEST_END):
+        start_index = scaffold.index(LATEST_START)
+        end_index = scaffold.index(LATEST_END) + len(LATEST_END)
+        return scaffold[:start_index].rstrip() + "\n\n" + block + scaffold[end_index:].rstrip() + "\n"
+    if LATEST_START in scaffold:
+        return scaffold[: scaffold.index(LATEST_START)].rstrip() + "\n\n" + block + "\n"
+    return scaffold.rstrip() + "\n\n" + block + "\n"
 
 
 def _merge_append_only_log(repo_root: Path, content: str) -> str:

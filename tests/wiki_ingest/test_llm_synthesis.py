@@ -606,6 +606,55 @@ def test_llm_synthesis_merges_index_with_existing_entries_and_generated_pages(tm
     assert "reports/2026-05-29-sleep-lifelog-packet-synthesis.md" in merged_index
 
 
+def test_llm_synthesis_balances_latest_context_generated_block(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    pages = [
+        {
+            "path": page["path"],
+            "content": "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n"
+            "## Current Best\n\n- Current best unchanged.\n\n"
+            "## Active Risks\n\n- Public scores remain tentative.\n\n"
+            "## Next Actions\n\n- Verify leaderboard provenance.\n\n"
+            "<!-- wiki-ingest:latest:start -->\n"
+            "### llm integration | sleep lifelog\n\n"
+            "- link: [[reports/2026-05-29-sleep-lifelog-packet-synthesis]]\n",
+        }
+        if page["path"] == "wiki/latest-context.md"
+        else page
+        for page in single_dataset_integration_pages()
+    ]
+    client = FakeClient(
+        {
+            "summary": "ok",
+            "integration_plan": [],
+            "created_pages": ["wiki/reports/2026-05-29-sleep-lifelog-packet-synthesis.md"],
+            "updated_pages": ["wiki/latest-context.md"],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": [],
+            "pages": pages,
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="latest-merge",
+        client=client,
+    )
+
+    latest = (tmp_path / "wiki" / "latest-context.md").read_text(encoding="utf-8")
+    assert report.status == "bot_pr"
+    assert latest.count("<!-- wiki-ingest:latest:start -->") == 1
+    assert latest.count("<!-- wiki-ingest:latest:end -->") == 1
+    assert "[[index]] [[overview]] [[log]]" in latest
+    assert "## Current Best" in latest
+    assert "## Active Risks" in latest
+    assert "## Next Actions" in latest
+
+
 def test_openai_responses_client_posts_structured_gpt55_request(monkeypatch):
     captured = {}
 
