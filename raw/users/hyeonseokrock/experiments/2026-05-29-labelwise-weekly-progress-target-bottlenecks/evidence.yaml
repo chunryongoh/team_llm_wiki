@@ -1,0 +1,26 @@
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+linked_existing_raw:
+  - raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/01_preprocessing.md
+  - raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/02_feature.md
+  - raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/03_model.md
+  - raw/users/hyeonseokrock/experiments/2026-06-01-lifelog-section07-working-notes/source/04_performance.md
+model:
+  family: labelwise-lgbm-catboost-section07
+observations:
+  - labelwise model strategy has strongest public score note 0.5986218188
+  - temporal overlap/window training increased data but hurt due to weighted learning or data loss
+  - additional Q features had little direct impact
+  - S1 can reportedly reach about 0.48
+  - Q3 is reportedly limited around 0.62
+  - S4 worsens as broad feature additions increase
+  - frequency-based feature ideas remain candidate work
+split:
+  group_key: subject_id
+  name: section07-working-notes-and-weekly-progress-observation
+target_bottlenecks:
+  Q3: stress target needs a different frequency/window representation
+  S1: stable/better target; avoid destabilizing excessive changes
+  S4: wakefulness/awakening target should avoid broad additions and focus on narrow disturbance/WASO proxies
+task: dacon-sleep-lifelog-labelwise-weekly-bottleneck-update

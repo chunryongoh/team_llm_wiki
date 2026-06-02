@@ -1,0 +1,88 @@
+baseline: sleep-hr-sequence-entropy-feature baseline before app context
+baseline_comparison:
+  note: Sequential public LB improvements are reported in DOCX but raw submissions are missing.
+  same_metric_definition: public LB logloss by report
+  same_split: unknown
+claim_status: tentative
+confusion_matrices: not provided
+dataset:
+  name: sleep-lifelog-2024
+  version: released-package
+feature_families:
+  daily_evening_app_names:
+    - kakao
+    - youtube
+    - instagram
+    - naver
+    - bible_religion
+    - cashwalk_reward
+    - call_phone
+    - message_sms
+    - webtoon
+    - tiktok
+    - browser
+    - music
+    - game
+    - shopping
+    - finance
+    - map_transport
+  derived_context:
+    - usage_entropy
+    - usage_top_app_ratio
+    - app_switch_count
+    - arousal_mix_index
+    - reflection_vs_stim_ratio
+  time_windows:
+    - presleep2
+    - presleep4
+    - winddown
+    - late22_02
+    - sleep00_06
+    - early_morning04_08
+metric_definitions:
+  baseline_public_lb_logloss:
+    direction: lower_is_better
+    evidence_surface: docx_report_public_lb_observation
+  daily_evening_app_public_lb_logloss:
+    direction: lower_is_better
+    evidence_surface: docx_report_public_lb_observation
+  final_public_lb_logloss:
+    direction: lower_is_better
+    evidence_surface: docx_report_public_lb_observation
+model:
+  family: lgbm-catboost-app-context-ensemble
+oof_predictions: not provided
+overall_metrics:
+  baseline_public_lb_logloss: 0.6218831823
+  daily_evening_app_public_lb_logloss: 0.6182941107
+  final_public_lb_logloss: 0.6106185586
+  first_delta: -0.0035890716
+  primary: final_public_lb_logloss
+  second_delta: -0.0076755521
+  total_delta: -0.0112646237
+primary_metric: final_public_lb_logloss
+split:
+  group_key: subject_id
+  name: 20260526-172609-lgbcat-timesplit-public-lb-observation
+split_id: 20260526-172609-lgbcat-timesplit-public-lb-observation
+submission_predictions: submission id and CSV lineage not provided
+target_metrics:
+  Q3:
+    status: reported_lowest_performance_target_without_numeric_metric
+targets:
+  - Q1
+  - Q2
+  - Q3
+  - S1
+  - S2
+  - S3
+  - S4
+task: dacon-sleep-lifelog-app-context-feature-performance
+uncertainty:
+  judgment: strong feature hypothesis but tentative leaderboard claim
+  missing_evidence:
+    - submission id
+    - leaderboard export
+    - raw metric file
+    - private LB score
+    - same-split local OOF

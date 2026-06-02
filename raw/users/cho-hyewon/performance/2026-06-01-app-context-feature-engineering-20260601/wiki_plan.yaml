@@ -1,0 +1,48 @@
+affected_pages:
+  - wiki/features/app-context-features.md
+  - wiki/performance/app-context-lgbcat-20260526.md
+  - wiki/questions/q3-app-context-next-tests.md
+  - wiki/models/lightgbm-catboost.md
+  - wiki/claims/current-supported-claims.md
+  - wiki/submissions/dacon-leaderboard-history.md
+claim_boundary: DOCX-reported feature engineering and public LB observation only; raw metric JSON, submission id, leaderboard export, private score, and same-split local OOF evidence are not included.
+claim_registry_updates:
+  - "tentative: app-name and app-context features are reported to improve public LB from 0.6218831823 to 0.6106185586, but leaderboard/submission provenance is missing."
+claim_status: tentative
+decisions:
+  []
+evidence_gaps:
+  - No raw metric JSON.
+  - No DACON submission id or leaderboard export.
+  - No private leaderboard evidence.
+  - No local OOF same-split baseline.
+open_questions:
+  -
+    close_condition: App context performance page can promote the claim from tentative to supported or keep it as public-LB observation.
+    id: app-context-raw-submission-lineage
+    merge_blocker: false
+    needed_evidence:
+      - submission CSV lineage
+      - leaderboard export
+      - local OOF metric table
+      - feature list hash
+    owner_role: feature-performance-owner
+    priority: high
+    question: Which submission ids and raw metric files correspond to the 0.6218831823, 0.6182941107, and 0.6106185586 app-context stages?
+packet_id: 2026-06-01-app-context-feature-engineering-20260601
+packet_type: performance
+schema: team-llm-wiki-plan/v1
+semantic_lint:
+  - Do not call the app-context model final best without verified leaderboard lineage.
+  - Keep public LB observation separate from local validation and private LB claims.
+  - Record Q3 as a remaining bottleneck rather than solved by app context.
+stable_entities:
+  - "feature:app-context-features"
+  - "performance:app-context-lgbcat-20260526"
+  - "target:q3-app-context-next-tests"
+  - "model:lgbm-catboost-app-context-ensemble"
+  - "claim:app-context-public-lb-observation"
+supersedes_or_conflicts:
+  - May supersede weaker generic app-category-only feature assumptions if raw evidence confirms the staged improvements.
+topic_pages:
+  []

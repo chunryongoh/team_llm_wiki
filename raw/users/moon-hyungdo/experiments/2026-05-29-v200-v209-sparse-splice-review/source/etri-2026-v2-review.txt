@@ -1,0 +1,188 @@
+ETRI 2026: v2.0 진행 경과 및
+시행착오 회고 (v200 ~ v209)
+Structural Morphology & Sparse Splice Strategy
+
+기존 피처 엔지니어링 (PREVIOUS FEATURES)
+
+다중 센서 데이터 기반 일상 패턴 도출
+→ 주요 센서: Light, ACStatus, Screen, Activity, HR, GPS 등
+→ 집계 방식: Daily 1차 요약 및 4분할 시간대Daypart) 분석
+→ 강력한 Proxy 변수: sleep_hours_est, act_stationary_ratio 등
+→ 2차 가공: Subject-relative (z-score), Cyclic 변수, Rolling/Lag
+적용
+Baseline: 20260522_lgb_cb_simple.ipynb
+
+V2.0 도입 계기: 패러다임의 전환
+
+기존 한계점
+
+새로운 목표
+
+단순 통계량이나 Anchor 모델 기반의 Local Calibration만으로는
+
+수면을 '형태Morphology)'로 접근. 5분 단위 Raw 시퀀스에서
+
+점수 상승폭의 명확한 한계 노출
+
+구조적 신호Structural Source) 직접 발굴
+
+핵심 기반 논문 - DPSLEEP & SLEEPMORE
+
+DPSleep 기반
+
+SleepMore 기반
+
+활동량 백분위Percentile)와 슬라이딩
+
+WiFi 및 기기 사용량 기반 분 단위 시퀀스
+
+윈도우 기반 동적 수면 에피소드 경계
+
+구성 및 '불확실성' 지표 산출
+
+Immobile Ratio,
+Fragmentation
+추정
+
+Uncertainty Rate, Modality
+
+Index
+
+Disagreement
+
+V200 ~ V209 진행 과정
+
+v200201
+
+v202204
+
+v205206
+
+v207208
+
+v209
+
+Raw 5분 센서 기반
+
+Anchor 기반 극소량
+
+Validator 고도화 및
+
+Q2/Q3 전용 모델링
+
+Public Consensus
+
+독자 독립 모델 구축
+
+편집 선회 및 Sparse
+
+OOF Proxy Blind
+
+및 Anchor 오차 잔차
+
+기반 합의 편집
+
+및 타깃별 최적화
+
+Calibration 적용
+
+Spot 공식 정의
+
+학습Residual)
+
+Micro-splice) 시도
+
+시행착오 및 핵심 한계
+리더보드 역상관 Broad Failure)
+로컬 대폭 개선에도 LB 폭락. 도메인 변화와 평가 분포
+불일치 증명
+
+검증 프록시 사각지대 Blind Spot)
+로컬 메트릭이 상위권 미세 격차0.0001를 감지하지
+못하는 한계
+
+Q2 타깃의 극단성
+Q2 수정 시 점수 하락 현상 확인. 타깃 보수성 유지
+필수
+
+리더보드 제출 결과 추이 (TREND)
+
+Version
+
+LB Score
+
+Delta (vs v189)
+
+Result Interpretation
+
+v189 Anchor
+
+0.5925397
+
+-
+
+공식 최고점 기준점
+
+v200
+
+0.608842
+
+0.01630
+
+전면 리셋 실패 Negative Evidence)
+
+v204
+
+0.592557
+
+0.000017
+
+S2 과예측 확률 보정 (상승 부족)
+
+v208
+
+0.592547
+
+0.000007
+
+Q2/Q3 잔차 및 모티프 확장 Near-best)
+
+v209 Q3 low
+
+0.592543
+
+0.000004
+
+Q3 단독 합의 편집 Near-best)
+
+v209 Q23 low)
+
+0.592551
+
+0.000011
+
+Q2/Q3 동시 편집 Q2 편입으로 하락)
+
+요약 및 향후 전략 (FUTURE GUARDRAILS)
+
+Sparse Splice 원칙
+
+엄격한 임계값
+
+Consensus 기반
+
+v189 Anchor 기반으로 근거가 확실한
+
+로컬 개선폭이 Blind Spot(5e-5) 미만일
+
+독립적 물리 신호원 간 합의 시에만 타깃
+
+극소량만 교체. 전면 교체 배제
+
+경우 라이브 제출 금지
+
+교정. Q2 타깃 극단적 보수성
+
+→ 과거 순위 복원이 가능한 'Replay Validator' 개발 필수
+
+

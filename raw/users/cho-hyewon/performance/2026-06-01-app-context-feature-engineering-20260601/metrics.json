@@ -1,0 +1,8 @@
+{
+  "baseline_public_lb_logloss": 0.6218831823,
+  "daily_evening_app_public_lb_logloss": 0.6182941107,
+  "final_public_lb_logloss": 0.6106185586,
+  "first_delta": -0.0035890716,
+  "second_delta": -0.0076755521,
+  "total_delta": -0.0112646237
+}

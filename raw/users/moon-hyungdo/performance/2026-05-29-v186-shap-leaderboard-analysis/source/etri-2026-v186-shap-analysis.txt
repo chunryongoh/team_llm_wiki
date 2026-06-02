@@ -1,0 +1,174 @@
+v186 All-Target
+SHAP Analysis
+
+ETRI 2026 Project: Feature Explainability & Model Lineage Analysis
+
+Created: 2026-05-29 | Lineage: v186 Refit
+
+v186 Model Performance Summary
+
+v186 모델은 현재까지 제출된 파일 중 가장 높은 성능을 기록하고
+있으며, 7개 타겟에 대한 평균 Logloss는 0.6167입니다.
+▪ LB Score: 0.5922831771
+▪ Best Target: S1 (Logloss 0.5597)
+▪ Worst Target: S4 (Logloss 0.6660)
+
+Rank
+
+Target
+
+Family
+
+OOF Logloss
+
+1
+
+S1
+
+S_TRANSITION
+
+0.5597
+
+2
+
+S3
+
+S_SLEEP
+
+0.5629
+
+3
+
+S2
+
+S_TRANSITION
+
+0.6005
+
+4
+
+Q1
+
+Q (Subjective)
+
+0.6406
+
+5
+
+Q3
+
+Q (Subjective)
+
+0.6408
+
+Predictive Lineages by Family
+
+Q1, Q2, Q3
+
+S1, S2
+
+S3, S4
+
+v149 Sensor-First
+
+v186 Target-Specific
+
+v146 Sleep-Episode
+
+주관적 응답 예측. 센서 데이터 기반
+
+수면 전이 예측. 가중치 적용 Refit
+
+추정 수면 지표. GPS 정지 상태 및
+
+환경적/행동적 대리 지표 활용 (LGBM
+
+모델 (LGBM + CatBoost Blend).
+
+캘린더 피처를 활용한 하이브리드
+
+Donor).
+
+블렌드.
+
+Q1: Subjective Sleep Quality
+Q1은 센서 데이터를 통한 환경적 평온함과 취침 전 행동 패턴에
+민감하게 반응합니다.
+▪ mWifi_scan_count: 취침 전 WiFi 스캔 횟수가 많을수록 주관적
+수면 질이 하락함.
+▪ mScreenStatus: 낮 시간 및 기상 시점의 화면 켬 이벤트는
+긍정적 상관관계.
+▪ mGps_speed: 기상 시점의 GPS 이동 속도가 낮을수록 더 나은
+Q1 점수 기록.
+
+Q2: Fatigue Prediction Analysis
+피로도(Q2)는 주관적 지표 중 가장 예측이 어려운 타겟(0.6466)으로,
+조도 및 앱 사용량과 관련이 깊습니다.
+▪ mLight_mean: 취침 전 주변 광도가 낮을수록 피로도 감소
+(Better Q2).
+▪ mUsageStats: 저녁 및 일일 앱 사용 총 시간이 짧을수록
+피로도가 낮게 나타남.
+▪ mActivity_mean: 저녁 시간의 적절한 활동 수준은 더 나은 Q2
+예측치와 연결됨.
+
+Q3: Stress & Mood Prediction
+스트레스 지표인 Q3는 무선 신호의 안정성과 계절적 요인에 의해
+주로 설명됩니다.
+▪ mWifi_rssi_max_std: 낮 시간 WiFi 신호의 변동성이 낮을수록
+스트레스 지수가 낮음.
+▪ cal_dayofweek: 주 중반(Midweek)에 스트레스가 낮아지는
+경향 확인.
+▪ Seasonality: Sine/Cosine 변환된 일자 피처가 유의미한 변동을
+설명함.
+
+The Power of Sensor-Derived Signals
+
+0.559
+7
+Best Logloss (S1)
+
+S-Family
+Superior Separability
+
+S1 및 S3 타겟은 SOL(수면 잠복기) 및 TST(총 수면 시간) 등 물리적 센서 데이터로부터 직접적인 신호를 포착하여 높은 예측력을 보여줍니다.
+
+S1: Sleep-Onset Latency Proxy
+S1은 수면 전이 타겟 중 가장 강력한 성능을 보이며, 직접적인 수면
+관련 대리 피처가 주도합니다.
+▪ episode_sol_proxy: 추정 수면 잠복기가 짧을수록 S1 값이 높게
+예측됨.
+▪ episode_tst_hours: 더 긴 총 수면 시간은 S1 예측에 긍정적인
+영향.
+▪ Weekend Effect: 주말 수면 여부가 베이스라인 오프셋으로
+작용함.
+
+S2: Heart Rate & Quiet Dynamics
+S2는 v186의 가중치 Refit(양성 3.0x 가중치)으로 개선되었으며,
+심박수 변화가 주요 동인입니다.
+▪ sr_hr_drop_percentile: 피험자 내 상대적 심박수 감소폭이
+클수록 높은 S2 기록.
+▪ sr_quiet_longest_streak: 가장 긴 정적 상태 지속 시간이 길수록
+수면 질 개선.
+▪ Coverage Ratio: 에피소드 내 센서 데이터 수집율이 높을수록
+안정적 예측 가능.
+
+S3: GPS Stillness & Regularity
+S3는 GPS 정지 비율과 계절적 주기에 의해 가장 잘 설명되는
+타겟입니다.
+▪ raw_gps_still_ratio: 추정 에피소드 내 GPS 정지 비율이
+높을수록 S3 향상.
+▪ cal_sleep_doy: 연중 일자(Day of Year)의 주기적 성분이 매우
+강력한 예측 변수.
+▪ Subject Baseline: 피험자 ID별 고유 베이스라인이 S3 분산의
+상당 부분을 차지.
+
+S4: The Primary Opportunity
+S4는 현재 0.6660으로 전 타겟 중 최하위 성능을 기록 중이며,
+향후 점수 개선의 핵심 레버리지입니다.
+▪ Quiet Streak: 가장 긴 정적 지속 시간이 핵심 동인.
+▪ Charging Ratio: 기기 충전 시작 여부가 수면 상태를 강하게
+시사.
+▪ Implication: S4가 캡처하는 특정 수면 차원을 모델링하기
+위한 새로운 피처 엔지니어링 필요.
+
+

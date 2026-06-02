@@ -1,0 +1,298 @@
+
+
+
+Feature Engineering Result Report
+
+수면 라이프로그 예측 성능 개선 feature 분석
+
+작성일: 2026-06-01 | 최종 실험: 20260526_172609_lgbcat_timesplit
+
+핵심 결론
+
+성능 개선 두 번 발생. 첫 번째는 실제 앱명 기반 daily/evening app feature를 추가했을 때이고, 두 번째는 취침 전·야간·새벽 시간대 app context feature를 추가했을 때이다. 최종 LB logloss는 0.6218831823에서 0.6106185586으로 개선.
+
+
+
+
+1. 목적
+
+본 보고서는 수면 관련 예측 지표(Q1-Q3, S1-S4)의 성능 향상을 위해 어떤 feature를 추가했을 때 leaderboard 성능이 개선되었는지 정리한 문서이다. 과제의 초점은 feature engineering을 통해 성능 향상에 기여한 변수를 확인하는 것이다.
+
+
+2. 개선 단계 요약
+
+단계
+
+추가 feature
+
+LB logloss
+
+이전 대비
+
+0. 기준 모델
+
+수면/HR/sequence/entropy 중심 feature
+
+0.6218831823
+
+-
+
+1. 1차 개선
+
+앱명 기반 daily/evening app feature
+
+0.6182941107
+
+-0.0035890716
+
+2. 2차 개선
+
+취침 전/야간/새벽 app context feature
+
+0.6106185586
+
+-0.0076755521
+
+
+
+전체 개선폭은 0.6218831823에서 0.6106185586으로 약 0.0113이었다.
+
+
+3. 기준 모델: 수면/생체/행동 Feature
+
+기준 모델은 앱 context feature를 추가하기 전, 수면과 생체신호 중심으로 구성된 feature set을 사용했다. 수면 시작/종료를 직접 관측할 수 없기 때문에 screen off, HR 안정화, light 감소 등을 이용해 수면 구간을 추정했다.
+
+Feature family
+
+대표 feature
+
+의미
+
+Sleep sequence / circadian
+
+sleep_onset_hour, wakeup_hour, circ_sleep_duration_h, circ_sleep_midpoint_h
+
+수면 시간, 기상 시간, 수면 midpoint, 수면 리듬 변동성
+
+HR / HRV
+
+hr_sleep_mean, hr_sleep_std, hrv_rmssd, hrv_pnn50, hr_mean_roll7
+
+수면 중 생리적 안정성, 피로 누적, 심박 변동성
+
+Sleep disturbance
+
+sleep_awake_hr_spike_count, sleep_awake_light_spike_count, sleep_fragmentation_index
+
+수면 중 각성 또는 수면 방해 가능성
+
+Sleep debt / history
+
+sleep_debt_3d, sleep_debt_7d, prev_bad_sleep_proxy, unrecovered_sleep_debt
+
+전날 및 최근 며칠간의 수면 부족 누적
+
+
+
+
+4. 1차 개선: 앱명 기반 Daily / Evening Feature
+
+1차 개선에서는 mUsageStats raw 데이터에 포함된 실제 앱 이름을 이용해 앱 사용 feature를 추가했다. 기존에는 앱 사용량을 social, video, game, browser 등 대략적인 카테고리로만 사용했지만, 이 단계에서는 실제 앱명을 의미 있는 앱군으로 묶었다.
+
+
+4.1 추가한 앱군
+
+kakao: 카카오톡/카카오 계열
+
+youtube: YouTube
+
+instagram: Instagram
+
+naver: NAVER/네이버
+
+bible_religion: 성경/종교/묵상 앱
+
+cashwalk_reward: 캐시워크/타임스프레드 등 reward app
+
+call_phone: 통화/전화
+
+message_sms: 메시지/SMS
+
+webtoon, tiktok, browser, music, game, shopping, finance, map_transport
+
+
+4.2 추가한 feature 형태
+
+Feature 예시
+
+설명
+
+usage_app_kakao_min / used / ratio
+
+카카오톡 계열 앱의 하루 사용량, 사용 여부, 비율
+
+usage_app_youtube_min
+
+YouTube 사용 시간
+
+usage_app_bible_religion_min
+
+성경/종교/묵상 앱 사용 시간
+
+usage_evening_app_kakao_min
+
+저녁 시간대 카카오톡 계열 앱 사용량
+
+usage_app_call_phone_ratio
+
+통화/전화 앱 사용 비율
+
+
+
+1차 개선 결과 LB logloss는 0.6218831823에서 0.6182941107로 개선되었다. 개선폭은 0.0035890716이다.
+
+
+5. 2차 개선: Presleep / Night / Early-Morning App Context
+
+2차 개선에서는 앱 사용을 단순 daily total로 보지 않고, 수면과 직접 연결되는 시간 구간별로 나누었다. 이 단계가 가장 큰 성능 개선을 만들었다.
+
+Prefix
+
+시간 구간
+
+의미
+
+appctx_presleep2_*
+
+예상 취침 전 2시간
+
+잠들기 직전 앱 사용
+
+appctx_presleep4_*
+
+예상 취침 전 4시간
+
+넓은 취침 전 앱 사용
+
+appctx_winddown_*
+
+취침 4-2시간 전
+
+wind-down 시기 앱 사용
+
+appctx_late22_02_*
+
+밤 22시-02시
+
+일반적인 야간 앱 사용
+
+appctx_sleep00_06_*
+
+00시-06시
+
+수면 시간대로 예상되는 구간의 앱 사용
+
+appctx_early_morning04_08_*
+
+새벽 04시-08시
+
+이른 기상/새벽 각성 가능성
+
+
+
+
+5.1 생성한 app context feature
+
+기본 사용량: usage_total_min, usage_n_apps, usage_entropy, usage_top_app_ratio, app_switch_count
+
+앱 카테고리: social_min, video_min, game_min, browser_min, shopping_min, other_min
+
+앱군별 사용량: kakao, youtube, instagram, naver, bible_religion, call_phone, message_sms, game, finance
+
+해석용 묶음: stimulating_app, communication_app, reflection_app, task_app, arousal_mix_index
+
+추가 interaction: winddown_to_presleep_stim_delta, late_to_sleepwin_usage_ratio, presleep_reflection_vs_stim_ratio
+
+2차 개선 결과 LB logloss는 0.6182941107에서 0.6106185586으로 개선되었다. 개선폭은 0.0076755521이다.
+
+
+6. SHAP 결과로 본 개선 Feature의 역할
+
+Target
+
+중요 feature 예시
+
+해석
+
+Q1
+
+appctx_winddown_app_call_phone_ratio, appctx_presleep4_other_min
+
+취침 전 통화/기타 앱 사용과 수면 중 screen entropy가 중요
+
+Q2
+
+screen_short_session_ratio_dev, hr_sleep_std_roll7, appctx_presleep2_app_message_sms_ratio
+
+짧고 잦은 화면 사용, 수면 중 HR 변동성, 메시지 사용 맥락
+
+Q3
+
+WiFi/BLE count, daytime HR, browser usage
+
+전체 SHAP 값이 작아 현재 feature set으로 설명력이 낮음
+
+S1
+
+appctx_sleep00_06_other_min, appctx_sleep00_06_app_switch_count
+
+수면 예상 시간대 앱 사용과 앱 전환 횟수가 강한 신호
+
+S2
+
+hr_mean_roll14, usage_app_bible_religion_min_dev
+
+장기 HR 수준과 reflection/religious reading app usage deviation
+
+S3
+
+hr_mean_roll7, appctx_winddown_usage_top_app_ratio
+
+HR rolling과 wind-down 시기 특정 앱 지배도가 중요
+
+S4
+
+appctx_presleep4_app_message_sms_ratio, sleep_fragmentation_index_roll5
+
+취침 전 메시지 비율과 수면 fragmentation이 중요
+
+
+
+
+7. 결론
+
+첫 번째 개선은 실제 앱명을 활용한 daily/evening app feature를 추가했을 때 발생했다.
+
+두 번째 개선은 앱 사용을 취침 전, 야간, 새벽 시간대로 나누는 app context feature를 추가했을 때 발생했다.
+
+수면 예측에서는 하루 전체 앱 사용량보다 수면과 가까운 시간대의 앱 사용 맥락이 더 강한 신호였다.
+
+
+
+보고서용 요약 문장
+
+본 실험에서는 앱 사용 feature를 단계적으로 확장하였다. 앱명 기반 daily/evening feature 추가 후 logloss는 0.6219에서 0.6183으로 개선되었고, 취침 전 2시간, 취침 전 4시간, 밤 22-02시, 수면 예상 시간 00-06시, 새벽 04-08시로 세분화한 app context feature를 추가한 뒤 최종 logloss는 0.6106까지 개선되었다. SHAP 분석 결과 presleep 및 sleep-window app usage, communication app ratio, app switch count, stimulating app usage가 여러 target에서 중요 feature로 나타났다.
+
+
+
+
+8. 산출물
+
+최종 제출 파일: experiments/20260526_172609_lgbcat_timesplit/submission_prob.csv
+
+타깃별 SHAP top20 CSV/PNG: experiments/20260526_172609_lgbcat_timesplit/shap_viz
+
+최종 feature file: features/app_context_features.parquet
+
+최종 metric file: experiments/20260526_172609_lgbcat_timesplit/metrics.csv
+

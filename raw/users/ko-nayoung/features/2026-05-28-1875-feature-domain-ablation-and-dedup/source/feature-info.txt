@@ -1,0 +1,788 @@
+v4
+타깃별 핵심 신호 분석
+
+Q1 수면의 질 → 전날 수면 + 당일 회복 상태
+Q2 취침 전 피로도 → 당일 신체·정신 부하 누적
+Q3 취침 전 스트레스 → 자율신경계 지표 (HRV, 심박)
+S1 총 수면시간 → 취침/기상 시각 행동
+S2 수면효율 → 야간 방해 요인 (빛·소리·각성)
+S3 수면 지연시간 → 취침 전 각성 수준 (스크린·빛·심박)
+S4 수면 중 각성 → 야간 스트레스·환경 방해
+추가할 feature 그룹
+① 수면 부채 (sleep debt)
+sleep_debt_3d/7d
+
+= (목표 수면 8h - 실제 수면) 누적합
+
+sleep_deficit_yesterday
+
+= 전날 수면 부족분
+
+② 취침 전 각성 지표 (pre-sleep arousal — S3에 핵심)
+presleep_hr_elevation
+
+= 21-23h HR - 야간 HR (취침 전 심박 상승폭)
+
+presleep_light_screen_combined
+
+합)
+presleep_activity_index
+
+= presleep_screen_sum × m_light_prebed_mean (블루라이트 복
+
+= 21-23h 활동량
+
+evening_stimulation_score
+
+= screen + light + activity 합성 (21-23h)
+
+③ HRV 기반 스트레스 (Q3, S3, S4에 핵심)
+hrv_evening_mean
+
+= 18-22h RMSSD 평균
+
+hrv_day_to_evening_drop
+autonomic_recovery
+hr_resting_ratio
+
+= 낮 RMSSD - 저녁 RMSSD (회복 실패 지표)
+
+= hr_night_rmssd / hr_mean_mean
+
+= hr_night_min / hr_mean_mean
+
+④ 일중 피로 지표 (Q2에 핵심)
+exertion_load
+
+= step_sum × speed_mean (운동 강도)
+
+work_screen_load
+
+= 9-18h screen_use × app_usage (업무 부하)
+
+peak_activity_hour
+
+= 활동 최고점 발생 시각
+
+⑤ 일주기 리듬 정렬 (S1, S3에 핵심)
+sleep_timing_regularity
+morning_light_score
+
+= w_light_morning_mean (기상 후 밝은 빛 노출)
+
+light_pattern_score
+
+= w_light_morning_mean - m_light_evening_mean (이상적 패턴: 아침 밝고
+
+저녁 어두움)
+
+v4
+
+= last_screen_hour_roll7_std (이미 있음, 강조)
+
+1
+
+chronotype_midpoint
+
+= (first_screen_hour + last_screen_hour) / 2
+
+⑥ 야간 방해 지표 (S2, S4에 핵심)
+night_arousal_composite
+noise_evening
+
+= night_screen_sum + disturb_te_night_n + hr_night_mean (복합)
+
+= amb_speech_score_mean + amb_vehicle_score_mean (저녁 소음)
+
+⑦ 연속성 지표 (Q1, Q2에 핵심)
+consecutive_late_nights
+sleep_debt_streak
+
+= last_screen_hour > 23인 연속 일수
+
+= 수면 부족 연속 일수
+
+feature 추가
+순위
+
+항목
+
+이유
+
+1
+
+앱 카테고리 분류
+
+코드 추가만으로 구현, Q2/Q3 직접 신호
+
+2
+
+교차 상호작용 feature
+
+기존 변수 조합, Cell 7에 추가
+
+3
+
+저녁 RMSSD
+
+Cell 3 수정 필요, S3 개선 기대
+
+# -- SHAP Top Features + 정의 출력 -FEAT_DESC = {
+# Mobile Light
+"m_light_mean":
+
+"모바일 조도 평균 (lux)",
+
+"m_light_std":
+"m_light_night_mean":
+
+"모바일 조도 편차",
+"야간(00-05h) 모바일 조도 평균",
+
+"m_light_morning_mean":
+
+"오전(06-11h) 모바일 조도 평균",
+
+"m_light_afternoon_mean":
+"m_light_evening_mean":
+
+"오후(12-17h) 모바일 조도 평균",
+"저녁(18-23h) 모바일 조도 평균",
+
+"m_light_night_ratio":
+"m_light_prebed_mean":
+
+"야간 조도 비율 (야간/전체)",
+"취침 전(21-23h) 조도 평균",
+
+# Wearable Light
+"w_light_mean":
+
+"웨어러블 조도 평균 (lux)",
+
+"w_light_morning_mean":
+"sk_light_ratio":
+
+"오전 웨어러블 조도 (외부 활동 지표)",
+"웨어러블 조도 / 모바일 조도 비율 (실외 노
+
+출도)",
+# Mobile Screen
+"m_screen_use_mean":
+
+"화면 사용 평균 (1=ON)",
+
+"m_screen_use_sum":
+"first_screen_hour":
+
+"화면 ON 총 횟수",
+"당일 첫 화면 ON 시각 (기상 시각 proxy)",
+
+"last_screen_hour":
+y)",
+"presleep_screen_sum":
+"presleep_screen_mean":
+"night_screen_sum":
+표)",
+
+v4
+
+"당일 마지막 화면 ON 시각 (취침 시각 prox
+"취침 전(21-23h) 화면 사용 횟수",
+"취침 전(21-23h) 화면 사용 평균",
+"야간(00-05h) 화면 ON 횟수 (수면 방해 지
+
+2
+
+"night_screen_mean":
+
+"야간 화면 사용 평균",
+
+"sleep_hours_est":
+"sk_screen_usage_cross":
+
+"추정 수면 시간 (화면 꺼짐 비율 기반)",
+"화면 사용 x 앱 사용 시간 교호작용",
+
+"sk_night_usage_ratio":
+
+"저녁 화면 비율 (저녁/전체)",
+
+"sk_night_phone":
+"sk_presleep_ratio":
+
+"야간 화면 사용 횟수 (수면 질 지표)",
+"취침 전 화면 비율 (취침전/전체)",
+
+# Activity
+"m_activity_mean":
+
+"모바일 활동 강도 평균",
+
+"m_activity_std":
+"act_stationary_ratio":
+
+"모바일 활동 강도 편차",
+"하루 중 정지 시간 비율",
+
+"act_active_ratio":
+"act_light_ratio":
+
+"하루 중 활동 시간 비율",
+"하루 중 가벼운 활동 비율",
+
+"act_transitions":
+"sk_walk_run_steps":
+
+"활동 상태 전환 횟수 (일상 분절도)",
+"걷기+달리기 걸음 수",
+
+"sk_running_ratio":
+
+"전체 걸음 중 달리기 비율",
+
+"sk_walking_ratio":
+"sk_stride_est":
+
+"전체 걸음 중 걷기 비율",
+"평균 보폭 추정치",
+
+"sk_activity_diff":
+"sk_sedentary_screen":
+
+"전날 대비 활동량 변화",
+"정지 비율 x 화면 사용 (앉아서 폰 사용 지
+
+표)",
+# Pedometer
+"step_sum":
+"step_mean":
+
+"하루 총 걸음 수",
+"시간당 평균 걸음 수",
+
+"running_step_sum":
+
+"달리기 걸음 수 합계",
+
+"walking_step_sum":
+"distance_sum":
+
+"걷기 걸음 수 합계",
+"하루 이동 거리 합계",
+
+"burned_calories_sum":
+"speed_mean":
+
+"하루 소모 칼로리",
+"평균 이동 속도",
+
+# Heart Rate
+"hr_mean_mean":
+
+"일평균 심박수",
+
+"hr_std_mean":
+"hr_min_mean":
+
+"심박수 평균 편차 (HRV proxy)",
+"일 최저 심박수 (안정시 심박)",
+
+"hr_max_mean":
+"hr_night_mean":
+
+"일 최고 심박수",
+"야간(22-05h) 심박수 평균 (회복 지표). Ce
+
+ll 3 hr night_mask=[22,23,0..5]",
+
+v4
+
+"hr_night_min":
+n과 동일 mask",
+
+"야간(22-05h) 최저 심박수. hr_night_mea
+
+"hr_night_rmssd_mean":
+hr_night_mean과 동일 mask",
+
+"야간(22-05h) RMSSD (야간 심박 변이도).
+
+"hr_rmssd_mean":
+"hr_z0_mean":
+
+"일평균 RMSSD (자율신경계 활성도)",
+"저박동(<60bpm) 비율",
+
+"hr_z1_mean":
+"hr_z2_mean":
+"hr_z3_mean":
+
+"정상박동(60-100bpm) 비율",
+"빠른박동(100-140bpm) 비율",
+"매우빠른박동(>140bpm) 비율",
+
+"sk_active_hr_cross":
+
+"활동 강도 x 심박수 교호작용",
+
+3
+
+"sk_hr_cv":
+
+"심박수 변동계수 (hr_std_mean / (hr_mea
+
+n_mean+1), 분모+1 안정화 CV). 스트레스/체력 지표",
+"hr_prebed_mean":
+"취침 전(21-23h) 심박수",
+# GPS
+"gps_loc_entropy_mean":
+"위치 엔트로피 평균 (방문 장소 다양성)",
+"gps_rog_mean":
+"gps_spatial_spread_mean":
+"gps_unique_grids_mean":
+"sk_gps_range_total":
+"sk_traveled":
+"sk_outdoor_active":
+도)",
+"sk_mobility_entropy":
+"sk_rog":
+# WiFi / BLE
+"wifi_scan_cnt_sum":
+"wifi_unique_bssid_mean":
+xy)",
+"ble_scan_cnt_sum":
+
+"회전 반경 평균 (활동 범위)",
+"공간 분산도 (위경도 편차 합)",
+"방문 격자 수 (100m 단위 고유 장소)",
+"GPS 공간 범위 (이동 범위 지표)",
+"외출 여부 (공간범위 > 0.005)",
+"오전 야외 조도 x 걸음 수 (외부 활동 강
+"위치 엔트로피 (방문 다양성)",
+"회전 반경 (mobility 규모)",
+"Wi-Fi 스캔 총 횟수",
+"감지된 고유 Wi-Fi AP 수 (장소 다양성 pro
+"블루투스 스캔 총 횟수",
+
+"ble_unique_addr_mean":
+"고유 블루투스 기기 수 (사회적 노출 prox
+y)",
+# App Usage
+"usage_event_total_time_sum":
+"앱 사용 총 시간",
+"usage_event_app_unique_sum":
+"하루 사용 고유 앱 수",
+"usage_event_time_entropy_mean": "앱 사용 시간 분포 엔트로피",
+# Charging
+"m_charging_mean":
+"충전 평균 비율 (폰 사용 간접 지표)",
+"m_charging_night_mean":
+"야간(00-05h) 충전 평균. agg_hour_bins
+night 윈도우. 비율은 m_charging_night_ratio가 별도 존재",
+# Timing Entropy
+"act_active_te_entropy":
+성)",
+"act_active_te_peak_hr":
+"act_active_te_early_frac":
+
+v4
+
+"활동 시간 분포 엔트로피 (생체리듬 규칙
+"활동 피크 시각",
+"새벽(00-05h) 활동 비율",
+
+"act_active_te_morn_frac":
+"act_active_te_aftn_frac":
+"act_active_te_eve_frac":
+"act_active_te_prebed_frac":
+
+"오전(06-11h) 활동 비율",
+"오후(12-17h) 활동 비율",
+"저녁(18-23h) 활동 비율",
+"취침전(21-23h) 활동 비율",
+
+"act_active_te_q25_hr":
+"act_active_te_q75_hr":
+"act_stat_te_entropy":
+
+"활동 누적 25% 도달 시각",
+"활동 누적 75% 도달 시각",
+"정지 시간 분포 엔트로피",
+
+"act_te_onset_hr":
+"act_te_offset_hr":
+"act_te_active_span":
+"screen_on_te_entropy":
+
+"첫 활동 시각 (기상 proxy)",
+"마지막 활동 시각 (취침 proxy)",
+"활동 지속 시간 (offset-onset)",
+"화면 ON 시간 분포 엔트로피",
+
+4
+
+"screen_on_te_peak_hr":
+"screen_on_te_early_frac":
+
+"화면 사용 피크 시각",
+"새벽 화면 사용 비율",
+
+"screen_on_te_eve_frac":
+"screen_on_te_prebed_frac":
+"hr_elev_te_entropy":
+"hr_elev_te_peak_hr":
+
+"저녁 화면 사용 비율",
+"취침전 화면 사용 비율",
+"고심박(>90bpm) 시간 분포 엔트로피",
+"고심박 피크 시각",
+
+"hr_rest_te_entropy":
+"hr_rest_te_peak_hr":
+"hr_te_min_hr_hr":
+"hr_te_night_day_diff":
+
+"안정심박(<70bpm) 시간 분포 엔트로피",
+"안정심박 피크 시각 (회복 시각)",
+"하루 중 최저 심박 시각 (깊은 회복 시각)",
+"야간-낮 심박 차이 (음수=야간 회복 양호)",
+
+"m_light_te_entropy":
+성)",
+"m_light_br_te_entropy":
+
+"조도 시간 분포 엔트로피 (빛 노출 규칙
+"밝은 빛(상위30%) 노출 시간 분포 엔트로
+
+피",
+"m_light_te_morn_frac":
+"w_light_te_entropy":
+"gps_move_te_entropy":
+칙성)",
+"gps_te_first_hr":
+"gps_te_last_hr":
+"gps_te_span_hrs":
+"wifi_scan_te_entropy":
+"ble_scan_te_entropy":
+"disturb_te_night_n":
+
+"오전 조도 비율 (아침 빛 노출도)",
+"웨어러블 조도 시간 분포 엔트로피",
+"GPS 이동 시간 분포 엔트로피 (이동 패턴 규
+"첫 GPS 이동 시각 (외출 시각)",
+"마지막 GPS 이동 시각 (귀가 시각)",
+"GPS 활동 지속 시간 (외출-귀가)",
+"Wi-Fi 스캔 시간 분포 엔트로피",
+"블루투스 스캔 시간 분포 엔트로피",
+"야간(00-05h) 수면 방해 이벤트 수 (화면
+
++활동+빛)",
+"disturb_te_night_hrs_uniq": "야간 방해 발생 시간대 수",
+"disturb_te_earliest_hr":
+"첫 야간 방해 시각 (수면 시작 지연 지표)",
+# Calendar
+"dayofweek":
+"is_weekend":
+"month_sin":
+"month_cos":
+
+"요일 (0=월~6=일)",
+"주말 여부",
+"월 주기 인코딩 (sin)",
+"월 주기 인코딩 (cos)",
+
+"dow_sin":
+"dow_cos":
+# Consistency
+
+"요일 주기 인코딩 (sin)",
+"요일 주기 인코딩 (cos)",
+
+"sleep_hours_est_roll7_std":
+"sleep_hours_est_roll14_std":
+성)",
+"step_sum_roll7_std":
+
+"7일 수면 시간 편차 (수면 규칙성)",
+"14일 수면 시간 편차 (장기 수면 규칙
+
+"m_screen_use_sum_roll7_std":
+성)",
+"first_screen_hour_roll7_std":
+
+"7일 화면 사용 편차 (스크린 규칙
+
+"7일 걸음 수 편차 (활동 규칙성)",
+
+"7일 기상 시각 편차 (기상 규칙성)",
+
+"last_screen_hour_roll7_std":
+"7일 취침 시각 편차 (취침 규칙성)",
+"hr_mean_mean_roll7_std":
+"7일 심박수 편차 (컨디션 일관성)",
+"act_stationary_ratio_roll7_std": "7일 정지 비율 편차 (활동 규칙성)",
+
+v4
+
+5
+
+# Misc
+"date_gap_days":
+"num_missing":
+
+"수면 보고일 - 활동 측정일 (보고 지연)",
+"결측 피처 수",
+
+"subject_enc":
+"피험자 레이블 인코딩",
+"sk_sleep_diff":
+"전날 대비 수면 시간 변화",
+# ── Calendar ────────────────────────────────────────────────────
+──────────
+"doy_sin":
+"연중 날짜 사인 인코딩 (sin(2π×dayof
+year/366)). 1월→0, 4월→1, 7월→0, 10월→-1 순환. cos과 쌍으로 사용해야 날짜 복
+원 가능",
+"doy_cos":
+"연중 날짜 코사인 인코딩 (cos(2π×day
+ofyear/366)). doy_sin과 90° 위상차. 두 값의 조합으로 계절 위치 고유 표현",
+"month":
+"측정 월 (1~12). 계절성 직접 표현. d
+oy_sin/cos의 선형 버전",
+# ── Mobile Light (agg_sleep_windows) ────────────────────────────
+──────────
+"m_light_wake_mean":
+"기상 직후(06-08h) 모바일 조도 평균
+(lux). agg_sleep_windows wake 윈도우. 아침 빛 노출 = 일주기 리듬 초기화 신
+호",
+"m_light_wake_sum":
+"기상 직후(06-08h) 모바일 조도 합계.
+agg_sleep_windows wake 윈도우. 총 아침 빛 노출량",
+"m_light_late_mean":
+"심야(00-02h) 모바일 조도 평균. agg_
+sleep_windows late 윈도우. 수면 중 폰 화면 켬 = 야간 각성 지표",
+"m_light_day_mean":
+"주간(09-17h) 모바일 조도 평균. agg_
+sleep_windows day 윈도우. 낮 실내/실외 환경 조도",
+"m_light_eve_mean":
+"이른 저녁(18-20h) 모바일 조도 평균.
+agg_sleep_windows eve 윈도우",
+"m_light_deep_mean":
+"새벽(03-05h) 모바일 조도 평균. agg_
+sleep_windows deep 윈도우. 깊은 수면 중 빛 노출 여부",
+"m_light_median":
+"모바일 조도 중앙값. agg_num_feature
+s. 이상치에 강건한 대표 조도. 극단적 직사광선 이벤트 제거 효과",
+# ── Mobile Light (agg_hour_bins) ────────────────────────────────
+──────────
+"m_light_evening_ratio":
+"저녁(18-23h) 모바일 조도 / 일평균 조
+도. agg_hour_bins. 높을수록 저녁에 폰을 어두운 환경에서 사용 → 멜라토닌 분비 억
+제",
+"m_light_morning_ratio":
+"오전(06-11h) 모바일 조도 / 일평균 조
+도. agg_hour_bins. 아침 빛 집중도 비율",
+"m_light_afternoon_ratio":
+"오후(12-17h) 모바일 조도 / 일평균 조
+도. agg_hour_bins",
+# ── Mobile Light (agg_timing_entropy) ───────────────────────────
+──────────
+"m_light_te_active_hrs":
+"모바일 조도 이벤트 발생 시간 수 (0~2
+4h). agg_timing_entropy_base. 폰을 사용한 시간대 수 = 사용 분산도",
+"m_light_te_eve_frac":
+"모바일 조도 이벤트 중 저녁(18-23h)
+
+v4
+
+6
+
+비율. agg_timing_entropy_base. 저녁 폰 사용 집중도",
+"m_light_te_q25_hr":
+"모바일 조도 이벤트 누적 25% 도달 시
+각. agg_timing_entropy_base. 하루 조도 이벤트 1/4이 완료되는 시각",
+"m_light_br_te_prebed_frac":
+"밝은 빛(상위 30% 조도) 이벤트 중 취
+침 전(21-23h) 비율. agg_timing_entropy_base. 취침 전 강한 빛 노출 집중도",
+# ── Wearable Light ──────────────────────────────────────────────
+──────────
+"w_light_median":
+"웨어러블 조도 중앙값. agg_num_featu
+res. 이상치 제거한 실외 빛 노출 대표값",
+"w_light_wake_mean":
+"기상 직후(06-08h) 웨어러블 조도 평
+균. agg_sleep_windows wake 윈도우. 실외 기상 여부 판별",
+"w_light_te_active_hrs":
+"웨어러블 조도 이벤트 발생 시간 수. ag
+g_timing_entropy_base. 실외 노출된 시간대 수 = 외부 활동 분산도",
+# ── Heart Rate (agg_sleep_windows) ──────────────────────────────
+──────────
+"hr_day_mean":
+"주간(09-17h) 심박수 평균. agg_slee
+p_windows day 윈도우. 낮 활동 중 평균 심박",
+"hr_eve_mean":
+"저녁(18-21h) 심박수 평균. Cell 3 직
+접 계산 (eve_mask=[18,19,20,21]). 저녁 회복 시작 시점 심박",
+"hr_eve_rmssd_std":
+"저녁(18-21h) HRV(RMSSD) 표준편차.
+Cell 3 직접 계산 (eve_mask=[18,19,20,21]). 저녁 자율신경 변동성. 높을수록 불
+안정한 저녁 회복 상태",
+# ── Heart Rate (agg_timing_entropy) ─────────────────────────────
+──────────
+"hr_elev_te_morn_frac":
+"고심박(>90bpm) 이벤트 중 오전(06-11
+h) 비율. agg_timing_entropy_base. 오전 운동·스트레스 강도 지표",
+"hr_elev_te_aftn_frac":
+"고심박(>90bpm) 이벤트 중 오후(12-17
+h) 비율. agg_timing_entropy_base. 오후 활동 강도 지표",
+"hr_elev_te_eve_frac":
+"고심박(>90bpm) 이벤트 중 저녁(18-23
+h) 비율. agg_timing_entropy_base. 저녁 교감신경 활성화 → 수면 지연 위험",
+"hr_rest_te_eve_frac":
+"안정시 심박(<70bpm) 이벤트 중 저녁(1
+8-23h) 비율. agg_timing_entropy_base. 저녁 이완도 지표. 높을수록 취침 전 충
+분히 회복",
+# ── Activity (agg_timing_entropy) ───────────────────────────────
+──────────
+"act_stat_te_active_hrs":
+"정지 상태(activity==0) 이벤트 발생
+시간 수. agg_timing_entropy_base. 앉아 있는 시간대 수 = 정적 활동 분산도",
+"act_stat_te_q75_hr":
+"정지 상태 이벤트 누적 75% 도달 시각.
+agg_timing_entropy_base. 하루 정지 활동의 3/4이 완료되는 시각. 빠를수록 이른
+귀가·취침 패턴",
+"m_activity_code_4_cnt":
+"활동 코드 4(unknown/기타) 측정 횟
+수. agg_sleep_windows or raw count. 미분류 활동 빈도. 센서 인식 불확실성 포
+함",
+# ── Charging (agg_hour_bins only — agg_sleep_windows 호출 없음) ──
+────────────
+
+v4
+
+7
+
+"m_charging_morning_ratio":
+"오전(06-11h) 충전 비율 / 일평균 충
+전. agg_hour_bins. 아침 충전 집중도. 높을수록 야간 미충전(늦게까지 사용) 가능
+성",
+"m_charging_evening_mean":
+"저녁(18-23h) 충전 평균. agg_hour_b
+ins evening 윈도우 ([18..23]). 귀가 후 충전 습관 = 규칙적 생활 지표",
+"m_charging_evening_ratio":
+"저녁(18-23h) 충전 비율 / 일평균 충
+전. agg_hour_bins. 저녁 충전 집중도",
+"m_charging_night_ratio":
+"야간(00-05h) 충전 비율 / 일평균 충
+전. agg_hour_bins. 야간 충전 = 수면 중 충전 습관. 0이면 취침 전 미충전",
+# ── Screen (agg_sleep_windows & agg_hour_bins) ──────────────────
+──────────
+"m_screen_day_mean":
+"주간(09-17h) 화면 사용 평균. agg_sl
+eep_windows day 윈도우. 낮 폰 확인 빈도",
+"m_screen_use_afternoon_mean":
+"오후(12-17h) 화면 ON 횟수 평균. agg
+_hour_bins afternoon 윈도우",
+"m_screen_use_evening_mean":
+"저녁(18-23h) 화면 ON 횟수 평균. agg
+_hour_bins evening 윈도우. 저녁 폰 사용 빈도",
+# ── WiFi Timing Entropy ─────────────────────────────────────────
+──────────
+"wifi_scan_te_early_frac":
+"WiFi 스캔 이벤트 중 새벽(00-05h) 비
+율. agg_timing_entropy_base. 야간 WiFi 활동 = 심야 이동 또는 야간 작업 지
+표",
+"wifi_scan_te_aftn_frac":
+"WiFi 스캔 이벤트 중 오후(12-17h) 비
+율. agg_timing_entropy_base. 오후 실내 체류 비율",
+"wifi_scan_te_eve_frac":
+"WiFi 스캔 이벤트 중 저녁(18-23h) 비
+율. agg_timing_entropy_base. 저녁 귀가 후 실내 체류 집중도",
+"wifi_scan_te_prebed_frac":
+"WiFi 스캔 이벤트 중 취침 전(21-23h)
+비율. agg_timing_entropy_base. 취침 직전 실내 WiFi 사용 밀도",
+"wifi_scan_te_peak_hr":
+"WiFi 스캔이 가장 많이 발생한 시각(0~
+23시). agg_timing_entropy_base. 주요 체류 장소 도착 시각 추정",
+# ── BLE Timing Entropy ──────────────────────────────────────────
+──────────
+"ble_scan_te_prebed_frac":
+"BLE 스캔 이벤트 중 취침 전(21-23h)
+비율. agg_timing_entropy_base. 취침 전 블루투스 기기 탐색 활동성",
+# ── Composite / Cross-sensor (Cell 6, 7) ────────────────────────
+─────────
+"morning_light_score":
+"w_light_morning_mean 직접 복사 (=
+오전(06-11h) 웨어러블 조도). Cell 7에서 light_pattern_score 계산을 위한 중간
+피처로 생성",
+"light_pattern_score":
+"w_light_morning_mean − m_light_e
+vening_mean. 아침 실외 조도 − 저녁 실내 조도. 양수=건강한 일주기 빛 패턴, 음수
+=역전된 패턴",
+"exertion_load":
+"log1p(step_sum) × speed_mean. 로
+그 걸음 수 × 평균 속도. 단순 걸음수에 이동 강도(속도)를 결합한 운동 부하 추정
+치",
+
+v4
+
+8
+
+"exertion_x_screen":
+"exertion_load × presleep_screen_
+sum.clip(≥0). 운동 부하 × 취침 전 화면 사용 횟수 합계. 신체 활동 후에도 취침
+전 스크린 자극이 높은 경우 포착",
+"chronotype_midpoint":
+"(last_screen_hour + first_screen
+_hour) / 2 % 24. 마지막·첫 화면 시각 중간값. 수면 중간 시각 추정 = 크로노타입
+proxy. 클수록 올빼미형",
+"presleep_activity_index":
+"act_active_te_prebed_frac × step
+_sum / 1000. 취침 전 활동 비율 × 걸음 수. 취침 직전 신체 각성 강도 지수",
+"distance_std":
+"하루 이동 거리 표준편차. agg_num_fe
+atures on distance. 날마다 이동 거리 편차 = 생활 이동 패턴 불규칙성",
+"sleep_deficit_yesterday":
+"전날 수면 부채 (max(0, 8h - 전날 sl
+eep_hours_est)). 누적 수면 압력 형성. 당일 수면 지연(S3)·각성(S4)에 직접 영
+향",
+"hrv_stress_index":
+"hr_mean_mean / (hr_rmssd_mean +
+1). 심박/RMSSD 비율. 높을수록 심박 빠르고 HRV 낮음 = 교감신경 우세 = 스트레스
+상태",
+"hr_eve_mean_x":
+"저녁 심박 평균 (x 버전). agg_sleep_
+windows eve 윈도우 + agg_num_features 병합 시 생성된 중복 컬럼. w_light_da
+ily_mean_x와 동일 패턴의 중복 피처",
+}
+SUFFIX_PATTERNS = [
+("_subj_mean",
+("_subj_std",
+("_subj_z",
+("_lag1",
+("_lag2",
+("_diff1",
+("_roll3_mean",
+("_roll7_mean",
+("_roll7_std",
+("_roll14_std",
+
+"피험자 개인 평균"),
+"피험자 개인 편차"),
+"피험자 대비 Z-score"),
+"전날 값"),
+"이틀 전 값"),
+"전날 대비 변화량"),
+"3일 이동 평균"),
+"7일 이동 평균"),
+"7일 이동 편차 (일관성)"),
+"14일 이동 편차 (장기 일관성)"),
+
+]
+
+v4
+
+9
+
+
