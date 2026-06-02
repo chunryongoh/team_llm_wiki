@@ -27,6 +27,13 @@ def seed_repo(root: Path):
     )
     (root / "CLAUDE.md").write_text("@AGENTS.md\nRead latest context first.\n", encoding="utf-8")
     (root / "wiki" / "datasets").mkdir(parents=True)
+    (root / "wiki" / "team").mkdir(parents=True)
+    (root / "wiki" / "team" / "ml-ai-hackathon-entity-model.md").write_text(
+        "# ML/AI Hackathon Entity Model\n", encoding="utf-8"
+    )
+    (root / "wiki" / "team" / "packet-quality-standard.md").write_text(
+        "# Packet Quality Standard\n", encoding="utf-8"
+    )
     (root / "wiki" / "index.md").write_text(
         "# Index\n\n<!-- wiki-ingest:index:start -->\n"
         "- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n"
@@ -141,6 +148,18 @@ def integration_pages() -> list[dict[str, str]]:
             "content": "# Sleep Lifelog Open Questions\n\n- How should Track B be handled?\n",
         },
         {
+            "path": "wiki/claims/current-supported-claims.md",
+            "content": "# Current Supported Claims\n\n- No leaderboard claim promoted.\n",
+        },
+        {
+            "path": "wiki/submissions/dacon-leaderboard-history.md",
+            "content": "# DACON Leaderboard History\n\n- No verified submission in this packet.\n",
+        },
+        {
+            "path": "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+            "content": "# Canonical Split And Leakage Policy\n\n- Keep local OOF and leaderboard evidence separate.\n",
+        },
+        {
             "path": "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
             "content": "# Sleep Lifelog Benchmark Synthesis\n\nIntegrated report.\n",
         },
@@ -150,7 +169,7 @@ def integration_pages() -> list[dict[str, str]]:
         },
         {
             "path": "wiki/latest-context.md",
-            "content": "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n<!-- wiki-ingest:latest:start -->\n### llm integration | sleep lifelog\n\n- link: [[reports/2026-05-29-sleep-lifelog-benchmark-synthesis]]\n<!-- wiki-ingest:latest:end -->\n",
+            "content": "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n## Current Best\n\n- Current best remains claim-boundary dependent.\n\n## Active Risks\n\n- Local OOF and leaderboard evidence remain separate.\n\n## Next Actions\n\n- Review benchmark integration.\n\n<!-- wiki-ingest:latest:start -->\n### llm integration | sleep lifelog\n\n- link: [[reports/2026-05-29-sleep-lifelog-benchmark-synthesis]]\n<!-- wiki-ingest:latest:end -->\n",
         },
         {
             "path": "wiki/index.md",
@@ -186,12 +205,24 @@ def single_dataset_integration_pages() -> list[dict[str, str]]:
             "content": "# Sleep Lifelog Packet Synthesis\n\nDataset packet integration report.\n",
         },
         {
+            "path": "wiki/claims/current-supported-claims.md",
+            "content": "# Current Supported Claims\n\n- No supported claim changed.\n",
+        },
+        {
+            "path": "wiki/submissions/dacon-leaderboard-history.md",
+            "content": "# DACON Leaderboard History\n\n- No verified submission in this packet.\n",
+        },
+        {
+            "path": "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+            "content": "# Canonical Split And Leakage Policy\n\n- GroupKFold split policy remains local OOF only.\n",
+        },
+        {
             "path": "wiki/overview.md",
             "content": "# Team LLM Wiki Overview\n\nCurrent focus: sleep lifelog dataset integration.\n",
         },
         {
             "path": "wiki/latest-context.md",
-            "content": "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n<!-- wiki-ingest:latest:start -->\n### llm integration | sleep lifelog\n\n- link: [[reports/2026-05-29-sleep-lifelog-packet-synthesis]]\n<!-- wiki-ingest:latest:end -->\n",
+            "content": "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n## Current Best\n\n- Current best unchanged.\n\n## Active Risks\n\n- Dataset claims remain tentative.\n\n## Next Actions\n\n- Review dataset evidence gaps.\n\n<!-- wiki-ingest:latest:start -->\n### llm integration | sleep lifelog\n\n- link: [[reports/2026-05-29-sleep-lifelog-packet-synthesis]]\n<!-- wiki-ingest:latest:end -->\n",
         },
         {
             "path": "wiki/index.md",
@@ -240,11 +271,17 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert "FILE: wiki/datasets/sleep-lifelog-2024.md" in prompt
     assert "Old deterministic summary" in prompt
     assert "metadata summaries in Korean" in prompt
+    assert "claim registry" in prompt
+    assert "leaderboard history" in prompt
+    assert "latest-context must expose Current Best, Active Risks, and Next Actions" in prompt
     assert report.status == "bot_pr"
     assert report.risk_tier == "tier4-governance"
     assert "wiki/features/sleep-lifelog-feature-landscape.md" in report.generated_paths
     assert "wiki/decisions/sleep-lifelog-evaluation-protocol.md" in report.generated_paths
     assert "wiki/questions/sleep-lifelog-open-questions.md" in report.generated_paths
+    assert "wiki/claims/current-supported-claims.md" in report.generated_paths
+    assert "wiki/submissions/dacon-leaderboard-history.md" in report.generated_paths
+    assert "wiki/preprocessing/canonical-split-and-leakage-policy.md" in report.generated_paths
     assert report.generated_paths[-1] == "raw/results/llm-synthesis/llm-run/report.json"
     assert "LLM synthesized page" in (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").read_text(
         encoding="utf-8"
@@ -327,6 +364,9 @@ def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path
         "wiki/features/sleep-lifelog-feature-landscape.md",
         "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
         "wiki/questions/sleep-lifelog-open-questions.md",
+        "wiki/claims/current-supported-claims.md",
+        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/preprocessing/canonical-split-and-leakage-policy.md",
         "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
         "wiki/overview.md",
         "wiki/latest-context.md",

@@ -2,6 +2,23 @@
 
 [[index]] [[overview]] [[log]]
 
+## Current Best
+
+- Supported local OOF claim: [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md) remains a narrow `local_oof_diagnostic_only` claim. It improves Wave41 by a tiny Q2 targetwise reblend contribution, not by standalone LGB/CB superiority.
+- User-reported DACON public score notes live in [DACON Leaderboard History](submissions/dacon-leaderboard-history.md) and are not verified leaderboard claims yet.
+
+## Active Risks
+
+- Split surfaces are mixed across 3-fold GroupKFold, 5-fold local OOF, working-note validation probes, and notebook-output probes. See [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md).
+- Section07 evidence is useful but tentative: allowed input audit, feature hashes, raw metric files, rerun logs, and DACON submission lineage are missing.
+- Do not call LightGBM + CatBoost globally best without distinguishing standalone, fixed blend, and targetwise reblend boundaries. See [LightGBM CatBoost](models/lightgbm-catboost.md).
+
+## Next Actions
+
+- Close [Section07 Follow-Up Backlog](questions/section07-followup-backlog.md) P0 items: allowed input audit and feature hash evidence.
+- Add a verified DACON leaderboard provenance packet if section07 public score notes should become leaderboard claims.
+- Ensure new experiment packets include `wiki_plan.yaml` stable entities, affected pages, and semantic lint so synthesis updates entity pages rather than only experiment mirrors.
+
 <!-- wiki-ingest:latest:start -->
 ### local-run-section07-notebook | 2026-06-01-lifelog-section07-notebook-overview
 

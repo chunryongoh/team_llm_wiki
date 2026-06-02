@@ -18,6 +18,9 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 - LLM output that changes `wiki/` must be review-required unless the change is only a low-risk summary with no claim promotion.
 - The LLM must read `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, target packet manifests, packet-specific YAML, and packet narratives before writing synthesis.
 - The LLM must run a wiki integration pass, not a two-page formatter pass. A source can update stable entity pages plus feature, decision, question, report, overview, latest-context, index, and log pages.
+- The LLM must preserve the entity graph. It should consider claim registry, DACON leaderboard history, submission history, and preprocessing/split policy pages on every synthesis pass, even when the conclusion is "no change".
+- `wiki/latest-context.md` must expose `Current Best`, `Active Risks`, and `Next Actions`.
+- Local OOF, notebook-output, user-reported public score, DACON public leaderboard, DACON private leaderboard, and organizer-official validation are separate evidence surfaces and must not be merged into one claim.
 - The LLM must preserve claim statuses and must not promote `tentative` to `supported` without raw evidence and metric/split validation.
 - The LLM must output structured JSON containing only allowed replacement wiki pages, not free-form repository edits.
 - The workflow requires `OPENAI_API_KEY`. If the secret is missing, the workflow must skip without breaking deterministic ingest.

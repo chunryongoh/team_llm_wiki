@@ -6,6 +6,23 @@ from team_llm_wiki.wiki_ingest.health import check_wiki_health
 
 def seed_clean(root):
     (root / "wiki").mkdir()
+    for directory in ["claims", "preprocessing", "submissions", "team"]:
+        (root / "wiki" / directory).mkdir()
+    (root / "wiki" / "team" / "ml-ai-hackathon-entity-model.md").write_text(
+        "# ML/AI Hackathon Entity Model\n", encoding="utf-8"
+    )
+    (root / "wiki" / "team" / "packet-quality-standard.md").write_text(
+        "# Packet Quality Standard\n", encoding="utf-8"
+    )
+    (root / "wiki" / "claims" / "current-supported-claims.md").write_text(
+        "# Current Supported Claims\n", encoding="utf-8"
+    )
+    (root / "wiki" / "preprocessing" / "canonical-split-and-leakage-policy.md").write_text(
+        "# Canonical Split And Leakage Policy\n", encoding="utf-8"
+    )
+    (root / "wiki" / "submissions" / "dacon-leaderboard-history.md").write_text(
+        "# DACON Leaderboard History\n", encoding="utf-8"
+    )
     (root / "wiki" / "index.md").write_text(
         "# Index\n\n<!-- wiki-ingest:index:start -->\n- [Overview](overview.md)\n<!-- wiki-ingest:index:end -->\n",
         encoding="utf-8",
@@ -14,6 +31,9 @@ def seed_clean(root):
     (root / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
     (root / "wiki" / "latest-context.md").write_text(
         "[[index]] [[overview]] [[log]]\n"
+        "\n## Current Best\n\n- No current best recorded.\n"
+        "\n## Active Risks\n\n- No active risks recorded.\n"
+        "\n## Next Actions\n\n- No next actions recorded.\n"
         "<!-- wiki-ingest:latest:start -->\n"
         "<!-- wiki-ingest:latest:end -->\n",
         encoding="utf-8",
@@ -52,6 +72,22 @@ def test_health_detects_unbalanced_latest_context_generated_block(tmp_path):
     report = check_wiki_health(tmp_path)
 
     assert any(error.code == "unbalanced_generated_block" for error in report.errors)
+
+
+def test_health_requires_entity_model_pages_and_latest_operating_sections(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "claims" / "current-supported-claims.md").unlink()
+    (tmp_path / "wiki" / "latest-context.md").write_text(
+        "[[index]] [[overview]] [[log]]\n"
+        "<!-- wiki-ingest:latest:start -->\n"
+        "<!-- wiki-ingest:latest:end -->\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path)
+
+    assert any(error.code == "missing_entity_model_page" for error in report.errors)
+    assert any(error.code == "missing_latest_operating_section" for error in report.errors)
 
 
 def test_health_detects_wiki_link_escape(tmp_path):
