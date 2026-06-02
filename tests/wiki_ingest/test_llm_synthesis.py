@@ -408,6 +408,20 @@ def test_llm_response_schema_requires_structured_open_questions():
     ]
 
 
+def test_llm_synthesis_prompt_bounds_page_output_size(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+
+    prompt = llm_synthesis.build_llm_synthesis_prompt(
+        tmp_path,
+        [(llm_synthesis.load_packet_manifest(packet_root), packet_root)],
+        ["wiki/datasets/sleep-lifelog-2024.md", "wiki/latest-context.md"],
+    )
+
+    assert "Concise page budgets" in prompt
+    assert "Do not copy raw packet text into wiki pages" in prompt
+
+
 def test_llm_synthesis_merges_log_output_append_only(tmp_path):
     seed_repo(tmp_path)
     packet_root = seed_dataset_packet(tmp_path)
@@ -584,5 +598,41 @@ def test_openai_responses_client_posts_structured_gpt55_request(monkeypatch):
     body = captured["body"]
     assert body["model"] == "gpt-5.5"
     assert body["reasoning"] == {"effort": "high"}
+    assert body["max_output_tokens"] >= 60000
     assert body["text"]["format"]["type"] == "json_schema"
     assert body["input"][1]["content"] == "context"
+
+
+def test_run_llm_synthesis_can_override_openai_output_budget(monkeypatch, tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    captured = {}
+
+    class CapturingClient:
+        def __init__(self, *, max_output_tokens):
+            captured["max_output_tokens"] = max_output_tokens
+
+        def synthesize(self, *, model, reasoning_effort, prompt):
+            return {
+                "summary": "ok",
+                "integration_plan": [],
+                "created_pages": [],
+                "updated_pages": [],
+                "claim_register": [],
+                "open_questions": [],
+                "superseded_or_conflicting_claims": [],
+                "review_notes": [],
+                "pages": single_dataset_integration_pages(),
+            }
+
+    monkeypatch.setattr(llm_synthesis, "OpenAIResponsesClient", CapturingClient)
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="budget-run",
+        max_output_tokens=72000,
+    )
+
+    assert report.status == "bot_pr"
+    assert captured["max_output_tokens"] == 72000

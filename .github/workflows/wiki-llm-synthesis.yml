@@ -83,6 +83,7 @@ jobs:
             --run-id "$RUN_ID" \
             --model gpt-5.5 \
             --reasoning-effort high \
+            --max-output-tokens 60000 \
             --report-path "raw/results/llm-synthesis/$RUN_ID/report.json" 2>error.json)
           status=$?
           printf "%s\n" "$output" > llm-output.json
@@ -90,16 +91,18 @@ jobs:
           import json
           import os
           from pathlib import Path
-          from team_llm_wiki.wiki_ingest.github_actions import render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
+          from team_llm_wiki.wiki_ingest.github_actions import preview_payload_from_streams, render_workflow_summary, safe_add_paths_file_from_payload, write_github_outputs
 
-          raw = Path("llm-output.json").read_text(encoding="utf-8") if Path("llm-output.json").exists() else None
-          payload = json.loads(raw) if raw else {}
+          raw_stdout = Path("llm-output.json").read_text(encoding="utf-8") if Path("llm-output.json").exists() else ""
+          raw_stderr = Path("error.json").read_text(encoding="utf-8") if Path("error.json").exists() else ""
+          payload = preview_payload_from_streams(raw_stdout, raw_stderr, run_id=os.environ["RUN_ID"])
           paths = safe_add_paths_file_from_payload(payload, Path("add-paths.txt"))
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
               "status": payload.get("status", "missing"),
               "add_paths": "\n".join(paths),
           })
-          Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(render_workflow_summary(raw).replace("Wiki ingest", "LLM wiki synthesis"), encoding="utf-8")
+          summary_raw = json.dumps(payload, ensure_ascii=False)
+          Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(render_workflow_summary(summary_raw).replace("Wiki ingest", "LLM wiki synthesis"), encoding="utf-8")
           PY
           if [ "$status" -ne 0 ]; then
             cat llm-output.json

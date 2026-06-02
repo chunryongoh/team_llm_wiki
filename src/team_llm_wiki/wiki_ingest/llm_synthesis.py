@@ -19,7 +19,7 @@ from .render import render_target_path
 
 DEFAULT_MODEL = "gpt-5.5"
 DEFAULT_REASONING_EFFORT = "high"
-DEFAULT_MAX_OUTPUT_TOKENS = 20000
+DEFAULT_MAX_OUTPUT_TOKENS = 60000
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 MAX_CONTEXT_FILE_CHARS = 120_000
 
@@ -98,6 +98,7 @@ def run_llm_wiki_synthesis(
     run_id: str = "llm-synthesis",
     model: str = DEFAULT_MODEL,
     reasoning_effort: str = DEFAULT_REASONING_EFFORT,
+    max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
     client: Any | None = None,
 ) -> IngestReport:
     start = time.monotonic()
@@ -118,7 +119,7 @@ def run_llm_wiki_synthesis(
     target_paths = _target_paths(manifests)
     evidence_by_target = _raw_evidence_by_target(repo_root, manifests, target_paths)
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
-    synthesis_client = client or OpenAIResponsesClient()
+    synthesis_client = client or OpenAIResponsesClient(max_output_tokens=max_output_tokens)
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
     pages = _validated_pages(llm_payload, allowed_paths=set(target_paths), required_paths=set(target_paths))
     changed: list[str] = []
@@ -219,6 +220,11 @@ def build_llm_synthesis_prompt(
         "- Do not promote tentative claims to supported without explicit raw metric/split evidence.\n"
         "- Write narrative prose and all metadata summaries in Korean so every teammate can review the PR; "
         "keep file paths, ids, field names, metrics, and model names verbatim.\n"
+        "- Concise page budgets: write compact wiki pages, not exhaustive reports. Keep packet review pages around "
+        "900-1400 Korean characters and integration pages around 1200-2200 Korean characters unless a page already "
+        "requires longer append-only history.\n"
+        "- Do not copy raw packet text into wiki pages. Synthesize stable facts, claim boundaries, evidence gaps, "
+        "decisions, and next actions with links to raw evidence.\n"
         "- Return JSON with keys: summary, integration_plan, created_pages, updated_pages, claim_register, "
         "open_questions, superseded_or_conflicting_claims, review_notes, pages.\n"
         "- Each open_questions item must be an actionable backlog object with id, question, priority, "

@@ -7,7 +7,12 @@ from pathlib import Path
 
 from .wiki_ingest.brief import generate_daily_brief, generate_weekly_brief
 from .wiki_ingest.health import check_wiki_health
-from .wiki_ingest.llm_synthesis import DEFAULT_MODEL, DEFAULT_REASONING_EFFORT, run_llm_wiki_synthesis
+from .wiki_ingest.llm_synthesis import (
+    DEFAULT_MAX_OUTPUT_TOKENS,
+    DEFAULT_MODEL,
+    DEFAULT_REASONING_EFFORT,
+    run_llm_wiki_synthesis,
+)
 from .wiki_ingest.manifest import read_changed_paths_file
 from .wiki_ingest.models import IngestFailure, as_jsonable
 from .wiki_ingest.runner import plan_wiki_main_ingest, run_wiki_main_ingest
@@ -55,6 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
     llm.add_argument("--run-id", default="llm-synthesis")
     llm.add_argument("--model", default=DEFAULT_MODEL)
     llm.add_argument("--reasoning-effort", default=DEFAULT_REASONING_EFFORT)
+    llm.add_argument("--max-output-tokens", type=int, default=DEFAULT_MAX_OUTPUT_TOKENS)
 
     health = sub.add_parser("check-wiki-health")
     health.add_argument("--repo-root", required=True)
@@ -99,6 +105,7 @@ def main(argv: list[str] | None = None) -> int:
                 run_id=args.run_id,
                 model=args.model,
                 reasoning_effort=args.reasoning_effort,
+                max_output_tokens=args.max_output_tokens,
             )
             _print_json(report, sys.stdout)
             return 1 if report.status == "hard_fail" else 0
