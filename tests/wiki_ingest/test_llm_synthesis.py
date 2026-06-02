@@ -553,6 +553,59 @@ def test_llm_synthesis_staging_preserves_existing_docs_links(tmp_path):
     assert report.status == "bot_pr"
 
 
+def test_llm_synthesis_merges_index_with_existing_entries_and_generated_pages(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    existing_experiment = tmp_path / "wiki" / "experiments" / "existing-section07.md"
+    existing_experiment.parent.mkdir(parents=True)
+    existing_experiment.write_text("# Existing Section07\n\nAlready indexed.\n", encoding="utf-8")
+    index = tmp_path / "wiki" / "index.md"
+    index.write_text(
+        "# Index\n\n<!-- wiki-ingest:index:start -->\n"
+        "- [Existing Section07](experiments/existing-section07.md) - `experiment`\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+    pages = [
+        {
+            "path": page["path"],
+            "content": "# Index\n\n<!-- wiki-ingest:index:start -->\n"
+            "- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n",
+        }
+        if page["path"] == "wiki/index.md"
+        else page
+        for page in single_dataset_integration_pages()
+    ]
+    client = FakeClient(
+        {
+            "summary": "ok",
+            "integration_plan": [],
+            "created_pages": ["wiki/reports/2026-05-29-sleep-lifelog-packet-synthesis.md"],
+            "updated_pages": ["wiki/index.md"],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": [],
+            "pages": pages,
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="index-merge",
+        client=client,
+    )
+
+    merged_index = index.read_text(encoding="utf-8")
+    assert report.status == "bot_pr"
+    assert merged_index.count("<!-- wiki-ingest:index:start -->") == 1
+    assert merged_index.count("<!-- wiki-ingest:index:end -->") == 1
+    assert "experiments/existing-section07.md" in merged_index
+    assert "datasets/sleep-lifelog-2024.md" in merged_index
+    assert "reports/2026-05-29-sleep-lifelog-packet-synthesis.md" in merged_index
+
+
 def test_openai_responses_client_posts_structured_gpt55_request(monkeypatch):
     captured = {}
 
