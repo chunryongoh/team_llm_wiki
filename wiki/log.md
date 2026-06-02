@@ -157,3 +157,12 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md`
 - run: `26806097236-1`
+
+## [2026-06-02] synthesis | 26806097236-sleep-lifelog-packet-integration
+
+- integrated packets: `2026-06-01-app-context-feature-engineering-20260601`, `2026-05-29-labelwise-weekly-progress-target-bottlenecks`, `2026-05-28-1875-feature-domain-ablation-and-dedup`, `2026-05-29-v200-v209-sparse-splice-review`, `2026-05-29-v186-shap-leaderboard-analysis`
+- created: `wiki/reports/2026-05-28-sleep-lifelog-packet-synthesis.md`
+- updated stable pages: `wiki/features/sleep-lifelog-feature-landscape.md`, `wiki/decisions/sleep-lifelog-evaluation-protocol.md`, `wiki/questions/sleep-lifelog-open-questions.md`, `wiki/claims/current-supported-claims.md`, `wiki/submissions/dacon-leaderboard-history.md`, `wiki/preprocessing/canonical-split-and-leakage-policy.md`
+- boundary preserved: local OOF, notebook-output, user-reported public score, DACON public/private leaderboard, organizer-official validation are separate evidence surfaces.
+- claim update: no new supported claim; all new public LB and feature-analysis claims remain `tentative`.
+- review-required: true

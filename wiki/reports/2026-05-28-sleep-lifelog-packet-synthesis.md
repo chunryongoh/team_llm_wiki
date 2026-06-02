@@ -1,10 +1,10 @@
 ---
-id: dacon-leaderboard-history
-type: submission-history
-title: DACON Leaderboard History
-status: active
+id: 2026-05-28-sleep-lifelog-packet-synthesis
+type: report
+title: 2026-05-28 Sleep Lifelog Packet Synthesis
 date: 2026-06-02
-summary: 현재 기록된 DACON public score 값은 모두 user-reported 또는 DOCX/PDF observation이며 verified_public_lb row는 없다.
+status: review-required
+summary: 2026-05-28부터 2026-06-01까지 들어온 5개 attachment-derived sleep-lifelog packet을 stable claim boundary, feature landscape, leaderboard history, split policy로 통합했다.
 review_required: true
 raw_evidence:
 - raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/manifest.yaml
@@ -46,40 +46,30 @@ raw_evidence:
 - raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/wiki_plan.yaml
 ---
 
-# DACON Leaderboard History
+# 2026-05-28 Sleep Lifelog Packet Synthesis
 
-이 page는 DACON submission evidence를 local OOF diagnostic과 분리한다. 현재 새 packet들이 제공한 public score는 leaderboard export, submission id, private score, submission CSV lineage가 없으므로 모두 tentative다.
+이 report는 `26806097236-1` ingest로 들어온 5개 packet을 packet mirror가 아니라 안정 wiki memory로 통합한 결과다.
 
-## Evidence classes
+## Integrated packets
 
-- `verified_public_lb`: DACON submission id, public score, leaderboard export, submission CSV lineage가 있음
-- `verified_private_lb`: private/final score artifact와 lineage가 있음
-- `user_reported_public_score_only`: report, Slack, PDF에 적힌 public score note
-- `docx_report_public_lb_observation`: DOCX에 적힌 staged public LB observation
-- `local_oof_diagnostic_only`: DACON leaderboard가 아닌 local validation evidence
-- `notebook_output_observation_only`: notebook/PDF output summary
+- [app context feature engineering 20260601](../performance/2026-06-01-app-context-feature-engineering-20260601.md)
+- [labelwise weekly progress target bottlenecks](../experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md)
+- [1875 feature domain ablation and dedup](../features/2026-05-28-1875-feature-domain-ablation-and-dedup.md)
+- [v200 v209 sparse splice review](../experiments/2026-05-29-v200-v209-sparse-splice-review.md)
+- [v186 shap leaderboard analysis](../performance/2026-05-29-v186-shap-leaderboard-analysis.md)
 
-## Current records
+## Integration result
 
-| candidate | score | evidence_class | packet | status |
-|---|---:|---|---|---|
-| `v186-target-specific-lgbm-catboost-blend` | `0.5922831771` | `user_reported_public_score_only` | `2026-05-29-v186-shap-leaderboard-analysis` | tentative |
-| `v189-anchor` | `0.5925397` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
-| `v200` | `0.608842` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
-| `v204` | `0.592557` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
-| `v208` | `0.592547` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
-| `v209-q3-low` | `0.592543` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
-| `v209-q23-low` | `0.592551` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
-| `section9_labelwise_best_20260522_1239` | `0.5986218188` | `user_reported_public_score_only` | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | tentative |
-| `section07_candidate_baseline_seed_ensemble_20260529_1029` | `0.6003735255` | `user_reported_public_score_only` | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | tentative |
-| `app-context-stage0-baseline` | `0.6218831823` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
-| `app-context-stage1-daily-evening` | `0.6182941107` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
-| `app-context-stage2-presleep-night` | `0.6106185586` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
+기존 supported claim은 [Current Supported Claims](../claims/current-supported-claims.md)의 LGB/CB targetwise reblend local OOF diagnostic 하나로 유지했다. 새 packet의 public score는 모두 `tentative`이며 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)에 `user_reported_public_score_only` 또는 `docx_report_public_lb_observation`으로 들어갔다.
 
-## Boundary preserved
+[Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)는 app context, 1,875 feature pool, v186 SHAP, v200-v209 sparse splice, Section07 target bottleneck을 한 페이지에서 분리 관리하도록 갱신했다. [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)는 local OOF, notebook-output, public score note의 split surface를 분리했다.
 
-[Current Supported Claims](../claims/current-supported-claims.md)의 LGB/CB local OOF claim은 이 table의 verified leaderboard row가 아니다. 반대로 위 public score notes는 local OOF metric으로 재해석하지 않는다.
+## Contradictions and supersession
 
-## Promotion evidence
+- 더 많은 feature가 항상 좋다는 가정은 S4 degradation, 1,875 dedup, temporal overlap negative report와 충돌한다.
+- broad morphology reset은 v200 negative public score note 때문에 guardrail 없이 채택할 수 없다.
+- v186 reported public best와 LGB/CB local OOF supported claim은 서로 다른 evidence surface다.
 
-Verified row로 승격하려면 DACON submission id, leaderboard export, timestamp, 제출 CSV lineage, local run mapping, feature/model policy mapping이 필요하다.
+## Next actions
+
+우선순위는 v186/app-context/Section07 submission lineage 확보, exact `715` dedup list 제출, Q3/S4 same-split ablation, replay validator blind-spot threshold 정의다. 세부 backlog는 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)에 있다.

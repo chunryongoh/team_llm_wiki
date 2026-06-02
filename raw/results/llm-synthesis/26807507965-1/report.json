@@ -1,0 +1,254 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md",
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+    "wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md",
+    "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+    "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/reports/2026-05-28-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "claim_register": [
+    {
+      "status": "supported",
+      "text": "`2026-06-01-lgb-cb-reproduction-local-oof-diagnostic`\ub294 `local_oof_diagnostic_only` \uacbd\uacc4\uc5d0\uc11c Q2\uc5d0 fixed LGB/CB blend `0.1`\uc744 \ub123\uc740 targetwise reblend\uac00 Wave41 local OOF `grouped_macro_log_loss`\ub97c `0.6198684545582471`\uc5d0\uc11c `0.6198365213240887`\ub85c \ubbf8\uc138 \uac1c\uc120\ud588\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\uc870\ud61c\uc6d0 app-context bundle\uc740 app-name daily/evening feature\uc640 presleep/night/early-morning app context feature\uac00 public LB \uad00\ucc30\uac12\uc744 `0.6218831823`\uc5d0\uc11c `0.6106185586`\uc73c\ub85c \uac1c\uc120\ud588\ub2e4\uace0 \ubcf4\uace0\ud558\uc9c0\ub9cc submission id, leaderboard export, private score, same-split local OOF\uac00 \uc5c6\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\uc11d\ud604\uc11d weekly update\ub294 labelwise strategy\uc758 user-reported public score note `0.5986218188`\ub97c \uae30\ub85d\ud558\uc9c0\ub9cc leaderboard provenance\uc640 target-level raw metric files\uac00 \uc5c6\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\uc11d\ud604\uc11d weekly update\ub294 temporal overlap/window augmentation\uc774 \uc190\ud574\uc600\uace0 Q3/S4\uac00 \ubcd1\ubaa9\uc774\ub77c\uace0 \ubcf4\uace0\ud558\uc9c0\ub9cc raw ablation table\uc774 \ud544\uc694\ud558\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\uad6c\ub098\uc601 feature bundle\uc740 `1,875` feature pipeline, `715` duplicate/high-correlation cleanup candidates, noisy `Light-W`, Screen/Sleep core domain, Q3 BLE/WiFi \uc608\uc678\ub97c \ubcf4\uace0\ud558\uc9c0\ub9cc raw correlation matrix, duplicate list, ablation metric files\uac00 \uc5c6\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\uad6c\ub098\uc601 bundle\uc758 V2 CatBoost avg `-0.0063` \uac1c\uc120\uc740 contributor-reported notebook output\uc774\uba70 raw metric artifact\uc640 submission lineage\uac00 \uc5c6\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\ubb38\ud615\ub3c4 v186 bundle\uc740 public LB `0.5922831771`\uc640 mean OOF `0.6167`\ub97c \ubcf4\uace0\ud558\uc9c0\ub9cc DACON leaderboard export, submission id, private score, submission CSV lineage\uac00 \uc5c6\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "v186 SHAP target\ubcc4 feature driver\ub294 feature-importance evidence\uc774\uba70 causal feature value\ub098 ablation evidence\uac00 \uc544\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "\ubb38\ud615\ub3c4 v200-v209 review\ub294 broad morphology reset\uc774 \uc2e4\ud328\ud558\uace0 sparse splice guardrail\uc774 \ud544\uc694\ud558\ub2e4\uace0 \ubcf4\uace0\ud558\uc9c0\ub9cc score trend\ub294 user-reported public LB observation\uc774\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/reports/2026-05-28-sleep-lifelog-packet-synthesis.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md",
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+    "wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md",
+    "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+    "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/reports/2026-05-28-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/26806097236-1/report.json"
+  ],
+  "integration_plan": [
+    "5\uac1c packet page\ub97c provenance \uc911\uc2ec\uc758 compact review page\ub85c \uc7ac\uc791\uc131\ud558\uace0 raw packet text \ubcf5\uc0ac\ub97c \uc81c\uac70\ud55c\ub2e4.",
+    "feature landscape\uc5d0\ub294 app context, 1,875 feature pool, v186 SHAP, v200-v209 sparse splice, Section07 target bottleneck\uc744 claim boundary\ubcc4\ub85c \ud569\uc131\ud55c\ub2e4.",
+    "evaluation protocol\uacfc preprocessing policy\uc5d0 local OOF, notebook-output, user-reported public score, DACON leaderboard, organizer official validation\uc744 \ubd84\ub9ac\ud558\ub294 \uaddc\uce59\uc744 \uba85\uc2dc\ud55c\ub2e4.",
+    "claim registry\uc640 DACON leaderboard history\uc5d0\ub294 \uc0c8 tentative claim\uc744 \ucd94\uac00\ud558\ub418 \uae30\uc874 supported claim\uc740 \uc2b9\uaca9\u00b7\uac15\ub4f1 \uc5c6\uc774 \ubcf4\uc874\ud55c\ub2e4.",
+    "open questions\uc640 report\uc5d0\ub294 \ubaa8\uc21c, supersession, missing evidence, next action\uc744 backlog\ub85c \uad6c\uc870\ud654\ud55c\ub2e4."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    {
+      "close_condition": "App context claim\uc744 verified public LB\ub85c \uc2b9\uaca9\ud558\uac70\ub098 \uc601\uad6c\uc801\uc73c\ub85c public-LB observation\uc73c\ub85c \uc720\uc9c0\ud558\ub294 \uacb0\uc815\uc774 \uae30\ub85d\ub41c\ub2e4.",
+      "id": "app-context-raw-submission-lineage",
+      "merge_blocker": false,
+      "needed_evidence": "submission CSV lineage, leaderboard export, local OOF metric table, feature list hash",
+      "owner_role": "feature-performance-owner",
+      "priority": "high",
+      "question": "`0.6218831823`, `0.6182941107`, `0.6106185586` app-context stage\uac00 \uc5b4\ub5a4 DACON submission id, \uc81c\ucd9c CSV, raw metric file\uc5d0 \ub300\uc751\ud558\ub294\uac00?"
+    },
+    {
+      "close_condition": "Q3 frequency feature\uc758 \ucc44\ud0dd \ub610\ub294 \ud3d0\uae30 \uacb0\uacfc\uac00 raw metric packet\uacfc \ud568\uaed8 \uae30\ub85d\ub41c\ub2e4.",
+      "id": "q3-frequency-feature-design",
+      "merge_blocker": false,
+      "needed_evidence": "feature formulas, same-split Q3 metrics, ablation table",
+      "owner_role": "target-feature-owner",
+      "priority": "high",
+      "question": "Q3 \ubcd1\ubaa9\uc744 \uc704\ud574 \uc5b4\ub5a4 frequency/window feature family\ub97c \uc5b4\ub5a4 validation surface\uc5d0\uc11c \uc2dc\ud5d8\ud560 \uac83\uc778\uac00?"
+    },
+    {
+      "close_condition": "S4 feature policy\uac00 safe/rejected family\ub85c \ubd84\ub9ac\ub418\uc5b4 \uae30\ub85d\ub41c\ub2e4.",
+      "id": "s4-broad-feature-degradation",
+      "merge_blocker": false,
+      "needed_evidence": "S4 per-target ablation, feature group list, same-split baseline",
+      "owner_role": "target-feature-owner",
+      "priority": "high",
+      "question": "S4\ub97c \uc545\ud654\uc2dc\ud0a4\ub294 broad feature addition\uacfc \uc548\uc804\ud55c WASO/disturbance proxy \ud6c4\ubcf4\ub294 \ubb34\uc5c7\uc778\uac00?"
+    },
+    {
+      "close_condition": "Feature dedup policy\uac00 \uc81c\uac70 \ud6c4\ubcf4\uc640 target-specific exception\uc744 \uc7ac\ud604 \uac00\ub2a5 artifact\ub85c \uae30\ub85d\ud55c\ub2e4.",
+      "id": "feature-dedup-715-raw-list",
+      "merge_blocker": false,
+      "needed_evidence": "correlation matrix, duplicate feature list, post-pruning metric table",
+      "owner_role": "feature-owner",
+      "priority": "high",
+      "question": "\uc815\ud655\ud788 \uc5b4\ub5a4 `715`\uac1c feature\uac00 duplicate \ub610\ub294 high-correlation cleanup candidate\uc778\uac00?"
+    },
+    {
+      "close_condition": "Validator policy\uac00 blind-spot threshold\uc640 \uc608\uc2dc\ub97c \uc815\uc758\ud55c\ub2e4.",
+      "id": "replay-validator-blind-spot-threshold",
+      "merge_blocker": false,
+      "needed_evidence": "v200-v209 submission table, local replay metrics, public LB deltas",
+      "owner_role": "validation-owner",
+      "priority": "high",
+      "question": "local replay \ub610\ub294 OOF proxy\uac00 public LB `0.00005` \uc218\uc900 \uc774\ub3d9\uc744 \uac10\uc9c0\ud558\ub824\uba74 \uc5b4\ub5a4 empirical threshold\uac00 \ud544\uc694\ud55c\uac00?"
+    },
+    {
+      "close_condition": "Leaderboard history\uac00 v186\uc744 `verified_public_lb`\ub85c \uc2b9\uaca9\ud558\uac70\ub098 tentative\ub85c \uace0\uc815\ud55c\ub2e4.",
+      "id": "v186-leaderboard-provenance",
+      "merge_blocker": false,
+      "needed_evidence": "DACON leaderboard export, submission CSV, submission timestamp, local run mapping",
+      "owner_role": "submission-owner",
+      "priority": "high",
+      "question": "v186 public LB `0.5922831771`\ub97c DACON submission id, leaderboard export, submission CSV lineage\ub85c \uac80\uc99d\ud560 \uc218 \uc788\ub294\uac00?"
+    },
+    {
+      "close_condition": "\ub3d9\uc77c \ub610\ub294 \uba85\uc2dc\uc801\uc73c\ub85c \ube44\uad50 \uac00\ub2a5\ud55c split\uc5d0\uc11c ablation\ubcc4 `grouped_macro_log_loss`\uac00 \uc81c\ucd9c\ub41c\ub2e4.",
+      "id": "fold-safe-leakage-ablation",
+      "merge_blocker": false,
+      "needed_evidence": "fold-safe ablation run id, per-target OOF metrics, leakage audit update",
+      "owner_role": "modeling-lead",
+      "priority": "P0",
+      "question": "transductive statistics, global imputer, subject encoding\uc744 fold-safe\ud558\uac8c \ubc14\uafb8\uba74 supported local OOF claim\uc758 metric\uc774 \uc5b4\ub5bb\uac8c \ubcc0\ud558\ub294\uac00?"
+    },
+    {
+      "close_condition": "alignment risk\uac00 pass \ub610\ub294 excluded decision\uc73c\ub85c \uac31\uc2e0\ub41c\ub2e4.",
+      "id": "date-rolling-alignment-audit",
+      "merge_blocker": false,
+      "needed_evidence": "feature generation audit, fold-aware alignment test, target boundary review",
+      "owner_role": "feature-owner",
+      "priority": "P0",
+      "question": "date/rolling feature\uac00 target \uc774\ud6c4 \uc815\ubcf4\uc640 fold boundary\ub97c \uce68\ubc94\ud558\uc9c0 \uc54a\ub294\uac00?"
+    },
+    {
+      "close_condition": "DACON Leaderboard History\uc758 \ud574\ub2f9 row\uac00 verified \ub610\ub294 permanently tentative\ub85c \uc815\ub9ac\ub41c\ub2e4.",
+      "id": "dacon-submission-provenance-boundary",
+      "merge_blocker": false,
+      "needed_evidence": "submission ids, public/private scores, leaderboard export, local run mapping",
+      "owner_role": "benchmark-owner",
+      "priority": "high",
+      "question": "\ud604\uc7ac user-reported public score notes\ub97c verified DACON public/private leaderboard evidence\ub85c \ubc14\uafc0 packet-local provenance\uac00 \uc788\ub294\uac00?"
+    }
+  ],
+  "packet_roots": [
+    "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+    "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+    "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+    "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+    "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-01-app-context-feature-engineering-20260601",
+      "packet_root": "raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601",
+      "type": "performance"
+    },
+    {
+      "id": "2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "packet_root": "raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks",
+      "type": "experiment"
+    },
+    {
+      "id": "2026-05-28-1875-feature-domain-ablation-and-dedup",
+      "packet_root": "raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup",
+      "type": "feature"
+    },
+    {
+      "id": "2026-05-29-v200-v209-sparse-splice-review",
+      "packet_root": "raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review",
+      "type": "experiment"
+    },
+    {
+      "id": "2026-05-29-v186-shap-leaderboard-analysis",
+      "packet_root": "raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/26807507965-1/report.json",
+  "review_notes": [
+    "\ubaa8\ub4e0 \uc0c8 performance/public score claim\uc740 `tentative`\ub85c \uc720\uc9c0\ud588\ub2e4.",
+    "\uae30\uc874 `supported` local OOF claim\uc740 metric, split, boundary\ub97c \uadf8\ub300\ub85c \ubcf4\uc874\ud588\ub2e4.",
+    "DACON public/private leaderboard, user-reported public score, local OOF, notebook-output, organizer-official validation\uc744 \ud55c \ud45c\uba74\uc73c\ub85c \ud569\uce58\uc9c0 \uc54a\uc558\ub2e4.",
+    "\ud5c8\uc6a9\ub41c 16\uac1c output page\ub9cc \uc791\uc131 \ub300\uc0c1\uc73c\ub85c \ud3ec\ud568\ud588\uace0 `raw/`, `automation/`, policy file\uc740 \uc791\uc131\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+    "\uc2e0\uaddc topic pages\ub97c \ubcc4\ub3c4 \ud30c\uc77c\ub85c \ub9cc\ub4e4 \uc218 \uc5c6\uc5b4\uc11c target, sparse-splice, app-context, dedup \uc9c0\uc2dd\uc740 allowed stable synthesis pages\uc5d0 \uc555\ucd95 \ud1b5\ud569\ud588\ub2e4."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "26807507965-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "\ub354 \ub9ce\uc740 feature\ub97c \uc804\uc5ed\uc73c\ub85c \ucd94\uac00\ud558\uba74 \ud56d\uc0c1 \uc88b\uc544\uc9c4\ub2e4\ub294 \uac00\uc815\uc740 Section07, 1,875-feature dedup, S4 degradation \uad00\ucc30\uacfc \ucda9\ub3cc\ud55c\ub2e4.",
+    "DPSleep/SleepMore-inspired morphology broad reset\uc774 \uc131\uacf5\uc801\uc774\ub77c\ub294 \ud574\uc11d\uc740 v200 public LB \uc545\ud654 \ubcf4\uace0\ub85c superseded \ub418\uc5c8\ub2e4.",
+    "v186\uc774 public-LB reported best\ub77c\ub294 claim\uacfc LGB/CB reproduction local OOF supported claim\uc740 \uc11c\ub85c \ub2e4\ub978 evidence surface\uc774\ubbc0\ub85c current best\ub85c \ud569\uce58\uba74 \uc548 \ub41c\ub2e4.",
+    "Light-W \uc804\uccb4 \uc81c\uac70\ub294 \ud3c9\uade0\uc801\uc73c\ub85c \ub178\uc774\uc988\ub77c\ub294 \ubcf4\uace0\uc640 Q3\uc5d0\uc11c BLE/WiFi \uc81c\uac70\uac00 \uc545\ud654\ub41c\ub2e4\ub294 \ubcf4\uace0\uac00 target-specific exception\uc744 \uc694\uad6c\ud55c\ub2e4.",
+    "generic app-category-only feature assumption\uc740 app-name/app-context staged report\uac00 \ud655\uc778\ub418\uba74 \uc57d\ud654\ub420 \uc218 \uc788\uc73c\ub098 \ud604\uc7ac\ub294 provenance \ubd80\uc871\uc73c\ub85c supersession \uc804\uc774\ub2e4.",
+    "temporal overlap/window augmentation\uc774 \uc790\ub3d9\uc73c\ub85c \ub3c4\uc6c0\uc774 \ub41c\ub2e4\ub294 \uac00\uc815\uc740 weekly update\uc758 negative report\uc640 \ucda9\ub3cc\ud55c\ub2e4."
+  ],
+  "synthesis_summary": "26806097236-1\uc758 5\uac1c sleep-lifelog packet\uc744 packet mirror\uac00 \uc544\ub2c8\ub77c claim-gated \uc548\uc815 \uc704\ud0a4\ub85c \ud1b5\ud569\ud588\ub2e4. \uae30\uc874 `local_oof_diagnostic_only` supported claim\uc740 \uadf8\ub300\ub85c \ubcf4\uc874\ud588\uace0, \uc0c8 public LB \uad00\ub828 \uc218\uce58\ub294 \ubaa8\ub450 `user_reported_public_score_only` \ub610\ub294 `docx_report_public_lb_observation`\uc758 tentative claim\uc73c\ub85c \uc720\uc9c0\ud588\ub2e4. DACON leaderboard history, claim registry, split/leakage policy, feature landscape, evaluation protocol, open questions, overview, latest-context, index, log\ub97c \ud568\uaed8 \uac31\uc2e0\ud588\ub2e4.",
+  "timing_ms": 252036,
+  "updated_pages": [
+    "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md",
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+    "wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md",
+    "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+    "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md"
+  ],
+  "validation": {},
+  "warnings": []
+}

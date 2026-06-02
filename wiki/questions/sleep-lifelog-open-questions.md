@@ -3,41 +3,65 @@ id: sleep-lifelog-open-questions
 type: open-questions
 title: Sleep Lifelog Open Questions
 status: active
-last_updated: 2026-06-01
-summary: >-
-  sleep-lifelog 후속 backlog는 local OOF claim을 유지한 채 fold-safe ablation, Q2 blend 검증, leaderboard 매핑, date/rolling alignment audit, uncertainty 추정을 요구한다.
+last_updated: 2026-06-02
+summary: sleep-lifelog backlog는 leaderboard provenance, feature ablation, split/leakage audit, target-specific Q3/S4 policy를 닫기 위한 실행 질문을 관리한다.
 review_required: true
 raw_evidence:
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/manifest.yaml
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/blend_weights.json
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/final_reblend_summary.json
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/leakage_audit.json
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/metrics.json
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/packet.md
-- raw/users/chunryongoh/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic/performance.yaml
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/manifest.yaml
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/metrics.json
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/packet.md
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/performance.yaml
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/source/feature-engineering-result-report-20260601.docx
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/source/feature-engineering-result-report-20260601.txt
+- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/wiki_plan.yaml
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/manifest.yaml
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/evidence.yaml
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/metrics.json
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/packet.md
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/source/weekly-progress-20260521-20260529-ko-short.md
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/source/prompt4llmwiki.txt
+- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/wiki_plan.yaml
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/manifest.yaml
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/features.yaml
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/packet.md
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/20260528-notebook-outputs.docx
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/20260528-notebook-outputs.txt
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/feature-info.pdf
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/feature-info.txt
+- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/wiki_plan.yaml
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/manifest.yaml
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/evidence.yaml
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/metrics.json
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/packet.md
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/source/etri-2026-v2-review.pdf
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/source/etri-2026-v2-review.txt
+- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/wiki_plan.yaml
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/manifest.yaml
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/metrics.json
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/packet.md
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/performance.yaml
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/etri-2026-v186-shap-analysis.pdf
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/etri-2026-v186-shap-analysis.txt
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/v186-top10-feature-meaning-ko.md
+- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/wiki_plan.yaml
 ---
 
 # Sleep Lifelog Open Questions
 
-이 페이지는 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md), [Sleep Health Hackathon Benchmark v0](../benchmarks/sleep-health-hackathon-v0.md), [LGB CB Reproduction Local OOF Diagnostic](../performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md), [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md), [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)에 연결된 실행 가능한 backlog다.
-
-## Backlog
+이 backlog는 [Feature Landscape](../features/sleep-lifelog-feature-landscape.md), [Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md), [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md), [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)에 연결된다. 현재 synthesis merge blocker는 없지만, 아래 질문이 닫히기 전에는 tentative claim을 supported 또는 verified leaderboard claim으로 승격할 수 없다.
 
 | id | priority | owner_role | merge_blocker | question | needed_evidence | close_condition |
 |---|---|---|---|---|---|---|
-| `sleep-lifelog-oq-001` | `P0` | modeling lead | false | `train_test_transductive_notebook_reproduction`, `global_train_median_imputer_before_cv`, subject identity, subject target encoding feature를 fold-safe하게 바꾸거나 제거했을 때 `grouped_macro_log_loss`와 target별 metric이 어떻게 변하는가? | fold-safe ablation run id, split definition, per-target OOF predictions or metric summary, raw `metrics.json`, leakage audit update | 동일 `local-groupkfold-subject-5fold-oof` 또는 명시적으로 비교 가능한 split에서 ablation별 `grouped_macro_log_loss`와 target별 deltas가 raw packet으로 제출된다. |
-| `sleep-lifelog-oq-002` | `P1` | modeling lead | false | Q2에서만 관측된 LGB/CB source-diversity 이득이 별도 weight search 또는 nested/fold-safe 절차에서도 유지되는가? | Q2 per-target blend-weight search log, candidate ids, validation protocol, OOF metric table, overfit 방지 설명 | Q2 weight 선택 절차와 metric이 raw evidence로 제출되고 현재 `0.1` weight 결과와 비교된다. |
-| `sleep-lifelog-oq-003` | `P1` | benchmark owner | false | local OOF line과 DACON public/private leaderboard 제출 사이의 submission id, score, cutoff, model lineage가 어떻게 매핑되는가? | DACON submission ids, public/private scores, 제출 파일 lineage, local run ids, leaderboard claim boundary packet | leaderboard claim이 local OOF와 분리된 source 또는 benchmark page에 raw provenance와 함께 기록된다. |
-| `sleep-lifelog-oq-004` | `P0` | feature owner | false | date/rolling alignment feature가 target leakage 없이 fold boundary와 subject boundary를 지키는가? | feature generation code review note, fold-aware alignment audit, target별 leakage check, 재현 가능한 raw audit artifact | date/rolling alignment audit이 통과 또는 제외 결정으로 문서화되고 feature landscape의 risk status가 갱신된다. |
-| `sleep-lifelog-oq-005` | `P2` | evaluation owner | false | 현재 local OOF delta `-3.19332341584e-05`가 seed/fold 변동 대비 의미 있는가? | multi-seed 또는 repeated split 결과, confidence interval 또는 rank stability table, 동일 metric 정의 | seed/fold uncertainty interval이 raw packet으로 제출되어 현재 delta의 안정성이 판단된다. |
-| `sleep-lifelog-oq-006` | `P2` | feature owner | false | `timing_entropy`가 default에서 제외된 이유와 안전한 variant 조건은 무엇인가? | `source_with_timing_entropy` variant metric, leakage audit, feature definition, inclusion/exclusion rationale | `timing_entropy` variant가 fold-safe audit과 metric evidence로 유지 또는 제외 결정된다. |
+| `app-context-raw-submission-lineage` | high | feature-performance-owner | false | app-context 세 stage score가 어떤 submission lineage에 대응하는가? | submission CSV, leaderboard export, local OOF metric, feature hash | app-context claim 승격 또는 permanent tentative 결정 |
+| `q3-frequency-feature-design` | high | target-feature-owner | false | Q3 frequency/window feature를 어떤 validation surface에서 시험할 것인가? | formulas, same-split Q3 metrics, ablation table | Q3 후보 채택/폐기 기록 |
+| `s4-broad-feature-degradation` | high | target-feature-owner | false | S4를 악화시키는 broad additions와 안전한 WASO proxy는 무엇인가? | S4 ablation, feature group list, baseline | safe/rejected S4 feature policy 기록 |
+| `feature-dedup-715-raw-list` | high | feature-owner | false | exact `715` duplicate/high-correlation candidates는 무엇인가? | correlation matrix, duplicate list, post-pruning metrics | dedup policy와 target exception 기록 |
+| `replay-validator-blind-spot-threshold` | high | validation-owner | false | `0.00005` public LB movement를 감지할 local replay threshold는 무엇인가? | v200-v209 submission table, local replay metrics, public deltas | validator blind-spot threshold 정의 |
+| `v186-leaderboard-provenance` | high | submission-owner | false | v186 public LB `0.5922831771`를 검증할 수 있는가? | leaderboard export, submission CSV, timestamp, run mapping | verified 또는 tentative 고정 |
+| `fold-safe-leakage-ablation` | P0 | modeling-lead | false | transductive statistics와 global imputer를 fold-safe하게 바꾸면 local OOF가 어떻게 변하는가? | fold-safe run, OOF metrics, leakage audit | supported local claim boundary 갱신 |
+| `date-rolling-alignment-audit` | P0 | feature-owner | false | date/rolling feature가 target 이후 정보를 쓰지 않는가? | alignment audit, feature cutoff review | pass 또는 excluded decision |
+| `dacon-submission-provenance-boundary` | high | benchmark-owner | false | user-reported public notes를 verified DACON evidence로 바꿀 provenance가 있는가? | submission ids, public/private scores, leaderboard export | DACON history row class 갱신 |
 
-## 현재 merge와의 관계
+## Review rule
 
-위 질문들은 현재 synthesis PR의 merge blocker가 아니다. 이유는 이번 PR이 claim을 승격하지 않고, raw evidence가 지원하는 `local_oof_diagnostic_only` boundary를 보존하기 때문이다. 단, 위 질문들이 닫히기 전에는 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)에 따라 leaderboard, official validation, robust small-delta claim으로 승격할 수 없다.
-
-## Provenance
-
-- packet id: `2026-06-01-lgb-cb-reproduction-local-oof-diagnostic`
-- raw evidence: `packet.md`, `performance.yaml`, `metrics.json`, `final_reblend_summary.json`, `blend_weights.json`, `leakage_audit.json`
-- synthesis report: [2026-06-01 Sleep Lifelog Packet Synthesis](../reports/2026-06-01-sleep-lifelog-packet-synthesis.md)
+질문을 닫는 packet은 raw metric, split, provenance, claim boundary를 함께 포함해야 한다. notebook screenshot, Slack note, DOCX summary만으로는 close할 수 없다.
