@@ -2,6 +2,8 @@
 
 이 문서는 Team LLM Wiki가 ML/AI 해커톤 지식을 packet mirror가 아니라 entity graph로 유지하기 위한 기준이다. Raw packet은 source evidence이고, wiki page는 팀원이 다음 실험을 설계할 때 바로 참조할 수 있는 안정 기억이다.
 
+Page role과 leaf promotion rule은 [Page Taxonomy](page-taxonomy.md)를 따른다. Agent 실행 루프는 [LLM Wiki Operating Harness](llm-wiki-operating-harness.md)를 따른다.
+
 ## Core Rule
 
 Experiment packet 하나가 들어오면 단순히 `wiki/experiments/<packet-id>.md`를 만드는 것으로 끝내지 않는다. 가능한 경우 아래 stable entity 중 최소 두 종류를 갱신해야 한다.
@@ -36,6 +38,8 @@ Experiment packet 하나가 들어오면 단순히 `wiki/experiments/<packet-id>
 - `wiki/claims/current-supported-claims.md`
 - `wiki/submissions/dacon-leaderboard-history.md`
 - `wiki/preprocessing/canonical-split-and-leakage-policy.md`
+- `wiki/team/page-taxonomy.md`
+- `wiki/team/llm-wiki-operating-harness.md`
 
 LLM synthesis는 packet 유형과 무관하게 위 세 페이지를 검토해야 한다. 변경이 없으면 "변경 없음"을 명시하고 boundary를 보존한다.
 
@@ -58,3 +62,4 @@ LLM synthesis는 packet 유형과 무관하게 위 세 페이지를 검토해야
 - supported claim에 raw evidence와 baseline이 있는가?
 - local OOF와 DACON leaderboard가 분리되어 있는가?
 - 최신 `wiki/latest-context.md`가 Current Best, Active Risks, Next Actions를 보여주는가?
+- 반복되는 target/model/feature 병목이 leaf page로 승격되어 있는가?

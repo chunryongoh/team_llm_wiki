@@ -52,8 +52,23 @@ def test_packet_skill_compatibility_passes_skill_shaped_packet(tmp_path):
             {"raw_path": "result.json", "metric_key": "logloss", "reported_value": 0.42}
         ],
         wiki_plan={
-            "stable_entities": ["performance:lgb-cb-oof"],
-            "affected_pages": ["wiki/performance/2026-06-01-lgb-cb-oof.md"],
+            "stable_entities": [
+                {
+                    "id": "performance:lgb-cb-oof",
+                    "kind": "performance",
+                    "action": "update",
+                    "page": "wiki/performance/2026-06-01-lgb-cb-oof.md",
+                    "page_role": "leaf",
+                    "promotion_reason": ["independent_claim_status_needed"],
+                }
+            ],
+            "affected_pages": [
+                {
+                    "path": "wiki/claims/current-supported-claims.md",
+                    "role": "registry",
+                    "expected_change": "preserve local OOF claim boundary",
+                }
+            ],
             "semantic_lint": ["Keep this as local OOF only."],
         },
     )
@@ -135,10 +150,30 @@ def test_packet_skill_compatibility_passes_entity_coverage_with_wiki_plan(tmp_pa
         packet_type="experiment",
         metrics_to_verify=[],
         wiki_plan={
-            "stable_entities": ["model:section07-mix-lgbm-catboost", "feature:section07-feature-policy"],
+            "stable_entities": [
+                {
+                    "id": "model:section07-mix-lgbm-catboost",
+                    "kind": "model",
+                    "action": "update",
+                    "page": "wiki/models/section07-mix-lgbm-catboost.md",
+                    "page_role": "leaf",
+                    "promotion_reason": ["adoption_guidance_needed"],
+                },
+                {
+                    "id": "feature:section07-feature-policy",
+                    "kind": "feature",
+                    "action": "update",
+                    "page": "wiki/features/section07-feature-policy.md",
+                    "page_role": "leaf",
+                    "promotion_reason": ["target_specific_ablation_needed"],
+                },
+            ],
             "affected_pages": [
-                "wiki/models/section07-mix-lgbm-catboost.md",
-                "wiki/features/section07-feature-policy.md",
+                {
+                    "path": "wiki/questions/section07-followup-backlog.md",
+                    "role": "hub",
+                    "expected_change": "update closeable follow-up question",
+                }
             ],
             "claim_registry_updates": [
                 {"status": "tentative", "text": "Notebook-output observation only."}
@@ -157,3 +192,30 @@ def test_packet_skill_compatibility_passes_entity_coverage_with_wiki_plan(tmp_pa
 
     assert result["status"] == "warning"  # experiment metrics still lack metrics_to_verify
     assert any(check["id"] == "entity_coverage" and check["status"] == "pass" for check in result["checks"])
+
+
+def test_packet_skill_compatibility_warns_for_string_only_wiki_plan(tmp_path):
+    packet_root = write_packet(
+        tmp_path,
+        tmp_path / "raw" / "users" / "alice" / "performance" / "2026-06-01-string-plan",
+        metrics_to_verify=[
+            {"raw_path": "result.json", "metric_key": "logloss", "reported_value": 0.42}
+        ],
+        wiki_plan={
+            "stable_entities": ["performance:string-plan"],
+            "affected_pages": ["wiki/performance/2026-06-01-string-plan.md"],
+            "semantic_lint": ["String-only plan should warn."],
+        },
+    )
+    manifest = load_packet_manifest(packet_root)
+
+    result = evaluate_packet_skill_compatibility(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        packet_roots=[packet_root],
+        manifests_by_root={packet_root: manifest},
+    )
+
+    entity_check = next(check for check in result["checks"] if check["id"] == "entity_coverage")
+    assert entity_check["status"] == "warning"
+    assert any("stable_entities should name" in warning or "page_role" in warning for warning in entity_check["warnings"])

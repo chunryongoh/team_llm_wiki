@@ -16,6 +16,7 @@ from .manifest import discover_packet_roots, load_packet_manifest, validate_chan
 from .models import FailureCode, IngestFailure, IngestReport, PacketManifest, PacketType, RiskTierLabel, as_jsonable
 from .policy import load_policy
 from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START, render_target_path
+from .wiki_plan import proposed_synthesis_paths
 
 DEFAULT_MODEL = "gpt-5.5"
 DEFAULT_REASONING_EFFORT = "high"
@@ -116,7 +117,7 @@ def run_llm_wiki_synthesis(
         )
     load_policy(repo_root)
     manifests = [(load_packet_manifest(root), root) for root in packet_roots]
-    target_paths = _target_paths(manifests)
+    target_paths = _target_paths(repo_root, manifests)
     evidence_by_target = _raw_evidence_by_target(repo_root, manifests, target_paths)
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
     synthesis_client = client or OpenAIResponsesClient(max_output_tokens=max_output_tokens)
@@ -196,7 +197,14 @@ def build_llm_synthesis_prompt(
     files.append(_file_block(repo_root, "AGENTS.md"))
     for rel in ["CLAUDE.md", "wiki/index.md", "wiki/overview.md", "wiki/latest-context.md", "wiki/log.md"]:
         files.append(_file_block(repo_root, rel, missing_ok=True))
-    files.append(_file_block(repo_root, "wiki/team/llm-synthesis-policy.md", missing_ok=True))
+    for rel in [
+        "wiki/team/llm-synthesis-policy.md",
+        "wiki/team/llm-wiki-operating-harness.md",
+        "wiki/team/page-taxonomy.md",
+        "wiki/team/wiki-ingest-policy.md",
+        "wiki/team/packet-quality-standard.md",
+    ]:
+        files.append(_file_block(repo_root, rel, missing_ok=True))
     for manifest, packet_root in manifests:
         files.extend(_packet_file_blocks(repo_root, packet_root))
     for rel in target_paths:
@@ -209,6 +217,12 @@ def build_llm_synthesis_prompt(
         "Requirements:\n"
         "- Read and obey AGENTS.md and CLAUDE.md.\n"
         "- Use stable entity pages plus compounding topic pages, not dated packet mirrors.\n"
+        "- Follow the operating harness: session context is ephemeral, durable insight must be crystallized into "
+        "wiki pages, `index.md` is the content catalog, and `log.md` is the chronological audit trail.\n"
+        "- Respect page roles. Entrypoints route, hubs/registries summarize and link, leaf pages own reusable "
+        "entity memory, packet review pages preserve source-specific context, and reports archive time-bounded waves.\n"
+        "- If `wiki_plan.yaml` proposes justified leaf pages, update those leaf pages instead of absorbing all detail "
+        "into a hub. If a proposed leaf is unjustified, explain why in review_notes.\n"
         "- Update the claim registry, DACON leaderboard history, submission history, and preprocessing/split policy pages when relevant; "
         "even when no claim changes, explicitly preserve that boundary.\n"
         "- Write every allowed output page exactly once; missing pages are invalid output.\n"
@@ -259,9 +273,10 @@ def _resolve_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
     return roots
 
 
-def _target_paths(manifests: list[tuple[PacketManifest, Path]]) -> list[str]:
+def _target_paths(repo_root: Path, manifests: list[tuple[PacketManifest, Path]]) -> list[str]:
     entity_paths = [render_target_path(manifest, packet_root) for manifest, packet_root in manifests]
-    return list(dict.fromkeys([*entity_paths, *_integration_paths(manifests)]))
+    proposed_paths = proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests])
+    return list(dict.fromkeys([*entity_paths, *_integration_paths(manifests), *proposed_paths]))
 
 
 def _validated_pages(

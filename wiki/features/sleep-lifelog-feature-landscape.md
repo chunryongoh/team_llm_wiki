@@ -52,16 +52,18 @@ raw_evidence:
 
 이 page는 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md)와 [Sleep Health Hackathon Benchmark v0](../benchmarks/sleep-health-hackathon-v0.md)의 feature family를 성능 claim과 분리해 합성한다. 성능 승격 규칙은 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md), 미해결 검증은 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)를 따른다.
 
+이 page는 hub다. 상세한 durable entity memory는 [App Context Windows](app-context-windows.md), [Q3 Stress Bottleneck](../targets/q3-stress-bottleneck.md), [S4 WASO Disturbance](../targets/s4-waso-disturbance.md), [v186 Targetwise LGBM CatBoost](../models/v186-targetwise-lgbm-catboost.md) 같은 leaf page에서 관리한다.
+
 ## Feature memory by evidence surface
 
 | family | provenance | 현재 해석 | status |
 |---|---|---|---|
 | LGB/CB reproduction feature scope | `2026-06-01-lgb-cb-reproduction-local-oof-diagnostic` | transductive statistics, global train median imputer, subject encoding, date/rolling alignment risk가 있어 local diagnostic boundary를 좁힌다. | supported claim의 leakage boundary |
-| app-name and app-context windows | `2026-06-01-app-context-feature-engineering-20260601` | actual app names와 presleep/night/early-morning context가 strong hypothesis이나 public LB lineage가 없다. | tentative |
+| [app-name and app-context windows](app-context-windows.md) | `2026-06-01-app-context-feature-engineering-20260601` | actual app names와 presleep/night/early-morning context가 strong hypothesis이나 public LB lineage가 없다. | tentative |
 | 1,875 sensor/Timing Entropy pool | `2026-05-28-1875-feature-domain-ablation-and-dedup` | feature count보다 dedup, fold scope, target-specific exception이 중요하다. | tentative |
-| v186 SHAP target drivers | `2026-05-29-v186-shap-leaderboard-analysis` | Q는 daily routine proxy, S는 sleep-episode/transition proxy가 강하다는 feature-importance note다. | tentative |
+| [v186 SHAP target drivers](../models/v186-targetwise-lgbm-catboost.md) | `2026-05-29-v186-shap-leaderboard-analysis` | Q는 daily routine proxy, S는 sleep-episode/transition proxy가 강하다는 feature-importance note다. | tentative |
 | v200-v209 sparse splice | `2026-05-29-v200-v209-sparse-splice-review` | broad morphology reset은 negative evidence이고 sparse micro-splice만 guardrail 후보로 남는다. | tentative |
-| Section07 target bottlenecks | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | Q3는 frequency/window 후보, S4는 narrow WASO/disturbance proxy가 필요하다. | tentative |
+| Section07 target bottlenecks | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | [Q3](../targets/q3-stress-bottleneck.md)는 frequency/window 후보, [S4](../targets/s4-waso-disturbance.md)는 narrow WASO/disturbance proxy가 필요하다. | tentative |
 
 ## Compounded feature rules
 

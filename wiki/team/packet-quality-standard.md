@@ -1,8 +1,8 @@
 # Packet Quality Standard
 
-이 문서는 packet PR과 bot PR을 리뷰할 때 필요한 최소 품질 기준이다.
+이 문서는 packet PR과 bot PR을 리뷰할 때 필요한 최소 품질 기준이다. Packet quality는 evidence, claim calibration, 그리고 wiki graph를 얼마나 잘 진화시키는지로 판단한다.
 
-## Packet Minimum
+## Packet minimum
 
 모든 packet은 다음을 가져야 한다.
 
@@ -14,23 +14,34 @@
 - source path provenance
 - reviewer가 닫을 수 있는 evidence gap 또는 next action
 
-## Entity-First Minimum
+## Entity-first minimum
 
 `experiment`, `feature`, `model`, `performance`, `preprocessing`, `augmentation` packet은 `wiki_plan.yaml`에 다음을 포함해야 한다.
 
 - `stable_entities`
 - `affected_pages`
 - `semantic_lint`
+- `page_role` 또는 `role` for proposed pages
+- `promotion_reason` when a leaf page is proposed
 
-가능하면 다음도 포함한다.
+권장 추가 필드:
 
 - `claim_registry_updates`
 - `supersedes_or_conflicts`
 - `open_questions`
+- `expected_change`
 
-`wiki-pr-validate`의 `entity_coverage` warning은 merge blocker가 아니지만, reviewer는 packet이 실험 mirror로만 남지 않는지 확인해야 한다.
+String-only entries are accepted for backward compatibility, but reviewers should treat them as weaker than structured page-role plans.
 
-## ML/AI Claim Gate
+## Good packet outcome
+
+좋은 packet은 dated packet review page만 만들지 않는다. Synthesis bot이 어떤 stable feature, model, target, preprocessing, submission, decision, question, claim page를 갱신해야 하는지 알려준다.
+
+## Weak but allowed
+
+Weak packet도 useful raw evidence를 보존하고 claim을 `tentative`로 둔다면 merge될 수 있다. PR preview는 missing evidence, missing page role, packet-review-only plan을 드러내야 하며, reviewer는 follow-up packet이 필요한지 판단한다.
+
+## ML/AI claim gate
 
 `supported` claim은 다음을 충족해야 한다.
 
@@ -42,7 +53,7 @@
 
 요건을 충족하지 못하면 `tentative`, `notebook_output_observation_only`, `user_reported_public_score_only`, `local_oof_diagnostic_only` 같은 좁은 boundary를 사용한다.
 
-## Reviewer Failure Modes
+## Reviewer failure modes
 
 - "best model"이라고 쓰지만 standalone, fixed blend, targetwise reblend가 구분되지 않음
 - public score note를 DACON leaderboard evidence처럼 승격함

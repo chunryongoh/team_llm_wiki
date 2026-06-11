@@ -6,6 +6,7 @@ from typing import Any
 import yaml
 
 from .models import PacketManifest, PacketType
+from .wiki_plan import load_wiki_plan
 
 
 STRONG_CLAIM_STATUSES = {"supported", "disputed", "superseded"}
@@ -126,11 +127,37 @@ def _entity_coverage_check(packet_root: Path, manifest: PacketManifest, rel_root
             rel_root,
             missing_fields=missing,
         )
+    plan = load_wiki_plan(packet_root)
+    warnings = list(plan.warnings)
+    stable_entities = payload.get("stable_entities") or []
+    affected_pages = payload.get("affected_pages") or []
+    if stable_entities and not plan.pages:
+        warnings.append("stable_entities should name at least one stable wiki page")
+    if plan.pages and not any(page.role for page in plan.pages):
+        warnings.append("wiki_plan pages should include page_role/role")
+    if plan.pages and not plan.has_hub_or_registry:
+        warnings.append("wiki_plan should include at least one hub or registry affected page")
+    if plan.pages and not plan.has_leaf and manifest.type in {PacketType.EXPERIMENT, PacketType.FEATURE, PacketType.MODEL, PacketType.PERFORMANCE}:
+        warnings.append("entity-bearing experiment/model/feature/performance packet should propose a leaf page when durable")
+    if plan.pages and all(page.role == "packet_review" for page in plan.pages if page.role):
+        warnings.append("packet plan only targets packet_review pages; durable entities may be lost")
+    if warnings:
+        return _check(
+            "entity_coverage",
+            "warning",
+            "wiki_plan.yaml has entity-first coverage but needs stronger page-role planning",
+            rel_root,
+            warnings=list(dict.fromkeys(warnings)),
+            proposed_pages=[page.path for page in plan.pages],
+        )
     return _check(
         "entity_coverage",
         "pass",
-        "wiki_plan.yaml includes stable entities, affected pages, and semantic lint",
+        "wiki_plan.yaml includes stable entities, affected pages, semantic lint, and page-role coverage",
         rel_root,
+        proposed_pages=[page.path for page in plan.pages],
+        stable_entity_count=len(stable_entities),
+        affected_page_count=len(affected_pages),
     )
 
 

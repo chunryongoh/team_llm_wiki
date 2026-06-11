@@ -4,7 +4,7 @@ GitHub repo를 팀 실험 지식 저장소로 쓰기 위한 LLM wiki 자동 inge
 
 팀원이 `raw/users/<owner>/<category>/<date-slug>/` 아래에 실험, 모델, feature, 성능, 회의 자료를 packet 형태로 올리면 GitHub Actions가 이를 검증하고 `wiki/`에 요약 페이지, 인덱스, 로그, 최신 컨텍스트, brief를 생성합니다.
 
-이 repo는 팀원이 직접 wiki를 손으로 편집하는 방식이 아니라, **raw packet PR -> deterministic ingest PR -> GPT-5.5 synthesis PR** 순서로 팀 지식을 축적합니다.
+이 repo는 팀원이 직접 wiki를 손으로 편집하는 방식이 아니라, **raw packet PR -> deterministic ingest PR -> GPT-5.5 synthesis PR** 순서로 팀 지식을 축적합니다. `AGENTS.md`, `CLAUDE.md`, `wiki/team/llm-wiki-operating-harness.md`가 wiki maintainer의 운영 하네스입니다.
 
 ## 한눈에 보는 운영 흐름
 
@@ -13,6 +13,10 @@ flowchart TD
     A["팀원 연구/실험 결과"] --> B["team-llm-wiki-packet skill 인터뷰"]
     B --> C["raw/users/<owner>/<category>/<date-slug>/ packet 생성"]
     C --> D["팀원 packet PR"]
+    R["AGENTS/CLAUDE 운영 하네스"] --> B
+    R --> E
+    R --> M
+    R --> Q
     D --> E["wiki-pr-validate preview comment"]
     E --> F{"packet PR merge?"}
     F -->|merge| G["wiki-main-ingest"]
@@ -25,9 +29,25 @@ flowchart TD
     L --> M["wiki-llm-synthesis: GPT-5.5"]
     M --> N["LLM synthesis bot PR"]
     N --> O{"LLM PR review / merge"}
-    O -->|merge| P["최신 wiki/index, latest-context, topic pages"]
-    P --> Q["팀원 Codex/Claude/LLM agent가 최신 wiki 참조"]
+    O -->|merge| P["최신 wiki/index, latest-context, hub/leaf pages"]
+    P --> Q["팀원 Codex/Claude/LLM agent가 latest-context -> index -> hub -> leaf 순서로 참조"]
 ```
+
+## LLM Wiki 운영 하네스
+
+Karpathy식 LLM wiki의 핵심은 raw 문서를 매번 RAG처럼 다시 찾는 것이 아니라, LLM이 중간층인 markdown wiki를 지속적으로 유지하는 것입니다. 이 repo의 운영 하네스는 다음 루프를 강제합니다.
+
+- `session_start`: `wiki/latest-context.md` -> `wiki/index.md` -> 관련 hub/leaf page 순서로 읽습니다.
+- `ingest`: raw packet을 source-specific page로만 복사하지 않고 stable entity, hub, registry, decision, question, index, log에 통합합니다.
+- `query`: 답변은 wiki에서 먼저 만들고, raw는 provenance 확인이 필요할 때만 읽습니다.
+- `crystallize_back`: 대화 중 생긴 durable insight는 chat에 남기지 않고 wiki page로 되돌립니다.
+- `lint`: contradiction, stale claim, orphan page, missing crosslink, leaf 누락, overloaded latest-context를 점검합니다.
+
+핵심 문서:
+
+- [LLM Wiki Operating Harness](wiki/team/llm-wiki-operating-harness.md)
+- [Page Taxonomy](wiki/team/page-taxonomy.md)
+- [LLM Synthesis Policy](wiki/team/llm-synthesis-policy.md)
 
 ### PR은 왜 여러 개 생기나?
 
