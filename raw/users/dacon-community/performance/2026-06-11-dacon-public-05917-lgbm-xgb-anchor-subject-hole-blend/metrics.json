@@ -1,0 +1,12 @@
+{
+  "cat_only_notebook_oof_log_loss": 0.528,
+  "feature_count_after_stability_filter": 1682,
+  "feature_count_before_stability_filter": 23177,
+  "lgbm_only_notebook_oof_log_loss": 0.525,
+  "log_loss": 0.5917,
+  "notebook_local_oof_log_loss": 0.514,
+  "notebook_local_public_gap": 0.075,
+  "public_lb_log_loss": 0.5917,
+  "target_specific_notebook_oof_log_loss": 0.513,
+  "xgb_only_notebook_oof_log_loss": 0.53
+}
