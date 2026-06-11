@@ -171,3 +171,12 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md`
 - run: `27325835544-1`
+
+## [2026-06-11] synthesis | dacon-public-05917-reference-integration
+
+- integrated packet: `2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend`
+- created: `wiki/models/lgbm-xgb-anchor-subject-hole-blend.md`, `wiki/preprocessing/subject-hole-cv.md`, `wiki/features/stability-filtered-feature-selection.md`, `wiki/performance/dacon-public-05917-lgbm-xgb-anchor-reference.md`, `wiki/reports/2026-06-11-sleep-lifelog-packet-synthesis.md`
+- updated stable pages: `wiki/features/sleep-lifelog-feature-landscape.md`, `wiki/decisions/sleep-lifelog-evaluation-protocol.md`, `wiki/questions/sleep-lifelog-open-questions.md`, `wiki/claims/current-supported-claims.md`, `wiki/submissions/dacon-leaderboard-history.md`, `wiki/preprocessing/canonical-split-and-leakage-policy.md`, `wiki/models/lightgbm-catboost.md`, `wiki/overview.md`, `wiki/latest-context.md`, `wiki/index.md`
+- claim update: no new supported claim; external Public `0.5917` remains `tentative` and `external_codeshare_public_lb_observation`.
+- boundary preserved: notebook Local OOF `0.514` is notebook-output summary only and is not merged with team canonical local OOF.
+- review-required: true
