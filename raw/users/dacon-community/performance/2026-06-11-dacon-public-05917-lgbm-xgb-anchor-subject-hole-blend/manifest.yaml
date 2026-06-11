@@ -1,0 +1,79 @@
+claim_boundary: public_lb_observation_only_from_dacon_codeshare_and_attached_notebook; not team verified; no DACON submission id, leaderboard export, submission file lineage, or same-run local reproduction is present in this packet. Notebook local OOF values are notebook-output summaries and must not be merged with team canonical local OOF.
+claim_status: tentative
+claims:
+  -
+    status: tentative
+    text: DACON code share 13975 reports Public 0.5917 for an LGBM+XGB anchor blend using V152 anchor OOF features, Subject-hole CV, stability-based feature selection, and blend search. Treat as an external reference and tentative public leaderboard observation until our team verifies submission lineage and same-split reproduction.
+dataset:
+  hash: not-provided
+  name: sleep-lifelog-2024
+  version: dacon-competition-package
+date: "2026-06-11"
+id: 2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend
+intended_wiki_targets:
+  - wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md
+metrics_to_verify:
+  -
+    metric_key: cat_only_notebook_oof_log_loss
+    raw_path: metrics.json
+    reported_value: 0.528
+  -
+    metric_key: feature_count_after_stability_filter
+    raw_path: metrics.json
+    reported_value: 1682
+  -
+    metric_key: feature_count_before_stability_filter
+    raw_path: metrics.json
+    reported_value: 23177
+  -
+    metric_key: lgbm_only_notebook_oof_log_loss
+    raw_path: metrics.json
+    reported_value: 0.525
+  -
+    metric_key: log_loss
+    raw_path: metrics.json
+    reported_value: 0.5917
+  -
+    metric_key: notebook_local_oof_log_loss
+    raw_path: metrics.json
+    reported_value: 0.514
+  -
+    metric_key: notebook_local_public_gap
+    raw_path: metrics.json
+    reported_value: 0.075
+  -
+    metric_key: public_lb_log_loss
+    raw_path: metrics.json
+    reported_value: 0.5917
+  -
+    metric_key: target_specific_notebook_oof_log_loss
+    raw_path: metrics.json
+    reported_value: 0.513
+  -
+    metric_key: xgb_only_notebook_oof_log_loss
+    raw_path: metrics.json
+    reported_value: 0.53
+mode: structured
+model:
+  family: lgbm-xgb-anchor-blend
+  weights_in_repo: false
+owner: dacon-community
+packet_type: performance
+raw_paths:
+  notebook: dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+  source_metadata: dacon-codeshare-13975.md
+  metrics: metrics.json
+  notes: packet.md
+  performance: performance.yaml
+  wiki_plan: wiki_plan.yaml
+route: wiki/performance
+schema: wiki-packet/v1
+source_refs:
+  - "https://dacon.io/en/competitions/official/236690/codeshare/13975?page=1&dtype=recent"
+  - "attachment:[Public_0.5917] LGBM+XGB 앵커·Subject-hole CV·안정성 피처선별·블렌드.ipynb"
+split:
+  name: subject-hole-cv-5fold-reference
+status: submitted
+summary: DACON code share 13975 reports Public 0.5917 for an LGBM+XGB anchor blend using V152 anchor OOF features, Subject-hole CV, stability-based feature selection, and blend search. Treat as an external reference and tentative public leaderboard observation until our team verifies submission lineage and same-split reproduction.
+task: source-ingest
+title: dacon public 05917 lgbm xgb anchor subject hole blend
