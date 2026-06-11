@@ -166,3 +166,8 @@ Append-only ingest and maintenance events belong here.
 - boundary preserved: local OOF, notebook-output, user-reported public score, DACON public/private leaderboard, organizer-official validation are separate evidence surfaces.
 - claim update: no new supported claim; all new public LB and feature-analysis claims remain `tentative`.
 - review-required: true
+
+## [2026-06-11] ingest | 2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend
+
+- target: `wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md`
+- run: `27325835544-1`
