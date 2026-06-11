@@ -14,6 +14,12 @@ def seed_clean(root):
     (root / "wiki" / "team" / "packet-quality-standard.md").write_text(
         "# Packet Quality Standard\n", encoding="utf-8"
     )
+    (root / "wiki" / "team" / "page-taxonomy.md").write_text(
+        "# Page Taxonomy\n", encoding="utf-8"
+    )
+    (root / "wiki" / "team" / "llm-wiki-operating-harness.md").write_text(
+        "# LLM Wiki Operating Harness\n", encoding="utf-8"
+    )
     (root / "wiki" / "claims" / "current-supported-claims.md").write_text(
         "# Current Supported Claims\n", encoding="utf-8"
     )
@@ -47,6 +53,7 @@ def test_health_clean_report(tmp_path):
 
     assert report.ok is True
     assert report.errors == []
+    assert report.entity_graph_health["status"] == "pass"
 
 
 def test_health_detects_broken_links_unbalanced_block_and_incomplete_latest_context(tmp_path):
@@ -76,7 +83,7 @@ def test_health_detects_unbalanced_latest_context_generated_block(tmp_path):
 
 def test_health_requires_entity_model_pages_and_latest_operating_sections(tmp_path):
     seed_clean(tmp_path)
-    (tmp_path / "wiki" / "claims" / "current-supported-claims.md").unlink()
+    (tmp_path / "wiki" / "team" / "page-taxonomy.md").unlink()
     (tmp_path / "wiki" / "latest-context.md").write_text(
         "[[index]] [[overview]] [[log]]\n"
         "<!-- wiki-ingest:latest:start -->\n"
@@ -88,6 +95,26 @@ def test_health_requires_entity_model_pages_and_latest_operating_sections(tmp_pa
 
     assert any(error.code == "missing_entity_model_page" for error in report.errors)
     assert any(error.code == "missing_latest_operating_section" for error in report.errors)
+
+
+def test_health_reports_entity_graph_warnings_without_failing(tmp_path):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "features").mkdir()
+    large_hub = "# Feature Landscape\n\n" + "\n".join(f"## Section {index}\n\nText." for index in range(30))
+    (tmp_path / "wiki" / "features" / "sleep-lifelog-feature-landscape.md").write_text(large_hub, encoding="utf-8")
+    (tmp_path / "wiki" / "index.md").write_text(
+        "# Index\n\n"
+        "<!-- wiki-ingest:index:start -->\n"
+        "- [Feature Landscape](features/sleep-lifelog-feature-landscape.md)\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path)
+
+    assert report.ok is True
+    assert report.entity_graph_health["status"] == "warning"
+    assert any(warning.code == "hub_without_leaf_routes" for warning in report.warnings)
 
 
 def test_health_detects_wiki_link_escape(tmp_path):

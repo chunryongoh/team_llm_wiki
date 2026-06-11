@@ -34,6 +34,12 @@ def seed_repo(root: Path):
     (root / "wiki" / "team" / "packet-quality-standard.md").write_text(
         "# Packet Quality Standard\n", encoding="utf-8"
     )
+    (root / "wiki" / "team" / "page-taxonomy.md").write_text(
+        "# Page Taxonomy\n\nLeaf pages own reusable entity memory.\n", encoding="utf-8"
+    )
+    (root / "wiki" / "team" / "llm-wiki-operating-harness.md").write_text(
+        "# LLM Wiki Operating Harness\n\nCrystallize durable insight back into wiki pages.\n", encoding="utf-8"
+    )
     (root / "wiki" / "index.md").write_text(
         "# Index\n\n<!-- wiki-ingest:index:start -->\n"
         "- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n"
@@ -271,6 +277,9 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert "FILE: wiki/datasets/sleep-lifelog-2024.md" in prompt
     assert "Old deterministic summary" in prompt
     assert "metadata summaries in Korean" in prompt
+    assert "FILE: wiki/team/llm-wiki-operating-harness.md" in prompt
+    assert "FILE: wiki/team/page-taxonomy.md" in prompt
+    assert "Respect page roles" in prompt
     assert "claim registry" in prompt
     assert "leaderboard history" in prompt
     assert "latest-context must expose Current Best, Active Risks, and Next Actions" in prompt
@@ -295,6 +304,99 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert payload["model"] == "gpt-5.5"
     assert payload["llm_synthesis"] is True
     assert payload["review_notes"] == ["Confirm tentative claims remain tentative."]
+
+
+def test_llm_synthesis_allows_safe_wiki_plan_leaf_targets(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    (packet_root / "wiki_plan.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "stable_entities": [
+                    {
+                        "id": "feature:app-context-windows",
+                        "kind": "feature",
+                        "action": "update",
+                        "page": "wiki/features/app-context-windows.md",
+                        "page_role": "leaf",
+                        "promotion_reason": ["repeated_across_packets"],
+                    }
+                ],
+                "affected_pages": [
+                    {
+                        "path": "wiki/features/sleep-lifelog-feature-landscape.md",
+                        "role": "hub",
+                        "expected_change": "add_or_update_registry_entry",
+                    }
+                ],
+                "semantic_lint": ["Keep app context tentative."],
+            }
+        ),
+        encoding="utf-8",
+    )
+    pages = [
+        *single_dataset_integration_pages(),
+        {
+            "path": "wiki/features/app-context-windows.md",
+            "content": "# App Context Windows\n\nLeaf synthesis from wiki_plan.\n",
+        },
+    ]
+    client = FakeClient({"summary": "Created leaf.", "pages": pages})
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "llm-synthesis" / "llm-run" / "report.json",
+        run_id="llm-run",
+        client=client,
+    )
+
+    assert report.status == "bot_pr"
+    assert "wiki/features/app-context-windows.md" in report.generated_paths
+    assert "Leaf synthesis from wiki_plan" in (tmp_path / "wiki" / "features" / "app-context-windows.md").read_text(
+        encoding="utf-8"
+    )
+
+
+def test_llm_synthesis_rejects_invalid_wiki_plan_target_output(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    (packet_root / "wiki_plan.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "stable_entities": [
+                    {
+                        "id": "bad:path",
+                        "kind": "feature",
+                        "page": "../outside.md",
+                        "page_role": "leaf",
+                    }
+                ],
+                "affected_pages": ["wiki/features/sleep-lifelog-feature-landscape.md"],
+                "semantic_lint": ["Invalid path should not be allowed."],
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = FakeClient(
+        {
+            "summary": "Bad write.",
+            "pages": [
+                *single_dataset_integration_pages(),
+                {"path": "../outside.md", "content": "# Bad\n"},
+            ],
+        }
+    )
+
+    with pytest.raises(IngestFailure) as exc:
+        run_llm_wiki_synthesis(
+            tmp_path,
+            changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+            run_id="llm-run",
+            client=client,
+        )
+
+    assert exc.value.code is FailureCode.INVALID_TARGET_ROUTE
 
 
 def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path):

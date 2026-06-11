@@ -18,6 +18,8 @@ REQUIRED_LATEST_OPERATING_SECTIONS = {
 REQUIRED_ENTITY_MODEL_PAGES = {
     "wiki/team/ml-ai-hackathon-entity-model.md",
     "wiki/team/packet-quality-standard.md",
+    "wiki/team/page-taxonomy.md",
+    "wiki/team/llm-wiki-operating-harness.md",
     "wiki/claims/current-supported-claims.md",
     "wiki/preprocessing/canonical-split-and-leakage-policy.md",
     "wiki/submissions/dacon-leaderboard-history.md",
@@ -29,6 +31,10 @@ ORPHAN_AND_CLAIM_CHECK_EXCLUDES = {
     "wiki/overview.md",
 }
 METRIC_LINE_RE = re.compile(r"(?im)^\s*[-*]?\s*[A-Za-z][A-Za-z0-9_. -]{1,40}\s*[:=]\s*\d+(?:\.\d+)?\s*%?\b")
+HUB_PAGE_HINTS = ("landscape", "history", "open-questions", "current-supported-claims", "policy", "overview")
+LATEST_CONTEXT_SOFT_CHAR_LIMIT = 9000
+HUB_SOFT_CHAR_LIMIT = 14000
+HUB_SOFT_HEADING_LIMIT = 24
 
 
 def _generated_block_errors(repo_root: Path) -> list[HealthError]:
@@ -216,9 +222,80 @@ def _expanded_health_errors(repo_root: Path) -> list[HealthError]:
     return errors
 
 
+def _entity_graph_health(repo_root: Path) -> tuple[dict[str, object], list[HealthError]]:
+    wiki_root = repo_root / "wiki"
+    if not wiki_root.exists():
+        return {"status": "skipped", "warnings": 0}, []
+    warnings: list[HealthError] = []
+    checked_hubs = 0
+    leaf_pages = 0
+    indexed_pages = 0
+    latest = wiki_root / "latest-context.md"
+    if latest.exists():
+        text = latest.read_text(encoding="utf-8")
+        if len(text) > LATEST_CONTEXT_SOFT_CHAR_LIMIT:
+            warnings.append(
+                HealthError(
+                    "latest_context_overloaded",
+                    "wiki/latest-context.md is too long for an entrypoint; move details to hub/leaf pages",
+                    "wiki/latest-context.md",
+                )
+            )
+        if text.lower().count("raw/users/") > 12:
+            warnings.append(
+                HealthError(
+                    "latest_context_packet_history_dump",
+                    "wiki/latest-context.md references many raw packets; keep it as routing context, not packet history",
+                    "wiki/latest-context.md",
+                )
+            )
+    for path in sorted(wiki_root.rglob("*.md")):
+        rel_path = path.relative_to(repo_root).as_posix()
+        text = path.read_text(encoding="utf-8")
+        frontmatter, _body = _parse_frontmatter(text)
+        page_role = frontmatter.get("page_role") or frontmatter.get("role")
+        if page_role == "leaf":
+            leaf_pages += 1
+        if not _is_orphan_claim_excluded(rel_path):
+            indexed_pages += 1
+        if _is_hub_like(rel_path, frontmatter):
+            checked_hubs += 1
+            heading_count = len(re.findall(r"(?m)^#{2,6}\s+", text))
+            leaf_link_count = len(re.findall(r"\[\[(?:features|models|targets|preprocessing|submissions)/[^]\n]+]]", text))
+            md_leaf_link_count = len(
+                re.findall(r"\]\((?:features|models|targets|preprocessing|submissions)/[^)\n]+\.md\)", text)
+            )
+            if (
+                len(text) > HUB_SOFT_CHAR_LIMIT or heading_count > HUB_SOFT_HEADING_LIMIT
+            ) and leaf_link_count + md_leaf_link_count < 3:
+                warnings.append(
+                    HealthError(
+                        "hub_without_leaf_routes",
+                        f"{rel_path} looks like a large hub but has few leaf routes",
+                        rel_path,
+                    )
+                )
+    status = "warning" if warnings else "pass"
+    return {
+        "status": status,
+        "warnings": len(warnings),
+        "checked_hubs": checked_hubs,
+        "leaf_pages": leaf_pages,
+        "indexed_entity_pages": indexed_pages,
+    }, warnings
+
+
+def _is_hub_like(rel_path: str, frontmatter: dict[str, str]) -> bool:
+    role = (frontmatter.get("page_role") or frontmatter.get("role") or "").strip()
+    if role in {"hub", "registry", "entrypoint"}:
+        return True
+    return any(hint in rel_path for hint in HUB_PAGE_HINTS)
+
+
 def check_wiki_health(repo_root: Path, report_path: Path | None = None) -> HealthReport:
     checked = [path.relative_to(repo_root).as_posix() for path in (repo_root / "wiki").rglob("*.md")] if (repo_root / "wiki").exists() else []
     link_checked = [path for path in checked if not path.startswith("wiki/briefs/")]
+    entity_graph_health, warnings = _entity_graph_health(repo_root)
     errors = [
         *lint_wiki_links(repo_root, paths=link_checked),
         *_generated_block_errors(repo_root),
@@ -226,7 +303,13 @@ def check_wiki_health(repo_root: Path, report_path: Path | None = None) -> Healt
         *_entity_model_page_errors(repo_root),
         *_expanded_health_errors(repo_root),
     ]
-    report = HealthReport(ok=not errors, errors=errors, checked_paths=sorted(checked))
+    report = HealthReport(
+        ok=not errors,
+        errors=errors,
+        warnings=warnings,
+        checked_paths=sorted(checked),
+        entity_graph_health=entity_graph_health,
+    )
     if report_path:
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text(json.dumps(as_jsonable(report), indent=2, sort_keys=True) + "\n", encoding="utf-8")

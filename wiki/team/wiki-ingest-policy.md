@@ -2,6 +2,8 @@
 
 The ingest runner accepts packet manifests under changed raw packet roots and writes deterministic synthesis pages under `wiki/`. `wiki/` pages are maintained team memory, not raw packet mirrors. Packet ids stay in provenance; stable entities such as datasets and benchmarks use stable page ids.
 
+This policy is subordinate to the maintainer loop in [LLM Wiki Operating Harness](llm-wiki-operating-harness.md) and the page roles in [Page Taxonomy](page-taxonomy.md). Ingest should preserve raw evidence, but LLM synthesis should integrate durable knowledge into registry, hub, and leaf pages.
+
 Low-risk reference and meeting packets may be direct-commit candidates. Experiment, performance, model, feature, augmentation, dataset, benchmark, supported, disputed, and superseded claims require bot PR review. Guard failures hard-fail and must not mutate `wiki/`.
 
 Packets must keep raw evidence local to the packet root. Secret-like content, secret filenames, model weight files, path escapes, missing raw evidence, metric mismatches, wrong target routes, and packet size limit violations are blocked.
@@ -26,10 +28,30 @@ PR preview also reports `packet_skill_compatibility`. This check is scoped to th
 
 Entity-bearing packet types (`experiment`, `feature`, `model`, `performance`, `preprocessing`, `augmentation`) are expected to include `wiki_plan.yaml`. Preview reports an `entity_coverage` check that looks for `stable_entities`, `affected_pages`, and `semantic_lint`. A warning is not a hard fail, but reviewers should not let important work remain only as an experiment mirror when it should update feature, model, preprocessing, performance, decision, question, claim, or submission pages.
 
+Modern `wiki_plan.yaml` entries should include page roles and promotion reasons. `stable_entities[].page` and `affected_pages[].path` can propose safe synthesis targets under `wiki/features/`, `wiki/models/`, `wiki/targets/`, `wiki/submissions/`, `wiki/claims/`, `wiki/preprocessing/`, `wiki/questions/`, `wiki/decisions/`, `wiki/reports/`, `wiki/datasets/`, `wiki/benchmarks/`, or `wiki/performance/`. The synthesis workflow may update those pages if the paths pass repo-side validation.
+
+Example:
+
+```yaml
+stable_entities:
+  - id: feature:app-context-windows
+    kind: feature
+    action: update
+    page: wiki/features/app-context-windows.md
+    page_role: leaf
+    promotion_reason:
+      - repeated_across_packets
+      - adoption_guidance_needed
+affected_pages:
+  - path: wiki/features/sleep-lifelog-feature-landscape.md
+    role: hub
+    expected_change: add_or_update_registry_entry
+```
+
 Main ingest direct commits use `[wiki-bot] ingest wiki packets`; reviewed bot PRs use `[wiki-bot][review-required] ingest wiki packets`. The main ingest workflow skips only changes matching those bot-loop conventions. It does not use `[skip ci]`, but default `GITHUB_TOKEN` bot commits may still suppress follow-up workflows under GitHub's event rules; use a PAT or GitHub App token when follow-up workflows must run from bot output.
 
 Before direct commit or bot PR publication, ingest workflows must self-validate generated output. Required checks are `check-wiki-health` and a targeted pytest suite for the touched automation path. The validation payload is rendered into bot PR bodies so reviewers can evaluate bot-created branches even when GitHub does not attach downstream pull request checks.
 
-`check-wiki-health` also enforces the ML/AI hackathon entity scaffold: `wiki/claims/current-supported-claims.md`, `wiki/submissions/dacon-leaderboard-history.md`, `wiki/preprocessing/canonical-split-and-leakage-policy.md`, `wiki/team/ml-ai-hackathon-entity-model.md`, and `wiki/team/packet-quality-standard.md` must exist. `wiki/latest-context.md` must keep `Current Best`, `Active Risks`, and `Next Actions` sections so a new AI session can quickly understand what is currently believed, what is risky, and what to do next.
+`check-wiki-health` also enforces the ML/AI hackathon entity scaffold: `wiki/claims/current-supported-claims.md`, `wiki/submissions/dacon-leaderboard-history.md`, `wiki/preprocessing/canonical-split-and-leakage-policy.md`, `wiki/team/ml-ai-hackathon-entity-model.md`, `wiki/team/page-taxonomy.md`, `wiki/team/llm-wiki-operating-harness.md`, and `wiki/team/packet-quality-standard.md` must exist. `wiki/latest-context.md` must keep `Current Best`, `Active Risks`, and `Next Actions` sections so a new AI session can quickly understand what is currently believed, what is risky, and what to do next.
 
 LLM synthesis `open_questions` must be structured backlog entries, not free-form strings. Each entry needs `id`, `question`, `priority`, `owner_role`, `merge_blocker`, `needed_evidence`, and `close_condition`; this makes generated questions actionable and reviewable.

@@ -18,6 +18,8 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 - LLM output that changes `wiki/` must be review-required unless the change is only a low-risk summary with no claim promotion.
 - The LLM must read `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, target packet manifests, packet-specific YAML, and packet narratives before writing synthesis.
 - The LLM must run a wiki integration pass, not a two-page formatter pass. A source can update stable entity pages plus feature, decision, question, report, overview, latest-context, index, and log pages.
+- The LLM must follow [LLM Wiki Operating Harness](llm-wiki-operating-harness.md) and [Page Taxonomy](page-taxonomy.md). Chat-only insight should be crystallized back into wiki pages when durable.
+- Hub and registry pages summarize and route; leaf pages own reusable entity memory. Do not let `sleep-lifelog-feature-landscape.md` absorb every feature, target, and model detail.
 - The LLM must preserve the entity graph. It should consider claim registry, DACON leaderboard history, submission history, and preprocessing/split policy pages on every synthesis pass, even when the conclusion is "no change".
 - `wiki/latest-context.md` must expose `Current Best`, `Active Risks`, and `Next Actions`.
 - Local OOF, notebook-output, user-reported public score, DACON public leaderboard, DACON private leaderboard, and organizer-official validation are separate evidence surfaces and must not be merged into one claim.
@@ -30,6 +32,8 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 The synthesis prompt should ask for:
 
 - stable entity page updates rather than dated packet mirrors
+- page-role aware routing: entrypoint, registry, hub, leaf, packet review, report, policy
+- proposed leaf pages from `wiki_plan.yaml` when path validation allows them
 - compounding topic pages when a packet creates durable cross-cutting knowledge
 - explicit provenance back to packet ids and raw evidence
 - conflicts, supersession, and open questions

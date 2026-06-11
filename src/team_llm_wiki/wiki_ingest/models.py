@@ -334,7 +334,9 @@ class HealthError:
 class HealthReport:
     ok: bool
     errors: list[HealthError] = field(default_factory=list)
+    warnings: list[HealthError] = field(default_factory=list)
     checked_paths: list[str] = field(default_factory=list)
+    entity_graph_health: dict[str, Any] = field(default_factory=dict)
 
 
 def as_jsonable(value: Any) -> Any:

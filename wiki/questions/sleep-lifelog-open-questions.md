@@ -53,11 +53,11 @@ raw_evidence:
 | id | priority | owner_role | merge_blocker | question | needed_evidence | close_condition |
 |---|---|---|---|---|---|---|
 | `app-context-raw-submission-lineage` | high | feature-performance-owner | false | app-context 세 stage score가 어떤 submission lineage에 대응하는가? | submission CSV, leaderboard export, local OOF metric, feature hash | app-context claim 승격 또는 permanent tentative 결정 |
-| `q3-frequency-feature-design` | high | target-feature-owner | false | Q3 frequency/window feature를 어떤 validation surface에서 시험할 것인가? | formulas, same-split Q3 metrics, ablation table | Q3 후보 채택/폐기 기록 |
-| `s4-broad-feature-degradation` | high | target-feature-owner | false | S4를 악화시키는 broad additions와 안전한 WASO proxy는 무엇인가? | S4 ablation, feature group list, baseline | safe/rejected S4 feature policy 기록 |
+| `q3-frequency-feature-design` | high | target-feature-owner | false | [Q3](../targets/q3-stress-bottleneck.md) frequency/window feature를 어떤 validation surface에서 시험할 것인가? | formulas, same-split Q3 metrics, ablation table | Q3 후보 채택/폐기 기록 |
+| `s4-broad-feature-degradation` | high | target-feature-owner | false | [S4](../targets/s4-waso-disturbance.md)를 악화시키는 broad additions와 안전한 WASO proxy는 무엇인가? | S4 ablation, feature group list, baseline | safe/rejected S4 feature policy 기록 |
 | `feature-dedup-715-raw-list` | high | feature-owner | false | exact `715` duplicate/high-correlation candidates는 무엇인가? | correlation matrix, duplicate list, post-pruning metrics | dedup policy와 target exception 기록 |
 | `replay-validator-blind-spot-threshold` | high | validation-owner | false | `0.00005` public LB movement를 감지할 local replay threshold는 무엇인가? | v200-v209 submission table, local replay metrics, public deltas | validator blind-spot threshold 정의 |
-| `v186-leaderboard-provenance` | high | submission-owner | false | v186 public LB `0.5922831771`를 검증할 수 있는가? | leaderboard export, submission CSV, timestamp, run mapping | verified 또는 tentative 고정 |
+| `v186-leaderboard-provenance` | high | submission-owner | false | [v186](../models/v186-targetwise-lgbm-catboost.md) public LB `0.5922831771`를 검증할 수 있는가? | leaderboard export, submission CSV, timestamp, run mapping | verified 또는 tentative 고정 |
 | `fold-safe-leakage-ablation` | P0 | modeling-lead | false | transductive statistics와 global imputer를 fold-safe하게 바꾸면 local OOF가 어떻게 변하는가? | fold-safe run, OOF metrics, leakage audit | supported local claim boundary 갱신 |
 | `date-rolling-alignment-audit` | P0 | feature-owner | false | date/rolling feature가 target 이후 정보를 쓰지 않는가? | alignment audit, feature cutoff review | pass 또는 excluded decision |
 | `dacon-submission-provenance-boundary` | high | benchmark-owner | false | user-reported public notes를 verified DACON evidence로 바꿀 provenance가 있는가? | submission ids, public/private scores, leaderboard export | DACON history row class 갱신 |

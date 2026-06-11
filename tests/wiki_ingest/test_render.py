@@ -55,6 +55,8 @@ def manifest(**overrides):
 def seed_entity_model_pages(root: Path):
     required = [
         "wiki/team/ml-ai-hackathon-entity-model.md",
+        "wiki/team/llm-wiki-operating-harness.md",
+        "wiki/team/page-taxonomy.md",
         "wiki/team/packet-quality-standard.md",
         "wiki/claims/current-supported-claims.md",
         "wiki/preprocessing/canonical-split-and-leakage-policy.md",
@@ -205,7 +207,7 @@ def test_render_packet_page_links_to_compiled_packet_json(tmp_path):
     (tmp_path / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
     (tmp_path / "automation" / ".cache" / "compiled").mkdir(parents=True)
     (tmp_path / "automation" / ".cache" / "compiled" / "compiled-ref.json").write_text("{}\n", encoding="utf-8")
-    packet = manifest(id="compiled-ref", type="reference", title="Compiled Ref")
+    packet = manifest(id="compiled-ref", type="reference", title="Compiled Ref", claim_status="supported")
 
     render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-compiled")
 
