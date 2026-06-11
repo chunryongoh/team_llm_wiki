@@ -1,0 +1,188 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.json",
+    "raw/results/wiki-ingest/27325835544-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "status": "tentative"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.json"
+  ],
+  "input_changed_paths": [
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md",
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml",
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json",
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md",
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml",
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [
+    {
+      "metric": "cat_only_notebook_oof_log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.528
+    },
+    {
+      "metric": "feature_count_after_stability_filter",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 1682.0
+    },
+    {
+      "metric": "feature_count_before_stability_filter",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 23177.0
+    },
+    {
+      "metric": "lgbm_only_notebook_oof_log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.525
+    },
+    {
+      "metric": "log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.5917
+    },
+    {
+      "metric": "notebook_local_oof_log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.514
+    },
+    {
+      "metric": "notebook_local_public_gap",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.075
+    },
+    {
+      "metric": "public_lb_log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.5917
+    },
+    {
+      "metric": "target_specific_notebook_oof_log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.513
+    },
+    {
+      "metric": "xgb_only_notebook_oof_log_loss",
+      "packet": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "reported_value": 0.53
+    }
+  ],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "changed paths are limited to raw/users/**",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "status": "pass"
+      },
+      {
+        "affected_page_count": 6,
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, semantic lint, and page-role coverage",
+        "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+        "proposed_pages": [
+          "wiki/models/lgbm-xgb-anchor-subject-hole-blend.md",
+          "wiki/preprocessing/subject-hole-cv.md",
+          "wiki/features/stability-filtered-feature-selection.md",
+          "wiki/submissions/dacon-leaderboard-history.md",
+          "wiki/models/lightgbm-catboost.md",
+          "wiki/features/sleep-lifelog-feature-landscape.md",
+          "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+          "wiki/questions/sleep-lifelog-open-questions.md",
+          "wiki/performance/dacon-public-05917-lgbm-xgb-anchor-reference.md"
+        ],
+        "stable_entity_count": 4,
+        "status": "pass"
+      }
+    ],
+    "status": "pass"
+  },
+  "packets": [
+    {
+      "claim_boundary": "public_lb_observation_only_from_dacon_codeshare_and_attached_notebook; not team verified; no DACON submission id, leaderboard export, submission file lineage, or same-run local reproduction is present in this packet. Notebook local OOF values are notebook-output summaries and must not be merged with team canonical local OOF.",
+      "claim_status": "tentative",
+      "id": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: performance",
+        "high-risk wiki target path",
+        "high-risk canonical route"
+      ],
+      "risk_tier": "tier3-performance",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/27325835544-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier3-performance",
+  "run_id": "27325835544-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": null,
+  "timing_ms": 54,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}

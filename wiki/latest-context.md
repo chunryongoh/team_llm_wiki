@@ -30,6 +30,13 @@
 - [2026-05-28 Sleep Lifelog Packet Synthesis](reports/2026-05-28-sleep-lifelog-packet-synthesis.md)
 
 <!-- wiki-ingest:latest:start -->
+### 27325835544-1 | 2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend
+
+- link: [[performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend]]
+- publish_action: `bot_pr`
+- risk_tier: `tier3-performance`
+- review-required: true
+
 ### 26806097236-1 | 2026-06-01-app-context-feature-engineering-20260601
 
 - link: [[performance/2026-06-01-app-context-feature-engineering-20260601]]
@@ -110,13 +117,6 @@
 ### 26628582638-1 | 2026-05-29-sleep-health-hackathon-v0
 
 - link: [[benchmarks/sleep-health-hackathon-v0]]
-- publish_action: `bot_pr`
-- risk_tier: `tier2-interpretation`
-- review-required: true
-
-### 26628582638-1 | 2026-05-29-sleep-lifelog-2024
-
-- link: [[datasets/sleep-lifelog-2024]]
 - publish_action: `bot_pr`
 - risk_tier: `tier2-interpretation`
 - review-required: true
