@@ -1,59 +1,31 @@
 ---
 id: dacon-leaderboard-history
 type: submission-history
+page_role: registry
 title: DACON Leaderboard History
 status: active
-date: 2026-06-02
-summary: 현재 기록된 DACON public score 값은 모두 user-reported 또는 DOCX/PDF observation이며 verified_public_lb row는 없다.
+date: 2026-06-11
+summary: 현재 기록된 DACON public score 값은 external code-share, user-reported, DOCX/PDF observation이며 verified_public_lb row는 없다.
 review_required: true
 raw_evidence:
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/manifest.yaml
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/metrics.json
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/packet.md
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/performance.yaml
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/source/feature-engineering-result-report-20260601.docx
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/source/feature-engineering-result-report-20260601.txt
-- raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/wiki_plan.yaml
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/manifest.yaml
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/evidence.yaml
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/metrics.json
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/packet.md
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/source/weekly-progress-20260521-20260529-ko-short.md
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/source/prompt4llmwiki.txt
-- raw/users/hyeonseokrock/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks/wiki_plan.yaml
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/manifest.yaml
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/features.yaml
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/packet.md
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/20260528-notebook-outputs.docx
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/20260528-notebook-outputs.txt
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/feature-info.pdf
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/source/feature-info.txt
-- raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/wiki_plan.yaml
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/manifest.yaml
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/evidence.yaml
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/metrics.json
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/packet.md
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/source/etri-2026-v2-review.pdf
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/source/etri-2026-v2-review.txt
-- raw/users/moon-hyungdo/experiments/2026-05-29-v200-v209-sparse-splice-review/wiki_plan.yaml
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/manifest.yaml
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/metrics.json
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/packet.md
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/performance.yaml
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/etri-2026-v186-shap-analysis.pdf
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/etri-2026-v186-shap-analysis.txt
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/source/v186-top10-feature-meaning-ko.md
-- raw/users/moon-hyungdo/performance/2026-05-29-v186-shap-leaderboard-analysis/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
+- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
 ---
 
 # DACON Leaderboard History
 
-이 page는 DACON submission evidence를 local OOF diagnostic과 분리한다. 현재 새 packet들이 제공한 public score는 leaderboard export, submission id, private score, submission CSV lineage가 없으므로 모두 tentative다.
+이 page는 DACON submission evidence를 local OOF diagnostic과 분리한다. 현재 기록된 public score는 submission id, leaderboard export, private score, submission CSV lineage가 없으므로 모두 tentative다.
 
 ## Evidence classes
 
 - `verified_public_lb`: DACON submission id, public score, leaderboard export, submission CSV lineage가 있음
 - `verified_private_lb`: private/final score artifact와 lineage가 있음
+- `external_codeshare_public_lb_observation`: DACON code share 또는 attached notebook의 public score note, lineage 없음
 - `user_reported_public_score_only`: report, Slack, PDF에 적힌 public score note
 - `docx_report_public_lb_observation`: DOCX에 적힌 staged public LB observation
 - `local_oof_diagnostic_only`: DACON leaderboard가 아닌 local validation evidence
@@ -61,8 +33,9 @@ raw_evidence:
 
 ## Current records
 
-| candidate | score | evidence_class | packet | status |
+| candidate | score | evidence_class | packet/source | status |
 |---|---:|---|---|---|
+| `dacon-public-05917-lgbm-xgb-anchor-reference` | `0.5917` | `external_codeshare_public_lb_observation` | DACON code share `13975`, packet `2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend` | tentative |
 | `v186-target-specific-lgbm-catboost-blend` | `0.5922831771` | `user_reported_public_score_only` | `2026-05-29-v186-shap-leaderboard-analysis` | tentative |
 | `v189-anchor` | `0.5925397` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
 | `v200` | `0.608842` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
@@ -78,7 +51,7 @@ raw_evidence:
 
 ## Boundary preserved
 
-[Current Supported Claims](../claims/current-supported-claims.md)의 LGB/CB local OOF claim은 이 table의 verified leaderboard row가 아니다. 반대로 위 public score notes는 local OOF metric으로 재해석하지 않는다.
+[Current Supported Claims](../claims/current-supported-claims.md)의 LGB/CB local OOF claim은 verified leaderboard row가 아니다. 반대로 위 public score notes는 local OOF metric으로 재해석하지 않는다. Code share notebook Local OOF `0.514`도 이 leaderboard table의 score가 아니다.
 
 ## Promotion evidence
 

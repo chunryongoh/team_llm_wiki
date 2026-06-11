@@ -1,0 +1,177 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/reports/2026-06-11-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/preprocessing/subject-hole-cv.md",
+    "wiki/features/stability-filtered-feature-selection.md",
+    "wiki/models/lightgbm-catboost.md",
+    "wiki/performance/dacon-public-05917-lgbm-xgb-anchor-reference.md"
+  ],
+  "claim_register": [
+    {
+      "status": "supported",
+      "text": "LGB/CB reproduction\uc740 `local_oof_diagnostic_only` boundary\uc5d0\uc11c Q2 targetwise reblend `0.1`\ub85c Wave41 local OOF `grouped_macro_log_loss`\ub97c `0.6198684545582471`\uc5d0\uc11c `0.6198365213240887`\ub85c \ubbf8\uc138 \uac1c\uc120\ud588\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "DACON code share 13975\ub294 V152 anchor OOF, Subject-hole CV, stability-filtered features, LGBM+XGB \uc57d 7:3 blend\ub85c Public `0.5917`\uc744 \ubcf4\uace0\ud55c\ub2e4. Submission id, leaderboard export, submission CSV lineage\uac00 \uc5c6\uc5b4 external public LB observation\uc774\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "Attached notebook\uc740 Local OOF `0.514`, target-specific blend `0.513`, Local-Public gap \uc57d `0.075`\ub97c \uc694\uc57d\ud558\uc9c0\ub9cc notebook-output surface\uc774\uba70 \ud300 canonical local OOF\uc640 \ube44\uad50\ud560 \uc218 \uc5c6\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "Stability filtering\uc740 feature count `23177`\uc5d0\uc11c `1682`\ub85c \uc904\uc600\ub2e4\ub294 \ucc38\uace0 evidence\uac00 \uc788\uc9c0\ub9cc large feature parquet\uc640 exact selected list\uac00 \uc5c6\uc5b4 feature policy\uac00 \uc544\ub2c8\ub2e4."
+    },
+    {
+      "status": "tentative",
+      "text": "Subject-hole CV\ub294 external reference split\uc73c\ub85c \uae30\ub85d\ub418\uba70 canonical GroupKFold \ub610\ub294 team local OOF policy\ub97c \ub300\uccb4\ud558\uc9c0 \uc54a\ub294\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/reports/2026-06-11-sleep-lifelog-packet-synthesis.md",
+    "wiki/models/lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/preprocessing/subject-hole-cv.md",
+    "wiki/features/stability-filtered-feature-selection.md",
+    "wiki/performance/dacon-public-05917-lgbm-xgb-anchor-reference.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/reports/2026-06-11-sleep-lifelog-packet-synthesis.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/preprocessing/subject-hole-cv.md",
+    "wiki/features/stability-filtered-feature-selection.md",
+    "wiki/models/lightgbm-catboost.md",
+    "wiki/performance/dacon-public-05917-lgbm-xgb-anchor-reference.md"
+  ],
+  "input_changed_paths": [
+    "automation/.cache/compiled/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.json",
+    "raw/results/wiki-ingest/27325835544-1/report.json",
+    "wiki/index.md",
+    "wiki/latest-context.md",
+    "wiki/log.md",
+    "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md"
+  ],
+  "integration_plan": [
+    "`wiki_plan.yaml`\uc758 leaf \uc81c\uc548\uc744 \ubaa8\ub450 \uc815\ub2f9\ud55c durable entity\ub85c \ucc44\ud0dd\ud588\ub2e4: LGBM+XGB anchor blend, Subject-hole CV, stability-filtered feature selection.",
+    "DACON public 0.5917\uc740 `DACON Leaderboard History`\uc5d0 external code-share observation\uc73c\ub85c \ucd94\uac00\ud558\uace0 verified leaderboard claim\uc73c\ub85c \uc2b9\uaca9\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+    "Notebook Local OOF 0.514, target-specific 0.513, feature count 23,177\u21921,682\uc740 notebook-output summary\ub85c\ub9cc \ubcf4\uc874\ud588\ub2e4.",
+    "Split/leakage policy\uc5d0\ub294 Subject-hole CV\ub97c canonical replacement\uac00 \uc544\ub2cc exploratory reference split\uc73c\ub85c \ub4f1\ub85d\ud588\ub2e4.",
+    "Open questions\uc5d0\ub294 submission lineage, V152 anchor OOF reproduction, Subject-hole CV\uc640 canonical split \ube44\uad50\ub97c close-condition\uacfc \ud568\uaed8 \ucd94\uac00\ud588\ub2e4.",
+    "Overview, latest-context, index, log\uc5d0\ub294 \uc0c8 report\uc640 leaf route\ub97c \uc5f0\uacb0\ud588\ub2e4."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "gpt-5.5",
+  "open_questions": [
+    {
+      "close_condition": "\uc99d\uac70\uac00 `0.5917` \uad00\ucc30\uc758 \uc7ac\ud604\uc131\uacfc traceability\ub97c \uc785\uc99d\ud558\uac70\ub098 \ubc18\ubc15\ud558\uba74 \ub2eb\ub294\ub2e4.",
+      "id": "dacon-public-05917-submission-lineage",
+      "merge_blocker": false,
+      "needed_evidence": "DACON submission id, leaderboard export \ub610\ub294 screenshot, submission CSV hash \ub610\ub294 file lineage, timestamp",
+      "owner_role": "validation-owner",
+      "priority": "high",
+      "question": "External `0.5917` public score\ub97c DACON submission id, leaderboard export, exact submission CSV lineage\uc5d0 \uc5f0\uacb0\ud560 \uc218 \uc788\ub294\uac00?"
+    },
+    {
+      "close_condition": "\ud300\uc774 anchor OOF\ub97c \uc7ac\ud604\ud558\uac70\ub098 portable\ud558\uc9c0 \uc54a\ub2e4\ub294 \uadfc\uac70\ub97c \uae30\ub85d\ud558\uba74 \ub2eb\ub294\ub2e4.",
+      "id": "v152-anchor-oof-reproduction",
+      "merge_blocker": false,
+      "needed_evidence": "V152 training recipe, OOF CSV with subject_id/sleep_date/lifelog_date/Q-S probabilities, fold assignment, leakage audit",
+      "owner_role": "model-owner",
+      "priority": "high",
+      "question": "V152 anchor OOF probabilities\ub97c \ud300 row identity\uc640 fold-safe \uc808\ucc28\ub85c \uc7ac\ud604\ud560 \uc218 \uc788\ub294\uac00?"
+    },
+    {
+      "close_condition": "same-run comparison\uc73c\ub85c Subject-hole CV\ub97c \ucc44\ud0dd, \uae30\uac01, \ub610\ub294 exploratory \uc720\uc9c0 \uc911 \ud558\ub098\ub85c \uacb0\uc815\ud558\uba74 \ub2eb\ub294\ub2e4.",
+      "id": "subject-hole-cv-vs-canonical-groupkfold",
+      "merge_blocker": false,
+      "needed_evidence": "same feature/model run under both split policies, local OOF, public/private mapping, leakage audit",
+      "owner_role": "validation-owner",
+      "priority": "medium",
+      "question": "Subject-hole CV\uac00 \ud604\uc7ac canonical GroupKFold policy\ubcf4\ub2e4 public/private leaderboard correlation\uc744 \ub354 \uc798 \uc124\uba85\ud558\ub294\uac00?"
+    },
+    {
+      "close_condition": "feature policy\ub85c \uc2b9\uaca9\ud558\uac70\ub098 reference-only\ub85c \uace0\uc815\ud558\uba74 \ub2eb\ub294\ub2e4.",
+      "id": "stability-filter-selected-list",
+      "merge_blocker": false,
+      "needed_evidence": "selected feature list, stability score definition, fold-safe computation proof, same-split ablation table",
+      "owner_role": "feature-owner",
+      "priority": "medium",
+      "question": "`23177 -> 1682` stability filtering\uc758 exact selected feature list\uc640 target\ubcc4 ablation delta\ub294 \ubb34\uc5c7\uc778\uac00?"
+    }
+  ],
+  "packet_roots": [
+    "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "packet_root": "raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/27325890566-1/report.json",
+  "review_notes": [
+    "`wiki_plan.yaml`\uc758 proposed leaf \uc138 \uac1c\ub294 \ubaa8\ub450 leaf promotion rule\uc744 \ucda9\uc871\ud588\ub2e4. \ubc18\ubcf5 \uc7ac\uc0ac\uc6a9 \uac00\ub2a5\uc131, \ub3c5\ub9bd claim boundary, leakage/adoption guidance \ud544\uc694\uc131\uc774 \uc788\uc5b4 hub\uc5d0 \ud761\uc218\ud558\uc9c0 \uc54a\uc558\ub2e4.",
+    "\uc815\ub2f9\ud654\ub418\uc9c0 \uc54a\uc740 proposed leaf\ub294 \uc5c6\uc5c8\ub2e4.",
+    "`Current Supported Claims`\ub294 \uc0c8 supported claim\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\uace0 \uae30\uc874 supported boundary\ub97c \uba85\uc2dc\uc801\uc73c\ub85c \ubcf4\uc874\ud588\ub2e4.",
+    "`DACON Leaderboard History`\ub294 \uc0c8 score\ub97c verified row\uac00 \uc544\ub2c8\ub77c external code-share public observation row\ub85c \ucd94\uac00\ud588\ub2e4.",
+    "`Canonical Split And Leakage Policy`\ub294 Subject-hole CV\ub97c canonical replacement\uac00 \uc544\ub2cc exploratory reference\ub85c \uc81c\ud55c\ud588\ub2e4.",
+    "\ubaa8\ub4e0 metric surface\ub97c \ubd84\ub9ac\ud588\ub2e4: notebook-output, external public score note, local OOF diagnostic, verified DACON leaderboard\ub294 \ubcd1\ud569\ud558\uc9c0 \uc54a\uc558\ub2e4."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "27325890566-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [
+    "\uc0c8 external `0.5917` \uad00\ucc30\uc740 v186/v189/Section07/app-context public notes\ub97c supersede\ud558\uc9c0 \uc54a\ub294\ub2e4. Submission lineage\uc640 evidence surface\uac00 \ub2e4\ub974\ub2e4.",
+    "LGBM+XGB anchor reference\ub294 \ud300\uc758 LGBM+CatBoost local diagnostic claim\uc744 \ub300\uccb4\ud558\uc9c0 \uc54a\ub294\ub2e4. \uc804\uc790\ub294 external public observation, \ud6c4\uc790\ub294 supported local OOF diagnostic\uc774\ub2e4.",
+    "Notebook Local OOF `0.514`\ub294 team Wave41/LGB-CB local OOF\uc640 split, feature provenance, evaluation surface\uac00 \ub2ec\ub77c \uc9c1\uc811 ranking \ube44\uad50\uac00 \uae08\uc9c0\ub41c\ub2e4.",
+    "Window-pair feature code\ub294 \uc77c\ubd80 placeholder\uc774\ubbc0\ub85c implemented production feature claim\uacfc \ucda9\ub3cc\ud558\uc9c0 \uc54a\ub3c4\ub85d reference caveat\ub85c\ub9cc \uae30\ub85d\ud55c\ub2e4."
+  ],
+  "synthesis_summary": "2026-06-11 DACON code share 13975 \ud328\ud0b7\uc744 \ub2e8\uc21c packet mirror\uac00 \uc544\ub2c8\ub77c stable model, preprocessing, feature leaf\uc640 registry, decision, open-question, report, entrypoint\uae4c\uc9c0 \ud1b5\ud569\ud588\ub2e4. Public 0.5917\uc740 \uc678\ubd80 code-share \uad00\ucc30\ub85c\ub9cc \ubcf4\uc874\ud588\uace0, notebook Local OOF 0.514\ub294 notebook-output surface\ub85c \ubd84\ub9ac\ud588\ub2e4. \uae30\uc874 supported claim\uc740 LGB/CB Q2 targetwise reblend\uc758 local OOF diagnostic \ud558\ub098\ub85c \uc720\uc9c0\ub41c\ub2e4.",
+  "timing_ms": 351768,
+  "updated_pages": [
+    "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lightgbm-catboost.md"
+  ],
+  "validation": {},
+  "warnings": []
+}
