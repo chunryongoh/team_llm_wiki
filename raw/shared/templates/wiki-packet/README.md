@@ -1,59 +1,41 @@
 # Wiki Packet Template
 
-Copy this directory under `raw/users/<user>/<packet-id>/` and keep all evidence files inside that packet root.
+수동 packet 작성용 템플릿입니다. 일반 팀원은 가능하면 `team-llm-wiki-packet` skill을 사용하세요.
 
-The ingest runner treats `raw/` as append-only evidence and promotes only synthesized markdown into `wiki/`.
+packet은 항상 아래 경로에 둡니다.
 
-For team contributors, the recommended path is to use
-`chunryongoh/team-llm-wiki-packet-skill` rather than copying this template
-manually. The skill performs graph-first artifact intake, asks evidence-gap
-questions, renders packet files, and opens a PR that only touches
-`raw/users/<owner>/<category>/<date-slug>/`.
+```text
+raw/users/<owner>/<category>/<date-slug>/
+```
 
-## Packet types
+## 기본 파일
 
-- `reference`, `meeting` -> `wiki/sources/`.
-- `experiment` -> `wiki/experiments/`.
-- `feature` -> `wiki/features/`.
-- `model` -> `wiki/models/`.
-- `performance` -> `wiki/performance/`.
-- `preprocessing`, `augmentation` -> `wiki/datasets/`.
-- `dataset` -> `wiki/datasets/`; route for first-class dataset definitions (modalities, splits, leakage risks).
-- `benchmark` -> `wiki/benchmarks/`; route for target taxonomy and metric definitions.
+```text
+manifest.yaml
+packet.md
+<packet-specific>.yaml
+metrics.json 또는 evidence 파일
+wiki_plan.yaml
+```
 
-Use `dataset.yaml` and `benchmark.yaml` in this directory as the packet-specific raw evidence for the new types. The ingest runner mirrors `claim_status` from the manifest into the packet-specific YAML and requires the listed fields.
+`manifest.yaml`의 `raw_paths`가 가리키는 파일은 모두 packet 폴더 안에 있어야 합니다.
 
-## Graph-first packet files
+## Packet type
 
-Entity-bearing packets should include enough information for repo-side ingest
-and GPT synthesis to update durable wiki pages instead of creating only a dated
-mirror page.
+| Type | Wiki route |
+| --- | --- |
+| `reference`, `meeting` | `wiki/sources/` |
+| `experiment` | `wiki/experiments/` |
+| `feature` | `wiki/features/` |
+| `model` | `wiki/models/` |
+| `performance` | `wiki/performance/` |
+| `preprocessing`, `augmentation`, `dataset` | `wiki/datasets/` |
+| `benchmark` | `wiki/benchmarks/` |
 
-Recommended packet-local files:
+## 주의
 
-- `manifest.yaml`: packet id, owner, packet type, claim status, claim boundary,
-  raw paths, and intended wiki targets.
-- `packet.md`: human-readable source summary and provenance notes.
-- packet-specific YAML such as `performance.yaml`, `model.yaml`,
-  `features.yaml`, `preprocessing.yaml`, `augmentation.yaml`, `dataset.yaml`, or
-  `benchmark.yaml`.
-- `metrics.json`, `*.csv`, notebook/code/report excerpts, or other raw evidence
-  referenced by `manifest.yaml`.
-- `wiki_plan.yaml`: advisory stable entities, affected hub/leaf pages, claim
-  registry updates, conflicts/supersessions, open questions, and semantic lint.
-
-The packet skill may create intermediate graph artifacts such as
-`packet_scan_manifest.json`, `packet_entity_graph.json`, `semantic_lint.json`,
-and `question_queue.yaml` under a scratch directory like
-`/tmp/team-llm-wiki-packet-work/<packet-id>/`. These scratch artifacts guide the
-interview and draft, but they do not need to be committed unless they are
-explicit raw evidence for the packet.
-
-## Claim boundary reminder
-
-Do not collapse separate evidence surfaces into one claim. Local OOF, notebook
-output, user-reported DACON public score, DACON private score, and
-organizer-official validation are separate surfaces. If a packet lacks
-submission id, exported prediction file, CSV hash, private score, or team
-reproduction evidence, leaderboard observations should normally remain
-`tentative`.
+- `raw/`는 원천 증거입니다. packet 제출 후 임의 수정하지 않습니다.
+- `wiki_plan.yaml`은 stable entity, affected page, open question, semantic lint를 제안하는 파일입니다.
+- local OOF, notebook output, DACON public LB, private LB, official validation은 서로 다른 근거입니다.
+- 제출 파일/hash, private score, 팀 재현 근거가 없으면 leaderboard claim은 보통 `tentative`입니다.
+- skill이 만든 scratch 파일은 보통 `/tmp/team-llm-wiki-packet-work/<packet-id>/`에 두고 commit하지 않습니다.
