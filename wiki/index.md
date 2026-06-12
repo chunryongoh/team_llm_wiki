@@ -47,52 +47,53 @@
 - [Team Packet Entity Coverage Audit](reports/2026-06-02-team-packet-entity-coverage-audit.md)
 
 <!-- wiki-ingest:index:start -->
-- [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`
-- [Current Supported Claims](claims/current-supported-claims.md) - `claim-registry`
-- [Sleep Lifelog 2024 Dataset Definition](datasets/sleep-lifelog-2024.md) - `dataset`
-- [Section07 Feature Policy Decision](decisions/section07-feature-policy-decision.md) - `decision`
-- [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`
-- [labelwise weekly progress target bottlenecks](experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md) - `experiment`
-- [v200 v209 sparse splice review](experiments/2026-05-29-v200-v209-sparse-splice-review.md) - `experiment`
-- [LifeLog Section 07 Notebook Overview](experiments/2026-06-01-lifelog-section07-notebook-overview.md) - `experiment`
-- [LifeLog Section 07 Working Notes](experiments/2026-06-01-lifelog-section07-working-notes.md) - `experiment`
 - [1875 feature domain ablation and dedup](features/2026-05-28-1875-feature-domain-ablation-and-dedup.md) - `feature`
-- [App Context Windows](features/app-context-windows.md) - `feature`
-- [Section07 Feature Policy](features/section07-feature-policy.md) - `feature-policy`
-- [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md) - `feature-landscape`
-- [Stability Filtered Feature Selection](features/stability-filtered-feature-selection.md) - `feature`
-- [Latest Context](latest-context.md)
-- [Log](log.md)
-- [LGBM XGB Anchor Subject Hole Blend](models/lgbm-xgb-anchor-subject-hole-blend.md) - `model`
-- [LightGBM CatBoost](models/lightgbm-catboost.md) - `model`
-- [Section07 Mix LGBM CatBoost](models/section07-mix-lgbm-catboost.md) - `model`
-- [v186 Targetwise LGBM CatBoost](models/v186-targetwise-lgbm-catboost.md) - `model`
-- [Overview](overview.md)
-- [v186 shap leaderboard analysis](performance/2026-05-29-v186-shap-leaderboard-analysis.md) - `performance`
-- [app context feature engineering 20260601](performance/2026-06-01-app-context-feature-engineering-20260601.md) - `performance`
-- [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md) - `performance`
-- [dacon public 05917 lgbm xgb anchor subject hole blend](performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md) - `performance`
-- [DACON Public 0.5917 LGBM XGB Anchor Reference](performance/dacon-public-05917-lgbm-xgb-anchor-reference.md) - `packet_review`
-- [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md) - `preprocessing-policy`
-- [Subject Hole CV](preprocessing/subject-hole-cv.md) - `preprocessing`
-- [Section07 Follow-Up Backlog](questions/section07-followup-backlog.md) - `open-questions`
-- [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md) - `open-questions`
-- [Packet Skill Design Summary](reports/2026-05-28-packet-skill-design.md)
-- [Packet Skill Implementation Report](reports/2026-05-28-packet-skill-implementation.md)
 - [2026-05-28 Sleep Lifelog Packet Synthesis](reports/2026-05-28-sleep-lifelog-packet-synthesis.md)
-- [GPT-5.5 LLM Synthesis Implementation](reports/2026-05-29-llm-synthesis-implementation.md)
 - [2026-06-01 Sleep Lifelog Packet Synthesis](reports/2026-06-01-sleep-lifelog-packet-synthesis.md)
-- [Team Packet Entity Coverage Audit](reports/2026-06-02-team-packet-entity-coverage-audit.md)
 - [2026-06-11 Sleep Lifelog Packet Synthesis](reports/2026-06-11-sleep-lifelog-packet-synthesis.md)
-- [DACON Leaderboard and Local OOF Claim Boundary](sources/2026-06-01-dacon-leaderboard-claim-boundary.md) - `reference`
-- [DACON Leaderboard History](submissions/dacon-leaderboard-history.md) - `submission-history`
-- [Q3 Stress Bottleneck](targets/q3-stress-bottleneck.md) - `target`
-- [S4 WASO Disturbance](targets/s4-waso-disturbance.md) - `target`
+- [App Context Windows](features/app-context-windows.md) - `feature`
+- [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md) - `preprocessing-policy`
 - [Contribution Workflow](team/contribution-workflow.md)
+- [Current Supported Claims](claims/current-supported-claims.md) - `claim-registry`
+- [DACON Leaderboard History](submissions/dacon-leaderboard-history.md) - `submission-history`
+- [DACON Leaderboard and Local OOF Claim Boundary](sources/2026-06-01-dacon-leaderboard-claim-boundary.md) - `reference`
+- [DACON Public 0.5917 LGBM XGB Anchor Reference](performance/dacon-public-05917-lgbm-xgb-anchor-reference.md) - `packet_review`
+- [GPT-5.5 LLM Synthesis Implementation](reports/2026-05-29-llm-synthesis-implementation.md)
+- [Ingest Policy](team/wiki-ingest-policy.md)
+- [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md) - `performance`
+- [LGBM XGB Anchor Subject Hole Blend](models/lgbm-xgb-anchor-subject-hole-blend.md) - `model`
 - [LLM Synthesis Policy](team/llm-synthesis-policy.md)
 - [LLM Wiki Operating Harness](team/llm-wiki-operating-harness.md)
+- [Latest Context](latest-context.md)
+- [LifeLog Section 07 Notebook Overview](experiments/2026-06-01-lifelog-section07-notebook-overview.md) - `experiment`
+- [LifeLog Section 07 Working Notes](experiments/2026-06-01-lifelog-section07-working-notes.md) - `experiment`
+- [LightGBM CatBoost](models/lightgbm-catboost.md) - `model`
+- [Log](log.md)
 - [ML/AI Hackathon Entity Model](team/ml-ai-hackathon-entity-model.md)
+- [Overview](overview.md)
 - [Packet Quality Standard](team/packet-quality-standard.md)
+- [Packet Skill Design Summary](reports/2026-05-28-packet-skill-design.md)
+- [Packet Skill Implementation Report](reports/2026-05-28-packet-skill-implementation.md)
 - [Page Taxonomy](team/page-taxonomy.md)
-- [Ingest Policy](team/wiki-ingest-policy.md)
+- [Q3 Stress Bottleneck](targets/q3-stress-bottleneck.md) - `target`
+- [S4 WASO Disturbance](targets/s4-waso-disturbance.md) - `target`
+- [Section07 Feature Policy Decision](decisions/section07-feature-policy-decision.md) - `decision`
+- [Section07 Feature Policy](features/section07-feature-policy.md) - `feature-policy`
+- [Section07 Follow-Up Backlog](questions/section07-followup-backlog.md) - `open-questions`
+- [Section07 Mix LGBM CatBoost](models/section07-mix-lgbm-catboost.md) - `model`
+- [Sleep Health Hackathon Benchmark v0 Definition](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`
+- [Sleep Lifelog 2024 Dataset Definition](datasets/sleep-lifelog-2024.md) - `dataset`
+- [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`
+- [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md) - `feature-landscape`
+- [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md) - `open-questions`
+- [Stability Filtered Feature Selection](features/stability-filtered-feature-selection.md) - `feature`
+- [Subject Hole CV](preprocessing/subject-hole-cv.md) - `preprocessing`
+- [Team Packet Entity Coverage Audit](reports/2026-06-02-team-packet-entity-coverage-audit.md)
+- [app context feature engineering 20260601](performance/2026-06-01-app-context-feature-engineering-20260601.md) - `performance`
+- [dacon public 05917 lgbm xgb anchor graph first recheck](performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck.md) - `performance`
+- [dacon public 05917 lgbm xgb anchor subject hole blend](performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md) - `performance`
+- [labelwise weekly progress target bottlenecks](experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md) - `experiment`
+- [v186 Targetwise LGBM CatBoost](models/v186-targetwise-lgbm-catboost.md) - `model`
+- [v186 shap leaderboard analysis](performance/2026-05-29-v186-shap-leaderboard-analysis.md) - `performance`
+- [v200 v209 sparse splice review](experiments/2026-05-29-v200-v209-sparse-splice-review.md) - `experiment`
 <!-- wiki-ingest:index:end -->

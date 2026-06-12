@@ -32,6 +32,13 @@
 - [v186 shap leaderboard analysis](performance/2026-05-29-v186-shap-leaderboard-analysis.md)
 
 <!-- wiki-ingest:latest:start -->
+### 27396372321-1 | 2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck
+
+- link: [[performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck]]
+- publish_action: `bot_pr`
+- risk_tier: `tier3-performance`
+- review-required: true
+
 ### 27325835544-1 | 2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend
 
 - link: [[performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend]]

@@ -1,0 +1,143 @@
+{
+  "claim_boundary": "External DACON code-share Public 0.5917 observation only; not team verified; no DACON submission id, leaderboard export, submission CSV hash, private leaderboard result, or same-run local reproduction is present.",
+  "claim_status": "tentative",
+  "claims": [
+    {
+      "status": "tentative",
+      "text": "DACON code share 13975 reports Public 0.5917 for an LGBM+XGB anchor blend using V152 OOF anchor probabilities, Subject-hole CV, stability-filtered features, and blend search. This packet rechecks the latest graph-first packet flow and keeps the observation tentative until submission lineage is verified."
+    }
+  ],
+  "dataset": {
+    "hash": "not-provided",
+    "name": "sleep-lifelog-2024",
+    "version": "dacon-competition-package"
+  },
+  "date": "2026-06-12",
+  "id": "2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck",
+  "intended_wiki_targets": [
+    "wiki/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck.md"
+  ],
+  "metrics_to_verify": [
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "cat_only_notebook_oof_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.528,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "feature_count_after_stability_filter",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 1682.0,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "feature_count_before_stability_filter",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 23177.0,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "lgbm_only_notebook_oof_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.525,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.5917,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "notebook_local_oof_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.514,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "public_lb_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.5917,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "target_specific_notebook_oof_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.513,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "xgb_only_notebook_oof_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.53,
+      "tolerance": 0.0
+    }
+  ],
+  "model": {
+    "family": "lgbm-xgb-anchor-blend",
+    "weights_in_repo": false
+  },
+  "owner": "dacon-community",
+  "packet_root": "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck",
+  "packet_type": "performance",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "artifact_summary": "artifact_summary.json",
+    "metrics": "metrics.json",
+    "notebook": "dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+    "notes": "packet.md",
+    "packet_entity_graph": "packet_entity_graph.json",
+    "performance": "performance.yaml",
+    "question_queue": "question_queue.yaml",
+    "scan_metrics": "scan-metrics.csv",
+    "semantic_lint": "semantic_lint.json",
+    "source_metadata": "dacon-codeshare-13975.md",
+    "wiki_plan": "wiki_plan.yaml"
+  },
+  "risk_tier": "tier3-performance",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "subject-hole-cv-5fold-reference"
+  },
+  "status": "submitted",
+  "summary": "DACON code share 13975 reports Public 0.5917 for an LGBM+XGB anchor blend using V152 OOF anchor probabilities, Subject-hole CV, stability-filtered features, and blend search. This packet rechecks the latest graph-first packet flow and keeps the observation tentative until submission lineage is verified.",
+  "task": "source-ingest",
+  "title": "dacon public 05917 lgbm xgb anchor graph first recheck"
+}
