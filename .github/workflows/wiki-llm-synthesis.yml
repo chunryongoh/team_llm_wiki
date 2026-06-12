@@ -14,6 +14,11 @@ on:
         description: "Newline-separated raw packet paths or wiki-ingest report paths"
         required: false
         type: string
+      migration_mode:
+        description: "Allow migration-only deprecated namespace handling. Requires migration/wiki-* branch."
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -35,6 +40,15 @@ jobs:
         with:
           python-version: "3.13"
       - run: python -m pip install -e .[test]
+      - name: Check migration dispatch gate
+        if: github.event_name == 'workflow_dispatch' && inputs.migration_mode
+        env:
+          WIKI_MIGRATION_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.migration_mode && startsWith(github.ref_name, 'migration/wiki-') && '1' || '0' }}
+        run: |
+          if [ "$WIKI_MIGRATION_MODE" != "1" ]; then
+            printf "LLM synthesis migration-mode dispatch requires a migration/wiki-* branch.\n" >&2
+            exit 1
+          fi
       - name: Collect changed paths
         env:
           INPUT_CHANGED_PATHS: ${{ inputs.changed_paths || '' }}

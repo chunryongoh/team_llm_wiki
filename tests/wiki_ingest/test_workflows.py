@@ -57,3 +57,32 @@ def test_llm_synthesis_workflow_validates_before_creating_bot_pr():
     assert validate_index < create_pr_index
     assert "check-wiki-health" in workflow
     assert "test_llm_synthesis.py" in workflow
+
+
+def test_normal_workflows_do_not_enable_migration_mode():
+    for rel in [
+        ".github/workflows/wiki-pr-validate.yml",
+        ".github/workflows/wiki-main-ingest.yml",
+        ".github/workflows/wiki-llm-synthesis.yml",
+        ".github/workflows/wiki-health-check.yml",
+    ]:
+        workflow = Path(rel).read_text(encoding="utf-8")
+        assert "WIKI_MIGRATION_MODE: 1" not in workflow
+        assert "WIKI_MIGRATION_MODE=1" not in workflow
+
+
+def test_main_ingest_migration_dispatch_is_branch_gated():
+    workflow = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
+
+    assert "migration_mode:" in workflow
+    assert "migration/wiki-" in workflow
+    assert "github.event_name == 'workflow_dispatch'" in workflow
+    assert "--migration-mode" in workflow
+
+
+def test_llm_synthesis_migration_dispatch_is_branch_gated():
+    workflow = Path(".github/workflows/wiki-llm-synthesis.yml").read_text(encoding="utf-8")
+
+    assert "migration_mode:" in workflow
+    assert "migration/wiki-" in workflow
+    assert "github.event_name == 'workflow_dispatch'" in workflow

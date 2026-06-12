@@ -14,6 +14,11 @@ on:
         description: "Newline-separated changed paths"
         required: false
         type: string
+      migration_mode:
+        description: "Allow migration-only deprecated namespace handling. Requires migration/wiki-* branch."
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -84,6 +89,46 @@ jobs:
           paths = workflow_dispatch_changed_paths(os.environ, repo_root=Path("."))
           Path("changed-paths.txt").write_text("\n".join(paths) + ("\n" if paths else ""), encoding="utf-8")
           PY
+          fi
+      - name: Run route migration when explicitly dispatched
+        if: steps.skip.outputs.skip != 'true' && github.event_name == 'workflow_dispatch' && inputs.migration_mode
+        id: route_migration
+        env:
+          PYTHONPATH: src
+          RUN_ID: route-migration-${{ github.run_id }}-${{ github.run_attempt }}
+          WIKI_MIGRATION_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.migration_mode && startsWith(github.ref_name, 'migration/wiki-') && '1' || '0' }}
+        run: |
+          if [ "$WIKI_MIGRATION_MODE" != "1" ]; then
+            printf "Route migration requires workflow_dispatch on a migration/wiki-* branch.\n" >&2
+            exit 1
+          fi
+          migration_args="--migration-mode"
+          set +e
+          output=$(python -m team_llm_wiki.cli run-wiki-route-migration \
+            --repo-root . \
+            --run-id "$RUN_ID" \
+            $migration_args \
+            --report-path "raw/results/wiki-renovation/$RUN_ID/report.json" 2> route-migration-error.json)
+          status=$?
+          printf "%s\n" "$output" > route-migration-output.json
+          git diff --name-only > route-migration-add-paths.txt
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from team_llm_wiki.wiki_ingest.github_actions import write_github_outputs
+
+          payload = json.loads(Path("route-migration-output.json").read_text(encoding="utf-8") or "{}")
+          add_paths = Path("route-migration-add-paths.txt").read_text(encoding="utf-8")
+          write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
+              "status": payload.get("status", "missing"),
+              "add_paths": add_paths,
+          })
+          PY
+          if [ "$status" -ne 0 ]; then
+            cat route-migration-output.json
+            cat route-migration-error.json
+            exit "$status"
           fi
       - name: Run wiki ingest
         if: steps.skip.outputs.skip != 'true'
@@ -208,3 +253,17 @@ jobs:
           body: ${{ steps.pr_body.outputs.pr_body }}
           branch: "bot/wiki-ingest-${{ github.run_id }}-${{ github.run_attempt }}"
           add-paths: ${{ steps.ingest.outputs.add_paths }}
+      - name: Create bot PR for route migration
+        if: steps.skip.outputs.skip != 'true' && steps.route_migration.outputs.status == 'migrated'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          title: "[wiki-bot][review-required] migrate wiki route structure"
+          commit-message: "[wiki-bot] migrate wiki route structure"
+          body: |
+            ## Wiki route migration
+
+            - migration mode: `workflow_dispatch`
+            - branch gate: `migration/wiki-*`
+            - report: `raw/results/wiki-renovation/route-migration-${{ github.run_id }}-${{ github.run_attempt }}/report.json`
+          branch: "bot/wiki-route-migration-${{ github.run_id }}-${{ github.run_attempt }}"
+          add-paths: ${{ steps.route_migration.outputs.add_paths }}
