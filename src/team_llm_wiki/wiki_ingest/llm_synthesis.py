@@ -123,10 +123,15 @@ def run_llm_wiki_synthesis(
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
     synthesis_client = client or OpenAIResponsesClient(max_output_tokens=max_output_tokens)
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
-    pages = _validated_pages(llm_payload, allowed_paths=set(target_paths), required_paths=set(target_paths))
-    contract_failures = _validate_generated_pages_against_contract(repo_root, pages)
+    pages = _coerce_page_outputs(llm_payload)
+    validation_failures = _page_validation_failures(
+        repo_root,
+        pages,
+        allowed_paths=set(target_paths),
+        required_paths=set(target_paths),
+    )
     final_report_path = report_path or repo_root / "raw" / "results" / "llm-synthesis" / run_id / "report.json"
-    if contract_failures:
+    if validation_failures:
         report = IngestReport(
             status="hard_fail",
             run_id=run_id,
@@ -136,7 +141,7 @@ def run_llm_wiki_synthesis(
                 {"id": manifest.id, "type": manifest.type.value, "packet_root": _rel(repo_root, root)}
                 for manifest, root in manifests
             ],
-            failures=contract_failures,
+            failures=validation_failures,
             risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value,
             timing_ms=int((time.monotonic() - start) * 1000),
             llm_synthesis=True,
@@ -307,16 +312,15 @@ def _resolve_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
 
 def _target_paths(repo_root: Path, manifests: list[tuple[PacketManifest, Path]]) -> list[str]:
     entity_paths = [render_target_path(manifest, packet_root, repo_root=repo_root) for manifest, packet_root in manifests]
-    proposed_paths = proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests], repo_root=repo_root)
+    proposed_paths = [
+        path
+        for path in proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests], repo_root=repo_root)
+        if not path.startswith("wiki/team/")
+    ]
     return list(dict.fromkeys([*entity_paths, *_integration_paths(manifests), *proposed_paths]))
 
 
-def _validated_pages(
-    payload: dict[str, Any],
-    *,
-    allowed_paths: set[str],
-    required_paths: set[str] | None = None,
-) -> list[dict[str, str]]:
+def _coerce_page_outputs(payload: dict[str, Any]) -> list[dict[str, str]]:
     pages = payload.get("pages")
     if not isinstance(pages, list) or not pages:
         raise IngestFailure(FailureCode.INVALID_LLM_OUTPUT, "LLM output must include at least one page")
@@ -332,19 +336,76 @@ def _validated_pages(
         rel = path.as_posix()
         if path.is_absolute() or ".." in path.parts or not rel.startswith("wiki/"):
             raise IngestFailure(FailureCode.INVALID_TARGET_ROUTE, f"LLM may only write wiki pages: {raw_path}")
-        if rel not in allowed_paths:
-            raise IngestFailure(FailureCode.INVALID_TARGET_ROUTE, f"LLM wrote an unapproved wiki path: {raw_path}")
         clean.append({"path": rel, "content": content})
+    return clean
+
+
+def _validated_pages(
+    payload: dict[str, Any],
+    *,
+    allowed_paths: set[str],
+    required_paths: set[str] | None = None,
+) -> list[dict[str, str]]:
+    clean = _coerce_page_outputs(payload)
+    failures = _page_validation_failures(
+        Path("."),
+        clean,
+        allowed_paths=allowed_paths,
+        required_paths=required_paths,
+        skip_contract=True,
+    )
+    if failures:
+        first = failures[0]
+        raise IngestFailure(FailureCode.INVALID_LLM_OUTPUT, str(first.get("message", "invalid LLM page output")), first)
+    return clean
+
+
+def _page_validation_failures(
+    repo_root: Path,
+    pages: list[dict[str, object]],
+    *,
+    allowed_paths: set[str],
+    required_paths: set[str] | None = None,
+    skip_contract: bool = False,
+) -> list[dict[str, object]]:
+    failures: list[dict[str, object]] = []
+    if not skip_contract:
+        failures.extend(_validate_generated_pages_against_contract(repo_root, pages))
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    for page in pages:
+        rel = str(page.get("path", ""))
+        if rel in seen and rel not in duplicates:
+            duplicates.append(rel)
+        seen.add(rel)
+        if rel not in allowed_paths and not any(error.get("path") == rel for error in failures):
+            failures.append(
+                {
+                    "code": "unapproved_synthesis_path",
+                    "path": rel,
+                    "message": "LLM wrote a wiki path outside the allowed synthesis plan",
+                }
+            )
+    if duplicates:
+        failures.append(
+            {
+                "code": FailureCode.INVALID_LLM_OUTPUT.value,
+                "message": "LLM output wrote the same wiki page more than once",
+                "duplicate_paths": sorted(duplicates),
+            }
+        )
     required_paths = required_paths or set()
-    present = {page["path"] for page in clean}
+    present = {str(page["path"]) for page in pages}
     missing = sorted(required_paths - present)
     if missing:
-        raise IngestFailure(
-            FailureCode.INVALID_LLM_OUTPUT,
-            "LLM output omitted required wiki integration pages",
-            {"missing_paths": missing},
+        failures.append(
+            {
+                "code": FailureCode.INVALID_LLM_OUTPUT.value,
+                "message": "LLM output omitted required wiki integration pages",
+                "missing_paths": missing,
+            }
         )
-    return clean
+    return failures
 
 
 def _validate_generated_pages_against_contract(repo_root: Path, pages: list[dict[str, object]]) -> list[dict[str, object]]:
@@ -354,6 +415,9 @@ def _validate_generated_pages_against_contract(repo_root: Path, pages: list[dict
     for page in pages:
         path = str(page.get("path", ""))
         if path in entrypoints:
+            continue
+        if path.startswith("wiki/team/"):
+            errors.append({"code": "policy_synthesis_path", "path": path, "message": "LLM synthesis may not write team policy pages"})
             continue
         if not contract.is_allowed_synthesis_path(path):
             code = "deprecated_synthesis_path" if contract.deprecated_namespace_for_path(path) else "invalid_synthesis_path"

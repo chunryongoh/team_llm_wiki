@@ -278,6 +278,106 @@ def test_llm_synthesis_rejects_deprecated_output_path(tmp_path):
     assert any(error["code"] == "deprecated_synthesis_path" for error in errors)
 
 
+def test_llm_synthesis_hard_fails_deprecated_output_path_without_mutating_wiki(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    canonical = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
+    before = canonical.read_text(encoding="utf-8")
+    report_path = tmp_path / "raw" / "results" / "llm-synthesis" / "deprecated-path" / "report.json"
+    pages = [
+        {"path": "wiki/questions/sleep-lifelog-open-questions.md", "content": "# Old Questions\n"}
+        if page["path"] == "wiki/targets/sleep-lifelog-open-issues.md"
+        else page
+        for page in single_dataset_integration_pages()
+    ]
+    client = FakeClient({"summary": "bad deprecated path", "review_notes": [], "pages": pages})
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=report_path,
+        run_id="deprecated-path",
+        client=client,
+    )
+
+    assert report.status == "hard_fail"
+    assert any(failure["code"] == "deprecated_synthesis_path" for failure in report.failures)
+    assert report_path.exists()
+    assert canonical.read_text(encoding="utf-8") == before
+
+
+def test_llm_synthesis_rejects_policy_wiki_plan_output_without_mutating_policy(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    policy = tmp_path / "wiki" / "team" / "llm-synthesis-policy.md"
+    policy.write_text("# LLM Synthesis Policy\n\nOriginal policy.\n", encoding="utf-8")
+    (packet_root / "wiki_plan.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "stable_entities": [
+                    {
+                        "id": "policy:llm-synthesis",
+                        "kind": "policy",
+                        "page": "wiki/team/llm-synthesis-policy.md",
+                        "page_role": "policy",
+                    }
+                ],
+                "affected_pages": ["wiki/team/llm-synthesis-policy.md"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = FakeClient(
+        {
+            "summary": "bad policy write",
+            "review_notes": [],
+            "pages": [
+                *single_dataset_integration_pages(),
+                {"path": "wiki/team/llm-synthesis-policy.md", "content": "# LLM Synthesis Policy\n\nMutated.\n"},
+            ],
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="policy-write",
+        client=client,
+    )
+
+    assert report.status == "hard_fail"
+    assert any(failure["code"] == "policy_synthesis_path" for failure in report.failures)
+    assert policy.read_text(encoding="utf-8") == "# LLM Synthesis Policy\n\nOriginal policy.\n"
+
+
+def test_llm_synthesis_rejects_duplicate_page_output_without_mutating_wiki(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    canonical = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
+    before = canonical.read_text(encoding="utf-8")
+    client = FakeClient(
+        {
+            "summary": "duplicate",
+            "review_notes": [],
+            "pages": [
+                *single_dataset_integration_pages(),
+                {"path": "wiki/preprocessing/sleep-lifelog-2024.md", "content": "# Duplicate\n\nSecond write.\n"},
+            ],
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="duplicate",
+        client=client,
+    )
+
+    assert report.status == "hard_fail"
+    assert any("duplicate_paths" in failure for failure in report.failures)
+    assert canonical.read_text(encoding="utf-8") == before
+
+
 def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(tmp_path):
     seed_repo(tmp_path)
     packet_root = seed_dataset_packet(tmp_path)
