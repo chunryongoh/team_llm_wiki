@@ -1,0 +1,115 @@
+{
+  "claim_boundaries": [
+    "Public leaderboard observations stay tentative until submission id, export, or CSV hash lineage exists."
+  ],
+  "evidence_gaps": [
+    "Missing submission id/export/csv hash for Public 0.5917 lineage."
+  ],
+  "features": [
+    "window-pair",
+    "light"
+  ],
+  "interpretations": [
+    "The artifacts are useful as external code-share evidence, not as verified run lineage."
+  ],
+  "metrics": [
+    {
+      "direction": "lower_is_better",
+      "key": "cat_only_notebook_oof_log_loss",
+      "surface": "notebook_output_summary",
+      "value": 0.528
+    },
+    {
+      "direction": "higher_is_descriptive",
+      "key": "feature_count_after_stability_filter",
+      "surface": "notebook_output_summary",
+      "value": 1682.0
+    },
+    {
+      "direction": "higher_is_descriptive",
+      "key": "feature_count_before_stability_filter",
+      "surface": "notebook_output_summary",
+      "value": 23177.0
+    },
+    {
+      "direction": "lower_is_better",
+      "key": "lgbm_only_notebook_oof_log_loss",
+      "surface": "notebook_output_summary",
+      "value": 0.525
+    },
+    {
+      "key": "local_oof",
+      "surface": "observed_text",
+      "value": 0.514
+    },
+    {
+      "direction": "lower_is_better",
+      "key": "notebook_local_oof_log_loss",
+      "surface": "notebook_output_summary",
+      "value": 0.514
+    },
+    {
+      "key": "public_lb",
+      "surface": "observed_text",
+      "value": 0.5917
+    },
+    {
+      "direction": "lower_is_better",
+      "key": "public_lb_log_loss",
+      "surface": "public_lb_observation",
+      "value": 0.5917
+    },
+    {
+      "key": "score",
+      "surface": "observed_text",
+      "value": 0.5917
+    },
+    {
+      "key": "score",
+      "surface": "observed_text",
+      "value": 0.5939
+    },
+    {
+      "direction": "lower_is_better",
+      "key": "target_specific_notebook_oof_log_loss",
+      "surface": "notebook_output_summary",
+      "value": 0.513
+    },
+    {
+      "direction": "lower_is_better",
+      "key": "xgb_only_notebook_oof_log_loss",
+      "surface": "notebook_output_summary",
+      "value": 0.53
+    }
+  ],
+  "models": [
+    "LightGBM",
+    "XGBoost",
+    "CatBoost"
+  ],
+  "observed_facts": [
+    "Public 0.5917 appears in scanned note/notebook/metric artifacts.",
+    "LightGBM and XGBoost model signals appear in the scanned artifacts.",
+    "Subject-hole CV / GroupKFold split signal appears in the scanned artifacts."
+  ],
+  "packet_id": "2026-06-12-packet-scan",
+  "preferred_synthesis_inputs": [
+    "artifact_summary.json",
+    "packet_entity_graph.json",
+    "semantic_lint.json",
+    "question_queue.yaml",
+    "wiki_plan.yaml"
+  ],
+  "preprocessing": [
+    "Subject-hole CV",
+    "OOF",
+    "GroupKFold"
+  ],
+  "schema_version": "packet-graph-v1.0",
+  "source_files": [
+    "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+    "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+    "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv"
+  ],
+  "summary_ko": "스캔 매니페스트에서 그래프 후보 신호를 검토했다. LightGBM/XGBoost 앵커 블렌드 신호를 확인했다. Subject-hole CV 신호를 확인했다. Public 0.5917 관찰을 확인했다. 제출 ID, 리더보드 export, 제출 CSV hash가 없어 공개 LB 주장은 tentative로 유지한다."
+}

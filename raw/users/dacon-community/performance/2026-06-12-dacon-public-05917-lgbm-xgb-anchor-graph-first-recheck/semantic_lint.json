@@ -1,0 +1,34 @@
+{
+  "findings": [
+    {
+      "blocks": [
+        "supported_status"
+      ],
+      "category": "leaderboard_provenance",
+      "evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv"
+      ],
+      "id": "public-lb-missing-lineage",
+      "message": "Public 0.5917 lacks submission id, leaderboard export, or submission CSV hash lineage.",
+      "recommended_action": "Keep the public leaderboard claim tentative until lineage is provided.",
+      "severity": "warn"
+    },
+    {
+      "blocks": [
+        "implementation_reuse"
+      ],
+      "category": "code_completeness",
+      "evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb"
+      ],
+      "id": "placeholder-code-detected",
+      "message": "Scanned notebook contains placeholder code such as pass.",
+      "recommended_action": "Do not promote placeholder notebook code as reusable implementation.",
+      "severity": "warn"
+    }
+  ],
+  "packet_id": "2026-06-12-packet-scan",
+  "schema_version": "packet-graph-v1.0"
+}
