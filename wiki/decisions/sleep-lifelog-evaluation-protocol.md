@@ -4,19 +4,24 @@ type: decision
 page_role: decision
 title: Sleep Lifelog Evaluation Protocol
 status: active-review-required
-date: 2026-06-11
+date: 2026-06-12
 dataset: sleep-lifelog-2024
 benchmark: sleep-health-hackathon-v0
 summary: sleep-lifelog 평가는 local OOF, notebook-output, external public note, DACON public/private leaderboard, organizer-official validation을 절대 합치지 않는다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # Sleep Lifelog Evaluation Protocol
@@ -34,7 +39,7 @@ Sleep-lifelog 성능과 feature claim은 evidence surface를 분리한다.
 ## Current application
 
 - supported: LGB/CB Q2 targetwise reblend local OOF delta `-3.19332341584e-05`, boundary `local_oof_diagnostic_only`.
-- tentative external reference: DACON code share `13975` Public `0.5917` for [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md). Submission id, export, CSV lineage가 없다.
+- tentative external reference: DACON code share `13975` Public `0.5917` for [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md). `2026-06-12` graph-first recheck도 submission id, export, CSV lineage를 제공하지 않았다.
 - notebook-output only: same code share notebook Local OOF `0.514`, target-specific `0.513`, feature count `23177 -> 1682`.
 - tentative public notes: v186 `0.5922831771`, v189/v200-v209 series, Section07 `0.5986218188`, app context `0.6106185586`.
 

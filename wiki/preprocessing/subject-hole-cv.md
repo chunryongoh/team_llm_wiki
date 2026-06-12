@@ -4,19 +4,24 @@ type: preprocessing
 page_role: leaf
 title: Subject Hole CV
 status: active-review-required
-date: 2026-06-11
+date: 2026-06-12
 dataset: sleep-lifelog-2024
 claim_status: tentative
 summary: Subject별 chronological chunks에서 early+late validation holes를 만드는 external reference CV이며 canonical split replacement가 아니다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # Subject Hole CV
@@ -34,7 +39,7 @@ Subject-hole CV는 DACON code share `13975`가 사용한 split idea다. 각 `sub
 
 ## Why it is separate from canonical policy
 
-현재 팀의 supported local claim은 `local-groupkfold-subject-5fold-oof` surface에 있다. Subject-hole CV는 same-run comparison이 없고 fold assignment artifact도 없다. 따라서 [Canonical Split And Leakage Policy](canonical-split-and-leakage-policy.md)를 대체하지 않는다.
+현재 팀의 supported local claim은 `local-groupkfold-subject-5fold-oof` surface에 있다. Subject-hole CV는 same-run comparison이 없고 fold assignment artifact도 없다. 따라서 [Canonical Split And Leakage Policy](canonical-split-and-leakage-policy.md)를 대체하지 않는다. `2026-06-12` graph-first packet의 entity graph가 split signal을 확인했지만, `wiki/datasets/subject-hole-cv.md`가 아니라 이 preprocessing leaf가 올바른 stable page다.
 
 ## Leakage and audit risks
 

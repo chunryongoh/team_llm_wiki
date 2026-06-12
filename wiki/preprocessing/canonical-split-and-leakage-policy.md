@@ -4,19 +4,24 @@ type: preprocessing-policy
 page_role: registry
 title: Canonical Split And Leakage Policy
 status: active
-date: 2026-06-11
+date: 2026-06-12
 dataset: sleep-lifelog-2024
 benchmark: sleep-health-hackathon-v0
 summary: sleep-lifelog split surface와 leakage boundary를 claim 옆에 붙여 local OOF, notebook-output, external public score를 혼합하지 않게 한다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # Canonical Split And Leakage Policy
@@ -29,7 +34,7 @@ raw_evidence:
 |---|---:|---|---|---|
 | `groupkfold-subject-3fold-oof` | 3 | `subject_id` | local canonical sprint definition | 초기 dataset/benchmark 기준 |
 | `local-groupkfold-subject-5fold-oof` | 5 | `subject_id` | `local_oof_diagnostic_only` | LGB/CB supported diagnostic 기준 |
-| `subject-hole-cv-5fold-reference` | 5 | `subject_id` | external code-share and notebook-output reference | DACON code share `13975`; canonical replacement 아님 |
+| `subject-hole-cv-5fold-reference` | 5 | `subject_id` | external code-share and notebook-output reference | DACON code share `13975`; `2026-06-12` recheck에서도 fold file 없음 |
 | `v186-report-oof-plus-public-lb-observation` | unknown | `subject_id` | PDF OOF + user-reported public score | submission lineage 없음 |
 | `20260526-172609-lgbcat-timesplit-public-lb-observation` | unknown | `subject_id` | DOCX public LB observation | app-context stage report |
 | `notebook-output-and-slack-summary-observation` | mixed | `subject_id` | notebook-output observation | 1875 feature/dedup report |
@@ -53,6 +58,7 @@ Subject-hole CV는 각 subject를 `sleep_date` 순으로 나누고 early+late ch
 
 - LGB/CB reproduction: transductive statistics, global imputer, subject encoding, date/rolling alignment risk
 - DACON 0.5917 reference: V152 OOF CSV, feature parquet, fold file, submission lineage 없음
+- 2026-06-12 graph-first packet: `packet_entity_graph`는 split signal만 재확인하며 fold assignment artifact를 제공하지 않음
 - app-context: feature list hash, submission lineage, same-split OOF 없음
 - 1875 pool: exact `715` list와 fold-scoped dedup 증거 없음
 - v186/v200/Section07: leaderboard provenance와 target-level audit 부족

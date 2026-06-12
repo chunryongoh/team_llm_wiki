@@ -12,7 +12,7 @@
 - Submission history: [DACON Leaderboard History](submissions/dacon-leaderboard-history.md)
 - Split/leakage policy: [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md)
 - Open questions: [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md)
-- Latest integration report: [2026-06-11 Sleep Lifelog Packet Synthesis](reports/2026-06-11-sleep-lifelog-packet-synthesis.md)
+- Latest integration report: [2026-06-12 Sleep Lifelog Packet Synthesis](reports/2026-06-12-sleep-lifelog-packet-synthesis.md)
 
 ## Current best by evidence surface
 
@@ -22,9 +22,9 @@ Reported public notes에는 DACON code share external `0.5917`, v186 `0.59228317
 
 ## 최근 통합된 packet themes
 
-- external DACON 0.5917 reference: [LGBM XGB Anchor Subject Hole Blend](models/lgbm-xgb-anchor-subject-hole-blend.md), [Subject Hole CV](preprocessing/subject-hole-cv.md), [Stability Filtered Feature Selection](features/stability-filtered-feature-selection.md)을 tentative reference로 추가했다.
+- external DACON 0.5917 reference: `2026-06-12` graph-first recheck가 [LGBM XGB Anchor Subject Hole Blend](models/lgbm-xgb-anchor-subject-hole-blend.md), [Subject Hole CV](preprocessing/subject-hole-cv.md), [Stability Filtered Feature Selection](features/stability-filtered-feature-selection.md)을 재확인했다. Claim status는 `tentative` 그대로다.
 - app context: app-name과 presleep/night/early-morning window feature가 강한 hypothesis이지만 tentative다.
-- 1875 feature pool: dedup, Light-W noise, Screen/Sleep core, Q3 BLE/WiFi exception이 raw artifact 없이 보고되었다.
+- 1875 feature pool: dedup, Light-W noise, Screen/Sleep core, Q3 BLE/WiFi exception은 raw artifact 없이 보고되어 historical source review로 남는다.
 - v186 SHAP: target별 feature importance 해석은 유용하지만 ablation proof가 아니다.
 - v200-v209: broad morphology reset은 negative evidence이고 sparse splice guardrail만 후보로 남았다.
 - Section07 weekly: labelwise strategy, Q3/S4 bottleneck, temporal overlap negative observation을 보강한다.
@@ -40,10 +40,9 @@ Reported public notes에는 DACON code share external `0.5917`, v186 `0.59228317
 ## Raw Evidence
 
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
