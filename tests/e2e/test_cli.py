@@ -238,6 +238,23 @@ def test_cli_run_wiki_route_migration_requires_flag(tmp_path):
     assert payload["status"] == "blocked"
 
 
+def test_cli_plan_wiki_route_migration_fails_on_unmapped_deprecated_inventory(tmp_path):
+    seed_repo(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "new-unmapped-page.md"
+    deprecated.parent.mkdir()
+    deprecated.write_text("# New Unmapped Page\n\n## Metrics\n\n- public_lb: 0.59\n", encoding="utf-8")
+
+    result = run_cli(
+        ["plan-wiki-route-migration", "--repo-root", str(tmp_path), "--run-id", "unmapped"],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "failed"
+    assert any(error["code"] == "migration_inventory_incomplete" for error in payload["errors"])
+
+
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):
     packet = seed_repo(tmp_path, packet_type="experiment", metric_expected=0.9)
     report_path = tmp_path / "hard-fail-report.json"

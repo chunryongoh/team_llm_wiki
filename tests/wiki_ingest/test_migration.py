@@ -21,8 +21,17 @@ def seed_deprecated_page(root: Path) -> None:
         "- [Sleep Lifelog](datasets/sleep-lifelog-2024.md)\n",
         encoding="utf-8",
     )
+    (wiki / "overview.md").write_text(
+        "# Overview\n\n[Dataset](wiki/datasets/sleep-lifelog-2024.md)\n\n[[datasets/sleep-lifelog-2024|Sleep Lifelog]]\n",
+        encoding="utf-8",
+    )
     (wiki / "datasets" / "sleep-lifelog-2024.md").write_text(
         "---\nclaim_status: tentative\n---\n# Sleep Lifelog 2024\n\n## Split Policy\n\n- GroupKFold by subject.\n",
+        encoding="utf-8",
+    )
+    (wiki / "models").mkdir()
+    (wiki / "models" / "lgbm-catboost.md").write_text(
+        "# LGBM CatBoost\n\n[Dataset](../datasets/sleep-lifelog-2024.md)\n",
         encoding="utf-8",
     )
 
@@ -56,7 +65,40 @@ def test_run_route_migration_moves_page_leaves_tombstone_and_rewrites_links(tmp_
     assert "preprocessing/sleep-lifelog-2024.md" in (tmp_path / "wiki" / "index.md").read_text(
         encoding="utf-8"
     )
+    model_page = (tmp_path / "wiki" / "models" / "lgbm-catboost.md").read_text(encoding="utf-8")
+    assert "../preprocessing/sleep-lifelog-2024.md" in model_page
+    assert "../datasets/sleep-lifelog-2024.md" not in model_page
+    overview = (tmp_path / "wiki" / "overview.md").read_text(encoding="utf-8")
+    assert "preprocessing/sleep-lifelog-2024.md" in overview
+    assert "[[preprocessing/sleep-lifelog-2024|Sleep Lifelog]]" in overview
     assert json.loads(report_path.read_text(encoding="utf-8"))["status"] == "migrated"
+
+
+def test_run_route_migration_is_idempotent_after_tombstone(tmp_path):
+    seed_deprecated_page(tmp_path)
+
+    first = run_route_migration(tmp_path, run_id="first", migration_mode=True)
+    canonical = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
+    before = canonical.read_text(encoding="utf-8")
+    second = run_route_migration(tmp_path, run_id="second", migration_mode=True)
+
+    assert first["status"] == "migrated"
+    assert second["status"] == "migrated"
+    assert second["planned_moves"] == []
+    assert "wiki/datasets/sleep-lifelog-2024.md" in second["already_migrated"]
+    assert canonical.read_text(encoding="utf-8") == before
+    assert "Deprecated Compatibility Page" not in canonical.read_text(encoding="utf-8")
+
+
+def test_plan_route_migration_fails_on_unmapped_deprecated_inventory(tmp_path):
+    seed_deprecated_page(tmp_path)
+    unmapped = tmp_path / "wiki" / "datasets" / "new-unmapped-page.md"
+    unmapped.write_text("# New Unmapped Page\n\n## Metrics\n\n- public_lb: 0.59\n", encoding="utf-8")
+
+    report = plan_route_migration(tmp_path, run_id="unmapped")
+
+    assert report["status"] == "failed"
+    assert any(error["code"] == "migration_inventory_incomplete" for error in report["errors"])
 
 
 def test_run_route_migration_requires_explicit_migration_mode(tmp_path):
