@@ -65,7 +65,7 @@ def _predicted_generated_paths(repo_root: Path, packets: list[tuple], packet_roo
     roots = packet_roots or []
     for index, (manifest, _risk) in enumerate(packets):
         packet_root = repo_root / roots[index] if index < len(roots) else None
-        paths.append(render_target_path(manifest, packet_root))
+        paths.append(render_target_path(manifest, packet_root, repo_root=repo_root))
     if packets:
         paths.extend(["wiki/index.md", "wiki/log.md", "wiki/latest-context.md"])
         paths.extend(_compiled_packet_path(manifest.id) for manifest, _risk in packets)
@@ -78,6 +78,9 @@ def _staged_subset(repo_root: Path, packet_roots: list[Path]) -> Path:
         source = repo_root / name
         if source.exists():
             shutil.copy2(source, staging / name)
+    contracts = repo_root / "automation" / "contracts"
+    if contracts.exists():
+        shutil.copytree(contracts, staging / "automation" / "contracts")
     if (repo_root / "wiki").exists():
         shutil.copytree(repo_root / "wiki", staging / "wiki")
     for root in packet_roots:
@@ -123,7 +126,7 @@ def _build_report(repo_root: Path, changed_paths: list[str], run_id: str) -> tup
             report_packets.append({"packet_root": _rel(repo_root, packet_root), "error": exc.code.value})
             continue
         guard = run_guard_checks(repo_root, packet_root, manifest, policy)
-        risk = classify_risk(manifest, guard)
+        risk = classify_risk(manifest, guard, repo_root=repo_root)
         packets.append((manifest, risk))
         manifests_by_root[packet_root] = manifest
         report_packets.append(

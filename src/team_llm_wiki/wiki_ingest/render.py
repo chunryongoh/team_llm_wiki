@@ -144,16 +144,18 @@ def _slug_from_value(value: Any, fallback: str) -> str:
     return candidate
 
 
-def render_target_path(manifest: PacketManifest, packet_root: Path | None = None) -> str:
+def render_target_path(
+    manifest: PacketManifest, packet_root: Path | None = None, *, repo_root: Path | None = None
+) -> str:
     if manifest.type is PacketType.DATASET:
         data = _load_packet_mapping(packet_root, manifest, "dataset")
         page_id = _slug_from_value(data.get("name") or manifest.dataset.name, manifest.id)
-        return packet_target_path(manifest.type, page_id)
+        return packet_target_path(manifest.type, page_id, repo_root=repo_root)
     if manifest.type is PacketType.BENCHMARK:
         data = _load_packet_mapping(packet_root, manifest, "benchmark")
         page_id = _slug_from_value(data.get("name"), manifest.id)
-        return packet_target_path(manifest.type, page_id)
-    return packet_target_path(manifest.type, manifest.id)
+        return packet_target_path(manifest.type, page_id, repo_root=repo_root)
+    return packet_target_path(manifest.type, manifest.id, repo_root=repo_root)
 
 
 def _lineage_lines(manifest: PacketManifest) -> list[str]:
@@ -292,6 +294,9 @@ def _packet_markdown_body(packet_root: Path | None, title: str, target_by_packet
         body = body.replace(f"[[datasets/{packet_id}]]", f"[[{target}]]")
         body = body.replace(f"[[benchmarks/{packet_id}]]", f"[[{target}]]")
         body = body.replace(f"[[sources/{packet_id}]]", f"[[{target}]]")
+        body = body.replace(f"[[preprocessing/{packet_id}]]", f"[[{target}]]")
+        body = body.replace(f"[[performance/{packet_id}]]", f"[[{target}]]")
+        body = body.replace(f"[[reports/{packet_id}]]", f"[[{target}]]")
     return body
 
 
@@ -407,7 +412,7 @@ def render_packets(
     normalized_packets = [_normalize_packet_input(packet) for packet in packets]
     roots = packet_roots or {}
     target_by_packet_id = {
-        manifest.id: Path(render_target_path(manifest, roots.get(manifest.id)))
+        manifest.id: Path(render_target_path(manifest, roots.get(manifest.id), repo_root=repo_root))
         .with_suffix("")
         .as_posix()
         .removeprefix("wiki/")
@@ -415,7 +420,7 @@ def render_packets(
     }
     for manifest, publish_action, risk_tier in normalized_packets:
         packet_root = roots.get(manifest.id)
-        rel = render_target_path(manifest, packet_root)
+        rel = render_target_path(manifest, packet_root, repo_root=repo_root)
         target = repo_root / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(

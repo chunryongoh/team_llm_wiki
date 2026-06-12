@@ -12,7 +12,7 @@ import yaml
 from .models import FailureCode, GuardResult, GuardViolation, IngestFailure, PacketManifest
 from .packet_schemas import validate_packet_specific_schema
 from .policy import IngestPolicy
-from .routes import PACKET_ROUTE_MAP
+from .routes import packet_route
 
 SECRET_NAME_SUFFIXES = {".env", ".pem", ".key", ".p12", ".pfx"}
 SECRET_NAMES = {"id_rsa", "id_dsa", "id_ed25519", "credentials.json"}
@@ -186,7 +186,7 @@ def run_guard_checks(repo_root: Path, packet_root: Path, manifest: PacketManifes
     except IngestFailure as exc:
         result.failures.append(GuardViolation(exc.code, exc.message, exc.details.get("path")))
 
-    expected_route = PACKET_ROUTE_MAP[manifest.type] + "/"
+    expected_route = packet_route(manifest.type, repo_root=repo_root) + "/"
     for target in manifest.intended_wiki_targets:
         target_path = Path(target)
         if target_path.is_absolute() or ".." in target_path.parts:

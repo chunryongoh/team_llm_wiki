@@ -18,20 +18,23 @@ def manifest(**overrides):
         "claim_status": "tentative",
         "summary": "Run summary.",
         "raw_paths": ["result.json"],
-        "intended_wiki_targets": ["wiki/sources/pkt-1.md"],
+        "intended_wiki_targets": ["wiki/reports/pkt-1.md"],
     }
     data.update(overrides)
     return PacketManifest(**data)
 
 
-def test_low_risk_reference_direct_commit():
-    packet = manifest(id="ref", type="reference", title="Reference", intended_wiki_targets=["wiki/sources/ref.md"])
+def test_reference_reports_route_requires_review():
+    packet = manifest(id="ref", type="reference", title="Reference", intended_wiki_targets=["wiki/reports/ref.md"])
 
-    assert classify_risk(packet, GuardResult()).tier is RiskTier.DIRECT_COMMIT
+    decision = classify_risk(packet, GuardResult())
+
+    assert decision.tier is RiskTier.BOT_PR
+    assert "high-risk canonical route" in decision.reasons
 
 
 def test_high_risk_packet_type_goes_bot_pr():
-    packet = manifest(id="exp", type="experiment", title="Run", intended_wiki_targets=["wiki/experiments/exp.md"])
+    packet = manifest(id="exp", type="experiment", title="Run", intended_wiki_targets=["wiki/reports/exp.md"])
 
     assert classify_risk(packet, GuardResult()).tier is RiskTier.BOT_PR
 
@@ -41,7 +44,7 @@ def test_preprocessing_packet_requires_review():
         id="prep",
         type="preprocessing",
         title="Preprocessing",
-        intended_wiki_targets=["wiki/datasets/prep.md"],
+        intended_wiki_targets=["wiki/preprocessing/prep.md"],
     )
 
     decision = classify_risk(packet, GuardResult())
@@ -54,7 +57,7 @@ def test_dataset_packet_requires_review():
         id="ds",
         type="dataset",
         title="Dataset",
-        intended_wiki_targets=["wiki/datasets/ds.md"],
+        intended_wiki_targets=["wiki/preprocessing/ds.md"],
     )
 
     decision = classify_risk(packet, GuardResult())
@@ -68,7 +71,7 @@ def test_benchmark_packet_requires_review():
         id="bm",
         type="benchmark",
         title="Benchmark",
-        intended_wiki_targets=["wiki/benchmarks/bm.md"],
+        intended_wiki_targets=["wiki/performance/bm.md"],
     )
 
     decision = classify_risk(packet, GuardResult())
@@ -79,7 +82,7 @@ def test_benchmark_packet_requires_review():
 
 
 def test_guard_failure_hard_fail():
-    packet = manifest(id="ref", type="reference", title="Reference", intended_wiki_targets=["wiki/sources/ref.md"])
+    packet = manifest(id="ref", type="reference", title="Reference", intended_wiki_targets=["wiki/reports/ref.md"])
     guard = GuardResult(failures=[GuardViolation(code="missing_raw_file", message="missing")])
 
     assert classify_risk(packet, guard).tier is RiskTier.HARD_FAIL
@@ -91,7 +94,7 @@ def test_supported_disputed_superseded_claims_require_bot_pr():
             id=status,
             type="reference",
             title="Claim",
-            intended_wiki_targets=[f"wiki/sources/{status}.md"],
+            intended_wiki_targets=[f"wiki/reports/{status}.md"],
             claims=[{"status": status, "text": "claim"}],
         )
 
@@ -104,7 +107,7 @@ def test_top_level_supported_disputed_superseded_claim_status_requires_bot_pr():
             id=status,
             type="reference",
             title="Claim",
-            intended_wiki_targets=[f"wiki/sources/{status}.md"],
+            intended_wiki_targets=[f"wiki/reports/{status}.md"],
             claim_status=status,
             claims=[],
         )

@@ -4,17 +4,21 @@ from pathlib import Path
 import yaml
 
 from team_llm_wiki.wiki_ingest.runner import plan_wiki_main_ingest, run_wiki_main_ingest
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
 
 
 ROUTES = {
-    "reference": "wiki/sources",
-    "experiment": "wiki/experiments",
+    "reference": "wiki/reports",
+    "experiment": "wiki/reports",
 }
 
 
 def seed_repo(root: Path):
     (root / "AGENTS.md").write_text("rules", encoding="utf-8")
     (root / "CLAUDE.md").write_text("@AGENTS.md", encoding="utf-8")
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
     (root / "wiki").mkdir()
     (root / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
     (root / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
@@ -61,7 +65,7 @@ def packet_with_manifest(root: Path, packet_id: str, manifest: dict, files: dict
     return packet_root
 
 
-def test_runner_low_risk_direct_commit_and_report(tmp_path):
+def test_runner_reference_packet_uses_contract_route_and_report(tmp_path):
     seed_repo(tmp_path)
     packet_root = packet(tmp_path, "ref-1", "reference")
     report_path = tmp_path / "raw" / "results" / "wiki-ingest" / "run-1" / "report.json"
@@ -73,13 +77,13 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
         run_id="run-1",
     )
 
-    assert report.status == "direct_commit"
-    assert (tmp_path / "wiki" / "sources" / "ref-1.md").exists()
+    assert report.status == "bot_pr"
+    assert (tmp_path / "wiki" / "reports" / "ref-1.md").exists()
     assert report_path.exists()
     payload = json.loads(report_path.read_text(encoding="utf-8"))
-    assert payload["status"] == "direct_commit"
+    assert payload["status"] == "bot_pr"
     assert payload["input_changed_paths"] == ["raw/users/alice/ref-1/manifest.yaml"]
-    assert "wiki/sources/ref-1.md" in payload["generated_paths"]
+    assert "wiki/reports/ref-1.md" in payload["generated_paths"]
     assert "automation/.cache/compiled/ref-1.json" in payload["generated_paths"]
     assert "automation/.cache/compiled/ref-1.json" in payload["changed_paths"]
     assert payload["report_path"] == "raw/results/wiki-ingest/run-1/report.json"
@@ -90,17 +94,17 @@ def test_runner_low_risk_direct_commit_and_report(tmp_path):
     assert compiled_payload["id"] == "ref-1"
     assert compiled_payload["packet_type"] == "reference"
     assert compiled_payload["packet_root"] == "raw/users/alice/ref-1"
-    assert compiled_payload["publish_action"] == "direct_commit"
-    assert compiled_payload["risk_tier"] == "tier0-catalog"
-    assert payload["packets"][0]["publish_action"] == "direct_commit"
-    assert payload["packets"][0]["risk_tier"] == "tier0-catalog"
+    assert compiled_payload["publish_action"] == "bot_pr"
+    assert compiled_payload["risk_tier"] == "tier2-interpretation"
+    assert payload["packets"][0]["publish_action"] == "bot_pr"
+    assert payload["packets"][0]["risk_tier"] == "tier2-interpretation"
     assert payload["packets"][0]["claim_boundary"] == "Only applies to the dev split."
     assert payload["packet_skill_compatibility"]["status"] == "warning"
     assert any(
         check["id"] == "packet_root_shape" and check["status"] == "warning"
         for check in payload["packet_skill_compatibility"]["checks"]
     )
-    assert payload["risk_tier"] == "tier0-catalog"
+    assert payload["risk_tier"] == "tier2-interpretation"
 
 
 def test_runner_top_level_risk_tier_uses_governance_label(tmp_path):
@@ -123,7 +127,7 @@ def test_runner_top_level_risk_tier_uses_governance_label(tmp_path):
             "claim_status": "supported",
             "summary": "Run summary.",
             "raw_paths": ["result.json"],
-            "intended_wiki_targets": ["wiki/sources/ref-supported.md"],
+            "intended_wiki_targets": ["wiki/reports/ref-supported.md"],
         },
         {"result.json": '{"accuracy": 0.8}'},
     )
@@ -140,7 +144,7 @@ def test_runner_top_level_risk_tier_uses_governance_label(tmp_path):
     assert report.packets[0]["risk_tier"] == "tier4-governance"
     assert report.risk_tier == "tier4-governance"
     compiled_payload = json.loads((tmp_path / "automation" / ".cache" / "compiled" / "ref-supported.json").read_text())
-    rendered_text = (tmp_path / "wiki" / "sources" / "ref-supported.md").read_text(encoding="utf-8")
+    rendered_text = (tmp_path / "wiki" / "reports" / "ref-supported.md").read_text(encoding="utf-8")
     assert compiled_payload["publish_action"] == "bot_pr"
     assert compiled_payload["risk_tier"] == "tier4-governance"
     assert "publish_action: bot_pr" in rendered_text
@@ -167,7 +171,7 @@ def test_runner_compiled_payload_preserves_labeled_raw_paths(tmp_path):
             "claim_status": "tentative",
             "summary": "Run summary.",
             "raw_paths": {"metrics": "metrics.json", "split": "folds.csv"},
-            "intended_wiki_targets": ["wiki/sources/ref-labeled.md"],
+            "intended_wiki_targets": ["wiki/reports/ref-labeled.md"],
             "metrics_to_verify": [
                 {"raw_path": "metrics.json", "metric_key": "accuracy", "reported_value": 0.8}
             ],
@@ -182,7 +186,7 @@ def test_runner_compiled_payload_preserves_labeled_raw_paths(tmp_path):
         run_id="run-labeled",
     )
 
-    assert report.status == "direct_commit"
+    assert report.status == "bot_pr"
     compiled = tmp_path / "automation" / ".cache" / "compiled" / "ref-labeled.json"
     compiled_payload = json.loads(compiled.read_text(encoding="utf-8"))
     assert compiled_payload["raw_paths"] == {"metrics": "metrics.json", "split": "folds.csv"}
@@ -243,7 +247,7 @@ def test_runner_conflict_markers_hard_fail_without_mutation(tmp_path):
             "claim_status": "tentative",
             "summary": "Run summary.",
             "raw_paths": ["result.json"],
-            "intended_wiki_targets": ["wiki/sources/ref-conflict.md"],
+            "intended_wiki_targets": ["wiki/reports/ref-conflict.md"],
             "claims": [{"status": "tentative", "text": "<<<<<<< HEAD\nleft\n=======\nright\n>>>>>>> branch"}],
         },
         {"result.json": '{"accuracy": 0.8}'},
@@ -299,7 +303,7 @@ def test_runner_generated_link_hard_fail_does_not_mutate_wiki(tmp_path):
             "claim_status": "tentative",
             "summary": "Generated page has [[missing-generated-link]].",
             "raw_paths": ["result.json"],
-            "intended_wiki_targets": ["wiki/sources/ref-bad-link.md"],
+            "intended_wiki_targets": ["wiki/reports/ref-bad-link.md"],
         },
         {"result.json": '{"accuracy": 0.8}'},
     )
@@ -359,7 +363,7 @@ def test_runner_dataset_and_benchmark_ingest_use_canonical_entity_pages(tmp_path
         "claim_status": "tentative",
         "summary": "Dataset summary.",
         "raw_paths": {"dataset": "dataset.yaml"},
-        "intended_wiki_targets": ["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+        "intended_wiki_targets": ["wiki/preprocessing/2026-05-29-sleep-lifelog-2024.md"],
     }
     benchmark_manifest = {
         "id": "2026-05-29-sleep-health-hackathon-v0",
@@ -376,7 +380,7 @@ def test_runner_dataset_and_benchmark_ingest_use_canonical_entity_pages(tmp_path
         "claim_status": "tentative",
         "summary": "Benchmark summary.",
         "raw_paths": {"benchmark": "benchmark.yaml"},
-        "intended_wiki_targets": ["wiki/benchmarks/2026-05-29-sleep-health-hackathon-v0.md"],
+        "intended_wiki_targets": ["wiki/performance/2026-05-29-sleep-health-hackathon-v0.md"],
     }
     dataset_root = packet_with_manifest(
         tmp_path,
@@ -432,13 +436,13 @@ def test_runner_dataset_and_benchmark_ingest_use_canonical_entity_pages(tmp_path
     )
 
     assert report.status == "bot_pr"
-    assert "wiki/datasets/sleep-lifelog-2024.md" in report.generated_paths
-    assert "wiki/benchmarks/sleep-health-hackathon-v0.md" in report.generated_paths
-    assert "wiki/datasets/2026-05-29-sleep-lifelog-2024.md" not in report.generated_paths
-    assert (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").exists()
-    benchmark_text = (tmp_path / "wiki" / "benchmarks" / "sleep-health-hackathon-v0.md").read_text(encoding="utf-8")
+    assert "wiki/preprocessing/sleep-lifelog-2024.md" in report.generated_paths
+    assert "wiki/performance/sleep-health-hackathon-v0.md" in report.generated_paths
+    assert "wiki/preprocessing/2026-05-29-sleep-lifelog-2024.md" not in report.generated_paths
+    assert (tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md").exists()
+    benchmark_text = (tmp_path / "wiki" / "performance" / "sleep-health-hackathon-v0.md").read_text(encoding="utf-8")
     assert "## Benchmark Entity" in benchmark_text
-    assert "[[datasets/sleep-lifelog-2024]]" in benchmark_text
+    assert "[[preprocessing/sleep-lifelog-2024]]" in benchmark_text
 
 
 def test_runner_invalid_manifest_writes_hard_fail_report_without_mutation(tmp_path):

@@ -5,16 +5,21 @@ from pathlib import Path
 
 import yaml
 
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
+
 
 ROUTES = {
-    "reference": "wiki/sources",
-    "experiment": "wiki/experiments",
+    "reference": "wiki/reports",
+    "experiment": "wiki/reports",
 }
 
 
 def seed_repo(root: Path, packet_type="reference", metric_expected=0.8):
     (root / "AGENTS.md").write_text("rules", encoding="utf-8")
     (root / "CLAUDE.md").write_text("@AGENTS.md", encoding="utf-8")
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
     (root / "wiki").mkdir()
     (root / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
     (root / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
@@ -91,7 +96,7 @@ def test_cli_run_writes_report_path(tmp_path):
     )
 
     assert result.returncode == 0
-    assert json.loads(result.stdout)["status"] == "direct_commit"
+    assert json.loads(result.stdout)["status"] == "bot_pr"
     assert report_path.exists()
 
 
@@ -144,7 +149,7 @@ def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):
     (tmp_path / "wiki" / "log.md").write_text(
         "# Log\n\n"
         "## [2026-05-27] ingest | pkt-1\n\n"
-        "- target: `wiki/sources/pkt-1.md`\n",
+        "- target: `wiki/reports/pkt-1.md`\n",
         encoding="utf-8",
     )
 
@@ -166,7 +171,7 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
     (tmp_path / "wiki" / "log.md").write_text(
         "# Log\n\n"
         "## [2026-05-27] ingest | pkt-1\n\n"
-        "- target: `wiki/sources/pkt-1.md`\n",
+        "- target: `wiki/reports/pkt-1.md`\n",
         encoding="utf-8",
     )
     (tmp_path / "wiki" / "questions").mkdir()

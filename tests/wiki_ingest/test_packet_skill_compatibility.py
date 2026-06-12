@@ -167,13 +167,13 @@ def test_packet_skill_compatibility_passes_entity_coverage_with_wiki_plan(tmp_pa
                     "page_role": "leaf",
                     "promotion_reason": ["target_specific_ablation_needed"],
                 },
-            ],
-            "affected_pages": [
-                {
-                    "path": "wiki/questions/section07-followup-backlog.md",
-                    "role": "hub",
-                    "expected_change": "update closeable follow-up question",
-                }
+                ],
+                "affected_pages": [
+                    {
+                        "path": "wiki/targets/section07-followup-backlog.md",
+                        "role": "hub",
+                        "expected_change": "update closeable follow-up question",
+                    }
             ],
             "claim_registry_updates": [
                 {"status": "tentative", "text": "Notebook-output observation only."}

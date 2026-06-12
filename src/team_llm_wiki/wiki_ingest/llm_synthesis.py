@@ -274,8 +274,8 @@ def _resolve_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
 
 
 def _target_paths(repo_root: Path, manifests: list[tuple[PacketManifest, Path]]) -> list[str]:
-    entity_paths = [render_target_path(manifest, packet_root) for manifest, packet_root in manifests]
-    proposed_paths = proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests])
+    entity_paths = [render_target_path(manifest, packet_root, repo_root=repo_root) for manifest, packet_root in manifests]
+    proposed_paths = proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests], repo_root=repo_root)
     return list(dict.fromkeys([*entity_paths, *_integration_paths(manifests), *proposed_paths]))
 
 
@@ -356,7 +356,7 @@ def _raw_evidence_by_target(
                 seen.append(rel)
             if rel not in all_evidence:
                 all_evidence.append(rel)
-        evidence[render_target_path(manifest, packet_root)] = seen
+        evidence[render_target_path(manifest, packet_root, repo_root=repo_root)] = seen
     for target_path in target_paths:
         evidence.setdefault(target_path, all_evidence)
     return evidence

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from .models import GuardResult, PacketManifest, PacketType, RiskDecision, RiskTier, RiskTierLabel
-from .routes import PACKET_ROUTE_MAP
+from .route_contract import load_route_contract
+from .routes import packet_route
 
 HIGH_RISK_TYPES = {
     PacketType.PERFORMANCE,
@@ -13,18 +16,27 @@ HIGH_RISK_TYPES = {
     PacketType.DATASET,
     PacketType.BENCHMARK,
 }
-HIGH_RISK_PATH_PREFIXES = (
-    "wiki/performance/",
-    "wiki/models/",
-    "wiki/features/",
-    "wiki/experiments/",
-    "wiki/datasets/",
-    "wiki/benchmarks/",
-)
 GOVERNANCE_CLAIM_STATUSES = {"supported", "disputed", "superseded"}
+DEFAULT_HIGH_RISK_PATHS = (
+    "wiki/preprocessing",
+    "wiki/features",
+    "wiki/models",
+    "wiki/performance",
+    "wiki/claims",
+    "wiki/targets",
+    "wiki/decisions",
+    "wiki/reports",
+)
 
 
-def classify_risk(manifest: PacketManifest, guard: GuardResult) -> RiskDecision:
+def _high_risk_path_prefixes(repo_root: Path | None = None) -> tuple[str, ...]:
+    if repo_root is None:
+        return tuple(f"{path}/" for path in DEFAULT_HIGH_RISK_PATHS)
+    contract = load_route_contract(repo_root)
+    return tuple(f"{path}/" for path in contract.canonical_paths if path != "wiki/team")
+
+
+def classify_risk(manifest: PacketManifest, guard: GuardResult, *, repo_root: Path | None = None) -> RiskDecision:
     if guard.failures:
         return RiskDecision(RiskTier.HARD_FAIL, [failure.message for failure in guard.failures], RiskTierLabel.TIER4_GOVERNANCE)
 
@@ -35,11 +47,12 @@ def classify_risk(manifest: PacketManifest, guard: GuardResult) -> RiskDecision:
         risk_tier = RiskTierLabel.TIER2_INTERPRETATION
     if manifest.type is PacketType.PERFORMANCE:
         risk_tier = RiskTierLabel.TIER3_PERFORMANCE
-    if any(path.startswith(HIGH_RISK_PATH_PREFIXES) for path in manifest.intended_wiki_targets):
+    high_risk_path_prefixes = _high_risk_path_prefixes(repo_root)
+    if any(path.startswith(high_risk_path_prefixes) for path in manifest.intended_wiki_targets):
         reasons.append("high-risk wiki target path")
         if risk_tier is RiskTierLabel.TIER0_CATALOG:
             risk_tier = RiskTierLabel.TIER2_INTERPRETATION
-    if PACKET_ROUTE_MAP[manifest.type] + "/" in HIGH_RISK_PATH_PREFIXES:
+    if packet_route(manifest.type, repo_root=repo_root) + "/" in high_risk_path_prefixes:
         reasons.append("high-risk canonical route")
         if risk_tier is RiskTierLabel.TIER0_CATALOG:
             risk_tier = RiskTierLabel.TIER2_INTERPRETATION

@@ -30,7 +30,7 @@ def write_manifest(root: Path, packet_type: str, raw_paths: dict[str, str]) -> N
         "metrics_to_verify": [],
     }
     if packet_type in {"preprocessing", "augmentation"}:
-        data["intended_wiki_targets"] = ["wiki/datasets/pkt-1.md"]
+        data["intended_wiki_targets"] = ["wiki/preprocessing/pkt-1.md"]
     (root / "manifest.yaml").write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
 
 
