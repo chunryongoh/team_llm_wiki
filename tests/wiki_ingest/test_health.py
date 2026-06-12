@@ -1,12 +1,22 @@
 import json
+from pathlib import Path
+import shutil
 
 from team_llm_wiki.wiki_ingest.brief import generate_daily_brief
 from team_llm_wiki.wiki_ingest.health import check_wiki_health
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def seed_clean(root):
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(REPO_ROOT / DEFAULT_CONTRACT_PATH, contract_target)
+
     (root / "wiki").mkdir()
-    for directory in ["claims", "preprocessing", "submissions", "team"]:
+    for directory in ["claims", "preprocessing", "performance", "team"]:
         (root / "wiki" / directory).mkdir()
     (root / "wiki" / "team" / "ml-ai-hackathon-entity-model.md").write_text(
         "# ML/AI Hackathon Entity Model\n", encoding="utf-8"
@@ -26,7 +36,7 @@ def seed_clean(root):
     (root / "wiki" / "preprocessing" / "canonical-split-and-leakage-policy.md").write_text(
         "# Canonical Split And Leakage Policy\n", encoding="utf-8"
     )
-    (root / "wiki" / "submissions" / "dacon-leaderboard-history.md").write_text(
+    (root / "wiki" / "performance" / "dacon-leaderboard-history.md").write_text(
         "# DACON Leaderboard History\n", encoding="utf-8"
     )
     (root / "wiki" / "index.md").write_text(
@@ -95,6 +105,52 @@ def test_health_requires_entity_model_pages_and_latest_operating_sections(tmp_pa
 
     assert any(error.code == "missing_entity_model_page" for error in report.errors)
     assert any(error.code == "missing_latest_operating_section" for error in report.errors)
+
+
+def test_health_requires_canonical_leaderboard_history(tmp_path):
+    seed_clean(tmp_path)
+    old = tmp_path / "wiki" / "submissions" / "dacon-leaderboard-history.md"
+    old.parent.mkdir(parents=True)
+    old.write_text("# Old Leaderboard\n", encoding="utf-8")
+    (tmp_path / "wiki" / "performance" / "dacon-leaderboard-history.md").unlink()
+
+    report = check_wiki_health(tmp_path)
+
+    assert not report.ok
+    assert any(error.path == "wiki/performance/dacon-leaderboard-history.md" for error in report.errors)
+
+
+def test_health_rejects_substantive_deprecated_page_after_migration(tmp_path):
+    seed_clean(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    deprecated.parent.mkdir(parents=True)
+    deprecated.write_text("# Sleep Lifelog\n\n## Metrics\n\n- public_lb: 0.5917\n", encoding="utf-8")
+
+    report = check_wiki_health(tmp_path, deprecated_mode="strict")
+
+    assert not report.ok
+    assert any(error.code == "deprecated_namespace_substantive_content" for error in report.errors)
+
+
+def test_health_accepts_deprecated_tombstone_in_strict_mode(tmp_path):
+    seed_clean(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    deprecated.parent.mkdir(parents=True)
+    deprecated.write_text(
+        "---\n"
+        "page_role: compatibility\n"
+        "status: deprecated\n"
+        "canonical_target: wiki/preprocessing/sleep-lifelog-2024.md\n"
+        "---\n"
+        "# Deprecated Compatibility Page\n\n"
+        "This page has moved to `wiki/preprocessing/sleep-lifelog-2024.md`.\n\n"
+        "Do not add new substantive content here. This file exists to preserve historical links and provenance.\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path, deprecated_mode="strict")
+
+    assert report.ok is True
 
 
 def test_health_reports_entity_graph_warnings_without_failing(tmp_path):
@@ -166,7 +222,7 @@ def test_health_accepts_indexed_wiki_link_without_md(tmp_path):
 
 def test_health_excludes_section_readme_landing_page_from_orphan_checks(tmp_path):
     seed_clean(tmp_path)
-    (tmp_path / "wiki" / "performance").mkdir()
+    (tmp_path / "wiki" / "performance").mkdir(exist_ok=True)
     (tmp_path / "wiki" / "performance" / "README.md").write_text("# Performance\n", encoding="utf-8")
 
     report = check_wiki_health(tmp_path)
@@ -201,8 +257,8 @@ def test_health_detects_supported_claim_missing_raw(tmp_path):
 
 def test_health_detects_stale_tentative_claim(tmp_path, monkeypatch):
     seed_clean(tmp_path)
-    (tmp_path / "wiki" / "questions").mkdir()
-    (tmp_path / "wiki" / "questions" / "old.md").write_text(
+    (tmp_path / "wiki" / "targets").mkdir()
+    (tmp_path / "wiki" / "targets" / "old.md").write_text(
         "---\n"
         "claim_status: tentative\n"
         "date: 2026-05-01\n"
@@ -213,7 +269,7 @@ def test_health_detects_stale_tentative_claim(tmp_path, monkeypatch):
     (tmp_path / "wiki" / "index.md").write_text(
         "# Index\n\n"
         "<!-- wiki-ingest:index:start -->\n"
-        "- [[questions/old]]\n"
+        "- [[targets/old]]\n"
         "<!-- wiki-ingest:index:end -->\n",
         encoding="utf-8",
     )
@@ -332,5 +388,14 @@ def test_health_ignores_generated_briefs_for_links_orphan_claim_and_metric_check
 
     generate_daily_brief(tmp_path, date="2026-05-27")
     report = check_wiki_health(tmp_path)
+
+    assert report.ok is True
+
+
+def test_health_allows_generated_briefs_in_strict_deprecated_mode(tmp_path):
+    seed_clean(tmp_path)
+    generate_daily_brief(tmp_path, date="2026-05-27")
+
+    report = check_wiki_health(tmp_path, deprecated_mode="strict")
 
     assert report.ok is True
