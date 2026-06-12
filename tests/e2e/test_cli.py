@@ -203,6 +203,41 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
     assert "<!-- wiki-brief:generated -->" in latest
 
 
+def test_cli_plan_wiki_route_migration_writes_report(tmp_path):
+    seed_repo(tmp_path)
+    report_path = tmp_path / "raw" / "results" / "wiki-renovation" / "cli" / "report.json"
+
+    result = run_cli(
+        [
+            "plan-wiki-route-migration",
+            "--repo-root",
+            str(tmp_path),
+            "--run-id",
+            "cli",
+            "--report-path",
+            str(report_path),
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 0
+    assert json.loads(result.stdout)["status"] in {"planned", "clean"}
+    assert report_path.exists()
+
+
+def test_cli_run_wiki_route_migration_requires_flag(tmp_path):
+    seed_repo(tmp_path)
+
+    result = run_cli(
+        ["run-wiki-route-migration", "--repo-root", str(tmp_path), "--run-id", "blocked"],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "blocked"
+
+
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):
     packet = seed_repo(tmp_path, packet_type="experiment", metric_expected=0.9)
     report_path = tmp_path / "hard-fail-report.json"
