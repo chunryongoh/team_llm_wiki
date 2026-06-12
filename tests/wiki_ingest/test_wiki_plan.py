@@ -47,7 +47,7 @@ def test_wiki_plan_rejects_deprecated_pages_outside_migration_mode(tmp_path):
     result = load_wiki_plan(packet_root, repo_root=Path("."))
 
     assert not result.safe_paths
-    assert any("not an allowed synthesis wiki path" in warning for warning in result.warnings)
+    assert any("deprecated synthesis wiki path" in warning for warning in result.warnings)
 
 
 def test_wiki_plan_allows_deprecated_pages_in_migration_mode(tmp_path):

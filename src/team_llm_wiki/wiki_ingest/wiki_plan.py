@@ -181,12 +181,19 @@ def _validate_page_roles(result: WikiPlanParseResult) -> None:
 
 
 def _validate_page_paths(result: WikiPlanParseResult) -> None:
+    try:
+        contract = load_route_contract(result.repo_root)
+    except IngestFailure:
+        contract = None
     for page in result.pages:
         if not _is_safe_synthesis_path(
             page.path,
             repo_root=result.repo_root,
             migration_mode=result.migration_mode and page.migration_compatibility,
         ):
+            if contract and contract.deprecated_namespace_for_path(page.path):
+                result.warnings.append(f"{page.path} is a deprecated synthesis wiki path")
+                continue
             result.warnings.append(f"{page.path} is not an allowed synthesis wiki path")
 
 
