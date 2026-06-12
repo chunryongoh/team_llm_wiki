@@ -186,3 +186,8 @@ Append-only ingest and maintenance events belong here.
 - claim update: no new supported claim; external Public `0.5917` remains `tentative` and `external_codeshare_public_lb_observation`.
 - boundary preserved: notebook Local OOF `0.514` is notebook-output summary only and is not merged with team canonical local OOF.
 - review-required: true
+
+## [2026-06-12] ingest | 2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck
+
+- target: `wiki/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck.md`
+- run: `27396372321-1`
