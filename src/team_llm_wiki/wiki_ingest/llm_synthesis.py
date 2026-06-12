@@ -16,6 +16,7 @@ from .manifest import discover_packet_roots, load_packet_manifest, validate_chan
 from .models import FailureCode, IngestFailure, IngestReport, PacketManifest, PacketType, RiskTierLabel, as_jsonable
 from .policy import load_policy
 from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START, render_target_path
+from .route_contract import load_route_contract
 from .wiki_plan import proposed_synthesis_paths
 
 DEFAULT_MODEL = "gpt-5.5"
@@ -123,6 +124,31 @@ def run_llm_wiki_synthesis(
     synthesis_client = client or OpenAIResponsesClient(max_output_tokens=max_output_tokens)
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
     pages = _validated_pages(llm_payload, allowed_paths=set(target_paths), required_paths=set(target_paths))
+    contract_failures = _validate_generated_pages_against_contract(repo_root, pages)
+    final_report_path = report_path or repo_root / "raw" / "results" / "llm-synthesis" / run_id / "report.json"
+    if contract_failures:
+        report = IngestReport(
+            status="hard_fail",
+            run_id=run_id,
+            input_changed_paths=input_changed_paths,
+            packet_roots=[_rel(repo_root, root) for root in packet_roots],
+            packets=[
+                {"id": manifest.id, "type": manifest.type.value, "packet_root": _rel(repo_root, root)}
+                for manifest, root in manifests
+            ],
+            failures=contract_failures,
+            risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value,
+            timing_ms=int((time.monotonic() - start) * 1000),
+            llm_synthesis=True,
+            model=model,
+            review_notes=[str(note) for note in llm_payload.get("review_notes") or []],
+            synthesis_summary=str(llm_payload.get("summary", "")),
+        )
+        _write_report(repo_root, report, final_report_path)
+        if report.report_path:
+            report.generated_paths.append(report.report_path)
+            report.changed_paths.append(report.report_path)
+        return report
     changed: list[str] = []
     staging = _staged_wiki(repo_root)
     try:
@@ -180,8 +206,7 @@ def run_llm_wiki_synthesis(
             str(item) for item in llm_payload.get("superseded_or_conflicting_claims") or []
         ],
     )
-    report_path = report_path or repo_root / "raw" / "results" / "llm-synthesis" / run_id / "report.json"
-    _write_report(repo_root, report, report_path)
+    _write_report(repo_root, report, final_report_path)
     if report.report_path and report.report_path not in report.generated_paths:
         report.generated_paths.append(report.report_path)
         report.changed_paths.append(report.report_path)
@@ -217,16 +242,23 @@ def build_llm_synthesis_prompt(
         "Requirements:\n"
         "- Read and obey AGENTS.md and CLAUDE.md.\n"
         "- Use stable entity pages plus compounding topic pages, not dated packet mirrors.\n"
+        "- Use only canonical wiki namespaces for durable pages: preprocessing, features, models, performance, "
+        "claims, targets, decisions, reports, team.\n"
+        "- Do not create wiki/datasets, wiki/benchmarks, wiki/submissions, wiki/questions, wiki/experiments, "
+        "or wiki/sources pages.\n"
+        "- Put open questions into wiki/targets/* or wiki/reports/* with close conditions.\n"
+        "- Put leaderboard and metric history into wiki/performance/*.\n"
+        "- Put dataset, split, leakage, and fit-scope policy into wiki/preprocessing/*.\n"
         "- Follow the operating harness: session context is ephemeral, durable insight must be crystallized into "
         "wiki pages, `index.md` is the content catalog, and `log.md` is the chronological audit trail.\n"
         "- Respect page roles. Entrypoints route, hubs/registries summarize and link, leaf pages own reusable "
         "entity memory, packet review pages preserve source-specific context, and reports archive time-bounded waves.\n"
         "- If `wiki_plan.yaml` proposes justified leaf pages, update those leaf pages instead of absorbing all detail "
         "into a hub. If a proposed leaf is unjustified, explain why in review_notes.\n"
-        "- Update the claim registry, DACON leaderboard history, submission history, and preprocessing/split policy pages when relevant; "
+        "- Update the claim registry, DACON leaderboard history, metric history, and preprocessing/split policy pages when relevant; "
         "even when no claim changes, explicitly preserve that boundary.\n"
         "- Write every allowed output page exactly once; missing pages are invalid output.\n"
-        "- Cross-link related dataset, benchmark, feature, decision, question, and report pages.\n"
+        "- Cross-link related preprocessing, performance, feature, decision, target, and report pages.\n"
         "- Capture contradictions, supersession notes, and unresolved questions as first-class wiki content.\n"
         "- `wiki/latest-context.md` latest-context must expose Current Best, Active Risks, and Next Actions.\n"
         "- Never merge local OOF, notebook-output, user-reported public score, DACON public leaderboard, "
@@ -315,6 +347,20 @@ def _validated_pages(
     return clean
 
 
+def _validate_generated_pages_against_contract(repo_root: Path, pages: list[dict[str, object]]) -> list[dict[str, object]]:
+    contract = load_route_contract(repo_root)
+    errors: list[dict[str, object]] = []
+    entrypoints = {"wiki/index.md", "wiki/log.md", "wiki/latest-context.md", "wiki/overview.md"}
+    for page in pages:
+        path = str(page.get("path", ""))
+        if path in entrypoints:
+            continue
+        if not contract.is_allowed_synthesis_path(path):
+            code = "deprecated_synthesis_path" if contract.deprecated_namespace_for_path(path) else "invalid_synthesis_path"
+            errors.append({"code": code, "path": path, "message": "LLM synthesis output path is not canonical"})
+    return errors
+
+
 def _packet_file_blocks(repo_root: Path, packet_root: Path) -> list[str]:
     blocks: list[str] = []
     for path in sorted(item for item in packet_root.rglob("*") if item.is_file()):
@@ -370,9 +416,9 @@ def _integration_paths(manifests: list[tuple[PacketManifest, Path]]) -> list[str
     return [
         f"wiki/features/{topic}-feature-landscape.md",
         f"wiki/decisions/{topic}-evaluation-protocol.md",
-        f"wiki/questions/{topic}-open-questions.md",
+        f"wiki/targets/{topic}-open-issues.md",
         "wiki/claims/current-supported-claims.md",
-        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/performance/dacon-leaderboard-history.md",
         "wiki/preprocessing/canonical-split-and-leakage-policy.md",
         f"wiki/reports/{report_slug}.md",
         "wiki/overview.md",
@@ -401,7 +447,7 @@ def _slugify(value: str) -> str:
 
 
 def _has_governance_targets(paths: list[str]) -> bool:
-    prefixes = ("wiki/decisions/", "wiki/questions/", "wiki/reports/", "wiki/index.md", "wiki/log.md", "wiki/overview.md")
+    prefixes = ("wiki/decisions/", "wiki/targets/", "wiki/reports/", "wiki/index.md", "wiki/log.md", "wiki/overview.md")
     return any(path.startswith(prefixes) for path in paths)
 
 
