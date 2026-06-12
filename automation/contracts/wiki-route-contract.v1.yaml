@@ -1,0 +1,101 @@
+version: 1
+canonical_namespaces:
+  preprocessing:
+    path: wiki/preprocessing
+    required: true
+  features:
+    path: wiki/features
+    required: true
+  models:
+    path: wiki/models
+    required: true
+  performance:
+    path: wiki/performance
+    required: true
+  claims:
+    path: wiki/claims
+    required: true
+  targets:
+    path: wiki/targets
+    required: true
+  decisions:
+    path: wiki/decisions
+    required: true
+  reports:
+    path: wiki/reports
+    required: true
+  team:
+    path: wiki/team
+    required: true
+deprecated_namespaces:
+  datasets:
+    path: wiki/datasets
+    replacement: wiki/preprocessing
+    allowed_mode: tombstone_only
+  benchmarks:
+    path: wiki/benchmarks
+    replacement: wiki/performance
+    allowed_mode: tombstone_only
+  submissions:
+    path: wiki/submissions
+    replacement: wiki/performance
+    allowed_mode: tombstone_only
+  questions:
+    path: wiki/questions
+    replacement: wiki/targets
+    allowed_mode: tombstone_only
+  experiments:
+    path: wiki/experiments
+    replacement: wiki/reports
+    allowed_mode: tombstone_only
+  sources:
+    path: wiki/sources
+    replacement: wiki/reports
+    allowed_mode: tombstone_only
+  briefs:
+    path: wiki/briefs
+    replacement: wiki/reports
+    allowed_mode: generated_compatibility_only
+packet_routes:
+  reference: wiki/reports
+  meeting: wiki/reports
+  experiment: wiki/reports
+  feature: wiki/features
+  model: wiki/models
+  performance: wiki/performance
+  preprocessing: wiki/preprocessing
+  augmentation: wiki/preprocessing
+  dataset: wiki/preprocessing
+  benchmark: wiki/performance
+allowed_page_roles:
+  - entrypoint
+  - registry
+  - hub
+  - leaf
+  - packet_review
+  - report
+  - policy
+required_entrypoints:
+  - wiki/latest-context.md
+  - wiki/index.md
+  - wiki/overview.md
+  - wiki/log.md
+required_pages:
+  - wiki/team/ml-ai-hackathon-entity-model.md
+  - wiki/team/packet-quality-standard.md
+  - wiki/team/page-taxonomy.md
+  - wiki/team/llm-wiki-operating-harness.md
+  - wiki/claims/current-supported-claims.md
+  - wiki/preprocessing/canonical-split-and-leakage-policy.md
+  - wiki/performance/dacon-leaderboard-history.md
+migration_map:
+  wiki/datasets/sleep-lifelog-2024.md: wiki/preprocessing/sleep-lifelog-2024.md
+  wiki/benchmarks/sleep-health-hackathon-v0.md: wiki/performance/sleep-health-hackathon-evaluation-policy.md
+  wiki/submissions/dacon-leaderboard-history.md: wiki/performance/dacon-leaderboard-history.md
+  wiki/questions/sleep-lifelog-open-questions.md: wiki/targets/sleep-lifelog-open-issues.md
+  wiki/questions/section07-followup-backlog.md: wiki/targets/section07-followup-backlog.md
+  wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md: wiki/reports/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md
+  wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md: wiki/reports/2026-05-29-v200-v209-sparse-splice-review.md
+  wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md: wiki/reports/2026-06-01-lifelog-section07-notebook-overview.md
+  wiki/experiments/2026-06-01-lifelog-section07-working-notes.md: wiki/reports/2026-06-01-lifelog-section07-working-notes.md
+  wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md: wiki/performance/2026-06-01-dacon-leaderboard-claim-boundary.md
