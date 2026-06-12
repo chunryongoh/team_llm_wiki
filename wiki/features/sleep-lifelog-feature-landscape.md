@@ -6,17 +6,22 @@ title: Sleep Lifelog Feature Landscape
 dataset: sleep-lifelog-2024
 benchmark: sleep-health-hackathon-v0
 status: active-review-required
-last_updated: 2026-06-11
-summary: sleep-lifelog feature memory는 app context, 1875 pool, v186 SHAP, sparse splice, stability filtering을 evidence surface별로 분리해 관리한다.
+last_updated: 2026-06-12
+summary: sleep-lifelog feature memory는 app context, 1875 pool, v186 SHAP, sparse splice, stability filtering, window-pair reference를 evidence surface별로 분리해 관리한다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # Sleep Lifelog Feature Landscape
@@ -31,9 +36,9 @@ raw_evidence:
 |---|---|---|---|
 | LGB/CB reproduction feature scope | `2026-06-01-lgb-cb-reproduction-local-oof-diagnostic` | transductive statistics, global imputer, subject encoding risk 때문에 supported claim은 local diagnostic으로 좁다. | supported boundary |
 | [app-name and app-context windows](app-context-windows.md) | `2026-06-01-app-context-feature-engineering-20260601` | presleep/night/early-morning context는 strong hypothesis이나 submission lineage가 없다. | tentative |
-| 1875 sensor/Timing Entropy pool | `2026-05-28-1875-feature-domain-ablation-and-dedup` | feature count보다 dedup, fold scope, target exception 검증이 중요하다. | tentative |
-| [stability-filtered feature selection](stability-filtered-feature-selection.md) | DACON code share `13975` | `23177 -> 1682` filter와 target별 max 300 idea는 유용하지만 large parquet와 exact list가 없다. | tentative |
-| window-pair interactions | DACON code share notebook | sleep-window pair idea는 일부 placeholder code라 implemented feature로 기록하지 않는다. | reference-only |
+| 1875 sensor/Timing Entropy pool | `2026-05-28-1875-feature-domain-ablation-and-dedup` | raw ablation/correlation evidence 장기 미보강으로 active claim이 아니라 historical source review다. | superseded |
+| [stability-filtered feature selection](stability-filtered-feature-selection.md) | DACON code share `13975`, `2026-06-11`, `2026-06-12` recheck | `23177 -> 1682` filter와 target별 max 300 idea는 유용하지만 exact list, feature hash, fold-safe proof가 없다. | tentative |
+| window-pair interactions | DACON code share notebook | sleep-window pair idea는 일부 placeholder code라 parquet-backed implementation 전에는 feature로 채택하지 않는다. | reference-only |
 | [v186 SHAP target drivers](../models/v186-targetwise-lgbm-catboost.md) | `2026-05-29-v186-shap-leaderboard-analysis` | Q는 routine proxy, S는 sleep-episode/transition proxy라는 interpretation evidence다. | tentative |
 | v200-v209 sparse splice | `2026-05-29-v200-v209-sparse-splice-review` | broad morphology reset은 negative evidence이고 sparse micro-splice만 후보로 남는다. | tentative |
 | Section07 target bottlenecks | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | Q3 frequency/window, S4 narrow WASO proxy가 next ablation 후보다. | tentative |
@@ -48,6 +53,7 @@ raw_evidence:
 
 ## Raw provenance roots
 
+- `raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/`
 - `raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/`
 - `raw/users/cho-hyewon/performance/2026-06-01-app-context-feature-engineering-20260601/`
 - `raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/`

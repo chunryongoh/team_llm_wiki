@@ -4,17 +4,22 @@ type: claim-registry
 page_role: registry
 title: Current Supported Claims
 status: active
-date: 2026-06-11
-summary: 현재 supported claim은 LGB/CB targetwise reblend local OOF diagnostic 하나이며, external 0.5917 code-share와 notebook OOF 값은 tentative로 보존한다.
+date: 2026-06-12
+summary: 현재 supported claim은 LGB/CB targetwise reblend local OOF diagnostic 하나이며, 2026-06-12 graph-first recheck도 external 0.5917 code-share와 notebook OOF 값을 tentative로 유지한다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # Current Supported Claims
@@ -36,8 +41,8 @@ raw_evidence:
 
 | claim | status | boundary | source |
 |---|---|---|---|
-| external DACON code share Public `0.5917` for LGBM+XGB anchor blend | tentative | external code-share public LB observation only | [0.5917 reference](../performance/dacon-public-05917-lgbm-xgb-anchor-reference.md) |
-| code share notebook Local OOF `0.514`, target-specific `0.513` | tentative | notebook-output summary only | [packet review](../performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md) |
+| external DACON code share Public `0.5917` for LGBM+XGB anchor blend | tentative | external code-share public LB observation only | [0.5917 reference](../performance/dacon-public-05917-lgbm-xgb-anchor-reference.md), `2026-06-12` recheck |
+| code share notebook Local OOF `0.514`, target-specific `0.513` | tentative | notebook-output summary only | [2026-06-12 packet review](../performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck.md) |
 | stability filtering `23177 -> 1682` | tentative | notebook/metrics summary, exact list missing | [Stability Filtered Feature Selection](../features/stability-filtered-feature-selection.md) |
 | Subject-hole CV improves LB correlation | tentative | exploratory external split idea | [Subject Hole CV](../preprocessing/subject-hole-cv.md) |
 | app context staged public LB `0.6218831823 -> 0.6106185586` | tentative | DOCX public LB observation | [app context](../performance/2026-06-01-app-context-feature-engineering-20260601.md) |

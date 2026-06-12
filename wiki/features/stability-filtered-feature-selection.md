@@ -4,24 +4,29 @@ type: feature
 page_role: leaf
 title: Stability Filtered Feature Selection
 status: active-review-required
-date: 2026-06-11
+date: 2026-06-12
 dataset: sleep-lifelog-2024
 claim_status: tentative
 summary: DACON code share 13975의 `23177 -> 1682` stability filtering idea를 reusable feature-selection 후보로 기록하되 exact list와 ablation 전까지 policy로 승격하지 않는다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # Stability Filtered Feature Selection
 
-이 leaf는 external DACON code share `13975`가 설명한 stability-based feature selection을 관리한다. Reported pipeline은 large feature pool `23177`개에서 `1682`개를 남겼다고 한다. Attached notebook skeleton은 absolute correlation/proxy stability threshold `min_stability 0.3`, target별 `max_features_per_target 300` 같은 형태를 보여준다.
+이 leaf는 external DACON code share `13975`가 설명한 stability-based feature selection을 관리한다. Reported pipeline은 large feature pool `23177`개에서 `1682`개를 남겼다고 한다. `2026-06-12` graph-first recheck도 같은 count를 metric artifact로 확인했지만, 선택된 feature artifact 자체는 제공하지 않았다.
 
 ## Claim boundary
 
@@ -37,7 +42,7 @@ Stability filtering은 overfit-prone feature pool을 줄이는 후보 방법이�
 
 ## Related feature caveat
 
-같은 notebook의 window-pair interaction section은 sleep-window pair idea를 설명하지만 일부 code path가 placeholder다. 실제 sensor parquet에서 생성된 feature evidence가 없으므로 implemented production feature로 기록하지 않는다.
+같은 notebook의 window-pair interaction section은 sleep-window pair idea를 설명하지만 일부 code path가 placeholder다. 실제 sensor parquet에서 생성된 feature evidence가 없으므로 implemented production feature로 기록하지 않는다. 이를 닫기 위한 backlog는 `window-pair-parquet-implementation`이다.
 
 ## Adoption gates
 

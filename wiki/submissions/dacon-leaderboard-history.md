@@ -4,17 +4,22 @@ type: submission-history
 page_role: registry
 title: DACON Leaderboard History
 status: active
-date: 2026-06-11
+date: 2026-06-12
 summary: 현재 기록된 DACON public score 값은 external code-share, user-reported, DOCX/PDF observation이며 verified_public_lb row는 없다.
 review_required: true
 raw_evidence:
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/manifest.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/dacon-codeshare-13975.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/metrics.json
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/packet.md
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/performance.yaml
-- raw/users/dacon-community/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend/wiki_plan.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/manifest.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/artifact_summary.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/metrics.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/packet_entity_graph.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/performance.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/question_queue.yaml
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/semantic_lint.json
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md
+- raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/wiki_plan.yaml
 ---
 
 # DACON Leaderboard History
@@ -35,7 +40,7 @@ raw_evidence:
 
 | candidate | score | evidence_class | packet/source | status |
 |---|---:|---|---|---|
-| `dacon-public-05917-lgbm-xgb-anchor-reference` | `0.5917` | `external_codeshare_public_lb_observation` | DACON code share `13975`, packet `2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend` | tentative |
+| `dacon-public-05917-lgbm-xgb-anchor-reference` | `0.5917` | `external_codeshare_public_lb_observation` | DACON code share `13975`; packets `2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend`, `2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck` | tentative |
 | `v186-target-specific-lgbm-catboost-blend` | `0.5922831771` | `user_reported_public_score_only` | `2026-05-29-v186-shap-leaderboard-analysis` | tentative |
 | `v189-anchor` | `0.5925397` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
 | `v200` | `0.608842` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
@@ -48,6 +53,10 @@ raw_evidence:
 | `app-context-stage0-baseline` | `0.6218831823` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
 | `app-context-stage1-daily-evening` | `0.6182941107` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
 | `app-context-stage2-presleep-night` | `0.6106185586` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
+
+## 2026-06-12 recheck note
+
+Graph-first packet은 `0.5917`을 새 score row로 만들지 않는다. 같은 DACON code share reference의 추가 provenance이며 missing lineage는 그대로다: DACON submission id, leaderboard export/screenshot, submission CSV hash, private result가 없다.
 
 ## Boundary preserved
 
