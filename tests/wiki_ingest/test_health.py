@@ -132,6 +132,30 @@ def test_health_rejects_substantive_deprecated_page_after_migration(tmp_path):
     assert any(error.code == "deprecated_namespace_substantive_content" for error in report.errors)
 
 
+def test_health_warns_for_mapped_deprecated_content_before_migration(tmp_path):
+    seed_clean(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    deprecated.parent.mkdir(parents=True)
+    deprecated.write_text("# Sleep Lifelog\n\n## Metrics\n\n- public_lb: 0.5917\n", encoding="utf-8")
+
+    report = check_wiki_health(tmp_path)
+
+    assert report.ok is True
+    assert any(warning.code == "deprecated_namespace_pending_migration" for warning in report.warnings)
+
+
+def test_health_rejects_unmapped_deprecated_content_before_migration(tmp_path):
+    seed_clean(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "new-unmapped-page.md"
+    deprecated.parent.mkdir(parents=True)
+    deprecated.write_text("# New Deprecated Page\n\n## Metrics\n\n- public_lb: 0.5917\n", encoding="utf-8")
+
+    report = check_wiki_health(tmp_path)
+
+    assert not report.ok
+    assert any(error.code == "deprecated_namespace_substantive_content" for error in report.errors)
+
+
 def test_health_accepts_deprecated_tombstone_in_strict_mode(tmp_path):
     seed_clean(tmp_path)
     deprecated = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
@@ -151,6 +175,28 @@ def test_health_accepts_deprecated_tombstone_in_strict_mode(tmp_path):
     report = check_wiki_health(tmp_path, deprecated_mode="strict")
 
     assert report.ok is True
+
+
+def test_health_rejects_claim_metadata_in_deprecated_tombstone(tmp_path):
+    seed_clean(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    deprecated.parent.mkdir(parents=True)
+    deprecated.write_text(
+        "---\n"
+        "page_role: compatibility\n"
+        "status: deprecated\n"
+        "claim_status: supported\n"
+        "canonical_target: wiki/preprocessing/sleep-lifelog-2024.md\n"
+        "---\n"
+        "# Deprecated Compatibility Page\n\n"
+        "This page has moved to `wiki/preprocessing/sleep-lifelog-2024.md`.\n",
+        encoding="utf-8",
+    )
+
+    report = check_wiki_health(tmp_path, deprecated_mode="strict")
+
+    assert not report.ok
+    assert any(error.code == "deprecated_namespace_substantive_content" for error in report.errors)
 
 
 def test_health_reports_entity_graph_warnings_without_failing(tmp_path):

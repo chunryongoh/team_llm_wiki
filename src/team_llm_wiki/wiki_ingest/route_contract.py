@@ -21,6 +21,9 @@ SUBSTANTIVE_TOMBSTONE_MARKERS = (
     "## Open Questions",
     "## Questions",
     "| metric |",
+    "claim_status:",
+    "claim_boundary:",
+    "metrics_to_verify:",
     "public_lb:",
     "local_oof:",
 )

@@ -12,7 +12,7 @@ GENERATED_BRIEF_MARKER = "<!-- wiki-brief:generated -->"
 
 def _write_latest_pointer(repo_root: Path, target_stem: str) -> str:
     latest_rel = "wiki/briefs/latest.md"
-    (repo_root / latest_rel).write_text(f"{GENERATED_BRIEF_MARKER}\n[[{target_stem}]]\n", encoding="utf-8")
+    (repo_root / latest_rel).write_text(f"[[{target_stem}]]\n{GENERATED_BRIEF_MARKER}\n", encoding="utf-8")
     return latest_rel
 
 

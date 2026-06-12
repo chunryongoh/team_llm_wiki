@@ -334,14 +334,24 @@ def _leaf_route_pattern(contract: WikiRouteContract | None) -> str:
     return "|".join(re.escape(route) for route in sorted(leaf_routes))
 
 
-def _deprecated_namespace_errors(
+def _map_tombstone_error(error: HealthError) -> HealthError:
+    if error.code == "deprecated_tombstone_substantive_content":
+        return HealthError(
+            "deprecated_namespace_substantive_content",
+            error.message,
+            error.path,
+        )
+    return error
+
+
+def _deprecated_namespace_findings(
     repo_root: Path,
     contract: WikiRouteContract | None,
     *,
     deprecated_mode: str,
-) -> list[HealthError]:
+) -> tuple[list[HealthError], list[HealthError]]:
     if contract is None or not (repo_root / "wiki").exists():
-        return []
+        return [], []
     if deprecated_mode not in {"warn_existing", "strict"}:
         return [
             HealthError(
@@ -349,9 +359,10 @@ def _deprecated_namespace_errors(
                 f"unsupported deprecated namespace mode: {deprecated_mode}",
                 DEFAULT_CONTRACT_PATH.as_posix(),
             )
-        ]
+        ], []
 
     errors: list[HealthError] = []
+    warnings: list[HealthError] = []
     for path in sorted((repo_root / "wiki").rglob("*.md")):
         rel_path = path.relative_to(repo_root).as_posix()
         namespace = contract.deprecated_namespace_for_path(rel_path)
@@ -368,20 +379,26 @@ def _deprecated_namespace_errors(
                     )
                 )
             continue
-        if deprecated_mode != "strict":
+        tombstone_errors = contract.validate_tombstone(rel_path, text)
+        if deprecated_mode == "strict":
+            errors.extend(_map_tombstone_error(error) for error in tombstone_errors)
             continue
-        for error in contract.validate_tombstone(rel_path, text):
-            if error.code == "deprecated_tombstone_substantive_content":
-                errors.append(
-                    HealthError(
-                        "deprecated_namespace_substantive_content",
-                        error.message,
-                        rel_path,
-                    )
+        substantive_errors = [
+            _map_tombstone_error(error)
+            for error in tombstone_errors
+            if error.code == "deprecated_tombstone_substantive_content"
+        ]
+        if substantive_errors and rel_path in contract.migration_map:
+            warnings.append(
+                HealthError(
+                    "deprecated_namespace_pending_migration",
+                    f"{rel_path} contains substantive content but is covered by the route migration map",
+                    rel_path,
                 )
-            else:
-                errors.append(error)
-    return errors
+            )
+        else:
+            errors.extend(substantive_errors)
+    return errors, warnings
 
 
 def check_wiki_health(
@@ -403,19 +420,24 @@ def check_wiki_health(
         contract=contract,
         required_pages=required_pages,
     )
+    deprecated_errors, deprecated_warnings = _deprecated_namespace_findings(
+        repo_root,
+        contract,
+        deprecated_mode=deprecated_mode,
+    )
     errors = [
         *contract_errors,
         *lint_wiki_links(repo_root, paths=link_checked),
         *_generated_block_errors(repo_root),
         *_latest_context_errors(repo_root),
         *_entity_model_page_errors(repo_root, required_pages),
-        *_deprecated_namespace_errors(repo_root, contract, deprecated_mode=deprecated_mode),
+        *deprecated_errors,
         *_expanded_health_errors(repo_root, contract=contract, required_pages=required_pages),
     ]
     report = HealthReport(
         ok=not errors,
         errors=errors,
-        warnings=warnings,
+        warnings=[*warnings, *deprecated_warnings],
         checked_paths=sorted(checked),
         entity_graph_health=entity_graph_health,
     )

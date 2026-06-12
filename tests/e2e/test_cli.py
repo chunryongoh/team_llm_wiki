@@ -163,7 +163,9 @@ def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):
     assert payload == {"generated_paths": ["wiki/briefs/2026-05-27-daily.md", "wiki/briefs/latest.md"]}
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-daily.md").exists()
     assert (tmp_path / "wiki" / "briefs" / "latest.md").exists()
-    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-05-27-daily]]\n"
+    latest = (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8")
+    assert latest.splitlines()[0] == "[[2026-05-27-daily]]"
+    assert "<!-- wiki-brief:generated -->" in latest
 
 
 def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path):
@@ -174,8 +176,8 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
         "- target: `wiki/reports/pkt-1.md`\n",
         encoding="utf-8",
     )
-    (tmp_path / "wiki" / "questions").mkdir()
-    (tmp_path / "wiki" / "questions" / "old.md").write_text(
+    (tmp_path / "wiki" / "targets").mkdir()
+    (tmp_path / "wiki" / "targets" / "old.md").write_text(
         "---\nclaim_status: tentative\ndate: 2026-05-01\n---\n# Old\n",
         encoding="utf-8",
     )
@@ -196,7 +198,9 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
     }
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-weekly.md").exists()
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-stale-claims.md").exists()
-    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-05-27-weekly]]\n"
+    latest = (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8")
+    assert latest.splitlines()[0] == "[[2026-05-27-weekly]]"
+    assert "<!-- wiki-brief:generated -->" in latest
 
 
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):

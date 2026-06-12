@@ -25,7 +25,7 @@ def test_generate_daily_brief_writes_dated_brief_and_latest_pointer(tmp_path):
     latest = wiki / "briefs" / "latest.md"
     assert dated.exists()
     assert latest.exists()
-    assert latest.read_text(encoding="utf-8") == f"{GENERATED_BRIEF_MARKER}\n[[2026-05-27-daily]]\n"
+    assert latest.read_text(encoding="utf-8") == f"[[2026-05-27-daily]]\n{GENERATED_BRIEF_MARKER}\n"
 
     text = dated.read_text(encoding="utf-8")
     assert GENERATED_BRIEF_MARKER in text
@@ -113,4 +113,4 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
     assert "type: stale-claim-report" in stale
     assert GENERATED_BRIEF_MARKER in stale
     assert "wiki/targets/old-hypothesis.md" in stale
-    assert latest == f"{GENERATED_BRIEF_MARKER}\n[[2026-05-27-weekly]]\n"
+    assert latest == f"[[2026-05-27-weekly]]\n{GENERATED_BRIEF_MARKER}\n"
