@@ -200,3 +200,9 @@ Append-only ingest and maintenance events belong here.
 - claim update: no new supported claim; external Public `0.5917` remains `tentative` and `external_codeshare_public_lb_observation`.
 - boundary preserved: notebook Local OOF `0.514` and target-specific `0.513` remain `notebook_output_summary` and are not merged with team canonical local OOF.
 - review-required: true
+
+## [2026-06-12] policy-draft | team-lead-wiki-structure-review
+
+- created: `wiki/team/team-lead-wiki-structure-review.md`
+- purpose: 팀장 피드백을 받기 위한 `./wiki` 구조, page role, 디렉토리별 정책 검토 초안
+- updated: `wiki/index.md`

@@ -12,6 +12,7 @@
 - [Page Taxonomy](team/page-taxonomy.md)
 - [ML/AI Hackathon Entity Model](team/ml-ai-hackathon-entity-model.md)
 - [Packet Quality Standard](team/packet-quality-standard.md)
+- [Team Lead Wiki Structure Review](team/team-lead-wiki-structure-review.md)
 
 ## Sleep-lifelog stable pages
 
