@@ -1,0 +1,94 @@
+baseline_comparison:
+  baseline_run_id: v152-anchor-reference
+  caveat: V152 anchor is described as a previous strong base model but its OOF CSV and full feature parquet are not included.
+  same_metric_definition: true
+  same_split: false
+claim_status: tentative
+confusion_matrices: not applicable for log-loss-only code share reference
+dataset:
+  hash: not-provided
+  name: sleep-lifelog-2024
+  version: dacon-competition-package
+feature_summary:
+  calendar_features:
+    - month
+    - dayofweek
+    - weekofyear
+    - weekend
+    - cyclic sin/cos
+    - date_gap_days
+    - subject_num
+  stability_filter: reported reduction from 23177 candidate features to 1682 selected features
+  window_pair_status: partly skeleton; real sensor-derived pair features require parquet linkage
+metric_definitions:
+  notebook_local_oof_log_loss:
+    caveat: Not comparable to team canonical local OOF until split and feature provenance are matched.
+    direction: lower_is_better
+    evidence_surface: notebook_output_summary
+  public_lb_log_loss:
+    caveat: No submission id, leaderboard export, or submission CSV lineage in packet.
+    direction: lower_is_better
+    evidence_surface: external_dacon_codeshare_public_lb_observation
+model:
+  family: lgbm-xgb-anchor-blend
+  weights_in_repo: false
+model_structure:
+  anchor_features: "base_{target}_prob and base_{target}_logit from V152 OOF when base_oof_path exists"
+  blend: "reported LGBM+XGB about 7:3 with CatBoost weight 0 for final Public 0.5917 summary"
+  libraries:
+    - LightGBM
+    - XGBoost
+    - CatBoost
+  target_handling: one binary classifier family per target
+oof_predictions: not included; V152 anchor OOF CSV and model OOF files are referenced but not provided
+overall_metrics:
+  cat_only_notebook_oof_log_loss: 0.528
+  feature_count_after_stability_filter: 1682
+  feature_count_before_stability_filter: 23177
+  lgbm_only_notebook_oof_log_loss: 0.525
+  log_loss: 0.5917
+  notebook_local_oof_log_loss: 0.514
+  primary: public_lb_log_loss
+  public_lb_log_loss: 0.5917
+  target_specific_notebook_oof_log_loss: 0.513
+  xgb_only_notebook_oof_log_loss: 0.53
+preprocessing_summary:
+  cv_strategy: Subject-hole CV with subject-aware chronological holes used as validation per fold
+  id_columns:
+    - subject_id
+    - sleep_date
+    - lifelog_date
+  leakage_guard: anchor OOF must be generated out-of-fold for train rows; full-train anchor prediction may be used only for test rows
+primary_metric: public_lb_log_loss
+required_metric_families:
+  - log_loss
+semantic_lint:
+  - Do not promote Public 0.5917 to a team verified leaderboard claim without submission id, leaderboard export, and submission file lineage.
+  - Do not compare notebook Local OOF 0.514 directly with team canonical GroupKFold or Wave41 OOF results.
+  - Treat V152 anchor OOF as high leakage risk until the actual OOF CSV and generation procedure are provided.
+  - Window-pair features in the notebook are partly skeleton and should not be recorded as implemented production features without parquet-backed code.
+split:
+  fold_file: none
+  group_key: subject_id
+  name: subject-hole-cv-5fold-reference
+split_id: subject-hole-cv-5fold-reference
+submission_predictions: not included; code share reports public score only
+target_metrics:
+  {}
+targets:
+  - Q1
+  - Q2
+  - Q3
+  - S1
+  - S2
+  - S3
+  - S4
+uncertainty:
+  judgment: reference_only_until_submission_lineage_verified
+  known_gaps:
+    - DACON submission id missing
+    - leaderboard export or screenshot missing
+    - submission file lineage missing
+    - V152 anchor OOF CSV missing
+    - large feature parquet missing
+    - window-pair feature code partly skeleton

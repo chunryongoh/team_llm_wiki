@@ -1,0 +1,80 @@
+{
+  "dedupe_report": {
+    "merged_nodes": [],
+    "reused_existing_pages": []
+  },
+  "edges": [
+    {
+      "confidence": "medium",
+      "evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv"
+      ],
+      "source": "model:lightgbm-xgboost-anchor-blend",
+      "target": "preprocessing:subject-hole-cv",
+      "type": "uses"
+    },
+    {
+      "confidence": "medium",
+      "evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv"
+      ],
+      "source": "claim:public-lb-05917",
+      "target": "model:lightgbm-xgboost-anchor-blend",
+      "type": "cites"
+    }
+  ],
+  "nodes": [
+    {
+      "claim_status": "tentative",
+      "confidence": "medium",
+      "evidence_surface": "external_codeshare_observation",
+      "id": "model:lightgbm-xgboost-anchor-blend",
+      "kind": "model",
+      "name": "LightGBM XGBoost Anchor Blend",
+      "page_role": "leaf",
+      "proposed_page": "wiki/models/lightgbm-xgboost-anchor-blend.md",
+      "raw_evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv"
+      ],
+      "summary": "Public-code-share model signal combining LightGBM and XGBoost anchors."
+    },
+    {
+      "claim_status": "tentative",
+      "confidence": "medium",
+      "id": "preprocessing:subject-hole-cv",
+      "kind": "preprocessing",
+      "name": "Subject-hole CV",
+      "page_role": "leaf",
+      "proposed_page": "wiki/datasets/subject-hole-cv.md",
+      "raw_evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb"
+      ],
+      "summary": "Subject-grouped validation split observed in the intake artifacts."
+    },
+    {
+      "claim_status": "tentative",
+      "confidence": "medium",
+      "evidence_surface": "public_lb_observation",
+      "id": "claim:public-lb-05917",
+      "kind": "claim",
+      "name": "Public LB 0.5917",
+      "page_role": "report",
+      "proposed_page": "wiki/benchmarks/dacon-public-lb-05917.md",
+      "raw_evidence": [
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-codeshare-13975.md",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb",
+        "raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/scan-metrics.csv"
+      ],
+      "summary": "External public leaderboard log-loss observation of 0.5917 without submission lineage."
+    }
+  ],
+  "packet_id": "2026-06-12-packet-scan",
+  "schema_version": "packet-graph-v1.0"
+}
