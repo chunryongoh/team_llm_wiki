@@ -35,7 +35,7 @@ String-only entries are accepted for backward compatibility, but reviewers shoul
 
 ## Good packet outcome
 
-좋은 packet은 dated packet review page만 만들지 않는다. Synthesis bot이 어떤 stable feature, model, target, preprocessing, submission, decision, question, claim page를 갱신해야 하는지 알려준다.
+좋은 packet은 dated packet review page만 만들지 않는다. Synthesis bot이 어떤 stable feature, model, target, preprocessing, performance/leaderboard, decision, target/open-issue, claim page를 갱신해야 하는지 알려준다.
 
 ## Weak but allowed
 

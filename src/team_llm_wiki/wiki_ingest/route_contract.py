@@ -108,8 +108,8 @@ class WikiRouteContract:
             )
         if "status: deprecated" not in text:
             errors.append(HealthError("invalid_deprecated_tombstone", "tombstone missing status: deprecated", rel_path))
-        if "canonical_target:" not in text:
-            errors.append(HealthError("invalid_deprecated_tombstone", "tombstone missing canonical_target", rel_path))
+        target_errors = self._validate_tombstone_target(rel_path, text)
+        errors.extend(target_errors)
         headings = [line.strip() for line in text.splitlines() if line.startswith("#")]
         if headings != [TOMBSTONE_HEADING]:
             errors.append(
@@ -129,6 +129,36 @@ class WikiRouteContract:
                     )
                 )
         return errors
+
+    def _validate_tombstone_target(self, rel_path: str, text: str) -> list[HealthError]:
+        data, parse_error = _frontmatter_mapping(text)
+        if parse_error:
+            return [HealthError("invalid_deprecated_tombstone", parse_error, rel_path)]
+        raw_target = data.get("canonical_target") if data else None
+        if not raw_target:
+            return [HealthError("invalid_deprecated_tombstone", "tombstone missing canonical_target", rel_path)]
+        try:
+            target = _wiki_file(raw_target, f"canonical_target for {rel_path}")
+        except IngestFailure as exc:
+            return [HealthError("invalid_deprecated_tombstone", exc.message, rel_path)]
+        if not self.is_canonical_path(target):
+            return [
+                HealthError(
+                    "invalid_deprecated_tombstone",
+                    f"canonical_target must be in a canonical namespace: {target}",
+                    rel_path,
+                )
+            ]
+        expected = self.migration_map.get(rel_path)
+        if expected and target != expected:
+            return [
+                HealthError(
+                    "invalid_deprecated_tombstone",
+                    f"canonical_target must match migration_map: expected {expected}, got {target}",
+                    rel_path,
+                )
+            ]
+        return []
 
 
 def load_route_contract(repo_root: Path, contract_path: Path | None = None) -> WikiRouteContract:
@@ -152,8 +182,8 @@ def load_route_contract(repo_root: Path, contract_path: Path | None = None) -> W
     allowed_roles = _string_set(payload.get("allowed_page_roles"), "allowed_page_roles")
     required_entrypoints = tuple(_string_list(payload.get("required_entrypoints"), "required_entrypoints"))
     required_pages = tuple(_string_list(payload.get("required_pages"), "required_pages"))
-    migration_map = _migration_map(payload.get("migration_map"), deprecated)
     _validate_replacements(deprecated, canonical)
+    migration_map = _migration_map(payload.get("migration_map"), deprecated, canonical)
     return WikiRouteContract(
         version=version,
         canonical_namespaces=canonical,
@@ -222,15 +252,22 @@ def _packet_routes(value: Any, canonical: dict[str, NamespaceRoute]) -> dict[str
     return routes
 
 
-def _migration_map(value: Any, deprecated: dict[str, DeprecatedNamespace]) -> dict[str, str]:
+def _migration_map(
+    value: Any, deprecated: dict[str, DeprecatedNamespace], canonical: dict[str, NamespaceRoute]
+) -> dict[str, str]:
     if not isinstance(value, dict):
         raise IngestFailure(FailureCode.POLICY_CONFLICT, "migration_map must be a mapping")
+    canonical_paths = {route.path for route in canonical.values()}
     result: dict[str, str] = {}
     for source, target in value.items():
         source_path = _wiki_file(source, f"migration source {source}")
         target_path = _wiki_file(target, f"migration target {source}")
         if not any(source_path == route.path or source_path.startswith(route.path + "/") for route in deprecated.values()):
             raise IngestFailure(FailureCode.POLICY_CONFLICT, f"migration source is not deprecated: {source_path}")
+        if not any(target_path.startswith(canonical_path + "/") for canonical_path in canonical_paths):
+            raise IngestFailure(
+                FailureCode.POLICY_CONFLICT, f"migration target is not canonical: {source_path} -> {target_path}"
+            )
         result[source_path] = target_path
     return result
 
@@ -268,3 +305,19 @@ def _string_list(value: Any, label: str) -> list[str]:
 
 def _string_set(value: Any, label: str) -> set[str]:
     return set(_string_list(value, label))
+
+
+def _frontmatter_mapping(text: str) -> tuple[dict[str, Any], str | None]:
+    if not text.startswith("---\n"):
+        return {}, None
+    end = text.find("\n---\n", 4)
+    if end == -1:
+        return {}, "tombstone frontmatter is not closed"
+    raw = text[4:end]
+    try:
+        data = yaml.safe_load(raw) or {}
+    except yaml.YAMLError as exc:
+        return {}, f"tombstone frontmatter could not be parsed: {exc}"
+    if not isinstance(data, dict):
+        return {}, "tombstone frontmatter must be a mapping"
+    return data, None

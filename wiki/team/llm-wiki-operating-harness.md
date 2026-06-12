@@ -81,4 +81,4 @@ Durable pages belong under canonical namespaces: `wiki/preprocessing`, `wiki/fea
 
 ## Briefing
 
-daily/weekly/current brief는 entrypoint와 action routing을 위해 존재한다. briefing은 report나 raw evidence를 대체하지 않는다. 중요한 변화는 해당 entity leaf, registry, decision, question page에도 반영되어야 한다.
+daily/weekly/current brief는 entrypoint와 action routing을 위해 존재한다. briefing은 report나 raw evidence를 대체하지 않는다. 중요한 변화는 해당 entity leaf, registry, decision, target/open-issue page에도 반영되어야 한다.

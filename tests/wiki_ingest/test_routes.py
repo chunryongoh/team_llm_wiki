@@ -68,6 +68,20 @@ def test_contract_load_fails_closed_for_bad_packet_route(tmp_path):
     assert "missing packet route: dataset" in exc.value.message
 
 
+def test_contract_load_fails_closed_for_noncanonical_migration_target(tmp_path):
+    contract_path = tmp_path / DEFAULT_CONTRACT_PATH
+    contract_path.parent.mkdir(parents=True)
+    data = yaml.safe_load(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"))
+    data["migration_map"]["wiki/submissions/legacy.md"] = "wiki/submissions/new-legacy.md"
+    contract_path.write_text(yaml.safe_dump(data), encoding="utf-8")
+
+    with pytest.raises(IngestFailure) as exc:
+        load_route_contract(tmp_path)
+
+    assert exc.value.code.value == "policy_conflict"
+    assert "migration target is not canonical" in exc.value.message
+
+
 def test_tombstone_validator_accepts_only_compatibility_body():
     contract = load_route_contract(Path("."))
     text = """---
@@ -83,6 +97,46 @@ Do not add new substantive content here. This file exists to preserve historical
 """
 
     assert contract.validate_tombstone("wiki/datasets/sleep-lifelog-2024.md", text) == []
+
+
+def test_tombstone_validator_rejects_wrong_canonical_target():
+    contract = load_route_contract(Path("."))
+    text = """---
+page_role: compatibility
+status: deprecated
+canonical_target: wiki/preprocessing/not-the-dataset.md
+---
+# Deprecated Compatibility Page
+
+This page has moved to [[preprocessing/not-the-dataset]].
+
+Do not add new substantive content here. This file exists to preserve historical links and provenance.
+"""
+
+    errors = contract.validate_tombstone("wiki/datasets/sleep-lifelog-2024.md", text)
+
+    assert any(error.code == "invalid_deprecated_tombstone" for error in errors)
+    assert any("migration_map" in error.message for error in errors)
+
+
+def test_tombstone_validator_rejects_deprecated_canonical_target():
+    contract = load_route_contract(Path("."))
+    text = """---
+page_role: compatibility
+status: deprecated
+canonical_target: wiki/submissions/dacon-leaderboard-history.md
+---
+# Deprecated Compatibility Page
+
+This page has moved to [[submissions/dacon-leaderboard-history]].
+
+Do not add new substantive content here. This file exists to preserve historical links and provenance.
+"""
+
+    errors = contract.validate_tombstone("wiki/submissions/dacon-leaderboard-history.md", text)
+
+    assert any(error.code == "invalid_deprecated_tombstone" for error in errors)
+    assert any("canonical namespace" in error.message for error in errors)
 
 
 def test_tombstone_validator_rejects_substantive_sections():
