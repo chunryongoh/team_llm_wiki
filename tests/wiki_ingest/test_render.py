@@ -71,7 +71,7 @@ def seed_entity_model_pages(root: Path):
         "wiki/team/packet-quality-standard.md",
         "wiki/claims/current-supported-claims.md",
         "wiki/preprocessing/canonical-split-and-leakage-policy.md",
-        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/performance/dacon-leaderboard-history.md",
     ]
     for rel_path in required:
         path = root / rel_path
