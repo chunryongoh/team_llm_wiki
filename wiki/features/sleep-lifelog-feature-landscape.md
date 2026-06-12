@@ -26,7 +26,7 @@ raw_evidence:
 
 # Sleep Lifelog Feature Landscape
 
-이 page는 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md) feature families의 hub다. 성능 승격은 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md), split/leakage 판단은 [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md), unresolved work는 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)를 따른다.
+이 page는 [Sleep Lifelog 2024 Dataset](../preprocessing/sleep-lifelog-2024.md) feature families의 hub다. 성능 승격은 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md), split/leakage 판단은 [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md), unresolved work는 [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)를 따른다.
 
 상세 durable memory는 leaf가 소유한다: [App Context Windows](app-context-windows.md), [Stability Filtered Feature Selection](stability-filtered-feature-selection.md), [Q3 Stress Bottleneck](../targets/q3-stress-bottleneck.md), [S4 WASO Disturbance](../targets/s4-waso-disturbance.md), [v186 Targetwise LGBM CatBoost](../models/v186-targetwise-lgbm-catboost.md).
 

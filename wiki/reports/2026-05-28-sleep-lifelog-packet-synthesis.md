@@ -53,14 +53,14 @@ raw_evidence:
 ## Integrated packets
 
 - [app context feature engineering 20260601](../performance/2026-06-01-app-context-feature-engineering-20260601.md)
-- [labelwise weekly progress target bottlenecks](../experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md)
+- [labelwise weekly progress target bottlenecks](2026-05-29-labelwise-weekly-progress-target-bottlenecks.md)
 - [1875 feature domain ablation and dedup](../features/2026-05-28-1875-feature-domain-ablation-and-dedup.md)
-- [v200 v209 sparse splice review](../experiments/2026-05-29-v200-v209-sparse-splice-review.md)
+- [v200 v209 sparse splice review](2026-05-29-v200-v209-sparse-splice-review.md)
 - [v186 shap leaderboard analysis](../performance/2026-05-29-v186-shap-leaderboard-analysis.md)
 
 ## Integration result
 
-기존 supported claim은 [Current Supported Claims](../claims/current-supported-claims.md)의 LGB/CB targetwise reblend local OOF diagnostic 하나로 유지했다. 새 packet의 public score는 모두 `tentative`이며 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)에 `user_reported_public_score_only` 또는 `docx_report_public_lb_observation`으로 들어갔다.
+기존 supported claim은 [Current Supported Claims](../claims/current-supported-claims.md)의 LGB/CB targetwise reblend local OOF diagnostic 하나로 유지했다. 새 packet의 public score는 모두 `tentative`이며 [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)에 `user_reported_public_score_only` 또는 `docx_report_public_lb_observation`으로 들어갔다.
 
 [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)는 app context, 1,875 feature pool, v186 SHAP, v200-v209 sparse splice, Section07 target bottleneck을 한 페이지에서 분리 관리하도록 갱신했다. [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)는 local OOF, notebook-output, public score note의 split surface를 분리했다.
 
@@ -72,4 +72,4 @@ raw_evidence:
 
 ## Next actions
 
-우선순위는 v186/app-context/Section07 submission lineage 확보, exact `715` dedup list 제출, Q3/S4 same-split ablation, replay validator blind-spot threshold 정의다. 세부 backlog는 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)에 있다.
+우선순위는 v186/app-context/Section07 submission lineage 확보, exact `715` dedup list 제출, Q3/S4 same-split ablation, replay validator blind-spot threshold 정의다. 세부 backlog는 [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)에 있다.

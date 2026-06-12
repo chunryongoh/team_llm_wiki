@@ -26,7 +26,7 @@ raw_evidence:
 
 # Canonical Split And Leakage Policy
 
-이 page는 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md) 성능 claim의 split, group key, fit scope, feature cutoff를 관리한다. Split-specific detail은 [Subject Hole CV](subject-hole-cv.md) 같은 leaf로 분리한다.
+이 page는 [Sleep Lifelog 2024 Dataset](sleep-lifelog-2024.md) 성능 claim의 split, group key, fit scope, feature cutoff를 관리한다. Split-specific detail은 [Subject Hole CV](subject-hole-cv.md) 같은 leaf로 분리한다.
 
 ## Known split and evidence surfaces
 

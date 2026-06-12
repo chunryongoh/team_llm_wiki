@@ -36,6 +36,6 @@ Use v186 insights for hypothesis generation and target-specific ablation design.
 
 ## Related pages
 
-- [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)
+- [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
 - [Current Supported Claims](../claims/current-supported-claims.md)
 - [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)

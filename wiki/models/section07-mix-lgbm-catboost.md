@@ -29,7 +29,7 @@ raw_evidence:
 
 ## Current Boundary
 
-이 모델 page는 model structure memory다. 성능 claim은 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md) 또는 verified performance packet이 들어오기 전까지 tentative로 유지한다.
+이 모델 page는 model structure memory다. 성능 claim은 [DACON Leaderboard History](../performance/dacon-leaderboard-history.md) 또는 verified performance packet이 들어오기 전까지 tentative로 유지한다.
 
 ## Excluded Paths
 

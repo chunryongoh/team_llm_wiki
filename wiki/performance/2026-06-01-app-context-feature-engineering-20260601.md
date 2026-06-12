@@ -21,7 +21,7 @@ raw_evidence:
 
 # app context feature engineering 20260601
 
-이 page는 조혜원 packet `2026-06-01-app-context-feature-engineering-20260601`의 안정 review다. 관련 dataset은 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md), 평가 경계는 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)과 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)를 따른다.
+이 page는 조혜원 packet `2026-06-01-app-context-feature-engineering-20260601`의 안정 review다. 관련 dataset은 [Sleep Lifelog 2024 Dataset](../preprocessing/sleep-lifelog-2024.md), 평가 경계는 [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)과 [DACON Leaderboard History](dacon-leaderboard-history.md)를 따른다.
 
 ## Claim boundary
 

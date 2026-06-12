@@ -25,7 +25,7 @@ Reference pipeline은 [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-an
 
 ## What is not proven
 
-Public `0.5917`은 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)의 `external_codeshare_public_lb_observation`이다. Submission id, leaderboard export, submission CSV lineage, private score가 없다. Notebook Local OOF `0.514`와 target-specific `0.513`은 notebook-output summary이며 [Current Supported Claims](../claims/current-supported-claims.md)의 local OOF diagnostic과 비교하지 않는다.
+Public `0.5917`은 [DACON Leaderboard History](dacon-leaderboard-history.md)의 `external_codeshare_public_lb_observation`이다. Submission id, leaderboard export, submission CSV lineage, private score가 없다. Notebook Local OOF `0.514`와 target-specific `0.513`은 notebook-output summary이며 [Current Supported Claims](../claims/current-supported-claims.md)의 local OOF diagnostic과 비교하지 않는다.
 
 ## Evidence gaps
 

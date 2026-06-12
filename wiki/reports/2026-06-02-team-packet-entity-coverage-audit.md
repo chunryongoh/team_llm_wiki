@@ -26,7 +26,7 @@ raw_evidence:
 | owner | 반영 상태 | 현재 wiki entity | 주의 |
 |---|---|---|---|
 | `chunryongoh` | 반영됨 | dataset, benchmark, LGB/CB local OOF diagnostic, claim boundary | supported claim은 `local_oof_diagnostic_only`로 제한된다. |
-| `hyeonseokrock` | 부분 반영됨 | [Section07 Feature Policy](../features/section07-feature-policy.md), [Section07 Mix LGBM CatBoost](../models/section07-mix-lgbm-catboost.md), [Section07 Follow-Up Backlog](../questions/section07-followup-backlog.md), [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md) | 최신 packet skill 이전 산출물이어서 `wiki_plan.yaml`이 없고 preview `entity_coverage` warning이 난다. |
+| `hyeonseokrock` | 부분 반영됨 | [Section07 Feature Policy](../features/section07-feature-policy.md), [Section07 Mix LGBM CatBoost](../models/section07-mix-lgbm-catboost.md), [Section07 Follow-Up Backlog](../targets/section07-followup-backlog.md), [DACON Leaderboard History](../performance/dacon-leaderboard-history.md) | 최신 packet skill 이전 산출물이어서 `wiki_plan.yaml`이 없고 preview `entity_coverage` warning이 난다. |
 
 ## 미반영 bundle
 

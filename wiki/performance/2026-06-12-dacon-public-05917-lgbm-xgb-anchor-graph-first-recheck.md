@@ -50,4 +50,4 @@ Submission id, leaderboard export/screenshot, submission CSV hash, private score
 
 ## Review outcome
 
-`public-lb-lineage` question은 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)의 `dacon-public-05917-submission-lineage`로 병합한다. Window-pair code는 일부 placeholder라 implemented feature로 승격하지 않는다.
+`public-lb-lineage` question은 [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)의 `dacon-public-05917-submission-lineage`로 병합한다. Window-pair code는 일부 placeholder라 implemented feature로 승격하지 않는다.

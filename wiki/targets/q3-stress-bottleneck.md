@@ -37,5 +37,5 @@ Q3 개선 claim은 전체 average score가 아니라 same-split Q3 metric, featu
 ## Related pages
 
 - [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)
-- [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)
+- [Sleep Lifelog Open Questions](sleep-lifelog-open-issues.md)
 - [App Context Windows](../features/app-context-windows.md)

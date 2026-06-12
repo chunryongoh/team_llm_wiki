@@ -4,14 +4,14 @@
 
 ## 현재 sleep-lifelog entrypoints
 
-- Dataset: [Sleep Lifelog 2024 Dataset](datasets/sleep-lifelog-2024.md)
-- Benchmark: [Sleep Health Hackathon Benchmark v0](benchmarks/sleep-health-hackathon-v0.md)
+- Dataset: [Sleep Lifelog 2024 Dataset](preprocessing/sleep-lifelog-2024.md)
+- Benchmark: [Sleep Health Hackathon Benchmark v0](performance/sleep-health-hackathon-evaluation-policy.md)
 - Evaluation decision: [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md)
 - Feature synthesis: [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md)
 - Claim registry: [Current Supported Claims](claims/current-supported-claims.md)
-- Submission history: [DACON Leaderboard History](submissions/dacon-leaderboard-history.md)
+- Submission history: [DACON Leaderboard History](performance/dacon-leaderboard-history.md)
 - Split/leakage policy: [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md)
-- Open questions: [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md)
+- Open questions: [Sleep Lifelog Open Questions](targets/sleep-lifelog-open-issues.md)
 - Latest integration report: [2026-06-12 Sleep Lifelog Packet Synthesis](reports/2026-06-12-sleep-lifelog-packet-synthesis.md)
 
 ## Current best by evidence surface

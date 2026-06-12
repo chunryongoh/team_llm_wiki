@@ -51,4 +51,4 @@ LightGBM + CatBoost는 current raw evidence에서 standalone best가 아니다. 
 
 - Q2 weight selection을 nested 또는 fold-safe procedure로 재검증한다.
 - same-split, same-feature, same-baseline 조건에서 LGB/CB, LGBM+XGB, CatBoost contribution을 비교한다.
-- leaderboard claim은 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md) evidence 없이는 만들지 않는다.
+- leaderboard claim은 [DACON Leaderboard History](../performance/dacon-leaderboard-history.md) evidence 없이는 만들지 않는다.

@@ -28,7 +28,7 @@ raw_evidence:
 
 ## Scope
 
-`2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck`는 DACON code share `13975`를 graph-first sidecars로 다시 확인한 performance packet이다. 새 source는 [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md), [Subject Hole CV](../preprocessing/subject-hole-cv.md), [Stability Filtered Feature Selection](../features/stability-filtered-feature-selection.md), [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)를 업데이트할 만큼 reusable하지만, claim promotion evidence는 없다.
+`2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck`는 DACON code share `13975`를 graph-first sidecars로 다시 확인한 performance packet이다. 새 source는 [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md), [Subject Hole CV](../preprocessing/subject-hole-cv.md), [Stability Filtered Feature Selection](../features/stability-filtered-feature-selection.md), [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)를 업데이트할 만큼 reusable하지만, claim promotion evidence는 없다.
 
 ## Integrated conclusions
 
