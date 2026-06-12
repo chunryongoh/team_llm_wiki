@@ -42,7 +42,7 @@ raw_evidence:
 | Subject-hole CV improves LB correlation | tentative | exploratory external split idea | [Subject Hole CV](../preprocessing/subject-hole-cv.md) |
 | app context staged public LB `0.6218831823 -> 0.6106185586` | tentative | DOCX public LB observation | [app context](../performance/2026-06-01-app-context-feature-engineering-20260601.md) |
 | Section07 labelwise public note `0.5986218188` | tentative | user-reported public score only | [labelwise weekly](../experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md) |
-| 1875 feature pool and `715` dedup candidates | tentative | DOCX/PDF notebook-output | [1875 feature](../features/2026-05-28-1875-feature-domain-ablation-and-dedup.md) |
+| 1875 feature pool and `715` dedup candidates | superseded | historical DOCX/PDF notebook-output; raw ablation/correlation evidence still missing | [1875 feature](../features/2026-05-28-1875-feature-domain-ablation-and-dedup.md) |
 | v186 public LB `0.5922831771` and SHAP drivers | tentative | user/PDF-reported public score plus interpretation evidence | [v186 SHAP](../performance/2026-05-29-v186-shap-leaderboard-analysis.md) |
 | v200-v209 sparse splice guardrail | tentative | PDF review and public-score notes | [v200-v209](../experiments/2026-05-29-v200-v209-sparse-splice-review.md) |
 
