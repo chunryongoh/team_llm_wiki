@@ -14,4 +14,6 @@ Mandatory loop:
 
 Do not promote performance claims without raw evidence and split/metric validation. Keep local OOF, notebook output, user-reported public score, DACON public/private leaderboard, and organizer-official validation separate.
 
+Route policy source of truth is `automation/contracts/wiki-route-contract.v1.yaml`. Dataset/split/leakage policy belongs under `wiki/preprocessing/`; metric, evaluation, leaderboard, and submission history belongs under `wiki/performance/`. Deprecated namespaces such as `wiki/datasets`, `wiki/benchmarks`, `wiki/questions`, `wiki/submissions`, `wiki/experiments`, and `wiki/sources` are compatibility-only.
+
 If asked to run LLM-assisted synthesis, use `gpt-5.5` by default and keep the result as a review-required wiki update.

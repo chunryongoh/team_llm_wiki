@@ -10,12 +10,18 @@ title: Page Taxonomy
 
 Team LLM Wiki는 하나의 거대한 markdown summary가 아니라 작은 stable page들의 graph로 성장해야 한다.
 
+Route policy source of truth: `automation/contracts/wiki-route-contract.v1.yaml`.
+
+Automation must read the contract through `src/team_llm_wiki/wiki_ingest/route_contract.py`; packet skill must vendor the same contract under `references/wiki-route-contract.v1.yaml`.
+
+Canonical namespaces are `wiki/preprocessing`, `wiki/features`, `wiki/models`, `wiki/performance`, `wiki/claims`, `wiki/targets`, `wiki/decisions`, `wiki/reports`, and `wiki/team`. Deprecated namespaces are compatibility-only and should only contain tombstones or generated compatibility pages.
+
 ## Roles
 
 | role | purpose | examples |
 |---|---|---|
 | `entrypoint` | 새 세션이 시작하는 routing page | `latest-context.md`, `index.md`, `overview.md` |
-| `registry` | 같은 종류의 claim/entity를 catalog | `claims/current-supported-claims.md`, `submissions/dacon-leaderboard-history.md` |
+| `registry` | 같은 종류의 claim/entity를 catalog | `claims/current-supported-claims.md`, `performance/dacon-leaderboard-history.md` |
 | `hub` | topic 요약과 leaf route | `features/sleep-lifelog-feature-landscape.md` |
 | `leaf` | durable entity 하나의 기억 | `targets/q3-stress-bottleneck.md` |
 | `packet_review` | 특정 raw packet의 source-specific 정리 | `performance/2026-05-29-v186-shap-leaderboard-analysis.md` |
