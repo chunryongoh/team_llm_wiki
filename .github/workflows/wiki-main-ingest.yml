@@ -66,7 +66,7 @@ jobs:
       - if: steps.skip.outputs.skip != 'true'
         run: pip install -r requirements.txt
       - name: Collect changed paths
-        if: steps.skip.outputs.skip != 'true'
+        if: steps.skip.outputs.skip != 'true' && (github.event_name != 'workflow_dispatch' || inputs.migration_mode != true)
         id: changed
         env:
           INPUT_CHANGED_PATHS: ${{ inputs.changed_paths || '' }}
@@ -131,7 +131,7 @@ jobs:
             exit "$status"
           fi
       - name: Run wiki ingest
-        if: steps.skip.outputs.skip != 'true'
+        if: steps.skip.outputs.skip != 'true' && (github.event_name != 'workflow_dispatch' || inputs.migration_mode != true)
         id: ingest
         env:
           PYTHONPATH: src
@@ -168,18 +168,25 @@ jobs:
             exit "$status"
           fi
       - name: Fallback summary
-        if: always() && steps.skip.outputs.skip != 'true'
+        if: always() && steps.skip.outputs.skip != 'true' && (github.event_name != 'workflow_dispatch' || inputs.migration_mode != true)
         run: |
           if [ ! -f ingest-summary-written ]; then
             printf "## Wiki ingest\n\nMissing ingest output.\n" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Upload wiki ingest report
-        if: always() && steps.skip.outputs.skip != 'true'
+        if: always() && steps.skip.outputs.skip != 'true' && (github.event_name != 'workflow_dispatch' || inputs.migration_mode != true)
         uses: actions/upload-artifact@v7
         with:
           name: wiki-ingest-report
           path: raw/results/wiki-ingest/*/report.json
           if-no-files-found: error
+      - name: Upload route migration report
+        if: always() && steps.skip.outputs.skip != 'true' && github.event_name == 'workflow_dispatch' && inputs.migration_mode
+        uses: actions/upload-artifact@v7
+        with:
+          name: wiki-route-migration-report
+          path: raw/results/wiki-renovation/*/report.json
+          if-no-files-found: ignore
       - name: Validate generated wiki output
         if: steps.skip.outputs.skip != 'true' && (steps.ingest.outputs.status == 'direct_commit' || steps.ingest.outputs.status == 'bot_pr')
         id: validate

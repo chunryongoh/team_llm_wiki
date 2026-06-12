@@ -1,5 +1,23 @@
 from pathlib import Path
 
+import yaml
+
+
+def load_workflow(path: str) -> dict:
+    payload = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    if True in payload and "on" not in payload:
+        payload["on"] = payload.pop(True)
+    return payload
+
+
+def steps_by_name(path: str, job: str) -> dict[str, dict]:
+    workflow = load_workflow(path)
+    return {
+        step["name"]: step
+        for step in workflow["jobs"][job]["steps"]
+        if isinstance(step, dict) and "name" in step
+    }
+
 
 def test_main_ingest_push_diff_uses_full_push_range():
     workflow = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
@@ -72,17 +90,41 @@ def test_normal_workflows_do_not_enable_migration_mode():
 
 
 def test_main_ingest_migration_dispatch_is_branch_gated():
-    workflow = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
+    workflow = load_workflow(".github/workflows/wiki-main-ingest.yml")
+    steps = steps_by_name(".github/workflows/wiki-main-ingest.yml", "ingest")
 
-    assert "migration_mode:" in workflow
-    assert "migration/wiki-" in workflow
-    assert "github.event_name == 'workflow_dispatch'" in workflow
-    assert "--migration-mode" in workflow
+    migration_input = workflow["on"]["workflow_dispatch"]["inputs"]["migration_mode"]
+    assert migration_input["type"] == "boolean"
+    assert migration_input["default"] is False
+
+    route_migration = steps["Run route migration when explicitly dispatched"]
+    assert route_migration["if"] == (
+        "steps.skip.outputs.skip != 'true' && github.event_name == 'workflow_dispatch' && inputs.migration_mode"
+    )
+    assert "startsWith(github.ref_name, 'migration/wiki-')" in route_migration["env"]["WIKI_MIGRATION_MODE"]
+    assert "exit 1" in route_migration["run"]
+    assert "--migration-mode" in route_migration["run"]
+
+    normal_exclusion = "github.event_name != 'workflow_dispatch' || inputs.migration_mode != true"
+    assert normal_exclusion in steps["Collect changed paths"]["if"]
+    assert normal_exclusion in steps["Run wiki ingest"]["if"]
+    assert normal_exclusion in steps["Upload wiki ingest report"]["if"]
+    assert "workflow_dispatch_changed_paths" in steps["Collect changed paths"]["run"]
 
 
 def test_llm_synthesis_migration_dispatch_is_branch_gated():
-    workflow = Path(".github/workflows/wiki-llm-synthesis.yml").read_text(encoding="utf-8")
+    workflow_path = ".github/workflows/wiki-llm-synthesis.yml"
+    workflow_text = Path(workflow_path).read_text(encoding="utf-8")
+    workflow = load_workflow(workflow_path)
+    steps = steps_by_name(workflow_path, "synthesize")
 
-    assert "migration_mode:" in workflow
-    assert "migration/wiki-" in workflow
-    assert "github.event_name == 'workflow_dispatch'" in workflow
+    migration_input = workflow["on"]["workflow_dispatch"]["inputs"]["migration_mode"]
+    assert migration_input["type"] == "boolean"
+    assert migration_input["default"] is False
+
+    gate = steps["Check migration dispatch gate"]
+    assert gate["if"] == "github.event_name == 'workflow_dispatch' && inputs.migration_mode"
+    assert "startsWith(github.ref_name, 'migration/wiki-')" in gate["env"]["WIKI_MIGRATION_MODE"]
+    assert "exit 1" in gate["run"]
+    assert "run-wiki-route-migration" not in workflow_text
+    assert "--migration-mode" not in workflow_text
