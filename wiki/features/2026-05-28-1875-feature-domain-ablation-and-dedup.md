@@ -5,12 +5,12 @@ packet_type: feature
 title: 1875 feature domain ablation and dedup
 date: 2026-05-28
 owner: ko-nayoung
-claim_status: tentative
-claim_boundary: DOCX/PDF and Slack-reported feature analysis only; raw ablation metric files, feature correlation matrix, duplicate list, and submission lineage are not included.
+claim_status: superseded
+claim_boundary: Historical DOCX/PDF and Slack-reported feature analysis only; raw ablation metric files, feature correlation matrix, duplicate list, and submission lineage were not provided within the stale-claim review window. Re-open with a new raw evidence packet before using as an active feature policy or performance claim.
 dataset: sleep-lifelog-2024
 benchmark: sleep-health-hackathon-v0
 model: catboost-v2-feature-domain-ablation
-summary: 1,875-feature pipeline, 중복/고상관 정리, Light-W noise, Screen/Sleep core domain, Q3 target-specific exception을 보고하지만 raw ablation artifact가 없어 tentative로 유지한다.
+summary: 1,875-feature pipeline, 중복/고상관 정리, Light-W noise, Screen/Sleep core domain, Q3 target-specific exception을 보고하지만 raw ablation artifact가 없어 active claim이 아니라 historical source packet으로 유지한다.
 review_required: true
 raw_evidence:
 - raw/users/ko-nayoung/features/2026-05-28-1875-feature-domain-ablation-and-dedup/manifest.yaml
@@ -25,9 +25,10 @@ raw_evidence:
 
 ## Evidence boundary
 
-- status: `tentative`
+- status: `superseded`
 - evidence surface: DOCX/PDF notebook-output and Slack summary
 - missing: raw ablation metric files, feature correlation matrix, exact duplicate list, submission lineage
+- stale-review result: 2026-06-12 기준 raw ablation/correlation evidence가 확보되지 않아 활성 tentative claim으로 유지하지 않는다. 재활성화하려면 새 raw evidence packet이 필요하다.
 
 ## 보고된 feature findings
 
@@ -45,4 +46,4 @@ Feature count는 feature value가 아니다. SHAP, ablation, leaderboard evidenc
 
 ## 다음 확인
 
-`feature-dedup-715-raw-list`를 닫으려면 correlation matrix, exact removal list, post-pruning metric table이 필요하다. Q3 BLE/WiFi 예외는 target-specific feature-set policy로만 다뤄야 한다.
+`feature-dedup-715-raw-list`를 닫으려면 correlation matrix, exact removal list, post-pruning metric table이 필요하다. Q3 BLE/WiFi 예외는 target-specific feature-set policy로만 다뤄야 한다. 해당 증거가 새 packet으로 들어오기 전까지 이 페이지는 현재 정책/성능 claim이 아니라 과거 source review로만 사용한다.

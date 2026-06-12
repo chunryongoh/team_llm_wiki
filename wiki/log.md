@@ -2,6 +2,12 @@
 
 Append-only ingest and maintenance events belong here.
 
+## [2026-06-12] maintenance | stale-1875-feature-claim-review
+
+- target: `wiki/features/2026-05-28-1875-feature-domain-ablation-and-dedup.md`
+- action: 14일 이상 raw ablation/correlation evidence가 보강되지 않은 tentative feature claim을 active claim에서 historical source review로 내렸다.
+- guardrail: 새 raw evidence packet 없이는 `1875` feature pool, `715` dedup candidates, Light-W noise, Q3 BLE/WiFi exception을 supported feature policy나 performance claim으로 승격하지 않는다.
+
 ## [2026-06-02] audit | team-packet-entity-coverage
 
 - target: `wiki/reports/2026-06-02-team-packet-entity-coverage-audit.md`
