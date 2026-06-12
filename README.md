@@ -33,6 +33,25 @@ flowchart TD
     P --> Q["팀원 Codex/Claude/LLM agent가 latest-context -> index -> hub -> leaf 순서로 참조"]
 ```
 
+## 2026-06-12 기준 검증된 E2E 체인
+
+DACON code share `Public 0.5917 LGBM+XGB anchor / Subject-hole CV / stability feature selection / blend` 예시로 전체 체인을 다시 검증했습니다.
+
+| 단계 | 검증된 동작 | 산출물 |
+| --- | --- | --- |
+| Packet skill | notebook/source note/CSV evidence를 graph-first로 scan하고 `wiki_plan.yaml` hint를 포함한 raw packet 생성 | `raw/users/dacon-community/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck/` |
+| Packet PR | `wiki-pr-validate` preview가 compatibility, risk tier, claim status, affected pages를 표시 | PR `#47`, `packet_skill_compatibility: pass` |
+| Deterministic ingest | raw packet을 compiled JSON과 packet review page로 정규화하고 self-validation 수행 | PR `#48`, `raw/results/wiki-ingest/27396372321-1/report.json` |
+| GPT-5.5 synthesis | existing wiki를 읽고 stable model/preprocessing/feature/performance/submission/question pages에 통합 | PR `#49`, `raw/results/llm-synthesis/27396499794-1/report.json` |
+| 최종 wiki | `latest-context`, `index`, `overview`, hub/leaf page가 최신 팀 맥락으로 갱신 | merge commit `236d2ef` |
+
+중요한 판정은 다음과 같습니다.
+
+- deterministic ingest는 raw packet mirror가 아니라 **packet review + compiled cache + guard evidence**를 만드는 단계입니다.
+- durable team memory 생성은 `wiki-llm-synthesis`가 담당합니다. 이 단계에서 `gpt-5.5`가 `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, 기존 hub/leaf page, compiled packet을 읽고 page taxonomy에 맞춰 통합합니다.
+- DACON Public 0.5917은 external public leaderboard observation이므로 `tentative`로 유지합니다. submission id, export file, CSV hash, private score, team reproduction이 없으면 supported claim으로 승격하지 않습니다.
+- local OOF, notebook output, public LB, private LB, organizer-official validation은 서로 다른 evidence surface입니다. README나 wiki page에서 같은 metric처럼 병합하지 않습니다.
+
 ## LLM Wiki 운영 하네스
 
 Karpathy식 LLM wiki의 핵심은 raw 문서를 매번 RAG처럼 다시 찾는 것이 아니라, LLM이 중간층인 markdown wiki를 지속적으로 유지하는 것입니다. 이 repo의 운영 하네스는 다음 루프를 강제합니다.
@@ -64,8 +83,9 @@ Karpathy식 LLM wiki의 핵심은 raw 문서를 매번 RAG처럼 다시 찾는 �
 Packet skill은 이 repo 안에 들어있는 기능이 아니라, 팀원이 자기 AI 도구에 설치해서 사용하는 **별도 contributor-side skill**입니다.
 
 - Skill repo: [chunryongoh/team-llm-wiki-packet-skill](https://github.com/chunryongoh/team-llm-wiki-packet-skill)
-- 역할: ML/DL 전문가 인터뷰 형식으로 packet 내용을 묻고, `manifest.yaml`, `packet.md`, `performance.yaml`, `metrics.json` 같은 raw evidence contract를 만든 뒤 PR-first 방식으로 이 repo의 `raw/users/**`에 올립니다.
+- 역할: ML/DL 전문가 인터뷰와 graph-first artifact scan을 결합해 packet 내용을 묻고, `manifest.yaml`, `packet.md`, packet-specific YAML, `metrics.json`, `wiki_plan.yaml` 같은 raw evidence contract를 만든 뒤 PR-first 방식으로 이 repo의 `raw/users/**`에 올립니다.
 - 경계: skill은 wiki를 직접 고치지 않습니다. wiki 생성과 synthesis는 이 repo의 GitHub Actions가 담당합니다.
+- graph-first 경계: skill은 notebook, CSV, markdown, metadata-only binary artifact를 scan해 entity 후보, metric surface, split/model/feature signal, evidence gap을 정리합니다. 하지만 이 결과는 **제안**이며, claim 승격과 stable wiki 통합은 repo-side validation/synthesis가 다시 판정합니다.
 - ETRI/DACON sleep-health packet에서는 skill이 bundled `references/etri-dacon-sleep-health-context.md`를 읽어 `sleep-lifelog-2024`, `sleep-health-hackathon-v0`, Q/S targets, local OOF와 DACON leaderboard claim boundary, 현재 LGB/CB diagnostic line을 인터뷰 배경으로 사용합니다. 최신 판정은 항상 이 repo의 `wiki/latest-context.md`와 안정 entity page가 우선합니다.
 
 설치 예시:
