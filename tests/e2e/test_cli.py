@@ -5,16 +5,21 @@ from pathlib import Path
 
 import yaml
 
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
+
 
 ROUTES = {
-    "reference": "wiki/sources",
-    "experiment": "wiki/experiments",
+    "reference": "wiki/reports",
+    "experiment": "wiki/reports",
 }
 
 
 def seed_repo(root: Path, packet_type="reference", metric_expected=0.8):
     (root / "AGENTS.md").write_text("rules", encoding="utf-8")
     (root / "CLAUDE.md").write_text("@AGENTS.md", encoding="utf-8")
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
     (root / "wiki").mkdir()
     (root / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
     (root / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
@@ -91,7 +96,7 @@ def test_cli_run_writes_report_path(tmp_path):
     )
 
     assert result.returncode == 0
-    assert json.loads(result.stdout)["status"] == "direct_commit"
+    assert json.loads(result.stdout)["status"] == "bot_pr"
     assert report_path.exists()
 
 
@@ -144,7 +149,7 @@ def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):
     (tmp_path / "wiki" / "log.md").write_text(
         "# Log\n\n"
         "## [2026-05-27] ingest | pkt-1\n\n"
-        "- target: `wiki/sources/pkt-1.md`\n",
+        "- target: `wiki/reports/pkt-1.md`\n",
         encoding="utf-8",
     )
 
@@ -158,7 +163,9 @@ def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):
     assert payload == {"generated_paths": ["wiki/briefs/2026-05-27-daily.md", "wiki/briefs/latest.md"]}
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-daily.md").exists()
     assert (tmp_path / "wiki" / "briefs" / "latest.md").exists()
-    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-05-27-daily]]\n"
+    latest = (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8")
+    assert latest.splitlines()[0] == "[[2026-05-27-daily]]"
+    assert "<!-- wiki-brief:generated -->" in latest
 
 
 def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path):
@@ -166,11 +173,11 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
     (tmp_path / "wiki" / "log.md").write_text(
         "# Log\n\n"
         "## [2026-05-27] ingest | pkt-1\n\n"
-        "- target: `wiki/sources/pkt-1.md`\n",
+        "- target: `wiki/reports/pkt-1.md`\n",
         encoding="utf-8",
     )
-    (tmp_path / "wiki" / "questions").mkdir()
-    (tmp_path / "wiki" / "questions" / "old.md").write_text(
+    (tmp_path / "wiki" / "targets").mkdir()
+    (tmp_path / "wiki" / "targets" / "old.md").write_text(
         "---\nclaim_status: tentative\ndate: 2026-05-01\n---\n# Old\n",
         encoding="utf-8",
     )
@@ -191,7 +198,61 @@ def test_cli_generate_wiki_weekly_brief_writes_weekly_and_stale_reports(tmp_path
     }
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-weekly.md").exists()
     assert (tmp_path / "wiki" / "briefs" / "2026-05-27-stale-claims.md").exists()
-    assert (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8") == "[[2026-05-27-weekly]]\n"
+    latest = (tmp_path / "wiki" / "briefs" / "latest.md").read_text(encoding="utf-8")
+    assert latest.splitlines()[0] == "[[2026-05-27-weekly]]"
+    assert "<!-- wiki-brief:generated -->" in latest
+
+
+def test_cli_plan_wiki_route_migration_writes_report(tmp_path):
+    seed_repo(tmp_path)
+    report_path = tmp_path / "raw" / "results" / "wiki-renovation" / "cli" / "report.json"
+
+    result = run_cli(
+        [
+            "plan-wiki-route-migration",
+            "--repo-root",
+            str(tmp_path),
+            "--run-id",
+            "cli",
+            "--report-path",
+            str(report_path),
+        ],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 0
+    assert json.loads(result.stdout)["status"] in {"planned", "clean"}
+    assert report_path.exists()
+
+
+def test_cli_run_wiki_route_migration_requires_flag(tmp_path):
+    seed_repo(tmp_path)
+
+    result = run_cli(
+        ["run-wiki-route-migration", "--repo-root", str(tmp_path), "--run-id", "blocked"],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "blocked"
+
+
+def test_cli_plan_wiki_route_migration_fails_on_unmapped_deprecated_inventory(tmp_path):
+    seed_repo(tmp_path)
+    deprecated = tmp_path / "wiki" / "datasets" / "new-unmapped-page.md"
+    deprecated.parent.mkdir()
+    deprecated.write_text("# New Unmapped Page\n\n## Metrics\n\n- public_lb: 0.59\n", encoding="utf-8")
+
+    result = run_cli(
+        ["plan-wiki-route-migration", "--repo-root", str(tmp_path), "--run-id", "unmapped"],
+        cwd=Path.cwd(),
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "failed"
+    assert any(error["code"] == "migration_inventory_incomplete" for error in payload["errors"])
 
 
 def test_cli_run_exits_nonzero_on_hard_fail_and_writes_report(tmp_path):

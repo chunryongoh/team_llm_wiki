@@ -24,6 +24,24 @@ flowchart LR
 | Ingest bot PR | packet을 deterministic하게 검증/정규화 |
 | Synthesis bot PR | GPT-5.5가 기존 wiki와 통합 |
 
+## Canonical Wiki Structure
+
+Durable wiki pages live in these namespaces:
+
+```text
+wiki/preprocessing
+wiki/features
+wiki/models
+wiki/performance
+wiki/claims
+wiki/targets
+wiki/decisions
+wiki/reports
+wiki/team
+```
+
+Deprecated namespaces such as `wiki/datasets`, `wiki/benchmarks`, `wiki/questions`, `wiki/submissions`, `wiki/experiments`, and `wiki/sources` are compatibility-only. New packet PRs and bot outputs must not create substantive pages there.
+
 ## 팀원이 할 일
 
 1. packet skill을 설치합니다.

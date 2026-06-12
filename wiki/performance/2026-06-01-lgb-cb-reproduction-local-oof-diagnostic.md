@@ -84,7 +84,7 @@ raw_evidence:
 
 # LGB CB Reproduction Local OOF Diagnostic
 
-이 페이지는 packet `2026-06-01-lgb-cb-reproduction-local-oof-diagnostic`의 안정 성능 진단 페이지다. 관련 안정 페이지는 [Sleep Lifelog 2024 Dataset](../datasets/sleep-lifelog-2024.md), [Sleep Health Hackathon Benchmark v0](../benchmarks/sleep-health-hackathon-v0.md), [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md), [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md), [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md), [2026-06-01 Sleep Lifelog Packet Synthesis](../reports/2026-06-01-sleep-lifelog-packet-synthesis.md)이다. leaderboard claim boundary는 [DACON Leaderboard and Local OOF Claim Boundary](../sources/2026-06-01-dacon-leaderboard-claim-boundary.md)를 함께 확인해야 한다.
+이 페이지는 packet `2026-06-01-lgb-cb-reproduction-local-oof-diagnostic`의 안정 성능 진단 페이지다. 관련 안정 페이지는 [Sleep Lifelog 2024 Dataset](../preprocessing/sleep-lifelog-2024.md), [Sleep Health Hackathon Benchmark v0](sleep-health-hackathon-evaluation-policy.md), [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md), [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md), [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md), [2026-06-01 Sleep Lifelog Packet Synthesis](../reports/2026-06-01-sleep-lifelog-packet-synthesis.md)이다. leaderboard claim boundary는 [DACON Leaderboard and Local OOF Claim Boundary](2026-06-01-dacon-leaderboard-claim-boundary.md)를 함께 확인해야 한다.
 
 ## 판정 요약
 
@@ -147,11 +147,11 @@ raw_evidence:
 
 - `LGB/CB가 전체적으로 가장 강하다`는 넓은 claim은 현재 packet으로 지원되지 않는다.
 - `LGB/CB blend가 모든 target을 개선한다`는 claim도 지원되지 않는다. Q2만 LGB/CB fixed blend `0.1`이 들어갔다.
-- local OOF score는 DACON public/private leaderboard score가 아니다. leaderboard claim은 별도 raw provenance와 [DACON Leaderboard and Local OOF Claim Boundary](../sources/2026-06-01-dacon-leaderboard-claim-boundary.md)의 boundary를 따라야 한다.
+- local OOF score는 DACON public/private leaderboard score가 아니다. leaderboard claim은 별도 raw provenance와 [DACON Leaderboard and Local OOF Claim Boundary](2026-06-01-dacon-leaderboard-claim-boundary.md)의 boundary를 따라야 한다.
 
 ## 다음 검증
 
-후속 작업은 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)에 backlog로 관리한다. 우선순위가 높은 항목은 fold-safe feature ablation, Q2 blend-weight 재검증, date/rolling alignment audit이다.
+후속 작업은 [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)에 backlog로 관리한다. 우선순위가 높은 항목은 fold-safe feature ablation, Q2 blend-weight 재검증, date/rolling alignment audit이다.
 
 ## Provenance
 

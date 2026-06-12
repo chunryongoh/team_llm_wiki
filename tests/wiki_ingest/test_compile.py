@@ -20,7 +20,7 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         claim_status="tentative",
         summary="Run summary.",
         raw_paths={"metrics": "result.json"},
-        intended_wiki_targets=["wiki/experiments/exp-1.md"],
+        intended_wiki_targets=["wiki/reports/exp-1.md"],
         metrics_to_verify=[MetricCheck(raw_path="result.json", metric_key="accuracy", reported_value=0.82)],
         claims=[Claim(status="supported", text="Accuracy improved.")],
     )
@@ -47,7 +47,7 @@ def test_compile_packet_normalizes_lineage_and_is_json_serializable():
         "claim_status": "tentative",
         "summary": "Run summary.",
         "raw_paths": {"metrics": "result.json"},
-        "intended_wiki_targets": ["wiki/experiments/exp-1.md"],
+        "intended_wiki_targets": ["wiki/reports/exp-1.md"],
         "metrics_to_verify": [
             {
                 "raw_path": "result.json",
@@ -84,7 +84,7 @@ def test_compile_packet_preserves_unlabeled_raw_paths_as_list():
         claim_status="tentative",
         summary="Run summary.",
         raw_paths=["result.json", "folds.csv"],
-        intended_wiki_targets=["wiki/experiments/exp-2.md"],
+        intended_wiki_targets=["wiki/reports/exp-2.md"],
     )
 
     payload = compile_packet(manifest, packet_root="raw/users/alice/exp-2", risk_tier="tier3-performance")

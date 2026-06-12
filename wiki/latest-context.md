@@ -5,7 +5,7 @@
 ## Current Best
 
 - Supported local OOF claim: [LGB CB Reproduction Local OOF Diagnostic](performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md)는 여전히 좁은 `local_oof_diagnostic_only` claim이다. Q2 targetwise reblend `0.1`이 Wave41 local OOF를 `0.6198684545582471`에서 `0.6198365213240887`로 미세 개선한 것만 supported다.
-- External/public notes: DACON code share `13975` Public `0.5917`, v186 `0.5922831771`, v189 `0.5925397`, Section07 `0.5986218188`, app-context `0.6106185586` 등은 [DACON Leaderboard History](submissions/dacon-leaderboard-history.md)에 있지만 verified leaderboard claim이 아니다.
+- External/public notes: DACON code share `13975` Public `0.5917`, v186 `0.5922831771`, v189 `0.5925397`, Section07 `0.5986218188`, app-context `0.6106185586` 등은 [DACON Leaderboard History](performance/dacon-leaderboard-history.md)에 있지만 verified leaderboard claim이 아니다.
 - Reference route: [LGBM XGB Anchor Subject Hole Blend](models/lgbm-xgb-anchor-subject-hole-blend.md), [Subject Hole CV](preprocessing/subject-hole-cv.md), [Stability Filtered Feature Selection](features/stability-filtered-feature-selection.md), [DACON Public 0.5917 LGBM XGB Anchor Reference](performance/dacon-public-05917-lgbm-xgb-anchor-reference.md).
 
 ## Active Risks
@@ -19,7 +19,7 @@
 
 ## Next Actions
 
-- [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md)의 `dacon-public-05917-submission-lineage`, `v152-anchor-oof-reproduction`, `subject-hole-cv-vs-canonical-groupkfold`를 우선 추적한다.
+- [Sleep Lifelog Open Questions](targets/sleep-lifelog-open-issues.md)의 `dacon-public-05917-submission-lineage`, `v152-anchor-oof-reproduction`, `subject-hole-cv-vs-canonical-groupkfold`를 우선 추적한다.
 - `stability-filter-selected-list`와 exact feature hash를 확보하기 전에는 `23177 -> 1682`를 feature policy로 쓰지 않는다.
 - `window-pair-parquet-implementation`을 닫기 전에는 window-pair code를 reusable implementation으로 홍보하지 않는다.
 - `v186-leaderboard-provenance`, `app-context-raw-submission-lineage`, `dacon-submission-provenance-boundary`도 계속 promotion blocker다.

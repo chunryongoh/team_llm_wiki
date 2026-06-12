@@ -61,7 +61,7 @@ V152 anchor OOF, Subject-hole CV, stability filtering, window-pair features는 u
 
 ## Links
 
-- [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)
+- [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
 - [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)
 - [Current Supported Claims](../claims/current-supported-claims.md)
-- [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)
+- [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)

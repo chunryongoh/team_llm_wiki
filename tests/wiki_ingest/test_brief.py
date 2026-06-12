@@ -1,4 +1,4 @@
-from team_llm_wiki.wiki_ingest.brief import generate_daily_brief, generate_weekly_brief
+from team_llm_wiki.wiki_ingest.brief import GENERATED_BRIEF_MARKER, generate_daily_brief, generate_weekly_brief
 
 
 def test_generate_daily_brief_writes_dated_brief_and_latest_pointer(tmp_path):
@@ -25,9 +25,10 @@ def test_generate_daily_brief_writes_dated_brief_and_latest_pointer(tmp_path):
     latest = wiki / "briefs" / "latest.md"
     assert dated.exists()
     assert latest.exists()
-    assert latest.read_text(encoding="utf-8") == "[[2026-05-27-daily]]\n"
+    assert latest.read_text(encoding="utf-8") == f"[[2026-05-27-daily]]\n{GENERATED_BRIEF_MARKER}\n"
 
     text = dated.read_text(encoding="utf-8")
+    assert GENERATED_BRIEF_MARKER in text
     assert "date: 2026-05-27" in text
     assert "type: daily-brief" in text
     assert "# Daily Brief - 2026-05-27" in text
@@ -58,8 +59,8 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
         "- target: `wiki/experiments/benchmark-a.md`\n\n",
         encoding="utf-8",
     )
-    (wiki / "questions").mkdir()
-    (wiki / "questions" / "old-hypothesis.md").write_text(
+    (wiki / "targets").mkdir()
+    (wiki / "targets" / "old-hypothesis.md").write_text(
         "---\n"
         "claim_status: tentative\n"
         "date: 2026-05-01\n"
@@ -107,7 +108,9 @@ def test_generate_weekly_brief_writes_weekly_and_stale_claim_reports(tmp_path):
     assert "wiki/models/superseded.md" in weekly
     assert "Same claim text" in weekly
     assert "## Stale tentative claims" in weekly
-    assert "wiki/questions/old-hypothesis.md" in weekly
+    assert GENERATED_BRIEF_MARKER in weekly
+    assert "wiki/targets/old-hypothesis.md" in weekly
     assert "type: stale-claim-report" in stale
-    assert "wiki/questions/old-hypothesis.md" in stale
-    assert latest == "[[2026-05-27-weekly]]\n"
+    assert GENERATED_BRIEF_MARKER in stale
+    assert "wiki/targets/old-hypothesis.md" in stale
+    assert latest == f"[[2026-05-27-weekly]]\n{GENERATED_BRIEF_MARKER}\n"

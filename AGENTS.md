@@ -23,7 +23,7 @@ When answering or editing in this repo:
 3. Follow only the task-relevant hub, registry, and leaf pages.
 4. Drop to `raw/` only when the wiki is insufficient, provenance is disputed, or a claim status may change.
 
-`wiki/latest-context.md` is an entrypoint. Keep it bounded; move detail into hub, registry, leaf, question, decision, or report pages.
+`wiki/latest-context.md` is an entrypoint. Keep it bounded; move detail into hub, registry, leaf, target, decision, or report pages.
 
 ## Ingest Loop
 
@@ -46,7 +46,7 @@ When answering a question:
 1. Answer from `wiki/` first.
 2. Cite wiki pages and raw evidence when provenance matters.
 3. Separate supported, tentative, disputed, and superseded claims.
-4. If the answer creates durable value, crystallize it back into `wiki/reports/`, `wiki/questions/`, `wiki/decisions/`, or the relevant leaf entity page.
+4. If the answer creates durable value, crystallize it back into `wiki/reports/`, `wiki/targets/`, `wiki/claims/`, `wiki/decisions/`, or the relevant canonical leaf entity page.
 
 Do not leave important analysis only in chat.
 
@@ -79,7 +79,9 @@ One durable entity should have one stable page. Repeated concepts, target bottle
 
 - Do not promote performance, model, feature, or supported claims without raw evidence and metric validation.
 - Local OOF, notebook output, user-reported public score, DACON public leaderboard, DACON private leaderboard, and organizer-official validation are separate evidence surfaces.
-- Dataset and benchmark pages use stable entity filenames such as `wiki/datasets/<dataset-name>.md` and `wiki/benchmarks/<benchmark-name>.md`; packet ids belong in provenance.
+- Route policy source of truth: `automation/contracts/wiki-route-contract.v1.yaml`.
+- Automation must read the contract through `src/team_llm_wiki/wiki_ingest/route_contract.py`; packet skill must vendor the same contract under `references/wiki-route-contract.v1.yaml`.
+- Dataset, split, leakage, and fit-scope policy belongs under `wiki/preprocessing/`. Metric, evaluation, leaderboard, and submission history belongs under `wiki/performance/`.
 - SHAP or feature importance is interpretation evidence, not causal proof.
 
 ## Lint Loop

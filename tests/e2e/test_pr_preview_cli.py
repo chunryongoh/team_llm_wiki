@@ -5,10 +5,15 @@ from pathlib import Path
 
 import yaml
 
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
+
 
 def seed_repo(root: Path):
     (root / "AGENTS.md").write_text("rules", encoding="utf-8")
     (root / "CLAUDE.md").write_text("@AGENTS.md", encoding="utf-8")
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
     (root / "wiki").mkdir()
     (root / "wiki" / "index.md").write_text("# Index\n", encoding="utf-8")
     (root / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
@@ -33,7 +38,7 @@ def seed_repo(root: Path):
                 "claim_status": "tentative",
                 "summary": "Run summary.",
                 "raw_paths": ["result.json"],
-                "intended_wiki_targets": ["wiki/sources/pkt-1.md"],
+                "intended_wiki_targets": ["wiki/reports/pkt-1.md"],
                 "metrics_to_verify": [
                     {"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.8}
                 ],
@@ -75,17 +80,17 @@ def test_preview_wiki_ingest_outputs_json_without_mutating_wiki(tmp_path):
 
     assert result.returncode == 0
     payload = json.loads(result.stdout)
-    assert payload["status"] == "direct_commit"
+    assert payload["status"] == "bot_pr"
     assert payload["run_id"] == "preview"
     assert payload["packet_roots"] == ["raw/users/alice/pkt-1"]
     assert payload["packets"][0]["type"] == "reference"
     assert payload["claim_statuses"] == [{"packet": "pkt-1", "status": "tentative"}]
-    assert "wiki/sources/pkt-1.md" in payload["generated_paths"]
+    assert "wiki/reports/pkt-1.md" in payload["generated_paths"]
     assert "automation/.cache/compiled/pkt-1.json" in payload["generated_paths"]
-    assert "wiki/sources/pkt-1.md" in payload["changed_paths"]
+    assert "wiki/reports/pkt-1.md" in payload["changed_paths"]
     assert "automation/.cache/compiled/pkt-1.json" in payload["changed_paths"]
     assert (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8") == before_index
-    assert not (tmp_path / "wiki" / "sources" / "pkt-1.md").exists()
+    assert not (tmp_path / "wiki" / "reports" / "pkt-1.md").exists()
     assert not (tmp_path / "automation" / ".cache" / "compiled" / "pkt-1.json").exists()
     assert not (tmp_path / "raw" / "results" / "wiki-ingest" / "preview" / "report.json").exists()
 

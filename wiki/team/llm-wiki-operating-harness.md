@@ -18,6 +18,11 @@ title: LLM Wiki Operating Harness
 - `log.md`는 chronological audit trail이다.
 - `latest-context.md`는 새 세션 entrypoint다.
 - durable entity는 stable page 하나를 가져야 한다.
+- route policy source of truth는 `automation/contracts/wiki-route-contract.v1.yaml`다.
+
+Automation must read the contract through `src/team_llm_wiki/wiki_ingest/route_contract.py`; packet skill must vendor the same contract under `references/wiki-route-contract.v1.yaml`.
+
+Durable pages belong under canonical namespaces: `wiki/preprocessing`, `wiki/features`, `wiki/models`, `wiki/performance`, `wiki/claims`, `wiki/targets`, `wiki/decisions`, `wiki/reports`, and `wiki/team`. Deprecated namespaces such as `wiki/datasets`, `wiki/benchmarks`, `wiki/questions`, `wiki/submissions`, `wiki/experiments`, and `wiki/sources` are compatibility-only.
 
 ## Session start
 
@@ -76,4 +81,4 @@ title: LLM Wiki Operating Harness
 
 ## Briefing
 
-daily/weekly/current brief는 entrypoint와 action routing을 위해 존재한다. briefing은 report나 raw evidence를 대체하지 않는다. 중요한 변화는 해당 entity leaf, registry, decision, question page에도 반영되어야 한다.
+daily/weekly/current brief는 entrypoint와 action routing을 위해 존재한다. briefing은 report나 raw evidence를 대체하지 않는다. 중요한 변화는 해당 entity leaf, registry, decision, target/open-issue page에도 반영되어야 한다.

@@ -33,7 +33,7 @@ raw_evidence:
 
 ## Claim outcome
 
-No supported claim was added. [Current Supported Claims](../claims/current-supported-claims.md)는 기존 LGB/CB Q2 targetwise local OOF diagnostic만 supported로 유지한다. [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)는 `0.5917`을 `external_codeshare_public_lb_observation`으로 추가했다. Submission id, leaderboard export, submission CSV lineage, private score가 없으므로 verified row가 아니다.
+No supported claim was added. [Current Supported Claims](../claims/current-supported-claims.md)는 기존 LGB/CB Q2 targetwise local OOF diagnostic만 supported로 유지한다. [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)는 `0.5917`을 `external_codeshare_public_lb_observation`으로 추가했다. Submission id, leaderboard export, submission CSV lineage, private score가 없으므로 verified row가 아니다.
 
 ## Policy outcome
 

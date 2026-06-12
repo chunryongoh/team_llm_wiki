@@ -1,9 +1,21 @@
+import os
 from pathlib import Path
 
+import pytest
 import yaml
 
 from team_llm_wiki.wiki_ingest.manifest import load_packet_manifest
 from team_llm_wiki.wiki_ingest.packet_skill_compatibility import evaluate_packet_skill_compatibility
+
+
+ROUTE_CONTRACT = Path("automation/contracts/wiki-route-contract.v1.yaml")
+PACKET_SKILL_CONTRACT = Path("references/wiki-route-contract.v1.yaml")
+
+
+def seed_route_contract(root: Path) -> None:
+    target = root / ROUTE_CONTRACT
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(ROUTE_CONTRACT.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def write_packet(
@@ -15,6 +27,7 @@ def write_packet(
     packet_md: bool = True,
     wiki_plan: dict | None = None,
 ) -> Path:
+    seed_route_contract(root)
     packet_root.mkdir(parents=True)
     manifest = {
         "id": packet_root.name,
@@ -31,7 +44,7 @@ def write_packet(
         "claim_status": "tentative",
         "summary": "Packet skill compatibility fixture.",
         "raw_paths": ["result.json"],
-        "intended_wiki_targets": [f"wiki/experiments/{packet_root.name}.md"],
+        "intended_wiki_targets": [f"wiki/reports/{packet_root.name}.md"],
     }
     if metrics_to_verify is not None:
         manifest["metrics_to_verify"] = metrics_to_verify
@@ -42,6 +55,22 @@ def write_packet(
     if wiki_plan is not None:
         (packet_root / "wiki_plan.yaml").write_text(yaml.safe_dump(wiki_plan), encoding="utf-8")
     return packet_root
+
+
+def test_packet_skill_contract_parity_with_source_repo():
+    candidates = [
+        os.environ.get("TEAM_LLM_WIKI_PACKET_SKILL_REPO"),
+        "/home/chunoh/.config/superpowers/worktrees/team-llm-wiki-packet-skill/wiki-policy-structure-renovation",
+        "/home/chunoh/ETRI/team-llm-wiki-packet-skill",
+    ]
+    skill_repo = next((Path(path) for path in candidates if path and (Path(path) / PACKET_SKILL_CONTRACT).exists()), None)
+    if skill_repo is None:
+        pytest.skip("team-llm-wiki-packet-skill checkout is not available for local parity check")
+
+    source_contract = Path("automation/contracts/wiki-route-contract.v1.yaml").read_text(encoding="utf-8")
+    skill_contract = (skill_repo / PACKET_SKILL_CONTRACT).read_text(encoding="utf-8")
+
+    assert skill_contract == source_contract
 
 
 def test_packet_skill_compatibility_passes_skill_shaped_packet(tmp_path):
@@ -167,13 +196,13 @@ def test_packet_skill_compatibility_passes_entity_coverage_with_wiki_plan(tmp_pa
                     "page_role": "leaf",
                     "promotion_reason": ["target_specific_ablation_needed"],
                 },
-            ],
-            "affected_pages": [
-                {
-                    "path": "wiki/questions/section07-followup-backlog.md",
-                    "role": "hub",
-                    "expected_change": "update closeable follow-up question",
-                }
+                ],
+                "affected_pages": [
+                    {
+                        "path": "wiki/targets/section07-followup-backlog.md",
+                        "role": "hub",
+                        "expected_change": "update closeable follow-up question",
+                    }
             ],
             "claim_registry_updates": [
                 {"status": "tentative", "text": "Notebook-output observation only."}
@@ -219,3 +248,45 @@ def test_packet_skill_compatibility_warns_for_string_only_wiki_plan(tmp_path):
     entity_check = next(check for check in result["checks"] if check["id"] == "entity_coverage")
     assert entity_check["status"] == "warning"
     assert any("stable_entities should name" in warning or "page_role" in warning for warning in entity_check["warnings"])
+
+
+def test_packet_skill_compatibility_warns_on_deprecated_wiki_plan_path(tmp_path):
+    packet_root = write_packet(
+        tmp_path,
+        tmp_path / "raw" / "users" / "alice" / "performance" / "2026-06-12-old-route",
+        metrics_to_verify=[
+            {"raw_path": "result.json", "metric_key": "logloss", "reported_value": 0.42}
+        ],
+        wiki_plan={
+            "stable_entities": [
+                {
+                    "id": "performance:old-route",
+                    "kind": "performance",
+                    "action": "update",
+                    "page": "wiki/benchmarks/old-route.md",
+                    "page_role": "leaf",
+                    "promotion_reason": ["deprecated_route_check"],
+                }
+            ],
+            "affected_pages": [
+                {
+                    "path": "wiki/performance/current-results.md",
+                    "role": "hub",
+                    "expected_change": "keep canonical hub updated",
+                }
+            ],
+            "semantic_lint": ["Old route should be rejected."],
+        },
+    )
+    manifest = load_packet_manifest(packet_root)
+
+    result = evaluate_packet_skill_compatibility(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        packet_roots=[packet_root],
+        manifests_by_root={packet_root: manifest},
+    )
+
+    entity_check = next(check for check in result["checks"] if check["id"] == "entity_coverage")
+    assert entity_check["status"] == "warning"
+    assert any("deprecated" in warning.lower() for warning in entity_check["warnings"])

@@ -5,9 +5,11 @@ import json
 from pathlib import Path
 import re
 
+from .brief import GENERATED_BRIEF_MARKER
 from .links import lint_wiki_links
-from .models import FailureCode, HealthError, HealthReport, as_jsonable
+from .models import FailureCode, HealthError, HealthReport, IngestFailure, as_jsonable
 from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START
+from .route_contract import DEFAULT_CONTRACT_PATH, WikiRouteContract, load_route_contract
 
 REQUIRED_LATEST_LINKS = {"[[index]]", "[[overview]]", "[[log]]"}
 REQUIRED_LATEST_OPERATING_SECTIONS = {
@@ -22,7 +24,7 @@ REQUIRED_ENTITY_MODEL_PAGES = {
     "wiki/team/llm-wiki-operating-harness.md",
     "wiki/claims/current-supported-claims.md",
     "wiki/preprocessing/canonical-split-and-leakage-policy.md",
-    "wiki/submissions/dacon-leaderboard-history.md",
+    "wiki/performance/dacon-leaderboard-history.md",
 }
 ORPHAN_AND_CLAIM_CHECK_EXCLUDES = {
     "wiki/index.md",
@@ -92,14 +94,27 @@ def _latest_context_errors(repo_root: Path) -> list[HealthError]:
     return errors
 
 
-def _entity_model_page_errors(repo_root: Path) -> list[HealthError]:
+def _load_health_contract(repo_root: Path) -> tuple[WikiRouteContract | None, list[HealthError]]:
+    try:
+        return load_route_contract(repo_root), []
+    except IngestFailure as exc:
+        return None, [HealthError(exc.code.value, exc.message, DEFAULT_CONTRACT_PATH.as_posix())]
+
+
+def _required_entity_pages(contract: WikiRouteContract | None) -> set[str]:
+    if contract is None:
+        return set(REQUIRED_ENTITY_MODEL_PAGES)
+    return set(contract.required_pages)
+
+
+def _entity_model_page_errors(repo_root: Path, required_pages: set[str]) -> list[HealthError]:
     return [
         HealthError(
             "missing_entity_model_page",
             f"required ML/AI hackathon entity page is missing: {rel_path}",
             rel_path,
         )
-        for rel_path in sorted(REQUIRED_ENTITY_MODEL_PAGES)
+        for rel_path in sorted(required_pages)
         if not (repo_root / rel_path).exists()
     ]
 
@@ -135,11 +150,16 @@ def _parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
     return frontmatter, body
 
 
-def _is_orphan_claim_excluded(rel_path: str) -> bool:
+def _is_orphan_claim_excluded(
+    rel_path: str,
+    *,
+    required_pages: set[str],
+    contract: WikiRouteContract | None,
+) -> bool:
     return (
         rel_path in ORPHAN_AND_CLAIM_CHECK_EXCLUDES
-        or rel_path in REQUIRED_ENTITY_MODEL_PAGES
-        or rel_path.startswith("wiki/briefs/")
+        or rel_path in required_pages
+        or (contract is not None and contract.deprecated_namespace_for_path(rel_path) is not None)
         or rel_path.startswith("wiki/team/")
         or rel_path.startswith("wiki/") and rel_path.endswith("/README.md")
     )
@@ -202,7 +222,12 @@ def _performance_metric_errors(rel_path: str, frontmatter: dict[str, str], text:
     return []
 
 
-def _expanded_health_errors(repo_root: Path) -> list[HealthError]:
+def _expanded_health_errors(
+    repo_root: Path,
+    *,
+    contract: WikiRouteContract | None,
+    required_pages: set[str],
+) -> list[HealthError]:
     wiki_root = repo_root / "wiki"
     if not wiki_root.exists():
         return []
@@ -212,7 +237,7 @@ def _expanded_health_errors(repo_root: Path) -> list[HealthError]:
         rel_path = path.relative_to(repo_root).as_posix()
         text = path.read_text(encoding="utf-8")
         frontmatter, _body = _parse_frontmatter(text)
-        if not _is_orphan_claim_excluded(rel_path):
+        if not _is_orphan_claim_excluded(rel_path, required_pages=required_pages, contract=contract):
             is_indexed = _is_indexed(index_text, rel_path)
             if not is_indexed:
                 errors.append(HealthError("orphan_wiki_page", f"{rel_path} is missing from wiki/index.md", rel_path))
@@ -222,7 +247,12 @@ def _expanded_health_errors(repo_root: Path) -> list[HealthError]:
     return errors
 
 
-def _entity_graph_health(repo_root: Path) -> tuple[dict[str, object], list[HealthError]]:
+def _entity_graph_health(
+    repo_root: Path,
+    *,
+    contract: WikiRouteContract | None,
+    required_pages: set[str],
+) -> tuple[dict[str, object], list[HealthError]]:
     wiki_root = repo_root / "wiki"
     if not wiki_root.exists():
         return {"status": "skipped", "warnings": 0}, []
@@ -256,14 +286,15 @@ def _entity_graph_health(repo_root: Path) -> tuple[dict[str, object], list[Healt
         page_role = frontmatter.get("page_role") or frontmatter.get("role")
         if page_role == "leaf":
             leaf_pages += 1
-        if not _is_orphan_claim_excluded(rel_path):
+        if not _is_orphan_claim_excluded(rel_path, required_pages=required_pages, contract=contract):
             indexed_pages += 1
         if _is_hub_like(rel_path, frontmatter):
             checked_hubs += 1
             heading_count = len(re.findall(r"(?m)^#{2,6}\s+", text))
-            leaf_link_count = len(re.findall(r"\[\[(?:features|models|targets|preprocessing|submissions)/[^]\n]+]]", text))
+            leaf_routes = _leaf_route_pattern(contract)
+            leaf_link_count = len(re.findall(rf"\[\[(?:{leaf_routes})/[^]\n]+]]", text))
             md_leaf_link_count = len(
-                re.findall(r"\]\((?:features|models|targets|preprocessing|submissions)/[^)\n]+\.md\)", text)
+                re.findall(rf"\]\((?:{leaf_routes})/[^)\n]+\.md\)", text)
             )
             if (
                 len(text) > HUB_SOFT_CHAR_LIMIT or heading_count > HUB_SOFT_HEADING_LIMIT
@@ -292,21 +323,121 @@ def _is_hub_like(rel_path: str, frontmatter: dict[str, str]) -> bool:
     return any(hint in rel_path for hint in HUB_PAGE_HINTS)
 
 
-def check_wiki_health(repo_root: Path, report_path: Path | None = None) -> HealthReport:
+def _leaf_route_pattern(contract: WikiRouteContract | None) -> str:
+    if contract is None:
+        return "features|models|targets|preprocessing|performance"
+    leaf_routes = [
+        route.path.removeprefix("wiki/")
+        for name, route in contract.canonical_namespaces.items()
+        if name not in {"claims", "team"}
+    ]
+    return "|".join(re.escape(route) for route in sorted(leaf_routes))
+
+
+def _map_tombstone_error(error: HealthError) -> HealthError:
+    if error.code == "deprecated_tombstone_substantive_content":
+        return HealthError(
+            "deprecated_namespace_substantive_content",
+            error.message,
+            error.path,
+        )
+    return error
+
+
+def _deprecated_namespace_findings(
+    repo_root: Path,
+    contract: WikiRouteContract | None,
+    *,
+    deprecated_mode: str,
+) -> tuple[list[HealthError], list[HealthError]]:
+    if contract is None or not (repo_root / "wiki").exists():
+        return [], []
+    if deprecated_mode not in {"warn_existing", "strict"}:
+        return [
+            HealthError(
+                FailureCode.POLICY_CONFLICT.value,
+                f"unsupported deprecated namespace mode: {deprecated_mode}",
+                DEFAULT_CONTRACT_PATH.as_posix(),
+            )
+        ], []
+
+    errors: list[HealthError] = []
+    warnings: list[HealthError] = []
+    for path in sorted((repo_root / "wiki").rglob("*.md")):
+        rel_path = path.relative_to(repo_root).as_posix()
+        namespace = contract.deprecated_namespace_for_path(rel_path)
+        if namespace is None:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if namespace.allowed_mode == "generated_compatibility_only":
+            if GENERATED_BRIEF_MARKER not in text:
+                errors.append(
+                    HealthError(
+                        "invalid_generated_compatibility_page",
+                        f"{rel_path} is in generated compatibility namespace without {GENERATED_BRIEF_MARKER}",
+                        rel_path,
+                    )
+                )
+            continue
+        tombstone_errors = contract.validate_tombstone(rel_path, text)
+        if deprecated_mode == "strict":
+            errors.extend(_map_tombstone_error(error) for error in tombstone_errors)
+            continue
+        substantive_errors = [
+            _map_tombstone_error(error)
+            for error in tombstone_errors
+            if error.code == "deprecated_tombstone_substantive_content"
+        ]
+        if substantive_errors and rel_path in contract.migration_map:
+            warnings.append(
+                HealthError(
+                    "deprecated_namespace_pending_migration",
+                    f"{rel_path} contains substantive content but is covered by the route migration map",
+                    rel_path,
+                )
+            )
+        else:
+            errors.extend(substantive_errors)
+    return errors, warnings
+
+
+def check_wiki_health(
+    repo_root: Path,
+    report_path: Path | None = None,
+    *,
+    deprecated_mode: str = "warn_existing",
+) -> HealthReport:
     checked = [path.relative_to(repo_root).as_posix() for path in (repo_root / "wiki").rglob("*.md")] if (repo_root / "wiki").exists() else []
-    link_checked = [path for path in checked if not path.startswith("wiki/briefs/")]
-    entity_graph_health, warnings = _entity_graph_health(repo_root)
+    contract, contract_errors = _load_health_contract(repo_root)
+    required_pages = _required_entity_pages(contract)
+    link_checked = [
+        path
+        for path in checked
+        if not (contract is not None and contract.is_generated_compatibility_path(path))
+    ]
+    entity_graph_health, warnings = _entity_graph_health(
+        repo_root,
+        contract=contract,
+        required_pages=required_pages,
+    )
+    deprecated_errors, deprecated_warnings = _deprecated_namespace_findings(
+        repo_root,
+        contract,
+        deprecated_mode=deprecated_mode,
+    )
     errors = [
+        *contract_errors,
         *lint_wiki_links(repo_root, paths=link_checked),
         *_generated_block_errors(repo_root),
         *_latest_context_errors(repo_root),
-        *_entity_model_page_errors(repo_root),
-        *_expanded_health_errors(repo_root),
+        *_entity_model_page_errors(repo_root, required_pages),
+        *deprecated_errors,
+        *_expanded_health_errors(repo_root, contract=contract, required_pages=required_pages),
     ]
     report = HealthReport(
         ok=not errors,
         errors=errors,
-        warnings=warnings,
+        warnings=[*warnings, *deprecated_warnings],
         checked_paths=sorted(checked),
         entity_graph_health=entity_graph_health,
     )

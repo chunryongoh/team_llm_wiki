@@ -36,5 +36,5 @@ Do not adopt app-context features as a global improvement claim until the packet
 ## Related pages
 
 - [Q3 Stress Bottleneck](../targets/q3-stress-bottleneck.md)
-- [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md)
+- [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
 - [Sleep Lifelog Feature Landscape](sleep-lifelog-feature-landscape.md)

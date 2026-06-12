@@ -1,13 +1,22 @@
 import json
 from pathlib import Path
+import shutil
 
 import pytest
 import yaml
 
 from team_llm_wiki.wiki_ingest import llm_synthesis
-from team_llm_wiki.wiki_ingest.llm_synthesis import OpenAIResponsesClient
+from team_llm_wiki.wiki_ingest.llm_synthesis import (
+    OpenAIResponsesClient,
+    _integration_paths,
+    _validate_generated_pages_against_contract,
+)
 from team_llm_wiki.wiki_ingest.models import FailureCode, IngestFailure
 from team_llm_wiki.wiki_ingest.llm_synthesis import run_llm_wiki_synthesis
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 class FakeClient:
@@ -21,12 +30,16 @@ class FakeClient:
 
 
 def seed_repo(root: Path):
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(REPO_ROOT / DEFAULT_CONTRACT_PATH, contract_target)
+
     (root / "AGENTS.md").write_text(
         "# Rules\n\n- Treat raw/ as append-only.\n- Dataset pages must be synthesized entity pages.\n",
         encoding="utf-8",
     )
     (root / "CLAUDE.md").write_text("@AGENTS.md\nRead latest context first.\n", encoding="utf-8")
-    (root / "wiki" / "datasets").mkdir(parents=True)
+    (root / "wiki" / "preprocessing").mkdir(parents=True)
     (root / "wiki" / "team").mkdir(parents=True)
     (root / "wiki" / "team" / "ml-ai-hackathon-entity-model.md").write_text(
         "# ML/AI Hackathon Entity Model\n", encoding="utf-8"
@@ -42,7 +55,7 @@ def seed_repo(root: Path):
     )
     (root / "wiki" / "index.md").write_text(
         "# Index\n\n<!-- wiki-ingest:index:start -->\n"
-        "- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n"
+        "- [Sleep Lifelog 2024](preprocessing/sleep-lifelog-2024.md) - `dataset`\n"
         "<!-- wiki-ingest:index:end -->\n",
         encoding="utf-8",
     )
@@ -54,11 +67,11 @@ def seed_repo(root: Path):
     (root / "wiki" / "latest-context.md").write_text(
         "# Latest Context\n\n[[index]] [[overview]] [[log]]\n\n"
         "<!-- wiki-ingest:latest:start -->\n"
-        "### seed | dataset\n\n- link: [[datasets/sleep-lifelog-2024]]\n"
+        "### seed | dataset\n\n- link: [[preprocessing/sleep-lifelog-2024]]\n"
         "<!-- wiki-ingest:latest:end -->\n",
         encoding="utf-8",
     )
-    (root / "wiki" / "datasets" / "sleep-lifelog-2024.md").write_text(
+    (root / "wiki" / "preprocessing" / "sleep-lifelog-2024.md").write_text(
         "# Old Dataset Page\n\nOld deterministic summary.\n",
         encoding="utf-8",
     )
@@ -82,7 +95,7 @@ def seed_dataset_packet(root: Path) -> Path:
         "claim_status": "tentative",
         "summary": "Dataset summary.",
         "raw_paths": {"dataset": "dataset.yaml"},
-        "intended_wiki_targets": ["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+        "intended_wiki_targets": ["wiki/preprocessing/sleep-lifelog-2024.md"],
     }
     (packet_root / "manifest.yaml").write_text(yaml.safe_dump(manifest), encoding="utf-8")
     (packet_root / "dataset.yaml").write_text(
@@ -114,7 +127,7 @@ def seed_benchmark_packet(root: Path) -> Path:
         "claim_status": "tentative",
         "summary": "Benchmark summary.",
         "raw_paths": {"benchmark": "benchmark.yaml"},
-        "intended_wiki_targets": ["wiki/benchmarks/2026-05-29-sleep-health-hackathon-v0.md"],
+        "intended_wiki_targets": ["wiki/performance/sleep-health-hackathon-v0.md"],
     }
     (packet_root / "manifest.yaml").write_text(yaml.safe_dump(manifest), encoding="utf-8")
     (packet_root / "benchmark.yaml").write_text(
@@ -134,11 +147,11 @@ def seed_benchmark_packet(root: Path) -> Path:
 def integration_pages() -> list[dict[str, str]]:
     return [
         {
-            "path": "wiki/datasets/sleep-lifelog-2024.md",
+            "path": "wiki/preprocessing/sleep-lifelog-2024.md",
             "content": "# Sleep Lifelog 2024\n\nDataset entity synthesis.\n",
         },
         {
-            "path": "wiki/benchmarks/sleep-health-hackathon-v0.md",
+            "path": "wiki/performance/sleep-health-hackathon-v0.md",
             "content": "# Sleep Health Hackathon v0\n\nBenchmark entity synthesis.\n",
         },
         {
@@ -150,7 +163,7 @@ def integration_pages() -> list[dict[str, str]]:
             "content": "# Sleep Lifelog Evaluation Protocol\n\nTrack A is the local comparison default.\n",
         },
         {
-            "path": "wiki/questions/sleep-lifelog-open-questions.md",
+            "path": "wiki/targets/sleep-lifelog-open-issues.md",
             "content": "# Sleep Lifelog Open Questions\n\n- How should Track B be handled?\n",
         },
         {
@@ -158,7 +171,7 @@ def integration_pages() -> list[dict[str, str]]:
             "content": "# Current Supported Claims\n\n- No leaderboard claim promoted.\n",
         },
         {
-            "path": "wiki/submissions/dacon-leaderboard-history.md",
+            "path": "wiki/performance/dacon-leaderboard-history.md",
             "content": "# DACON Leaderboard History\n\n- No verified submission in this packet.\n",
         },
         {
@@ -179,7 +192,7 @@ def integration_pages() -> list[dict[str, str]]:
         },
         {
             "path": "wiki/index.md",
-            "content": "# Index\n\n<!-- wiki-ingest:index:start -->\n- [Sleep Health Hackathon v0](benchmarks/sleep-health-hackathon-v0.md) - `benchmark`\n- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n- [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md) - `feature-synthesis`\n- [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`\n- [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md) - `questions`\n- [Sleep Lifelog Benchmark Synthesis](reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md) - `report`\n<!-- wiki-ingest:index:end -->\n",
+            "content": "# Index\n\n<!-- wiki-ingest:index:start -->\n- [Sleep Health Hackathon v0](performance/sleep-health-hackathon-v0.md) - `benchmark`\n- [Sleep Lifelog 2024](preprocessing/sleep-lifelog-2024.md) - `dataset`\n- [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md) - `feature-synthesis`\n- [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`\n- [Sleep Lifelog Open Questions](targets/sleep-lifelog-open-issues.md) - `questions`\n- [Sleep Lifelog Benchmark Synthesis](reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md) - `report`\n<!-- wiki-ingest:index:end -->\n",
         },
         {
             "path": "wiki/log.md",
@@ -191,7 +204,7 @@ def integration_pages() -> list[dict[str, str]]:
 def single_dataset_integration_pages() -> list[dict[str, str]]:
     pages = [
         {
-            "path": "wiki/datasets/sleep-lifelog-2024.md",
+            "path": "wiki/preprocessing/sleep-lifelog-2024.md",
             "content": "# Sleep Lifelog 2024\n\nLLM synthesized page.\n\n- claim_status: `tentative`\n",
         },
         {
@@ -203,7 +216,7 @@ def single_dataset_integration_pages() -> list[dict[str, str]]:
             "content": "# Sleep Lifelog Evaluation Protocol\n\nEvaluation protocol notes.\n",
         },
         {
-            "path": "wiki/questions/sleep-lifelog-open-questions.md",
+            "path": "wiki/targets/sleep-lifelog-open-issues.md",
             "content": "# Sleep Lifelog Open Questions\n\n- Which modalities need schema expansion?\n",
         },
         {
@@ -215,7 +228,7 @@ def single_dataset_integration_pages() -> list[dict[str, str]]:
             "content": "# Current Supported Claims\n\n- No supported claim changed.\n",
         },
         {
-            "path": "wiki/submissions/dacon-leaderboard-history.md",
+            "path": "wiki/performance/dacon-leaderboard-history.md",
             "content": "# DACON Leaderboard History\n\n- No verified submission in this packet.\n",
         },
         {
@@ -232,7 +245,7 @@ def single_dataset_integration_pages() -> list[dict[str, str]]:
         },
         {
             "path": "wiki/index.md",
-            "content": "# Index\n\n<!-- wiki-ingest:index:start -->\n- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n- [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md) - `feature-synthesis`\n- [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`\n- [Sleep Lifelog Open Questions](questions/sleep-lifelog-open-questions.md) - `questions`\n- [Sleep Lifelog Packet Synthesis](reports/2026-05-29-sleep-lifelog-packet-synthesis.md) - `report`\n<!-- wiki-ingest:index:end -->\n",
+            "content": "# Index\n\n<!-- wiki-ingest:index:start -->\n- [Sleep Lifelog 2024](preprocessing/sleep-lifelog-2024.md) - `dataset`\n- [Sleep Lifelog Feature Landscape](features/sleep-lifelog-feature-landscape.md) - `feature-synthesis`\n- [Sleep Lifelog Evaluation Protocol](decisions/sleep-lifelog-evaluation-protocol.md) - `decision`\n- [Sleep Lifelog Open Questions](targets/sleep-lifelog-open-issues.md) - `questions`\n- [Sleep Lifelog Packet Synthesis](reports/2026-05-29-sleep-lifelog-packet-synthesis.md) - `report`\n<!-- wiki-ingest:index:end -->\n",
         },
         {
             "path": "wiki/log.md",
@@ -240,6 +253,129 @@ def single_dataset_integration_pages() -> list[dict[str, str]]:
         },
     ]
     return pages
+
+
+def test_llm_synthesis_integration_paths_are_canonical():
+    paths = _integration_paths([])
+
+    assert "wiki/claims/current-supported-claims.md" in paths
+    assert "wiki/performance/dacon-leaderboard-history.md" in paths
+    assert "wiki/preprocessing/canonical-split-and-leakage-policy.md" in paths
+    assert all(not path.startswith("wiki/questions/") for path in paths)
+    assert all(not path.startswith("wiki/submissions/") for path in paths)
+    assert all(not path.startswith("wiki/datasets/") for path in paths)
+    assert all(not path.startswith("wiki/benchmarks/") for path in paths)
+
+
+def test_llm_synthesis_rejects_deprecated_output_path(tmp_path):
+    contract_target = tmp_path / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True)
+    shutil.copyfile(REPO_ROOT / DEFAULT_CONTRACT_PATH, contract_target)
+    page = {"path": "wiki/questions/sleep-lifelog-open-questions.md", "content": "# Old Questions\n"}
+
+    errors = _validate_generated_pages_against_contract(tmp_path, [page])
+
+    assert any(error["code"] == "deprecated_synthesis_path" for error in errors)
+
+
+def test_llm_synthesis_hard_fails_deprecated_output_path_without_mutating_wiki(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    canonical = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
+    before = canonical.read_text(encoding="utf-8")
+    report_path = tmp_path / "raw" / "results" / "llm-synthesis" / "deprecated-path" / "report.json"
+    pages = [
+        {"path": "wiki/questions/sleep-lifelog-open-questions.md", "content": "# Old Questions\n"}
+        if page["path"] == "wiki/targets/sleep-lifelog-open-issues.md"
+        else page
+        for page in single_dataset_integration_pages()
+    ]
+    client = FakeClient({"summary": "bad deprecated path", "review_notes": [], "pages": pages})
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=report_path,
+        run_id="deprecated-path",
+        client=client,
+    )
+
+    assert report.status == "hard_fail"
+    assert any(failure["code"] == "deprecated_synthesis_path" for failure in report.failures)
+    assert report_path.exists()
+    assert canonical.read_text(encoding="utf-8") == before
+
+
+def test_llm_synthesis_rejects_policy_wiki_plan_output_without_mutating_policy(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    policy = tmp_path / "wiki" / "team" / "llm-synthesis-policy.md"
+    policy.write_text("# LLM Synthesis Policy\n\nOriginal policy.\n", encoding="utf-8")
+    (packet_root / "wiki_plan.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "stable_entities": [
+                    {
+                        "id": "policy:llm-synthesis",
+                        "kind": "policy",
+                        "page": "wiki/team/llm-synthesis-policy.md",
+                        "page_role": "policy",
+                    }
+                ],
+                "affected_pages": ["wiki/team/llm-synthesis-policy.md"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = FakeClient(
+        {
+            "summary": "bad policy write",
+            "review_notes": [],
+            "pages": [
+                *single_dataset_integration_pages(),
+                {"path": "wiki/team/llm-synthesis-policy.md", "content": "# LLM Synthesis Policy\n\nMutated.\n"},
+            ],
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="policy-write",
+        client=client,
+    )
+
+    assert report.status == "hard_fail"
+    assert any(failure["code"] == "policy_synthesis_path" for failure in report.failures)
+    assert policy.read_text(encoding="utf-8") == "# LLM Synthesis Policy\n\nOriginal policy.\n"
+
+
+def test_llm_synthesis_rejects_duplicate_page_output_without_mutating_wiki(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    canonical = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
+    before = canonical.read_text(encoding="utf-8")
+    client = FakeClient(
+        {
+            "summary": "duplicate",
+            "review_notes": [],
+            "pages": [
+                *single_dataset_integration_pages(),
+                {"path": "wiki/preprocessing/sleep-lifelog-2024.md", "content": "# Duplicate\n\nSecond write.\n"},
+            ],
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="duplicate",
+        client=client,
+    )
+
+    assert report.status == "hard_fail"
+    assert any("duplicate_paths" in failure for failure in report.failures)
+    assert canonical.read_text(encoding="utf-8") == before
 
 
 def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(tmp_path):
@@ -274,7 +410,7 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert "FILE: wiki/latest-context.md" in prompt
     assert "FILE: raw/users/alice/datasets/2026-05-29-sleep-lifelog-2024/packet.md" in prompt
     assert "This packet explains leakage risks." in prompt
-    assert "FILE: wiki/datasets/sleep-lifelog-2024.md" in prompt
+    assert "FILE: wiki/preprocessing/sleep-lifelog-2024.md" in prompt
     assert "Old deterministic summary" in prompt
     assert "metadata summaries in Korean" in prompt
     assert "FILE: wiki/team/llm-wiki-operating-harness.md" in prompt
@@ -287,15 +423,15 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert report.risk_tier == "tier4-governance"
     assert "wiki/features/sleep-lifelog-feature-landscape.md" in report.generated_paths
     assert "wiki/decisions/sleep-lifelog-evaluation-protocol.md" in report.generated_paths
-    assert "wiki/questions/sleep-lifelog-open-questions.md" in report.generated_paths
+    assert "wiki/targets/sleep-lifelog-open-issues.md" in report.generated_paths
     assert "wiki/claims/current-supported-claims.md" in report.generated_paths
-    assert "wiki/submissions/dacon-leaderboard-history.md" in report.generated_paths
+    assert "wiki/performance/dacon-leaderboard-history.md" in report.generated_paths
     assert "wiki/preprocessing/canonical-split-and-leakage-policy.md" in report.generated_paths
     assert report.generated_paths[-1] == "raw/results/llm-synthesis/llm-run/report.json"
-    assert "LLM synthesized page" in (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").read_text(
+    assert "LLM synthesized page" in (tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md").read_text(
         encoding="utf-8"
     )
-    generated_text = (tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md").read_text(encoding="utf-8")
+    generated_text = (tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md").read_text(encoding="utf-8")
     assert "raw_evidence:" in generated_text
     assert "raw/users/alice/datasets/2026-05-29-sleep-lifelog-2024/manifest.yaml" in generated_text
     assert "raw/users/alice/datasets/2026-05-29-sleep-lifelog-2024/dataset.yaml" in generated_text
@@ -414,12 +550,12 @@ def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path
             "created_pages": [
                 "wiki/features/sleep-lifelog-feature-landscape.md",
                 "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
-                "wiki/questions/sleep-lifelog-open-questions.md",
+                "wiki/targets/sleep-lifelog-open-issues.md",
                 "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
             ],
             "updated_pages": [
-                "wiki/datasets/sleep-lifelog-2024.md",
-                "wiki/benchmarks/sleep-health-hackathon-v0.md",
+                "wiki/preprocessing/sleep-lifelog-2024.md",
+                "wiki/performance/sleep-health-hackathon-v0.md",
                 "wiki/overview.md",
                 "wiki/latest-context.md",
                 "wiki/index.md",
@@ -457,17 +593,17 @@ def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path
     assert "Karpathy-style LLM wiki integration pass" in prompt
     assert "wiki/features/sleep-lifelog-feature-landscape.md" in prompt
     assert "wiki/decisions/sleep-lifelog-evaluation-protocol.md" in prompt
-    assert "wiki/questions/sleep-lifelog-open-questions.md" in prompt
+    assert "wiki/targets/sleep-lifelog-open-issues.md" in prompt
     assert "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md" in prompt
     assert report.status == "bot_pr"
     assert report.generated_paths == [
-        "wiki/datasets/sleep-lifelog-2024.md",
-        "wiki/benchmarks/sleep-health-hackathon-v0.md",
+        "wiki/preprocessing/sleep-lifelog-2024.md",
+        "wiki/performance/sleep-health-hackathon-v0.md",
         "wiki/features/sleep-lifelog-feature-landscape.md",
         "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
-        "wiki/questions/sleep-lifelog-open-questions.md",
+        "wiki/targets/sleep-lifelog-open-issues.md",
         "wiki/claims/current-supported-claims.md",
-        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/performance/dacon-leaderboard-history.md",
         "wiki/preprocessing/canonical-split-and-leakage-policy.md",
         "wiki/reports/2026-05-29-sleep-lifelog-benchmark-synthesis.md",
         "wiki/overview.md",
@@ -478,7 +614,7 @@ def test_llm_synthesis_integrates_packets_across_compounding_wiki_pages(tmp_path
     ]
     assert (tmp_path / "wiki" / "features" / "sleep-lifelog-feature-landscape.md").exists()
     assert (tmp_path / "wiki" / "decisions" / "sleep-lifelog-evaluation-protocol.md").exists()
-    assert (tmp_path / "wiki" / "questions" / "sleep-lifelog-open-questions.md").exists()
+    assert (tmp_path / "wiki" / "targets" / "sleep-lifelog-open-issues.md").exists()
     payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "graph-run" / "report.json").read_text())
     assert payload["integration_plan"][1] == "Create feature, decision, question, and synthesis report pages."
     assert payload["open_questions"] == [
@@ -517,7 +653,7 @@ def test_llm_synthesis_prompt_bounds_page_output_size(tmp_path):
     prompt = llm_synthesis.build_llm_synthesis_prompt(
         tmp_path,
         [(llm_synthesis.load_packet_manifest(packet_root), packet_root)],
-        ["wiki/datasets/sleep-lifelog-2024.md", "wiki/latest-context.md"],
+        ["wiki/preprocessing/sleep-lifelog-2024.md", "wiki/latest-context.md"],
     )
 
     assert "Concise page budgets" in prompt
@@ -586,7 +722,7 @@ def test_llm_synthesis_rejects_model_attempt_to_write_raw_paths(tmp_path):
 def test_llm_synthesis_hard_fail_does_not_mutate_wiki_on_broken_generated_link(tmp_path):
     seed_repo(tmp_path)
     packet_root = seed_dataset_packet(tmp_path)
-    target = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    target = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
     before = target.read_text(encoding="utf-8")
     client = FakeClient(
         {
@@ -594,7 +730,7 @@ def test_llm_synthesis_hard_fail_does_not_mutate_wiki_on_broken_generated_link(t
             "review_notes": [],
             "pages": [
                 {"path": page["path"], "content": "# Sleep Lifelog 2024\n\nThis page points at [[missing-page]].\n"}
-                if page["path"] == "wiki/datasets/sleep-lifelog-2024.md"
+                if page["path"] == "wiki/preprocessing/sleep-lifelog-2024.md"
                 else page
                 for page in single_dataset_integration_pages()
             ],
@@ -658,13 +794,13 @@ def test_llm_synthesis_staging_preserves_existing_docs_links(tmp_path):
 def test_llm_synthesis_merges_index_with_existing_entries_and_generated_pages(tmp_path):
     seed_repo(tmp_path)
     packet_root = seed_dataset_packet(tmp_path)
-    existing_experiment = tmp_path / "wiki" / "experiments" / "existing-section07.md"
+    existing_experiment = tmp_path / "wiki" / "reports" / "existing-section07.md"
     existing_experiment.parent.mkdir(parents=True)
     existing_experiment.write_text("# Existing Section07\n\nAlready indexed.\n", encoding="utf-8")
     index = tmp_path / "wiki" / "index.md"
     index.write_text(
         "# Index\n\n<!-- wiki-ingest:index:start -->\n"
-        "- [Existing Section07](experiments/existing-section07.md) - `experiment`\n"
+        "- [Existing Section07](reports/existing-section07.md) - `experiment`\n"
         "<!-- wiki-ingest:index:end -->\n",
         encoding="utf-8",
     )
@@ -672,7 +808,7 @@ def test_llm_synthesis_merges_index_with_existing_entries_and_generated_pages(tm
         {
             "path": page["path"],
             "content": "# Index\n\n<!-- wiki-ingest:index:start -->\n"
-            "- [Sleep Lifelog 2024](datasets/sleep-lifelog-2024.md) - `dataset`\n",
+            "- [Sleep Lifelog 2024](preprocessing/sleep-lifelog-2024.md) - `dataset`\n",
         }
         if page["path"] == "wiki/index.md"
         else page
@@ -703,8 +839,8 @@ def test_llm_synthesis_merges_index_with_existing_entries_and_generated_pages(tm
     assert report.status == "bot_pr"
     assert merged_index.count("<!-- wiki-ingest:index:start -->") == 1
     assert merged_index.count("<!-- wiki-ingest:index:end -->") == 1
-    assert "experiments/existing-section07.md" in merged_index
-    assert "datasets/sleep-lifelog-2024.md" in merged_index
+    assert "reports/existing-section07.md" in merged_index
+    assert "preprocessing/sleep-lifelog-2024.md" in merged_index
     assert "reports/2026-05-29-sleep-lifelog-packet-synthesis.md" in merged_index
 
 

@@ -37,7 +37,7 @@ raw_evidence:
 - [LGB CB Reproduction Local OOF Diagnostic](../performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md): metric, split, targetwise blend, leakage audit, claim boundary를 통합했다.
 - [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md): transductive statistics, imputer scope, subject encoding, date/rolling alignment, `timing_entropy` risk를 feature topic memory로 만들었다.
 - [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md): local OOF, leaderboard, official validation claim을 분리하는 decision page를 만들었다.
-- [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md): follow-up backlog를 actionable object로 정리했다.
+- [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md): follow-up backlog를 actionable object로 정리했다.
 - [Overview](../overview.md), [Latest Context](../latest-context.md), [Index](../index.md), [Log](../log.md): entrypoint와 navigation을 갱신했다.
 
 ## Claim register
@@ -54,12 +54,12 @@ raw_evidence:
 
 - 넓은 claim인 LGB/CB overall superiority는 현재 packet으로 superseded 된다. 지원되는 claim은 Q2 source-diversity 보강이다.
 - 모든 target 개선 claim은 지원되지 않는다. 최종 reblend는 6개 target에서 Wave41 `1.0`을 유지했다.
-- local OOF diagnostic은 leaderboard claim이 아니다. 관련 boundary는 [DACON Leaderboard and Local OOF Claim Boundary](../sources/2026-06-01-dacon-leaderboard-claim-boundary.md)를 참조한다.
+- local OOF diagnostic은 leaderboard claim이 아니다. 관련 boundary는 [DACON Leaderboard and Local OOF Claim Boundary](../performance/2026-06-01-dacon-leaderboard-claim-boundary.md)를 참조한다.
 - leakage audit가 완전 통과했다는 표현은 부정확하다. `completed_with_known_risks`가 정확한 상태다.
 
 ## Open questions created
 
-Open questions는 [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)에 canonical backlog로 기록했다. 가장 중요한 항목은 `sleep-lifelog-oq-001` fold-safe ablation과 `sleep-lifelog-oq-004` date/rolling alignment audit이다.
+Open questions는 [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)에 canonical backlog로 기록했다. 가장 중요한 항목은 `sleep-lifelog-oq-001` fold-safe ablation과 `sleep-lifelog-oq-004` date/rolling alignment audit이다.
 
 ## Reviewer checklist
 

@@ -7,11 +7,12 @@ import re
 
 LOG_HEADING_RE = re.compile(r"^## \[(?P<date>\d{4}-\d{2}-\d{2})\] .*$")
 CLAIM_LINE_RE = re.compile(r"(?im)^\s*[-*]\s*(?P<status>supported|tentative|disputed|superseded)\s*:\s*(?P<text>.+?)\s*$")
+GENERATED_BRIEF_MARKER = "<!-- wiki-brief:generated -->"
 
 
 def _write_latest_pointer(repo_root: Path, target_stem: str) -> str:
     latest_rel = "wiki/briefs/latest.md"
-    (repo_root / latest_rel).write_text(f"[[{target_stem}]]\n", encoding="utf-8")
+    (repo_root / latest_rel).write_text(f"[[{target_stem}]]\n{GENERATED_BRIEF_MARKER}\n", encoding="utf-8")
     return latest_rel
 
 
@@ -126,6 +127,8 @@ def _brief_text(day: str, entries: list[str]) -> str:
         "type: daily-brief",
         "---",
         "",
+        GENERATED_BRIEF_MARKER,
+        "",
         f"# Daily Brief - {day}",
         "",
         "## New packets ingested",
@@ -195,6 +198,8 @@ def _stale_report_text(day: str, stale_claims: list[str]) -> str:
         "type: stale-claim-report",
         "---",
         "",
+        GENERATED_BRIEF_MARKER,
+        "",
         f"# Stale Claim Report - {day}",
         "",
         "## Stale tentative claims",
@@ -211,6 +216,8 @@ def _weekly_brief_text(week_id: str, day: str, entries: list[str], contradiction
         f"week: {week_id}",
         "type: weekly-brief",
         "---",
+        "",
+        GENERATED_BRIEF_MARKER,
         "",
         f"# Weekly Brief - {week_id}",
         "",

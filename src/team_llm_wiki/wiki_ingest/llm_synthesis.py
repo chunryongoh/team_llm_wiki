@@ -16,6 +16,7 @@ from .manifest import discover_packet_roots, load_packet_manifest, validate_chan
 from .models import FailureCode, IngestFailure, IngestReport, PacketManifest, PacketType, RiskTierLabel, as_jsonable
 from .policy import load_policy
 from .render import INDEX_END, INDEX_START, LATEST_END, LATEST_START, render_target_path
+from .route_contract import load_route_contract
 from .wiki_plan import proposed_synthesis_paths
 
 DEFAULT_MODEL = "gpt-5.5"
@@ -122,7 +123,37 @@ def run_llm_wiki_synthesis(
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
     synthesis_client = client or OpenAIResponsesClient(max_output_tokens=max_output_tokens)
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
-    pages = _validated_pages(llm_payload, allowed_paths=set(target_paths), required_paths=set(target_paths))
+    pages = _coerce_page_outputs(llm_payload)
+    validation_failures = _page_validation_failures(
+        repo_root,
+        pages,
+        allowed_paths=set(target_paths),
+        required_paths=set(target_paths),
+    )
+    final_report_path = report_path or repo_root / "raw" / "results" / "llm-synthesis" / run_id / "report.json"
+    if validation_failures:
+        report = IngestReport(
+            status="hard_fail",
+            run_id=run_id,
+            input_changed_paths=input_changed_paths,
+            packet_roots=[_rel(repo_root, root) for root in packet_roots],
+            packets=[
+                {"id": manifest.id, "type": manifest.type.value, "packet_root": _rel(repo_root, root)}
+                for manifest, root in manifests
+            ],
+            failures=validation_failures,
+            risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value,
+            timing_ms=int((time.monotonic() - start) * 1000),
+            llm_synthesis=True,
+            model=model,
+            review_notes=[str(note) for note in llm_payload.get("review_notes") or []],
+            synthesis_summary=str(llm_payload.get("summary", "")),
+        )
+        _write_report(repo_root, report, final_report_path)
+        if report.report_path:
+            report.generated_paths.append(report.report_path)
+            report.changed_paths.append(report.report_path)
+        return report
     changed: list[str] = []
     staging = _staged_wiki(repo_root)
     try:
@@ -180,8 +211,7 @@ def run_llm_wiki_synthesis(
             str(item) for item in llm_payload.get("superseded_or_conflicting_claims") or []
         ],
     )
-    report_path = report_path or repo_root / "raw" / "results" / "llm-synthesis" / run_id / "report.json"
-    _write_report(repo_root, report, report_path)
+    _write_report(repo_root, report, final_report_path)
     if report.report_path and report.report_path not in report.generated_paths:
         report.generated_paths.append(report.report_path)
         report.changed_paths.append(report.report_path)
@@ -217,16 +247,23 @@ def build_llm_synthesis_prompt(
         "Requirements:\n"
         "- Read and obey AGENTS.md and CLAUDE.md.\n"
         "- Use stable entity pages plus compounding topic pages, not dated packet mirrors.\n"
+        "- Use only canonical wiki namespaces for durable pages: preprocessing, features, models, performance, "
+        "claims, targets, decisions, reports, team.\n"
+        "- Do not create wiki/datasets, wiki/benchmarks, wiki/submissions, wiki/questions, wiki/experiments, "
+        "or wiki/sources pages.\n"
+        "- Put open questions into wiki/targets/* or wiki/reports/* with close conditions.\n"
+        "- Put leaderboard and metric history into wiki/performance/*.\n"
+        "- Put dataset, split, leakage, and fit-scope policy into wiki/preprocessing/*.\n"
         "- Follow the operating harness: session context is ephemeral, durable insight must be crystallized into "
         "wiki pages, `index.md` is the content catalog, and `log.md` is the chronological audit trail.\n"
         "- Respect page roles. Entrypoints route, hubs/registries summarize and link, leaf pages own reusable "
         "entity memory, packet review pages preserve source-specific context, and reports archive time-bounded waves.\n"
         "- If `wiki_plan.yaml` proposes justified leaf pages, update those leaf pages instead of absorbing all detail "
         "into a hub. If a proposed leaf is unjustified, explain why in review_notes.\n"
-        "- Update the claim registry, DACON leaderboard history, submission history, and preprocessing/split policy pages when relevant; "
+        "- Update the claim registry, DACON leaderboard history, metric history, and preprocessing/split policy pages when relevant; "
         "even when no claim changes, explicitly preserve that boundary.\n"
         "- Write every allowed output page exactly once; missing pages are invalid output.\n"
-        "- Cross-link related dataset, benchmark, feature, decision, question, and report pages.\n"
+        "- Cross-link related preprocessing, performance, feature, decision, target, and report pages.\n"
         "- Capture contradictions, supersession notes, and unresolved questions as first-class wiki content.\n"
         "- `wiki/latest-context.md` latest-context must expose Current Best, Active Risks, and Next Actions.\n"
         "- Never merge local OOF, notebook-output, user-reported public score, DACON public leaderboard, "
@@ -274,17 +311,16 @@ def _resolve_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Pat
 
 
 def _target_paths(repo_root: Path, manifests: list[tuple[PacketManifest, Path]]) -> list[str]:
-    entity_paths = [render_target_path(manifest, packet_root) for manifest, packet_root in manifests]
-    proposed_paths = proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests])
+    entity_paths = [render_target_path(manifest, packet_root, repo_root=repo_root) for manifest, packet_root in manifests]
+    proposed_paths = [
+        path
+        for path in proposed_synthesis_paths([packet_root for _manifest, packet_root in manifests], repo_root=repo_root)
+        if not path.startswith("wiki/team/")
+    ]
     return list(dict.fromkeys([*entity_paths, *_integration_paths(manifests), *proposed_paths]))
 
 
-def _validated_pages(
-    payload: dict[str, Any],
-    *,
-    allowed_paths: set[str],
-    required_paths: set[str] | None = None,
-) -> list[dict[str, str]]:
+def _coerce_page_outputs(payload: dict[str, Any]) -> list[dict[str, str]]:
     pages = payload.get("pages")
     if not isinstance(pages, list) or not pages:
         raise IngestFailure(FailureCode.INVALID_LLM_OUTPUT, "LLM output must include at least one page")
@@ -300,19 +336,93 @@ def _validated_pages(
         rel = path.as_posix()
         if path.is_absolute() or ".." in path.parts or not rel.startswith("wiki/"):
             raise IngestFailure(FailureCode.INVALID_TARGET_ROUTE, f"LLM may only write wiki pages: {raw_path}")
-        if rel not in allowed_paths:
-            raise IngestFailure(FailureCode.INVALID_TARGET_ROUTE, f"LLM wrote an unapproved wiki path: {raw_path}")
         clean.append({"path": rel, "content": content})
+    return clean
+
+
+def _validated_pages(
+    payload: dict[str, Any],
+    *,
+    allowed_paths: set[str],
+    required_paths: set[str] | None = None,
+) -> list[dict[str, str]]:
+    clean = _coerce_page_outputs(payload)
+    failures = _page_validation_failures(
+        Path("."),
+        clean,
+        allowed_paths=allowed_paths,
+        required_paths=required_paths,
+        skip_contract=True,
+    )
+    if failures:
+        first = failures[0]
+        raise IngestFailure(FailureCode.INVALID_LLM_OUTPUT, str(first.get("message", "invalid LLM page output")), first)
+    return clean
+
+
+def _page_validation_failures(
+    repo_root: Path,
+    pages: list[dict[str, object]],
+    *,
+    allowed_paths: set[str],
+    required_paths: set[str] | None = None,
+    skip_contract: bool = False,
+) -> list[dict[str, object]]:
+    failures: list[dict[str, object]] = []
+    if not skip_contract:
+        failures.extend(_validate_generated_pages_against_contract(repo_root, pages))
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    for page in pages:
+        rel = str(page.get("path", ""))
+        if rel in seen and rel not in duplicates:
+            duplicates.append(rel)
+        seen.add(rel)
+        if rel not in allowed_paths and not any(error.get("path") == rel for error in failures):
+            failures.append(
+                {
+                    "code": "unapproved_synthesis_path",
+                    "path": rel,
+                    "message": "LLM wrote a wiki path outside the allowed synthesis plan",
+                }
+            )
+    if duplicates:
+        failures.append(
+            {
+                "code": FailureCode.INVALID_LLM_OUTPUT.value,
+                "message": "LLM output wrote the same wiki page more than once",
+                "duplicate_paths": sorted(duplicates),
+            }
+        )
     required_paths = required_paths or set()
-    present = {page["path"] for page in clean}
+    present = {str(page["path"]) for page in pages}
     missing = sorted(required_paths - present)
     if missing:
-        raise IngestFailure(
-            FailureCode.INVALID_LLM_OUTPUT,
-            "LLM output omitted required wiki integration pages",
-            {"missing_paths": missing},
+        failures.append(
+            {
+                "code": FailureCode.INVALID_LLM_OUTPUT.value,
+                "message": "LLM output omitted required wiki integration pages",
+                "missing_paths": missing,
+            }
         )
-    return clean
+    return failures
+
+
+def _validate_generated_pages_against_contract(repo_root: Path, pages: list[dict[str, object]]) -> list[dict[str, object]]:
+    contract = load_route_contract(repo_root)
+    errors: list[dict[str, object]] = []
+    entrypoints = {"wiki/index.md", "wiki/log.md", "wiki/latest-context.md", "wiki/overview.md"}
+    for page in pages:
+        path = str(page.get("path", ""))
+        if path in entrypoints:
+            continue
+        if path.startswith("wiki/team/"):
+            errors.append({"code": "policy_synthesis_path", "path": path, "message": "LLM synthesis may not write team policy pages"})
+            continue
+        if not contract.is_allowed_synthesis_path(path):
+            code = "deprecated_synthesis_path" if contract.deprecated_namespace_for_path(path) else "invalid_synthesis_path"
+            errors.append({"code": code, "path": path, "message": "LLM synthesis output path is not canonical"})
+    return errors
 
 
 def _packet_file_blocks(repo_root: Path, packet_root: Path) -> list[str]:
@@ -356,7 +466,7 @@ def _raw_evidence_by_target(
                 seen.append(rel)
             if rel not in all_evidence:
                 all_evidence.append(rel)
-        evidence[render_target_path(manifest, packet_root)] = seen
+        evidence[render_target_path(manifest, packet_root, repo_root=repo_root)] = seen
     for target_path in target_paths:
         evidence.setdefault(target_path, all_evidence)
     return evidence
@@ -370,9 +480,9 @@ def _integration_paths(manifests: list[tuple[PacketManifest, Path]]) -> list[str
     return [
         f"wiki/features/{topic}-feature-landscape.md",
         f"wiki/decisions/{topic}-evaluation-protocol.md",
-        f"wiki/questions/{topic}-open-questions.md",
+        f"wiki/targets/{topic}-open-issues.md",
         "wiki/claims/current-supported-claims.md",
-        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/performance/dacon-leaderboard-history.md",
         "wiki/preprocessing/canonical-split-and-leakage-policy.md",
         f"wiki/reports/{report_slug}.md",
         "wiki/overview.md",
@@ -401,7 +511,7 @@ def _slugify(value: str) -> str:
 
 
 def _has_governance_targets(paths: list[str]) -> bool:
-    prefixes = ("wiki/decisions/", "wiki/questions/", "wiki/reports/", "wiki/index.md", "wiki/log.md", "wiki/overview.md")
+    prefixes = ("wiki/decisions/", "wiki/targets/", "wiki/reports/", "wiki/index.md", "wiki/log.md", "wiki/overview.md")
     return any(path.startswith(prefixes) for path in paths)
 
 

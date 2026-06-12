@@ -55,5 +55,5 @@ Subject-hole CV는 DACON code share `13975`가 사용한 split idea다. 각 `sub
 ## Links
 
 - [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md)
-- [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)
+- [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)
 - [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)

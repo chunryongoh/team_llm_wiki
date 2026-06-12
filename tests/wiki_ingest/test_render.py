@@ -1,35 +1,46 @@
 from pathlib import Path
 
+import pytest
+
 from team_llm_wiki.wiki_ingest.models import PacketManifest, PacketType, RiskTier, RiskTierLabel
 from team_llm_wiki.wiki_ingest.policy import IngestPolicy
-from team_llm_wiki.wiki_ingest.render import render_packets
+from team_llm_wiki.wiki_ingest.render import render_packets, render_target_path
 from team_llm_wiki.wiki_ingest.health import check_wiki_health
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
+from team_llm_wiki.wiki_ingest.routes import packet_route
+
+
+@pytest.fixture(autouse=True)
+def seed_route_contract(tmp_path):
+    contract_target = tmp_path / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def manifest(**overrides):
     packet_id = overrides.get("id", "pkt-1")
     packet_type = overrides.get("type", PacketType.REFERENCE)
     route = {
-        "meeting": "wiki/sources",
+        "meeting": "wiki/reports",
         "feature": "wiki/features",
         "model": "wiki/models",
         "performance": "wiki/performance",
-        "preprocessing": "wiki/datasets",
-        "augmentation": "wiki/datasets",
-        "experiment": "wiki/experiments",
-        "reference": "wiki/sources",
-        "dataset": "wiki/datasets",
-        "benchmark": "wiki/benchmarks",
-        PacketType.MEETING: "wiki/sources",
+        "preprocessing": "wiki/preprocessing",
+        "augmentation": "wiki/preprocessing",
+        "experiment": "wiki/reports",
+        "reference": "wiki/reports",
+        "dataset": "wiki/preprocessing",
+        "benchmark": "wiki/performance",
+        PacketType.MEETING: "wiki/reports",
         PacketType.FEATURE: "wiki/features",
         PacketType.MODEL: "wiki/models",
         PacketType.PERFORMANCE: "wiki/performance",
-        PacketType.PREPROCESSING: "wiki/datasets",
-        PacketType.AUGMENTATION: "wiki/datasets",
-        PacketType.EXPERIMENT: "wiki/experiments",
-        PacketType.REFERENCE: "wiki/sources",
-        PacketType.DATASET: "wiki/datasets",
-        PacketType.BENCHMARK: "wiki/benchmarks",
+        PacketType.PREPROCESSING: "wiki/preprocessing",
+        PacketType.AUGMENTATION: "wiki/preprocessing",
+        PacketType.EXPERIMENT: "wiki/reports",
+        PacketType.REFERENCE: "wiki/reports",
+        PacketType.DATASET: "wiki/preprocessing",
+        PacketType.BENCHMARK: "wiki/performance",
     }[packet_type]
     data = {
         "id": packet_id,
@@ -60,7 +71,7 @@ def seed_entity_model_pages(root: Path):
         "wiki/team/packet-quality-standard.md",
         "wiki/claims/current-supported-claims.md",
         "wiki/preprocessing/canonical-split-and-leakage-policy.md",
-        "wiki/submissions/dacon-leaderboard-history.md",
+        "wiki/performance/dacon-leaderboard-history.md",
     ]
     for rel_path in required:
         path = root / rel_path
@@ -91,10 +102,10 @@ def test_render_source_index_log_and_latest_context(tmp_path):
 
     result = render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-1")
 
-    target = tmp_path / "wiki" / "sources" / "ref-1.md"
+    target = tmp_path / "wiki" / "reports" / "ref-1.md"
     assert target.exists()
     assert "Reference One" in target.read_text(encoding="utf-8")
-    assert "sources/ref-1.md" in (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+    assert "reports/ref-1.md" in (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
     assert "## [2026-05-26] ingest | ref-1" in (tmp_path / "wiki" / "log.md").read_text(encoding="utf-8")
     latest_text = latest.read_text(encoding="utf-8")
     assert "old generated entry" in latest_text
@@ -102,7 +113,7 @@ def test_render_source_index_log_and_latest_context(tmp_path):
     assert "[[overview]]" in latest_text
     assert "[[log]]" in latest_text
     assert result.changed_paths == [
-        "wiki/sources/ref-1.md",
+        "wiki/reports/ref-1.md",
         "wiki/index.md",
         "wiki/log.md",
         "wiki/latest-context.md",
@@ -119,7 +130,7 @@ def test_render_packet_page_separates_publish_action_from_risk_tier(tmp_path):
         run_id="run-risk",
     )
 
-    text = (tmp_path / "wiki" / "sources" / "risk-ref.md").read_text(encoding="utf-8")
+    text = (tmp_path / "wiki" / "reports" / "risk-ref.md").read_text(encoding="utf-8")
     latest = (tmp_path / "wiki" / "latest-context.md").read_text(encoding="utf-8")
     assert "publish_action: bot_pr" in text
     assert "risk_tier: tier4-governance" in text
@@ -141,12 +152,13 @@ def test_render_canonical_routes_and_review_notes(tmp_path):
 
     render_packets(tmp_path, [(packet, RiskTier.BOT_PR) for packet in packets], run_id="run-2")
 
-    assert (tmp_path / "wiki" / "sources" / "meet.md").exists()
+    assert (tmp_path / "wiki" / "reports" / "meet.md").exists()
     assert (tmp_path / "wiki" / "features" / "feat.md").exists()
     assert (tmp_path / "wiki" / "models" / "model.md").exists()
     assert (tmp_path / "wiki" / "performance" / "perf.md").exists()
-    assert (tmp_path / "wiki" / "datasets" / "prep.md").exists()
-    assert (tmp_path / "wiki" / "datasets" / "aug.md").exists()
+    assert (tmp_path / "wiki" / "preprocessing" / "prep.md").exists()
+    assert (tmp_path / "wiki" / "preprocessing" / "aug.md").exists()
+    assert (tmp_path / "wiki" / "reports" / "exp.md").exists()
     assert "review-required" in (tmp_path / "wiki" / "features" / "feat.md").read_text(encoding="utf-8")
 
 
@@ -169,7 +181,7 @@ def test_render_spec_metric_uses_raw_evidence_fields(tmp_path):
 
     render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-metric")
 
-    text = (tmp_path / "wiki" / "sources" / "metric-ref.md").read_text(encoding="utf-8")
+    text = (tmp_path / "wiki" / "reports" / "metric-ref.md").read_text(encoding="utf-8")
     assert "None" not in text
     assert "- `scores.accuracy`: reported `0.82`, raw_path `metrics/result.json`, tolerance `0.001`" in text
     assert "raw-evidence-backed" in text
@@ -181,7 +193,7 @@ def test_render_packet_page_includes_full_manifest_lineage(tmp_path):
 
     render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-lineage")
 
-    text = (tmp_path / "wiki" / "sources" / "lineage-ref.md").read_text(encoding="utf-8")
+    text = (tmp_path / "wiki" / "reports" / "lineage-ref.md").read_text(encoding="utf-8")
     assert "owner: alice" in text
     assert "task: classification" in text
     assert "dataset:" in text
@@ -211,7 +223,7 @@ def test_render_packet_page_links_to_compiled_packet_json(tmp_path):
 
     render_packets(tmp_path, [(packet, RiskTier.DIRECT_COMMIT)], run_id="run-compiled")
 
-    text = (tmp_path / "wiki" / "sources" / "compiled-ref.md").read_text(encoding="utf-8")
+    text = (tmp_path / "wiki" / "reports" / "compiled-ref.md").read_text(encoding="utf-8")
     assert "[automation/.cache/compiled/compiled-ref.json](../../automation/.cache/compiled/compiled-ref.json)" in text
     assert check_wiki_health(tmp_path).ok is True
 
@@ -233,7 +245,7 @@ def test_render_preserves_existing_generated_index_entries(tmp_path):
 
     index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
     assert "- [Existing](wiki/sources/existing.md) - `reference`" in index
-    assert "- [New Ref](sources/new-ref.md) - `reference`" in index
+    assert "- [New Ref](reports/new-ref.md) - `reference`" in index
 
 
 def test_render_escapes_manifest_title_in_generated_index(tmp_path):
@@ -354,7 +366,7 @@ def test_render_dataset_packet_uses_canonical_entity_page_and_promotes_packet_ma
         title="Sleep Lifelog 2024 Dataset Definition",
         dataset={"name": "sleep-lifelog-2024", "version": "v0"},
         raw_paths={"dataset": "dataset.yaml"},
-        intended_wiki_targets=["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+        intended_wiki_targets=["wiki/preprocessing/2026-05-29-sleep-lifelog-2024.md"],
     )
 
     result = render_packets(
@@ -364,9 +376,9 @@ def test_render_dataset_packet_uses_canonical_entity_page_and_promotes_packet_ma
         packet_roots={packet.id: packet_root},
     )
 
-    target = tmp_path / "wiki" / "datasets" / "sleep-lifelog-2024.md"
+    target = tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md"
     assert target.exists()
-    assert not (tmp_path / "wiki" / "datasets" / "2026-05-29-sleep-lifelog-2024.md").exists()
+    assert not (tmp_path / "wiki" / "preprocessing" / "2026-05-29-sleep-lifelog-2024.md").exists()
     text = target.read_text(encoding="utf-8")
     assert "## Dataset Entity" in text
     assert "`smartphone:mActivity`" in text
@@ -374,9 +386,9 @@ def test_render_dataset_packet_uses_canonical_entity_page_and_promotes_packet_ma
     assert "## Released Package Contents" in text
     assert "Q-family labels are participant-relative averages." in text
     index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
-    assert "(datasets/sleep-lifelog-2024.md)" in index
-    assert "(wiki/datasets/sleep-lifelog-2024.md)" not in index
-    assert "wiki/datasets/sleep-lifelog-2024.md" in result.changed_paths
+    assert "(preprocessing/sleep-lifelog-2024.md)" in index
+    assert "(wiki/preprocessing/sleep-lifelog-2024.md)" not in index
+    assert "wiki/preprocessing/sleep-lifelog-2024.md" in result.changed_paths
 
 
 def test_render_benchmark_packet_uses_canonical_page_structured_sections_and_rewrites_packet_links(tmp_path):
@@ -419,7 +431,7 @@ def test_render_benchmark_packet_uses_canonical_page_structured_sections_and_rew
     (benchmark_root / "packet.md").write_text(
         "# Sleep Health Hackathon Benchmark v0 Definition\n\n"
         "## Dataset Anchor\n\n"
-        "This benchmark evaluates [[datasets/2026-05-29-sleep-lifelog-2024]].\n",
+        "This benchmark evaluates [[preprocessing/2026-05-29-sleep-lifelog-2024]].\n",
         encoding="utf-8",
     )
     dataset_packet = manifest(
@@ -428,14 +440,14 @@ def test_render_benchmark_packet_uses_canonical_page_structured_sections_and_rew
         title="Sleep Lifelog 2024 Dataset Definition",
         dataset={"name": "sleep-lifelog-2024", "version": "v0"},
         raw_paths={"dataset": "dataset.yaml"},
-        intended_wiki_targets=["wiki/datasets/2026-05-29-sleep-lifelog-2024.md"],
+        intended_wiki_targets=["wiki/preprocessing/2026-05-29-sleep-lifelog-2024.md"],
     )
     benchmark_packet = manifest(
         id="2026-05-29-sleep-health-hackathon-v0",
         type=PacketType.BENCHMARK,
         title="Sleep Health Hackathon Benchmark v0 Definition",
         raw_paths={"benchmark": "benchmark.yaml"},
-        intended_wiki_targets=["wiki/benchmarks/2026-05-29-sleep-health-hackathon-v0.md"],
+        intended_wiki_targets=["wiki/performance/2026-05-29-sleep-health-hackathon-v0.md"],
     )
 
     render_packets(
@@ -448,9 +460,21 @@ def test_render_benchmark_packet_uses_canonical_page_structured_sections_and_rew
         packet_roots={dataset_packet.id: dataset_root, benchmark_packet.id: benchmark_root},
     )
 
-    text = (tmp_path / "wiki" / "benchmarks" / "sleep-health-hackathon-v0.md").read_text(encoding="utf-8")
+    text = (tmp_path / "wiki" / "performance" / "sleep-health-hackathon-v0.md").read_text(encoding="utf-8")
     assert "## Benchmark Entity" in text
     assert "`grouped_macro_logloss`" in text
     assert "| Q1 | subjective-binary | perceived sleep quality |" in text
-    assert "[[datasets/sleep-lifelog-2024]]" in text
-    assert "[[datasets/2026-05-29-sleep-lifelog-2024]]" not in text
+    assert "[[preprocessing/sleep-lifelog-2024]]" in text
+    assert "[[preprocessing/2026-05-29-sleep-lifelog-2024]]" not in text
+
+
+def test_render_target_path_uses_contract_canonical_routes(tmp_path):
+    packet = manifest(
+        id="2026-05-29-sleep-lifelog-2024",
+        type=PacketType.DATASET,
+        dataset={"name": "2026-05-29-sleep-lifelog-2024", "version": "v0"},
+        intended_wiki_targets=["wiki/preprocessing/2026-05-29-sleep-lifelog-2024.md"],
+    )
+
+    assert packet_route(PacketType.DATASET) == "wiki/preprocessing"
+    assert render_target_path(packet, repo_root=Path(".")) == "wiki/preprocessing/2026-05-29-sleep-lifelog-2024.md"

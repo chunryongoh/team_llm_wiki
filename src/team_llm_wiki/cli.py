@@ -14,6 +14,7 @@ from .wiki_ingest.llm_synthesis import (
     run_llm_wiki_synthesis,
 )
 from .wiki_ingest.manifest import read_changed_paths_file
+from .wiki_ingest.migration import plan_route_migration, run_route_migration
 from .wiki_ingest.models import IngestFailure, as_jsonable
 from .wiki_ingest.runner import plan_wiki_main_ingest, run_wiki_main_ingest
 
@@ -51,6 +52,17 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--changed-path-file")
     run.add_argument("--report-path")
     run.add_argument("--run-id", default="run")
+
+    migration_plan = sub.add_parser("plan-wiki-route-migration")
+    migration_plan.add_argument("--repo-root", required=True)
+    migration_plan.add_argument("--run-id", default="route-migration-plan")
+    migration_plan.add_argument("--report-path")
+
+    migration_run = sub.add_parser("run-wiki-route-migration")
+    migration_run.add_argument("--repo-root", required=True)
+    migration_run.add_argument("--run-id", default="route-migration-run")
+    migration_run.add_argument("--report-path")
+    migration_run.add_argument("--migration-mode", action="store_true")
 
     llm = sub.add_parser("run-llm-wiki-synthesis")
     llm.add_argument("--repo-root", required=True)
@@ -97,6 +109,23 @@ def main(argv: list[str] | None = None) -> int:
             )
             _print_json(report, sys.stdout)
             return 1 if report.status == "hard_fail" else 0
+        if args.command == "plan-wiki-route-migration":
+            report = plan_route_migration(
+                Path(args.repo_root),
+                run_id=args.run_id,
+                report_path=Path(args.report_path) if args.report_path else None,
+            )
+            _print_json(report, sys.stdout)
+            return 1 if report.get("status") == "failed" else 0
+        if args.command == "run-wiki-route-migration":
+            report = run_route_migration(
+                Path(args.repo_root),
+                run_id=args.run_id,
+                report_path=Path(args.report_path) if args.report_path else None,
+                migration_mode=args.migration_mode,
+            )
+            _print_json(report, sys.stdout)
+            return 0 if report.get("status") == "migrated" else 1
         if args.command == "run-llm-wiki-synthesis":
             report = run_llm_wiki_synthesis(
                 Path(args.repo_root),

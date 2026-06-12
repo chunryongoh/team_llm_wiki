@@ -75,7 +75,7 @@ def evaluate_packet_skill_compatibility(
         )
         checks.append(_metric_claim_check(manifest, rel_root))
         checks.append(_strong_claim_evidence_check(manifest, rel_root))
-        checks.append(_entity_coverage_check(packet_root, manifest, rel_root))
+        checks.append(_entity_coverage_check(repo_root, packet_root, manifest, rel_root))
 
     return {"status": _aggregate_status(checks), "checks": checks}
 
@@ -101,7 +101,7 @@ def _strong_claim_evidence_check(manifest: PacketManifest, rel_root: str) -> dic
     return _check("strong_claim_evidence", "pass", "claim evidence level is compatible with packet skill policy", rel_root)
 
 
-def _entity_coverage_check(packet_root: Path, manifest: PacketManifest, rel_root: str) -> dict[str, Any]:
+def _entity_coverage_check(repo_root: Path, packet_root: Path, manifest: PacketManifest, rel_root: str) -> dict[str, Any]:
     if manifest.type not in ENTITY_BEARING_PACKET_TYPES:
         return _check("entity_coverage", "pass", "stable entity coverage is not required for this packet type", rel_root)
     wiki_plan = packet_root / "wiki_plan.yaml"
@@ -127,7 +127,7 @@ def _entity_coverage_check(packet_root: Path, manifest: PacketManifest, rel_root
             rel_root,
             missing_fields=missing,
         )
-    plan = load_wiki_plan(packet_root)
+    plan = load_wiki_plan(packet_root, repo_root=repo_root)
     warnings = list(plan.warnings)
     stable_entities = payload.get("stable_entities") or []
     affected_pages = payload.get("affected_pages") or []

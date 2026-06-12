@@ -55,4 +55,4 @@ Stability filtering은 overfit-prone feature pool을 줄이는 후보 방법이�
 
 - [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md)
 - [Subject Hole CV](../preprocessing/subject-hole-cv.md)
-- [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)
+- [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)

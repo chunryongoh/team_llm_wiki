@@ -1,0 +1,234 @@
+{
+  "already_migrated": [],
+  "broken_links": [],
+  "contract_path": "automation/contracts/wiki-route-contract.v1.yaml",
+  "contract_version": 1,
+  "deferred_with_reason": [],
+  "errors": [],
+  "generated_compatibility": [],
+  "inventory": [
+    "wiki/benchmarks/sleep-health-hackathon-v0.md",
+    "wiki/datasets/sleep-lifelog-2024.md",
+    "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+    "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+    "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+    "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+    "wiki/questions/section07-followup-backlog.md",
+    "wiki/questions/sleep-lifelog-open-questions.md",
+    "wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md",
+    "wiki/submissions/dacon-leaderboard-history.md"
+  ],
+  "link_rewrites": [
+    {
+      "path": "wiki/claims/current-supported-claims.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/features/app-context-windows.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/features/sleep-lifelog-feature-landscape.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/features/stability-filtered-feature-selection.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/index.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/latest-context.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/models/lightgbm-catboost.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/models/section07-mix-lgbm-catboost.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/models/v186-targetwise-lgbm-catboost.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/overview.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/2026-05-29-v186-shap-leaderboard-analysis.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/2026-06-01-app-context-feature-engineering-20260601.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/dacon-public-05917-lgbm-xgb-anchor-reference.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/performance/sleep-health-hackathon-evaluation-policy.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/preprocessing/subject-hole-cv.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-05-28-sleep-lifelog-packet-synthesis.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-05-29-v200-v209-sparse-splice-review.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-06-01-sleep-lifelog-packet-synthesis.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-06-02-team-packet-entity-coverage-audit.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-06-11-sleep-lifelog-packet-synthesis.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/reports/2026-06-12-sleep-lifelog-packet-synthesis.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/targets/q3-stress-bottleneck.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/targets/s4-waso-disturbance.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/targets/section07-followup-backlog.md",
+      "status": "rewritten"
+    },
+    {
+      "path": "wiki/targets/sleep-lifelog-open-issues.md",
+      "status": "rewritten"
+    }
+  ],
+  "merged": [],
+  "moved": [
+    {
+      "source": "wiki/benchmarks/sleep-health-hackathon-v0.md",
+      "target": "wiki/performance/sleep-health-hackathon-evaluation-policy.md"
+    },
+    {
+      "source": "wiki/datasets/sleep-lifelog-2024.md",
+      "target": "wiki/preprocessing/sleep-lifelog-2024.md"
+    },
+    {
+      "source": "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+      "target": "wiki/reports/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md"
+    },
+    {
+      "source": "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+      "target": "wiki/reports/2026-05-29-v200-v209-sparse-splice-review.md"
+    },
+    {
+      "source": "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+      "target": "wiki/reports/2026-06-01-lifelog-section07-notebook-overview.md"
+    },
+    {
+      "source": "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+      "target": "wiki/reports/2026-06-01-lifelog-section07-working-notes.md"
+    },
+    {
+      "source": "wiki/questions/section07-followup-backlog.md",
+      "target": "wiki/targets/section07-followup-backlog.md"
+    },
+    {
+      "source": "wiki/questions/sleep-lifelog-open-questions.md",
+      "target": "wiki/targets/sleep-lifelog-open-issues.md"
+    },
+    {
+      "source": "wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md",
+      "target": "wiki/performance/2026-06-01-dacon-leaderboard-claim-boundary.md"
+    },
+    {
+      "source": "wiki/submissions/dacon-leaderboard-history.md",
+      "target": "wiki/performance/dacon-leaderboard-history.md"
+    }
+  ],
+  "planned_moves": [
+    {
+      "source": "wiki/benchmarks/sleep-health-hackathon-v0.md",
+      "target": "wiki/performance/sleep-health-hackathon-evaluation-policy.md"
+    },
+    {
+      "source": "wiki/datasets/sleep-lifelog-2024.md",
+      "target": "wiki/preprocessing/sleep-lifelog-2024.md"
+    },
+    {
+      "source": "wiki/experiments/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md",
+      "target": "wiki/reports/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md"
+    },
+    {
+      "source": "wiki/experiments/2026-05-29-v200-v209-sparse-splice-review.md",
+      "target": "wiki/reports/2026-05-29-v200-v209-sparse-splice-review.md"
+    },
+    {
+      "source": "wiki/experiments/2026-06-01-lifelog-section07-notebook-overview.md",
+      "target": "wiki/reports/2026-06-01-lifelog-section07-notebook-overview.md"
+    },
+    {
+      "source": "wiki/experiments/2026-06-01-lifelog-section07-working-notes.md",
+      "target": "wiki/reports/2026-06-01-lifelog-section07-working-notes.md"
+    },
+    {
+      "source": "wiki/questions/section07-followup-backlog.md",
+      "target": "wiki/targets/section07-followup-backlog.md"
+    },
+    {
+      "source": "wiki/questions/sleep-lifelog-open-questions.md",
+      "target": "wiki/targets/sleep-lifelog-open-issues.md"
+    },
+    {
+      "source": "wiki/sources/2026-06-01-dacon-leaderboard-claim-boundary.md",
+      "target": "wiki/performance/2026-06-01-dacon-leaderboard-claim-boundary.md"
+    },
+    {
+      "source": "wiki/submissions/dacon-leaderboard-history.md",
+      "target": "wiki/performance/dacon-leaderboard-history.md"
+    }
+  ],
+  "run_id": "20260612-run",
+  "status": "migrated"
+}

@@ -21,7 +21,7 @@ raw_evidence:
 
 # v186 shap leaderboard analysis
 
-문형도 packet `2026-05-29-v186-shap-leaderboard-analysis`는 v186 target-specific LGBM/CatBoost blend의 public LB report와 SHAP interpretation을 제공한다. 이 page는 [DACON Leaderboard History](../submissions/dacon-leaderboard-history.md), [Current Supported Claims](../claims/current-supported-claims.md), [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)에 연결된다.
+문형도 packet `2026-05-29-v186-shap-leaderboard-analysis`는 v186 target-specific LGBM/CatBoost blend의 public LB report와 SHAP interpretation을 제공한다. 이 page는 [DACON Leaderboard History](dacon-leaderboard-history.md), [Current Supported Claims](../claims/current-supported-claims.md), [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)에 연결된다.
 
 ## Evidence boundary
 

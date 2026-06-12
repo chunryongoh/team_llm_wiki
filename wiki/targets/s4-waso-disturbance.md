@@ -37,4 +37,4 @@ S4 feature를 채택하려면 same-split S4 target metric, removed/added feature
 ## Related pages
 
 - [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)
-- [Sleep Lifelog Open Questions](../questions/sleep-lifelog-open-questions.md)
+- [Sleep Lifelog Open Questions](sleep-lifelog-open-issues.md)

@@ -25,8 +25,8 @@ raw_evidence:
 - packet_id: `2026-06-11-dacon-public-05917-lgbm-xgb-anchor-subject-hole-blend`
 - run: `27325835544-1`
 - source: DACON code share `13975`, attached notebook `dacon-public-05917-lgbm-xgb-anchor-subject-hole.ipynb`
-- dataset: [Sleep Lifelog 2024](../datasets/sleep-lifelog-2024.md)
-- related benchmark: [Sleep Health Hackathon Benchmark v0](../benchmarks/sleep-health-hackathon-v0.md)
+- dataset: [Sleep Lifelog 2024](../preprocessing/sleep-lifelog-2024.md)
+- related benchmark: [Sleep Health Hackathon Benchmark v0](sleep-health-hackathon-evaluation-policy.md)
 - model route: [LGBM XGB Anchor Subject Hole Blend](../models/lgbm-xgb-anchor-subject-hole-blend.md)
 - split route: [Subject Hole CV](../preprocessing/subject-hole-cv.md)
 - feature route: [Stability Filtered Feature Selection](../features/stability-filtered-feature-selection.md)

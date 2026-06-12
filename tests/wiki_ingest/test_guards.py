@@ -8,9 +8,13 @@ from team_llm_wiki.wiki_ingest.guards import run_guard_checks
 from team_llm_wiki.wiki_ingest.manifest import load_packet_manifest
 from team_llm_wiki.wiki_ingest.models import FailureCode, IngestFailure
 from team_llm_wiki.wiki_ingest.policy import IngestPolicy
+from team_llm_wiki.wiki_ingest.route_contract import DEFAULT_CONTRACT_PATH
 
 
 def make_packet(tmp_path: Path, **manifest_overrides):
+    contract_target = tmp_path / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
     packet = tmp_path / "raw" / "users" / "alice" / "pkt-1"
     packet.mkdir(parents=True)
     (packet / "result.json").write_text(json.dumps({"accuracy": 0.82}), encoding="utf-8")
@@ -29,7 +33,7 @@ def make_packet(tmp_path: Path, **manifest_overrides):
         "claim_status": "tentative",
         "summary": "Run summary.",
         "raw_paths": ["result.json"],
-        "intended_wiki_targets": ["wiki/experiments/pkt-1.md"],
+        "intended_wiki_targets": ["wiki/reports/pkt-1.md"],
         "metrics_to_verify": [{"raw_path": "result.json", "metric_key": "accuracy", "reported_value": 0.82}],
     }
     data.update(manifest_overrides)
@@ -354,7 +358,7 @@ def test_guard_surfaces_non_string_packet_specific_raw_path(tmp_path):
         tmp_path,
         type="augmentation",
         raw_paths={"augmentation": "augmentation.yaml"},
-        intended_wiki_targets=["wiki/datasets/pkt-1.md"],
+        intended_wiki_targets=["wiki/preprocessing/pkt-1.md"],
         metrics_to_verify=[],
     )
     (packet / "augmentation.yaml").write_text(

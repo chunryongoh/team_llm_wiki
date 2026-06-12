@@ -1,6 +1,10 @@
 # Contribution Workflow
 
-1. Create a packet under `raw/users/<user>/<packet-id>/`.
+Route policy source of truth: `automation/contracts/wiki-route-contract.v1.yaml`.
+
+Automation must read the contract through `src/team_llm_wiki/wiki_ingest/route_contract.py`; packet skill must vendor the same contract under `references/wiki-route-contract.v1.yaml`.
+
+1. Create a packet under `raw/users/<user>/<category>/<date-slug>/`.
 2. Add `manifest.yaml` and raw evidence files inside the packet root. The manifest must include `id`, `packet_type`, `title`, `date`, `owner`, `status`, `task`, `dataset`, `split`, `model`, `claim_boundary`, `claim_status`, `summary`, `raw_paths`, and `intended_wiki_targets`.
 3. Run `plan-wiki-main-ingest` with the changed packet paths.
 4. Let the workflow run `run-wiki-main-ingest` on merge-time changes.
@@ -18,7 +22,7 @@ Preview comments are Korean-first and include a packet lifecycle summary. Review
 
 The packet skill compatibility result is an adoption signal, not a second manifest validator. `warning` means the packet can still be useful but the reviewer should inspect shape or evidence quality, such as a legacy packet root, missing `packet.md`, or performance packet without `metrics_to_verify`.
 
-Supported packet types are `reference`, `meeting`, `experiment`, `feature`, `model`, `performance`, `preprocessing`, `augmentation`, `dataset`, and `benchmark`. Dataset packets define modalities, splits, package files, and leakage risks; benchmark packets define target taxonomy, primary metric, and evaluation policy. Both require packet-specific YAML labeled as `dataset` or `benchmark` in `raw_paths`, route to `wiki/datasets/` and `wiki/benchmarks/` respectively, render to stable entity pages, and go through bot PR review.
+Supported packet types are `reference`, `meeting`, `experiment`, `feature`, `model`, `performance`, `preprocessing`, `augmentation`, `dataset`, and `benchmark`. Dataset packets define modalities, splits, package files, and leakage risks; benchmark packets define target taxonomy, primary metric, and evaluation policy. Both require packet-specific YAML labeled as `dataset` or `benchmark` in `raw_paths`, route through the contract to `wiki/preprocessing/` or `wiki/performance/`, render to stable entity pages, and go through bot PR review.
 
 Use `packet.md` for the human-readable synthesis narrative that should be promoted into the target wiki page. The manifest and packet-specific YAML provide machine-checkable fields; `packet.md` provides the explanatory context that teammates and agents should read.
 
@@ -30,12 +34,12 @@ Canonical ETRI/DACON entrypoints:
 
 - `wiki/latest-context.md`
 - `wiki/overview.md`
-- `wiki/datasets/sleep-lifelog-2024.md`
-- `wiki/benchmarks/sleep-health-hackathon-v0.md`
+- `wiki/preprocessing/sleep-lifelog-2024.md`
+- `wiki/performance/sleep-health-hackathon-evaluation-policy.md`
 - `wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md`
 - `wiki/features/sleep-lifelog-feature-landscape.md`
 - `wiki/decisions/sleep-lifelog-evaluation-protocol.md`
-- `wiki/questions/sleep-lifelog-open-questions.md`
+- `wiki/targets/sleep-lifelog-open-issues.md`
 
 When a packet skill primer conflicts with any of the pages above, reviewers should require the packet to follow the wiki page and record the conflict as an evidence gap or semantic lint item. The primer must not promote local OOF diagnostics to DACON leaderboard claims, must not call LightGBM + CatBoost globally best without the exact supported boundary, and must not conflate different GroupKFold fold counts as the same split.
 
