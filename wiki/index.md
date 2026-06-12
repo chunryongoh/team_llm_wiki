@@ -87,6 +87,7 @@
 - [Team Packet Entity Coverage Audit](reports/2026-06-02-team-packet-entity-coverage-audit.md)
 - [2026-06-11 Sleep Lifelog Packet Synthesis](reports/2026-06-11-sleep-lifelog-packet-synthesis.md)
 - [2026-06-12 Sleep Lifelog Packet Synthesis](reports/2026-06-12-sleep-lifelog-packet-synthesis.md)
+- [Team Lead Wiki Structure Feedback Brief](reports/2026-06-12-team-lead-wiki-structure-feedback-brief.md)
 - [DACON Leaderboard and Local OOF Claim Boundary](sources/2026-06-01-dacon-leaderboard-claim-boundary.md) - `reference`
 - [DACON Leaderboard History](submissions/dacon-leaderboard-history.md) - `submission-history`
 - [Q3 Stress Bottleneck](targets/q3-stress-bottleneck.md) - `target`

@@ -206,3 +206,10 @@ Append-only ingest and maintenance events belong here.
 - created: `wiki/team/team-lead-wiki-structure-review.md`
 - purpose: 팀장 피드백을 받기 위한 `./wiki` 구조, page role, 디렉토리별 정책 검토 초안
 - updated: `wiki/index.md`
+
+## [2026-06-12] report | team-lead-wiki-structure-feedback-brief
+
+- created: `wiki/reports/2026-06-12-team-lead-wiki-structure-feedback-brief.md`
+- source: `team-lead-wiki-structure-review_shs260612.md`
+- decision direction: LLM wiki 내부 정책은 유지하되, 사람용 운영 구조는 preprocessing, features, models, performance, claims, targets, decisions, reports, team 중심으로 단순화
+- proposed removals/merges: `datasets`, `benchmarks`, `questions`, `sources`, `briefs` 삭제 또는 축소; `submissions`는 `performance`로 병합; `experiments`는 `reports` 또는 versioned summary로 통합
