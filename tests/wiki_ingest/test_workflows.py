@@ -89,6 +89,16 @@ def test_normal_workflows_do_not_enable_migration_mode():
         assert "WIKI_MIGRATION_MODE=1" not in workflow
 
 
+def test_scheduled_health_warns_on_stale_tentative_claims_only():
+    workflow = Path(".github/workflows/wiki-health-check.yml").read_text(encoding="utf-8")
+    main_ingest = Path(".github/workflows/wiki-main-ingest.yml").read_text(encoding="utf-8")
+    llm_synthesis = Path(".github/workflows/wiki-llm-synthesis.yml").read_text(encoding="utf-8")
+
+    assert "--stale-tentative-as-warning" in workflow
+    assert "--stale-tentative-as-warning" not in main_ingest
+    assert "--stale-tentative-as-warning" not in llm_synthesis
+
+
 def test_main_ingest_migration_dispatch_is_branch_gated():
     workflow = load_workflow(".github/workflows/wiki-main-ingest.yml")
     steps = steps_by_name(".github/workflows/wiki-main-ingest.yml", "ingest")

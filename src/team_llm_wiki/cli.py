@@ -77,6 +77,11 @@ def build_parser() -> argparse.ArgumentParser:
     health = sub.add_parser("check-wiki-health")
     health.add_argument("--repo-root", required=True)
     health.add_argument("--report-path")
+    health.add_argument(
+        "--stale-tentative-as-warning",
+        action="store_true",
+        help="Treat stale tentative claims as warnings for scheduled operational briefs.",
+    )
 
     brief = sub.add_parser("generate-wiki-brief")
     brief.add_argument("--repo-root", default=".")
@@ -139,7 +144,11 @@ def main(argv: list[str] | None = None) -> int:
             _print_json(report, sys.stdout)
             return 1 if report.status == "hard_fail" else 0
         if args.command == "check-wiki-health":
-            report = check_wiki_health(Path(args.repo_root), Path(args.report_path) if args.report_path else None)
+            report = check_wiki_health(
+                Path(args.repo_root),
+                Path(args.report_path) if args.report_path else None,
+                stale_tentative_mode="warning" if args.stale_tentative_as_warning else "error",
+            )
             _print_json(report, sys.stdout)
             return 0 if report.ok else 1
         if args.command == "generate-wiki-brief":

@@ -15,6 +15,7 @@
 - V152 anchor OOF는 strict out-of-fold generation과 row identity proof가 없으면 high leakage-risk feature다.
 - Window-pair section은 일부 placeholder code라 parquet-backed feature evidence 전에는 implemented feature로 쓰지 않는다.
 - App context, stability filtering, v186 SHAP, v200-v209 sparse splice, Section07 weekly claims는 모두 `tentative`; 1875 pool은 historical source review다.
+- 오래된 tentative claim은 [Stale Tentative Claims](claims/stale-tentative-claims.md)에서 추적한다. scheduled health에서는 warning으로 브리핑하지만 PR/ingest/synthesis gate에서는 error로 유지한다.
 - SHAP importance, public score note, local OOF, DACON leaderboard, private leaderboard를 한 ranking surface로 합치면 안 된다.
 
 ## Next Actions
@@ -23,6 +24,7 @@
 - `stability-filter-selected-list`와 exact feature hash를 확보하기 전에는 `23177 -> 1682`를 feature policy로 쓰지 않는다.
 - `window-pair-parquet-implementation`을 닫기 전에는 window-pair code를 reusable implementation으로 홍보하지 않는다.
 - `v186-leaderboard-provenance`, `app-context-raw-submission-lineage`, `dacon-submission-provenance-boundary`도 계속 promotion blocker다.
+- [Stale Tentative Claims](claims/stale-tentative-claims.md)의 각 row는 새 packet evidence가 들어오면 `supported`, `disputed`, `superseded` 중 하나로 닫는다.
 - `replay-validator-blind-spot-threshold`를 정의하기 전에는 `0.00005` 수준 local/public delta로 live submission trigger를 만들지 않는다.
 
 ## Recent packet review links

@@ -79,6 +79,8 @@ Durable pages belong under canonical namespaces: `wiki/preprocessing`, `wiki/fea
 - open question에 close condition이 있는가
 - index와 log가 실제 page 상태를 반영하는가
 
+Stale tentative claim은 [Stale Tentative Claims](../claims/stale-tentative-claims.md)에 올려서 닫힘 조건을 추적한다. PR/ingest/synthesis 검증에서는 error로 유지하지만, scheduled `wiki-health-check`는 해당 code만 warning으로 낮춰 daily/weekly brief artifact를 계속 생성한다. 이 warning mode는 운영 브리핑을 살리기 위한 것이며 claim 해결이나 승격을 의미하지 않는다.
+
 ## Briefing
 
 daily/weekly/current brief는 entrypoint와 action routing을 위해 존재한다. briefing은 report나 raw evidence를 대체하지 않는다. 중요한 변화는 해당 entity leaf, registry, decision, target/open-issue page에도 반영되어야 한다.

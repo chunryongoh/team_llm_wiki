@@ -93,6 +93,7 @@ wiki/latest-context.md, wiki/index.md를 먼저 읽고
 - local OOF, notebook output, DACON public LB, private LB, official validation은 서로 다른 근거입니다.
 - public LB 기록은 제출 파일/hash, private score, 팀 재현 근거가 없으면 보통 `tentative`입니다.
 - 중요한 판단은 chat에만 남기지 말고 wiki로 되돌립니다.
+- 오래된 tentative claim은 [Stale Tentative Claims](wiki/claims/stale-tentative-claims.md)에서 닫힘 조건과 함께 추적합니다.
 
 ## 주요 경로
 
@@ -118,5 +119,7 @@ raw/results/llm-synthesis/     synthesis report
 PYTHONPATH=src python -m team_llm_wiki.cli check-wiki-health --repo-root .
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src pytest -q
 ```
+
+PR/ingest/synthesis 검증은 strict입니다. scheduled `wiki-health-check`만 오래된 tentative claim을 warning으로 내려 daily/weekly brief를 계속 생성합니다.
 
 최근 검증 사례: DACON `Public 0.5917 LGBM+XGB anchor` packet PR `#47` -> ingest PR `#48` -> synthesis PR `#49`.

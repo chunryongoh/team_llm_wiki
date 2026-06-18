@@ -213,3 +213,10 @@ Append-only ingest and maintenance events belong here.
 - source: `team-lead-wiki-structure-review_shs260612.md`
 - decision direction: LLM wiki 내부 정책은 유지하되, 사람용 운영 구조는 preprocessing, features, models, performance, claims, targets, decisions, reports, team 중심으로 단순화
 - proposed removals/merges: `datasets`, `benchmarks`, `questions`, `sources`, `briefs` 삭제 또는 축소; `submissions`는 `performance`로 병합; `experiments`는 `reports` 또는 versioned summary로 통합
+
+## [2026-06-18] policy | claim-triage-health-policy
+
+- created: `wiki/claims/stale-tentative-claims.md`
+- updated: `wiki/latest-context.md`, `wiki/index.md`, `wiki/team/llm-wiki-operating-harness.md`, `wiki/team/wiki-ingest-policy.md`
+- decision: PR/ingest/synthesis health gate는 stale tentative claim을 error로 유지하고, scheduled `wiki-health-check`만 warning으로 내려 daily/weekly brief artifact 생성을 지속한다.
+- purpose: 오래된 tentative claim을 숨기거나 가짜 supported claim으로 승격하지 않고, 닫힘 조건이 있는 review queue로 관리한다.

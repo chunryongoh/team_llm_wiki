@@ -22,7 +22,8 @@ jobs:
         run: |
           python -m team_llm_wiki.cli check-wiki-health \
             --repo-root . \
-            --report-path artifacts/wiki-health/report.json
+            --report-path artifacts/wiki-health/report.json \
+            --stale-tentative-as-warning
       - name: Generate daily brief
         if: always()
         env:
