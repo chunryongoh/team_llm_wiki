@@ -37,6 +37,8 @@ HUB_PAGE_HINTS = ("landscape", "history", "open-questions", "current-supported-c
 LATEST_CONTEXT_SOFT_CHAR_LIMIT = 9000
 HUB_SOFT_CHAR_LIMIT = 14000
 HUB_SOFT_HEADING_LIMIT = 24
+STALE_TENTATIVE_CLAIM_CODE = "stale_tentative_claim"
+STALE_TENTATIVE_MODES = {"error", "warning"}
 
 
 def _generated_block_errors(repo_root: Path) -> list[HealthError]:
@@ -194,12 +196,23 @@ def _claim_errors(rel_path: str, frontmatter: dict[str, str], text: str) -> list
         if claim_date and (date.today() - claim_date).days > 14:
             errors.append(
                 HealthError(
-                    "stale_tentative_claim",
+                    STALE_TENTATIVE_CLAIM_CODE,
                     f"{rel_path} has a tentative claim older than 14 days",
                     rel_path,
                 )
             )
     return errors
+
+
+def _partition_stale_tentative_claims(errors: list[HealthError]) -> tuple[list[HealthError], list[HealthError]]:
+    remaining: list[HealthError] = []
+    stale_tentative_claims: list[HealthError] = []
+    for error in errors:
+        if error.code == STALE_TENTATIVE_CLAIM_CODE:
+            stale_tentative_claims.append(error)
+        else:
+            remaining.append(error)
+    return remaining, stale_tentative_claims
 
 
 def _has_performance_metric_content(text: str) -> bool:
@@ -406,6 +419,7 @@ def check_wiki_health(
     report_path: Path | None = None,
     *,
     deprecated_mode: str = "warn_existing",
+    stale_tentative_mode: str = "error",
 ) -> HealthReport:
     checked = [path.relative_to(repo_root).as_posix() for path in (repo_root / "wiki").rglob("*.md")] if (repo_root / "wiki").exists() else []
     contract, contract_errors = _load_health_contract(repo_root)
@@ -434,6 +448,17 @@ def check_wiki_health(
         *deprecated_errors,
         *_expanded_health_errors(repo_root, contract=contract, required_pages=required_pages),
     ]
+    if stale_tentative_mode not in STALE_TENTATIVE_MODES:
+        errors.append(
+            HealthError(
+                FailureCode.POLICY_CONFLICT.value,
+                f"unsupported stale tentative claim mode: {stale_tentative_mode}",
+                DEFAULT_CONTRACT_PATH.as_posix(),
+            )
+        )
+    if stale_tentative_mode == "warning":
+        errors, stale_tentative_warnings = _partition_stale_tentative_claims(errors)
+        warnings = [*warnings, *stale_tentative_warnings]
     report = HealthReport(
         ok=not errors,
         errors=errors,

@@ -55,6 +55,54 @@ def seed_repo(root: Path, packet_type="reference", metric_expected=0.8):
     return packet
 
 
+def seed_health_repo_with_stale_tentative_claim(root: Path):
+    contract_target = root / DEFAULT_CONTRACT_PATH
+    contract_target.parent.mkdir(parents=True, exist_ok=True)
+    contract_target.write_text(Path(DEFAULT_CONTRACT_PATH).read_text(encoding="utf-8"), encoding="utf-8")
+
+    for directory in ["claims", "preprocessing", "performance", "targets", "team"]:
+        (root / "wiki" / directory).mkdir(parents=True, exist_ok=True)
+    required_pages = [
+        "wiki/team/ml-ai-hackathon-entity-model.md",
+        "wiki/team/packet-quality-standard.md",
+        "wiki/team/page-taxonomy.md",
+        "wiki/team/llm-wiki-operating-harness.md",
+        "wiki/claims/current-supported-claims.md",
+        "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+        "wiki/performance/dacon-leaderboard-history.md",
+    ]
+    for rel_path in required_pages:
+        (root / rel_path).write_text("# Required Page\n", encoding="utf-8")
+    (root / "wiki" / "index.md").write_text(
+        "# Index\n\n"
+        "<!-- wiki-ingest:index:start -->\n"
+        "- [[targets/old]]\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+    (root / "wiki" / "overview.md").write_text("# Overview\n", encoding="utf-8")
+    (root / "wiki" / "log.md").write_text("# Log\n", encoding="utf-8")
+    (root / "wiki" / "latest-context.md").write_text(
+        "[[index]] [[overview]] [[log]]\n"
+        "\n## Current Best\n\n- No current best recorded.\n"
+        "\n## Active Risks\n\n- No active risks recorded.\n"
+        "\n## Next Actions\n\n- No next actions recorded.\n"
+        "<!-- wiki-ingest:latest:start -->\n"
+        "<!-- wiki-ingest:latest:end -->\n",
+        encoding="utf-8",
+    )
+    (root / "wiki" / "targets" / "old.md").write_text(
+        "---\n"
+        "claim_status: tentative\n"
+        "date: 2026-05-01\n"
+        "---\n"
+        "# Old hypothesis\n\n"
+        "raw_evidence:\n"
+        "- raw/users/alice/old/README.md\n",
+        encoding="utf-8",
+    )
+
+
 def run_cli(args, cwd):
     return subprocess.run(
         [sys.executable, "-m", "team_llm_wiki.cli", *args],
@@ -142,6 +190,29 @@ def test_cli_check_wiki_health_nonzero_on_failure(tmp_path):
 
     assert result.returncode == 1
     assert json.loads(report_path.read_text(encoding="utf-8"))["ok"] is False
+
+
+def test_cli_check_wiki_health_can_warn_on_stale_tentative_claims(tmp_path):
+    seed_health_repo_with_stale_tentative_claim(tmp_path)
+    report_path = tmp_path / "health.json"
+
+    result = run_cli(
+        [
+            "check-wiki-health",
+            "--repo-root",
+            str(tmp_path),
+            "--report-path",
+            str(report_path),
+            "--stale-tentative-as-warning",
+        ],
+        cwd=Path.cwd(),
+    )
+
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    assert result.returncode == 0
+    assert payload["ok"] is True
+    assert not any(error["code"] == "stale_tentative_claim" for error in payload["errors"])
+    assert any(warning["code"] == "stale_tentative_claim" for warning in payload["warnings"])
 
 
 def test_cli_generate_wiki_brief_writes_files_and_json(tmp_path):

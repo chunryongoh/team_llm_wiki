@@ -32,6 +32,7 @@
 ## Entity registries
 
 - [Current Supported Claims](claims/current-supported-claims.md) - `claim-registry`
+- [Stale Tentative Claims](claims/stale-tentative-claims.md) - `claim-triage`
 - [DACON Leaderboard History](performance/dacon-leaderboard-history.md) - `submission-history`
 - [Canonical Split And Leakage Policy](preprocessing/canonical-split-and-leakage-policy.md) - `preprocessing-policy`
 - [LightGBM CatBoost](models/lightgbm-catboost.md) - `model`

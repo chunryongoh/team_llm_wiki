@@ -309,7 +309,9 @@ def test_health_detects_stale_tentative_claim(tmp_path, monkeypatch):
         "claim_status: tentative\n"
         "date: 2026-05-01\n"
         "---\n"
-        "# Old hypothesis\n",
+        "# Old hypothesis\n\n"
+        "raw_evidence:\n"
+        "- raw/users/alice/old/README.md\n",
         encoding="utf-8",
     )
     (tmp_path / "wiki" / "index.md").write_text(
@@ -341,6 +343,56 @@ def test_health_detects_stale_tentative_claim(tmp_path, monkeypatch):
     report = check_wiki_health(tmp_path)
 
     assert any(error.code == "stale_tentative_claim" for error in report.errors)
+
+
+def test_health_can_warn_for_stale_tentative_claim_on_scheduled_runs(tmp_path, monkeypatch):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "targets").mkdir()
+    (tmp_path / "wiki" / "targets" / "old.md").write_text(
+        "---\n"
+        "claim_status: tentative\n"
+        "date: 2026-05-01\n"
+        "---\n"
+        "# Old hypothesis\n\n"
+        "raw_evidence:\n"
+        "- raw/users/alice/old/README.md\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "wiki" / "index.md").write_text(
+        "# Index\n\n"
+        "<!-- wiki-ingest:index:start -->\n"
+        "- [[targets/old]]\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+
+    class FrozenDate:
+        @classmethod
+        def today(cls):
+            return cls(2026, 5, 27)
+
+        @classmethod
+        def fromisoformat(cls, value):
+            from datetime import date
+
+            return date.fromisoformat(value)
+
+        def __new__(cls, *args):
+            from datetime import date
+
+            return date(*args)
+
+    monkeypatch.setattr("team_llm_wiki.wiki_ingest.health.date", FrozenDate, raising=False)
+
+    report_path = tmp_path / "health.json"
+    report = check_wiki_health(tmp_path, report_path=report_path, stale_tentative_mode="warning")
+    payload = json.loads(report_path.read_text(encoding="utf-8"))
+
+    assert report.ok is True
+    assert not any(error.code == "stale_tentative_claim" for error in report.errors)
+    assert any(warning.code == "stale_tentative_claim" for warning in report.warnings)
+    assert payload["ok"] is True
+    assert any(warning["code"] == "stale_tentative_claim" for warning in payload["warnings"])
 
 
 def test_health_detects_performance_metric_unverified(tmp_path):
