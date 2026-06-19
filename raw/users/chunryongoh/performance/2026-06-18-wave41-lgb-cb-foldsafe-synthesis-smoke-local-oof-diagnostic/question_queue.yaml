@@ -1,0 +1,25 @@
+{
+  "packet_id": "2026-06-19-packet-scan",
+  "questions": [
+    {
+      "blocks_packet_plan": false,
+      "blocks_supported_status": true,
+      "fallback_if_unanswered": "missing nodes remain omitted",
+      "id": "missing-graph-signals",
+      "priority": "medium",
+      "question": "누락된 그래프 신호를 명시한 원본 artifact가 있는가?",
+      "suggested_choices": [
+        {
+          "label": "누락 유지",
+          "recommended": true
+        },
+        {
+          "label": "증거 artifact 제공",
+          "recommended": false
+        }
+      ],
+      "why_it_matters": "명시 증거가 없으면 모델, 전처리, 공개 LB 노드를 생성하지 않는다."
+    }
+  ],
+  "schema_version": "packet-graph-v1.0"
+}

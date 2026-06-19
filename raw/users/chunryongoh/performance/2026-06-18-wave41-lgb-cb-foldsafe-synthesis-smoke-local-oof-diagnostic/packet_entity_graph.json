@@ -1,0 +1,10 @@
+{
+  "dedupe_report": {
+    "merged_nodes": [],
+    "reused_existing_pages": []
+  },
+  "edges": [],
+  "nodes": [],
+  "packet_id": "2026-06-19-packet-scan",
+  "schema_version": "packet-graph-v1.0"
+}

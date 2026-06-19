@@ -1,0 +1,18 @@
+{
+  "Q1_log_loss": 0.6225370998897288,
+  "Q2_log_loss": 0.6555493560477773,
+  "Q3_log_loss": 0.6309857415368405,
+  "S1_log_loss": 0.562996471228798,
+  "S2_log_loss": 0.6113857154018603,
+  "S3_log_loss": 0.595105227779678,
+  "S4_log_loss": 0.6586155626317527,
+  "delta_vs_prior_lgb_cb_reproduction": -0.000240067821740797,
+  "grouped_macro_log_loss": 0.6195964535023479,
+  "macro_auroc": 0.680617701580707,
+  "macro_brier_score": 0.2153164638768479,
+  "macro_f1": 0.7417894093790057,
+  "macro_roc_auc": 0.680617701580707,
+  "prior_lgb_cb_reproduction_macro_log_loss": 0.6198365213240887,
+  "remaining_gap_to_0p61": 0.009596453502347946,
+  "targetwise_reblend_macro_log_loss": 0.6195964535023479
+}

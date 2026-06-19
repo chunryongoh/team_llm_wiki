@@ -1,0 +1,511 @@
+{
+  "blend_id": "lgb_cb_targetwise_synthesis_v1",
+  "blend_strategy": "target_wise_greedy",
+  "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-targetwise-reblend-v1",
+  "selected_candidate_ids": [
+    "cb_foldsafe_baseline_v1",
+    "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+    "lgb_foldsafe_baseline_v1",
+    "q2_nested_platt_diagnostic_v1",
+    "s4_nested_platt_diagnostic_v1"
+  ],
+  "source_candidates": [
+    {
+      "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+      "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1"
+    },
+    {
+      "candidate_id": "lgb_foldsafe_baseline_v1",
+      "eligible_target_names": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_foldsafe_baseline_v1"
+    },
+    {
+      "candidate_id": "cb_foldsafe_baseline_v1",
+      "eligible_target_names": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1"
+    },
+    {
+      "candidate_id": "lgb_cb_foldsafe_fixed_blend_v1",
+      "eligible_target_names": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_cb_foldsafe_fixed_blend_v1"
+    },
+    {
+      "candidate_id": "q2_lgb_weighted_reliability_v1",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_lgb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "q2_cb_weighted_reliability_v1",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_cb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "s4_lgb_weighted_reliability_v1",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_lgb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "s4_cb_weighted_reliability_v1",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_cb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "q2_uncertainty_prior_shrink_v1",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_uncertainty_prior_shrink_v1"
+    },
+    {
+      "candidate_id": "s4_uncertainty_prior_shrink_v1",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_uncertainty_prior_shrink_v1"
+    },
+    {
+      "candidate_id": "q2_temperature_scale_v1",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_temperature_scale_v1"
+    },
+    {
+      "candidate_id": "s4_temperature_scale_v1",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_temperature_scale_v1"
+    },
+    {
+      "candidate_id": "q2_nested_platt_diagnostic_v1",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_nested_platt_diagnostic_v1"
+    },
+    {
+      "candidate_id": "s4_nested_platt_diagnostic_v1",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_nested_platt_diagnostic_v1"
+    }
+  ],
+  "target_blends": {
+    "Q1": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.6227600448650603,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        },
+        {
+          "action": "add",
+          "candidate_id": "cb_foldsafe_baseline_v1",
+          "new_candidate_weight": 0.05,
+          "score": 0.6225370998897288,
+          "weights": {
+            "cb_foldsafe_baseline_v1": 0.05,
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.95
+          }
+        }
+      ],
+      "score": 0.6225370998897288,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "cb_foldsafe_baseline_v1"
+      ],
+      "weights": {
+        "cb_foldsafe_baseline_v1": 0.05,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.95
+      }
+    },
+    "Q2": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.6556358809986518,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        },
+        {
+          "action": "add",
+          "candidate_id": "cb_foldsafe_baseline_v1",
+          "new_candidate_weight": 0.05,
+          "score": 0.65555072471445,
+          "weights": {
+            "cb_foldsafe_baseline_v1": 0.05,
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.95
+          }
+        },
+        {
+          "action": "add",
+          "candidate_id": "q2_nested_platt_diagnostic_v1",
+          "new_candidate_weight": 0.1,
+          "score": 0.6555493560477773,
+          "weights": {
+            "cb_foldsafe_baseline_v1": 0.045000000000000005,
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.855,
+            "q2_nested_platt_diagnostic_v1": 0.1
+          }
+        }
+      ],
+      "score": 0.6555493560477773,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "cb_foldsafe_baseline_v1",
+        "q2_nested_platt_diagnostic_v1"
+      ],
+      "weights": {
+        "cb_foldsafe_baseline_v1": 0.045000000000000005,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.855,
+        "q2_nested_platt_diagnostic_v1": 0.1
+      }
+    },
+    "Q3": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.6309857415368405,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.6309857415368405,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S1": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.562996471228798,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.562996471228798,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S2": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.6113857154018603,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.6113857154018603,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S3": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.595105227779678,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        }
+      ],
+      "score": 0.595105227779678,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+      ],
+      "weights": {
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+      }
+    },
+    "S4": {
+      "history": [
+        {
+          "action": "initial",
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "score": 0.6599865674577321,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+          }
+        },
+        {
+          "action": "add",
+          "candidate_id": "lgb_foldsafe_baseline_v1",
+          "new_candidate_weight": 0.15,
+          "score": 0.6586337354259134,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.85,
+            "lgb_foldsafe_baseline_v1": 0.15
+          }
+        },
+        {
+          "action": "add",
+          "candidate_id": "s4_nested_platt_diagnostic_v1",
+          "new_candidate_weight": 0.1,
+          "score": 0.6586155626317527,
+          "weights": {
+            "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.765,
+            "lgb_foldsafe_baseline_v1": 0.135,
+            "s4_nested_platt_diagnostic_v1": 0.1
+          }
+        }
+      ],
+      "score": 0.6586155626317527,
+      "selected_candidate_ids": [
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "lgb_foldsafe_baseline_v1",
+        "s4_nested_platt_diagnostic_v1"
+      ],
+      "weights": {
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.765,
+        "lgb_foldsafe_baseline_v1": 0.135,
+        "s4_nested_platt_diagnostic_v1": 0.1
+      }
+    }
+  },
+  "target_histories": {
+    "Q1": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.6227600448650603,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      },
+      {
+        "action": "add",
+        "candidate_id": "cb_foldsafe_baseline_v1",
+        "new_candidate_weight": 0.05,
+        "score": 0.6225370998897288,
+        "weights": {
+          "cb_foldsafe_baseline_v1": 0.05,
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.95
+        }
+      }
+    ],
+    "Q2": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.6556358809986518,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      },
+      {
+        "action": "add",
+        "candidate_id": "cb_foldsafe_baseline_v1",
+        "new_candidate_weight": 0.05,
+        "score": 0.65555072471445,
+        "weights": {
+          "cb_foldsafe_baseline_v1": 0.05,
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.95
+        }
+      },
+      {
+        "action": "add",
+        "candidate_id": "q2_nested_platt_diagnostic_v1",
+        "new_candidate_weight": 0.1,
+        "score": 0.6555493560477773,
+        "weights": {
+          "cb_foldsafe_baseline_v1": 0.045000000000000005,
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.855,
+          "q2_nested_platt_diagnostic_v1": 0.1
+        }
+      }
+    ],
+    "Q3": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.6309857415368405,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S1": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.562996471228798,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S2": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.6113857154018603,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S3": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.595105227779678,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      }
+    ],
+    "S4": [
+      {
+        "action": "initial",
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "score": 0.6599865674577321,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+        }
+      },
+      {
+        "action": "add",
+        "candidate_id": "lgb_foldsafe_baseline_v1",
+        "new_candidate_weight": 0.15,
+        "score": 0.6586337354259134,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.85,
+          "lgb_foldsafe_baseline_v1": 0.15
+        }
+      },
+      {
+        "action": "add",
+        "candidate_id": "s4_nested_platt_diagnostic_v1",
+        "new_candidate_weight": 0.1,
+        "score": 0.6586155626317527,
+        "weights": {
+          "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.765,
+          "lgb_foldsafe_baseline_v1": 0.135,
+          "s4_nested_platt_diagnostic_v1": 0.1
+        }
+      }
+    ]
+  },
+  "target_selected_candidate_ids": {
+    "Q1": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+      "cb_foldsafe_baseline_v1"
+    ],
+    "Q2": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+      "cb_foldsafe_baseline_v1",
+      "q2_nested_platt_diagnostic_v1"
+    ],
+    "Q3": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+    ],
+    "S1": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+    ],
+    "S2": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+    ],
+    "S3": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0"
+    ],
+    "S4": [
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+      "lgb_foldsafe_baseline_v1",
+      "s4_nested_platt_diagnostic_v1"
+    ]
+  },
+  "target_weights": {
+    "Q1": {
+      "cb_foldsafe_baseline_v1": 0.05,
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.95
+    },
+    "Q2": {
+      "cb_foldsafe_baseline_v1": 0.045000000000000005,
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.855,
+      "q2_nested_platt_diagnostic_v1": 0.1
+    },
+    "Q3": {
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+    },
+    "S1": {
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+    },
+    "S2": {
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+    },
+    "S3": {
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 1.0
+    },
+    "S4": {
+      "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.765,
+      "lgb_foldsafe_baseline_v1": 0.135,
+      "s4_nested_platt_diagnostic_v1": 0.1
+    }
+  },
+  "weights": {
+    "cb_foldsafe_baseline_v1": 0.013571428571428571,
+    "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.9385714285714285,
+    "lgb_foldsafe_baseline_v1": 0.019285714285714288,
+    "q2_nested_platt_diagnostic_v1": 0.014285714285714287,
+    "s4_nested_platt_diagnostic_v1": 0.014285714285714287
+  }
+}

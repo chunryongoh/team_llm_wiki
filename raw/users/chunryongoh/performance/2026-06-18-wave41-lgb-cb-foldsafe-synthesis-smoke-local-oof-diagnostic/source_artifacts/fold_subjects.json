@@ -1,0 +1,32 @@
+{
+  "fold_count": 6,
+  "folds": {
+    "cb_foldsafe_baseline_v1": {
+      "items": 35
+    },
+    "lgb_foldsafe_baseline_v1": {
+      "items": 35
+    },
+    "q2_cb_weighted_reliability_v1": {
+      "items": 5
+    },
+    "q2_lgb_weighted_reliability_v1": {
+      "items": 5
+    },
+    "s4_cb_weighted_reliability_v1": {
+      "items": 5
+    },
+    "s4_lgb_weighted_reliability_v1": {
+      "items": 5
+    }
+  },
+  "source_ref": "ETRI/raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1/fold_subjects.json",
+  "top_level_keys": [
+    "cb_foldsafe_baseline_v1",
+    "lgb_foldsafe_baseline_v1",
+    "q2_cb_weighted_reliability_v1",
+    "q2_lgb_weighted_reliability_v1",
+    "s4_cb_weighted_reliability_v1",
+    "s4_lgb_weighted_reliability_v1"
+  ]
+}
