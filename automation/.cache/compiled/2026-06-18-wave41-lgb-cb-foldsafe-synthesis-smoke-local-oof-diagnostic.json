@@ -1,0 +1,221 @@
+{
+  "claim_boundary": "local_oof_diagnostic_only",
+  "claim_status": "supported",
+  "claims": [
+    {
+      "status": "supported",
+      "text": "Wave41 LGB/CB fold-safe synthesis smoke improved the prior LGB/CB reproduction local OOF diagnostic line from 0.6198365213240887 to 0.6195964535023479, but remains local OOF only and short of the 0.61 goal."
+    }
+  ],
+  "dataset": {
+    "hash": "none",
+    "name": "sleep-lifelog-2024",
+    "version": "released-package"
+  },
+  "date": "2026-06-18",
+  "id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+  "intended_wiki_targets": [
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md"
+  ],
+  "metrics_to_verify": [
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "Q1_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6225370998897288,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "Q2_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6555493560477773,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "Q3_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6309857415368405,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "S1_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.562996471228798,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "S2_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6113857154018603,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "S3_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.595105227779678,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "S4_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6586155626317527,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "delta_vs_prior_lgb_cb_reproduction",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": -0.000240067821740797,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "grouped_macro_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6195964535023479,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "macro_auroc",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.680617701580707,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "macro_brier_score",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.2153164638768479,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "macro_f1",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.7417894093790057,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "macro_roc_auc",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.680617701580707,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "prior_lgb_cb_reproduction_macro_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6198365213240887,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "remaining_gap_to_0p61",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.009596453502347946,
+      "tolerance": 0.0
+    },
+    {
+      "actual": null,
+      "expected": null,
+      "key": null,
+      "metric_key": "targetwise_reblend_macro_log_loss",
+      "name": null,
+      "raw_path": "metrics.json",
+      "reported_value": 0.6195964535023479,
+      "tolerance": 0.0
+    }
+  ],
+  "model": {
+    "family": "lightgbm-catboost-foldsafe-synthesis-targetwise-reblend",
+    "weights_in_repo": false
+  },
+  "owner": "chunryongoh",
+  "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+  "packet_type": "performance",
+  "publish_action": "bot_pr",
+  "raw_paths": {
+    "artifact_summary": "artifact_summary.json",
+    "metrics": "metrics.json",
+    "notes": "packet.md",
+    "packet_entity_graph": "packet_entity_graph.json",
+    "performance": "performance.yaml",
+    "question_queue": "question_queue.yaml",
+    "semantic_lint": "semantic_lint.json",
+    "source_blend_weights": "source_artifacts/blend_weights.json",
+    "source_candidate_status": "source_artifacts/candidate_status.csv",
+    "source_decision_matrix": "source_artifacts/decision_matrix.csv",
+    "source_fold_subjects_summary": "source_artifacts/fold_subjects.json",
+    "source_note": "source_note.md",
+    "source_optuna_trials_summary": "source_artifacts/optuna_trials.csv",
+    "source_suite_metrics": "source_artifacts/suite_metrics.json",
+    "source_suite_plan": "source_artifacts/suite_plan.json",
+    "source_suite_summary": "source_artifacts/suite_summary.json",
+    "source_target_deltas": "source_artifacts/target_deltas.json",
+    "source_targetwise_reblend_summary": "source_artifacts/targetwise_reblend_summary.json",
+    "wiki_plan": "wiki_plan.yaml"
+  },
+  "risk_tier": "tier4-governance",
+  "split": {
+    "fold_file": null,
+    "group_key": "subject_id",
+    "name": "local-groupkfold-subject-5fold-oof"
+  },
+  "status": "submitted",
+  "summary": "Wave41 LGB/CB fold-safe synthesis smoke improved the prior LGB/CB reproduction local OOF diagnostic line from 0.6198365213240887 to 0.6195964535023479, but remains local OOF only and short of the 0.61 goal.",
+  "task": "source-ingest",
+  "title": "Wave41 LGB CB Foldsafe Synthesis Smoke Local OOF Diagnostic"
+}

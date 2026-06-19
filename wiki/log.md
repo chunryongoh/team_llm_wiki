@@ -226,3 +226,8 @@ Append-only ingest and maintenance events belong here.
 - updated: `src/team_llm_wiki/wiki_ingest/health.py`, `wiki/claims/stale-tentative-claims.md`, `wiki/team/llm-wiki-operating-harness.md`, `wiki/team/wiki-ingest-policy.md`
 - decision: [Stale Tentative Claims](claims/stale-tentative-claims.md)에 등록된 stale claim은 strict health에서도 warning으로 처리하고, registry에 없는 stale claim만 PR/ingest/synthesis gate error로 유지한다.
 - reason: Wave41 packet merge 후 `wiki-main-ingest`가 packet 자체 문제가 아니라 기존 tracked stale backlog 때문에 실패했다.
+
+## [2026-06-18] ingest | 2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic
+
+- target: `wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md`
+- run: `27804535275-1`
