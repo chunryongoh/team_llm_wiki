@@ -269,7 +269,6 @@ def run_llm_wiki_synthesis(
         pages,
         required_paths=target_paths,
         manifests=manifests,
-        llm_payload=llm_payload,
         provider_name=provider_name,
     )
     provider_notes.extend(fallback_fill_notes)
@@ -610,30 +609,56 @@ def _preserve_existing_pages_for_github_models(
     entrypoints = {"wiki/index.md", "wiki/log.md", "wiki/latest-context.md", "wiki/overview.md"}
     preserved: list[dict[str, str]] = []
     preserved_paths: list[str] = []
+    scaffolded_paths: list[str] = []
     for page in pages:
         path = page["path"]
         existing_path = repo_root / path
-        if path in entrypoints or not existing_path.exists():
+        if path in entrypoints:
             preserved.append(page)
+            continue
+        if existing_path.exists():
+            preserved.append(
+                {
+                    "path": path,
+                    "content": _github_models_existing_page_addendum(
+                        repo_root,
+                        path,
+                        page["content"],
+                        manifests=manifests,
+                    ),
+                }
+            )
+            preserved_paths.append(path)
             continue
         preserved.append(
             {
                 "path": path,
-                "content": _github_models_existing_page_addendum(
-                    repo_root,
-                    path,
-                    page["content"],
-                    manifests=manifests,
-                ),
+                "content": _github_models_new_page_scaffold(path, manifests=manifests),
             }
         )
-        preserved_paths.append(path)
-    if not preserved_paths:
-        return preserved, []
-    preview = ", ".join(preserved_paths[:8])
-    if len(preserved_paths) > 8:
-        preview += f", and {len(preserved_paths) - 8} more"
-    return preserved, [f"GitHub Models fallback preserved existing wiki pages with non-destructive addenda: {preview}."]
+        scaffolded_paths.append(path)
+
+    notes: list[str] = []
+    if preserved_paths:
+        notes.append(
+            "GitHub Models fallback preserved existing wiki pages with non-destructive addenda: "
+            + _preview_paths(preserved_paths)
+            + "."
+        )
+    if scaffolded_paths:
+        notes.append(
+            "GitHub Models fallback replaced compact new-page bodies with deterministic scaffolds: "
+            + _preview_paths(scaffolded_paths)
+            + "."
+        )
+    return preserved, notes
+
+
+def _preview_paths(paths: list[str], *, limit: int = 8) -> str:
+    preview = ", ".join(paths[:limit])
+    if len(paths) > limit:
+        preview += f", and {len(paths) - limit} more"
+    return preview
 
 
 def _github_models_existing_page_addendum(
@@ -663,13 +688,90 @@ def _github_models_existing_page_addendum(
     )
 
 
+def _github_models_new_page_scaffold(
+    rel_path: str,
+    *,
+    manifests: list[tuple[PacketManifest, Path]],
+) -> str:
+    title = _fallback_title_from_path(rel_path)
+    lines = [
+        f"# {title}",
+        "",
+        "## GitHub Models Deterministic Page Scaffold",
+        "",
+        "- fallback_merge_policy: deterministic_new_page_scaffold",
+        "- fallback_compact_body_applied: false",
+        "- note: GitHub Models fallback identified this page as required, but compact model prose was not applied because metric provenance must come from raw packet evidence.",
+        "",
+        "## Source Packets",
+        "",
+    ]
+    for manifest, _root in manifests:
+        lines.extend(
+            [
+                f"### {manifest.id}",
+                "",
+                f"- packet_type: `{manifest.type.value}`",
+                f"- title: {manifest.title}",
+                f"- date: `{manifest.date}`",
+                f"- owner: `{manifest.owner}`",
+                f"- dataset: `{manifest.dataset.name}` (`{manifest.dataset.version}`)",
+                f"- split: `{manifest.split.name}`",
+                f"- model: `{manifest.model.family}`",
+                f"- claim_boundary: `{manifest.claim_boundary}`",
+                f"- claim_status: `{manifest.claim_status}`",
+                f"- summary: {_fallback_inline_text(manifest.summary, max_chars=420)}",
+                "",
+            ]
+        )
+        metric_lines = _manifest_metric_lines(manifest)
+        if metric_lines:
+            lines.extend(["#### Raw-backed Metrics", "", *metric_lines, ""])
+        claim_lines = _manifest_claim_lines(manifest)
+        if claim_lines:
+            lines.extend(["#### Manifest Claims", "", *claim_lines, ""])
+    lines.extend(
+        [
+            "## Review Boundary",
+            "",
+            "- Local OOF, notebook output, DACON public/private leaderboard, and organizer-official validation remain separate evidence surfaces.",
+            "- Do not treat this scaffold as a claim promotion; update it with primary LLM synthesis or human review when stronger evidence is available.",
+        ]
+    )
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _manifest_metric_lines(manifest: PacketManifest) -> list[str]:
+    lines: list[str] = []
+    for metric in manifest.metrics_to_verify:
+        if not hasattr(metric, "metric_key") or not hasattr(metric, "reported_value"):
+            continue
+        raw_path = getattr(metric, "raw_path", None)
+        key = getattr(metric, "metric_key", None)
+        value = getattr(metric, "reported_value", None)
+        if key is None or value is None:
+            continue
+        lines.append(f"- `{key}`: `{value}` (raw_path: `{raw_path}`)")
+    return lines
+
+
+def _manifest_claim_lines(manifest: PacketManifest) -> list[str]:
+    lines: list[str] = []
+    for claim in manifest.claims:
+        status = getattr(claim, "status", None)
+        text = getattr(claim, "text", None)
+        if not status:
+            continue
+        lines.append(f"- {status}: {_fallback_inline_text(text or '', max_chars=360)}")
+    return lines
+
+
 def _fill_missing_required_pages_for_github_models(
     repo_root: Path,
     pages: list[dict[str, str]],
     *,
     required_paths: list[str],
     manifests: list[tuple[PacketManifest, Path]],
-    llm_payload: dict[str, Any],
     provider_name: str,
 ) -> tuple[list[dict[str, str]], list[str]]:
     if provider_name != "github-models":
@@ -690,7 +792,6 @@ def _fill_missing_required_pages_for_github_models(
                     path,
                     required_paths=required_set,
                     manifests=manifests,
-                    llm_payload=llm_payload,
                 ),
             }
         )
@@ -706,12 +807,10 @@ def _github_models_required_page_fallback_content(
     *,
     required_paths: set[str],
     manifests: list[tuple[PacketManifest, Path]],
-    llm_payload: dict[str, Any],
 ) -> str:
     topic = _topic_slug(manifests)
     date_slug = _source_date_slug(manifests)
     packet_ids = ", ".join(manifest.id for manifest, _root in manifests) or "unknown"
-    summary = _fallback_inline_text(llm_payload.get("summary") or "GitHub Models fallback synthesis", max_chars=260)
     report_path = next((path for path in required_paths if path.startswith("wiki/reports/")), "wiki/index.md")
     report_link = report_path.removeprefix("wiki/").removesuffix(".md")
 
@@ -762,14 +861,15 @@ def _github_models_required_page_fallback_content(
         )
 
     existing_path = repo_root / rel_path
-    title = _fallback_title_from_path(rel_path)
-    existing = existing_path.read_text(encoding="utf-8").rstrip() if existing_path.exists() else f"# {title}"
+    if not existing_path.exists():
+        return _github_models_new_page_scaffold(rel_path, manifests=manifests)
+    existing = existing_path.read_text(encoding="utf-8").rstrip()
     marker = f"<!-- llm-synthesis:github-models-required-page-fill:{date_slug}:{_slugify(rel_path)} -->"
     section = (
         f"{marker}\n"
         f"## GitHub Models Fallback Synthesis | {date_slug}\n\n"
         f"- packet_ids: `{packet_ids}`\n"
-        f"- llm_summary: {summary}\n"
+        f"- packet_summary: {_manifest_summary_for_fallback(manifests)}\n"
         "- claim_status: preserved_from_raw_packet\n"
         "- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.\n"
         "- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.\n"
@@ -782,6 +882,11 @@ def _github_models_required_page_fallback_content(
 
 def _fallback_title_from_path(rel_path: str) -> str:
     return Path(rel_path).stem.replace("-", " ").title()
+
+
+def _manifest_summary_for_fallback(manifests: list[tuple[PacketManifest, Path]]) -> str:
+    summaries = [f"{manifest.id}: {manifest.summary}" for manifest, _root in manifests]
+    return _fallback_inline_text(" | ".join(summaries) or "No packet summary.", max_chars=420)
 
 
 def _fallback_inline_text(value: Any, *, max_chars: int) -> str:
