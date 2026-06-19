@@ -1263,6 +1263,58 @@ def test_github_models_fallback_does_not_report_supported_claim_promotions(tmp_p
     assert any("cannot promote supported claims" in note for note in payload["review_notes"])
 
 
+def test_github_models_fallback_uses_deterministic_scaffold_for_new_pages(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    primary = FailingClient(
+        IngestFailure(
+            FailureCode.LLM_SYNTHESIS_FAILED,
+            "OpenAI Responses API failed with HTTP 429",
+            {"body": '{"code":"insufficient_quota"}'},
+        )
+    )
+    fallback = FakeClient(
+        {
+            "summary": "GitHub Models fallback returned a wrong compact report.",
+            "integration_plan": [],
+            "created_pages": [],
+            "updated_pages": [],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": [],
+            "pages": [
+                {
+                    "path": page["path"],
+                    "content": "# Bad Report\n\nwrong compact metric `999`\n",
+                }
+                if page["path"] == "wiki/reports/2026-05-29-sleep-lifelog-packet-synthesis.md"
+                else page
+                for page in single_dataset_integration_pages()
+            ],
+        }
+    )
+    fallback.provider_name = "github-models"
+    fallback.last_model = "openai/gpt-4.1"
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="deterministic-new-pages",
+        client=SynthesisClientChain([primary, fallback]),
+    )
+
+    report_page = (tmp_path / "wiki" / "reports" / "2026-05-29-sleep-lifelog-packet-synthesis.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert report.status == "bot_pr"
+    assert "wrong compact metric" not in report_page
+    assert "`999`" not in report_page
+    assert "GitHub Models Deterministic Page Scaffold" in report_page
+    assert "fallback_compact_body_applied: false" in report_page
+
+
 def test_run_llm_synthesis_can_override_openai_output_budget(monkeypatch, tmp_path):
     seed_repo(tmp_path)
     packet_root = seed_dataset_packet(tmp_path)
