@@ -7,6 +7,7 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 - Provider: OpenAI
 - Model: `gpt-5.5`
 - Rationale: wiki synthesis requires long-context reasoning over `AGENTS.md`, `CLAUDE.md`, `wiki/latest-context.md`, packet manifests, packet-specific YAML, and packet narratives. Current OpenAI documentation marks GPT-5.5 as the latest flagship model for complex reasoning and coding.
+- Primary lane mode: when the OpenAI primary path is available, `run-llm-wiki-synthesis` runs three `gpt-5.5` specialist lanes before final page generation: `entity-graph`, `evidence-claims`, and `wiki-routing`.
 - GitHub-native fallback: GitHub Models through `GITHUB_TOKEN`, default model `openai/gpt-4.1`. The fallback exists so packet merge -> ingest -> synthesis remains fully executable inside GitHub Actions when OpenAI quota or billing fails.
 - Repo/org owners can set Actions variable `GITHUB_MODELS_MODEL` to a stronger allowed GitHub Models model without changing workflow code.
 
@@ -14,6 +15,7 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 
 - Merge-time `wiki-main-ingest` must not require an LLM API key.
 - `run-llm-wiki-synthesis` is the actual LLM synthesis path. It tries OpenAI Responses API with `gpt-5.5` and `reasoning.effort=high` first, then falls back to GitHub Models for recoverable provider failures such as missing OpenAI key, HTTP 429 quota/rate errors, timeout, or transient server errors.
+- On the OpenAI primary path, specialist lanes do not directly write wiki files. They produce bounded JSON findings for entity mapping, evidence/claim audit, and wiki routing; the final `gpt-5.5` integrator owns page generation and the existing validator still rejects missing, duplicate, noncanonical, or out-of-scope pages.
 - `.github/workflows/wiki-llm-synthesis.yml` runs after `raw/results/wiki-ingest/**` reaches `main`, reads the ingest report, and creates a review-required bot PR with the rewritten wiki pages.
 - LLM output must never mutate `raw/`.
 - LLM output that changes `wiki/` must be review-required unless the change is only a low-risk summary with no claim promotion.
@@ -28,6 +30,7 @@ This repository uses deterministic ingest as the default merge-time path. LLM-as
 - The LLM must output structured JSON containing only allowed replacement wiki pages, not free-form repository edits.
 - The workflow must not depend on `OPENAI_API_KEY` alone. It grants `models: read`, passes `GITHUB_TOKEN`, and should still create a synthesis bot PR through GitHub Models when OpenAI is unavailable.
 - If fallback is used, the synthesis report and bot PR body must record the actual model and include a review note that the primary provider failed recoverably.
+- If the primary specialist lanes run, the synthesis report and bot PR body must record the lane ids and concise summaries so reviewers can see how the work was divided.
 
 ## Prompt Contract
 
@@ -47,6 +50,7 @@ The synthesis prompt should ask for:
 - CLI: `python -m team_llm_wiki.cli run-llm-wiki-synthesis`
 - Model default: `gpt-5.5`
 - GitHub Models fallback default: `openai/gpt-4.1`
+- Primary specialist lanes: `entity-graph`, `evidence-claims`, `wiki-routing`
 - Reasoning default: `high`
 - Allowed write surface: stable entity pages plus deterministic integration pages computed from the changed packets
 - Report path: `raw/results/llm-synthesis/<run-id>/report.json`

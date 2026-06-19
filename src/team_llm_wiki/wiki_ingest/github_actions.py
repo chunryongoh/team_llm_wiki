@@ -136,6 +136,26 @@ def _append_review_question_section(lines: list[str], payload: dict[str, Any], f
         lines.append(f"- {_bounded_text(question)}")
 
 
+def _append_synthesis_lanes_section(lines: list[str], lanes: Any) -> None:
+    clean = [lane for lane in lanes or [] if isinstance(lane, dict)]
+    if not clean:
+        return
+    lines.extend(["", "### GPT-5.5 specialist lanes"])
+    for lane in clean[:MAX_LIST_ITEMS]:
+        lane_id = _bounded_text(lane.get("lane_id", "unknown"), MAX_PATH_CHARS)
+        summary = _bounded_text(lane.get("summary", ""), 300)
+        role = _bounded_text(lane.get("role", ""), 180)
+        suffix = f" - {summary}" if summary else ""
+        role_suffix = f" (`{role}`)" if role else ""
+        lines.append(f"- `{lane_id}`{role_suffix}{suffix}")
+        risks = [str(item) for item in lane.get("risks") or [] if str(item).strip()]
+        if risks:
+            lines.append(f"  - risk: {_bounded_text('; '.join(risks), 300)}")
+    remaining = len(clean) - MAX_LIST_ITEMS
+    if remaining > 0:
+        lines.append(f"- 외 {remaining}개 더")
+
+
 def should_skip_wiki_ingest(actor: str, commit_message: str | None = None, pr_title: str | None = None) -> bool:
     if pr_title and pr_title.startswith(WIKI_BOT_PREFIX):
         return True
@@ -222,6 +242,7 @@ def render_bot_pr_body(payload: dict[str, Any]) -> str:
         lines.extend(["", "## LLM 통합 정리", ""])
         summary = payload.get("synthesis_summary") or payload.get("summary") or "없음"
         lines.append(_bounded_text(summary, 1000))
+        _append_synthesis_lanes_section(lines, payload.get("synthesis_lanes"))
         integration_plan = [item for item in payload.get("integration_plan") or [] if str(item).strip()]
         if integration_plan:
             lines.extend(["", "### 통합 계획"])

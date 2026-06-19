@@ -150,6 +150,18 @@ def test_render_bot_pr_body_surfaces_llm_integration_metadata():
                 "wiki/questions/dataset-open-questions.md",
             ],
             "synthesis_summary": "Integrated source into the wiki graph.",
+            "synthesis_lanes": [
+                {
+                    "lane_id": "entity-graph",
+                    "summary": "Mapped durable entities and wiki links.",
+                    "risks": ["duplicate hub risk"],
+                },
+                {
+                    "lane_id": "evidence-claims",
+                    "summary": "Audited metric and claim boundaries.",
+                    "risks": [],
+                },
+            ],
             "integration_plan": ["Create topic pages", "Refresh core pages"],
             "created_pages": ["wiki/features/dataset-feature-landscape.md"],
             "updated_pages": ["wiki/datasets/dataset-a.md", "wiki/index.md"],
@@ -170,6 +182,10 @@ def test_render_bot_pr_body_surfaces_llm_integration_metadata():
 
     assert "## LLM 통합 정리" in body
     assert "Integrated source into the wiki graph." in body
+    assert "### GPT-5.5 specialist lanes" in body
+    assert "entity-graph" in body
+    assert "Mapped durable entities and wiki links." in body
+    assert "evidence-claims" in body
     assert "### 통합 계획" in body
     assert "Create topic pages" in body
     assert "### 새로 생성된 wiki 페이지" in body

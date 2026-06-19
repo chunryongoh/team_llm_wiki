@@ -16,4 +16,4 @@ Do not promote performance claims without raw evidence and split/metric validati
 
 Route policy source of truth is `automation/contracts/wiki-route-contract.v1.yaml`. Dataset/split/leakage policy belongs under `wiki/preprocessing/`; metric, evaluation, leaderboard, and submission history belongs under `wiki/performance/`. Deprecated namespaces such as `wiki/datasets`, `wiki/benchmarks`, `wiki/questions`, `wiki/submissions`, `wiki/experiments`, and `wiki/sources` are compatibility-only.
 
-If asked to run LLM-assisted synthesis, use `gpt-5.5` by default and keep the result as a review-required wiki update.
+If asked to run LLM-assisted synthesis, use `gpt-5.5` by default, run specialist lane findings for entity graph mapping, evidence/claim audit, and wiki routing when primary synthesis is available, and keep the result as a review-required wiki update.

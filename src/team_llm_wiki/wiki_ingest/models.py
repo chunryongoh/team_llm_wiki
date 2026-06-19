@@ -314,6 +314,7 @@ class IngestReport:
     llm_synthesis: bool = False
     model: str | None = None
     review_notes: list[str] = field(default_factory=list)
+    synthesis_lanes: list[dict[str, Any]] = field(default_factory=list)
     synthesis_summary: str | None = None
     integration_plan: list[str] = field(default_factory=list)
     created_pages: list[str] = field(default_factory=list)
