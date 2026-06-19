@@ -25,7 +25,8 @@ DEFAULT_MAX_OUTPUT_TOKENS = 60000
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference"
 DEFAULT_GITHUB_MODELS_MODEL = "openai/gpt-4.1"
-DEFAULT_GITHUB_MODELS_MAX_OUTPUT_TOKENS = 32000
+DEFAULT_GITHUB_MODELS_MAX_OUTPUT_TOKENS = 3000
+DEFAULT_GITHUB_MODELS_MAX_PROMPT_CHARS = 12000
 MAX_CONTEXT_FILE_CHARS = 120_000
 
 
@@ -106,12 +107,15 @@ class GitHubModelsChatClient:
         model: str | None = None,
         base_url: str | None = None,
         max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
+        max_prompt_chars: int | None = None,
     ):
         self.token = token or os.environ.get("GITHUB_MODELS_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
         self.model = model or os.environ.get("GITHUB_MODELS_MODEL") or DEFAULT_GITHUB_MODELS_MODEL
         self.base_url = (base_url or os.environ.get("GITHUB_MODELS_BASE_URL") or DEFAULT_GITHUB_MODELS_BASE_URL).rstrip("/")
         env_budget = os.environ.get("GITHUB_MODELS_MAX_OUTPUT_TOKENS")
         self.max_output_tokens = int(env_budget) if env_budget else min(max_output_tokens, DEFAULT_GITHUB_MODELS_MAX_OUTPUT_TOKENS)
+        env_prompt_budget = os.environ.get("GITHUB_MODELS_MAX_PROMPT_CHARS")
+        self.max_prompt_chars = int(env_prompt_budget) if env_prompt_budget else (max_prompt_chars or DEFAULT_GITHUB_MODELS_MAX_PROMPT_CHARS)
         self.provider_name = "github-models"
         self.last_model: str | None = None
 
@@ -119,6 +123,7 @@ class GitHubModelsChatClient:
         if not self.token:
             raise IngestFailure(FailureCode.MISSING_API_KEY, "GITHUB_TOKEN or GITHUB_MODELS_TOKEN is required for GitHub Models synthesis")
         self.last_model = self.model
+        compact_prompt = _compact_prompt_for_github_models(prompt, max_chars=self.max_prompt_chars)
         payload = {
             "model": self.model,
             "messages": [
@@ -130,7 +135,7 @@ class GitHubModelsChatClient:
                         "proves a change. Return only valid JSON matching the provided schema."
                     ),
                 },
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": compact_prompt},
             ],
             "max_tokens": self.max_output_tokens,
             "temperature": 0,
@@ -893,6 +898,102 @@ def _loads_llm_json(text: str) -> Any:
         clean = re.sub(r"^```(?:json)?\s*", "", clean)
         clean = re.sub(r"\s*```$", "", clean).strip()
     return json.loads(clean)
+
+
+def _compact_prompt_for_github_models(prompt: str, *, max_chars: int = DEFAULT_GITHUB_MODELS_MAX_PROMPT_CHARS) -> str:
+    if len(prompt) <= max_chars:
+        return prompt
+    matches = list(re.finditer(r"FILE: ([^\n]+)\n```text\n(.*?)\n```", prompt, flags=re.DOTALL))
+    if not matches:
+        return _truncate_text(prompt, max_chars)
+
+    head = prompt[: matches[0].start()].strip()
+    head = _truncate_text(head, min(6500, max_chars // 2))
+    intro = (
+        head.rstrip()
+        + "\n\nGitHub Models fallback compact context: some large raw artifacts are truncated. "
+        "Use preserved filenames, metrics, claim boundaries, wiki_plan targets, and existing wiki entrypoints to synthesize concise pages."
+    )
+    blocks = [
+        (
+            _github_prompt_file_priority(match.group(1)),
+            match.start(),
+            _compact_file_block_for_github(match.group(1), match.group(2)),
+        )
+        for match in matches
+    ]
+    blocks.sort(key=lambda item: (item[0], item[1]))
+    selected: list[str] = []
+    omitted: list[str] = []
+    current_len = len(intro) + 2
+    for _priority, _index, block in blocks:
+        needed = len(block) + 2
+        if current_len + needed <= max_chars:
+            selected.append(block)
+            current_len += needed
+        else:
+            omitted.append(_file_path_from_block(block))
+    suffix = ""
+    if omitted:
+        suffix = "\n\nOmitted compact context files due GitHub Models request limit:\n" + "\n".join(
+            f"- {path}" for path in omitted[:80]
+        )
+    compact = intro + "\n\n" + "\n\n".join(selected) + suffix
+    if len(compact) > max_chars:
+        compact = _truncate_text(compact, max_chars)
+    return compact
+
+
+def _compact_file_block_for_github(path: str, content: str) -> str:
+    budget = _github_prompt_file_budget(path)
+    return f"FILE: {path}\n```text\n{_truncate_text(content.strip(), budget)}\n```"
+
+
+def _truncate_text(text: str, max_chars: int) -> str:
+    if len(text) <= max_chars:
+        return text
+    marker = "\n<truncated for GitHub Models fallback>\n"
+    if max_chars <= len(marker) + 20:
+        return text[:max(0, max_chars - len(marker))] + marker.strip()
+    head = max_chars - len(marker)
+    return text[:head].rstrip() + marker
+
+
+def _github_prompt_file_priority(path: str) -> int:
+    if path in {"AGENTS.md", "CLAUDE.md", "wiki/latest-context.md", "wiki/index.md", "wiki/overview.md"}:
+        return 0
+    if path.endswith(("/manifest.yaml", "/packet.md", "/metrics.json", "/performance.yaml", "/wiki_plan.yaml")):
+        return 0
+    if path.endswith(("/semantic_lint.json", "/question_queue.yaml", "/artifact_summary.json", "/source_note.md")):
+        return 1
+    if path.startswith("wiki/team/") or path.startswith("wiki/claims/") or path.startswith("wiki/preprocessing/"):
+        return 1
+    if path.startswith("wiki/") or "/source_artifacts/" not in path:
+        return 2
+    return 3
+
+
+def _github_prompt_file_budget(path: str) -> int:
+    if path in {"AGENTS.md", "CLAUDE.md"}:
+        return 2200
+    if path in {"wiki/latest-context.md", "wiki/index.md", "wiki/overview.md"}:
+        return 1600
+    if path.endswith("/packet.md"):
+        return 1800
+    if path.endswith(("/manifest.yaml", "/metrics.json", "/performance.yaml", "/wiki_plan.yaml")):
+        return 1600
+    if path.endswith(("/semantic_lint.json", "/question_queue.yaml", "/artifact_summary.json", "/source_note.md")):
+        return 900
+    if path.startswith("wiki/team/"):
+        return 900
+    if "/source_artifacts/" in path:
+        return 450
+    return 900
+
+
+def _file_path_from_block(block: str) -> str:
+    first = block.splitlines()[0] if block.splitlines() else ""
+    return first.removeprefix("FILE: ").strip() or "<unknown>"
 
 
 def _is_recoverable_synthesis_failure(exc: IngestFailure) -> bool:

@@ -1003,11 +1003,65 @@ def test_github_models_client_posts_structured_chat_completion(monkeypatch):
     assert captured["headers"]["Accept"] == "application/vnd.github+json"
     body = captured["body"]
     assert body["model"] == "openai/gpt-4.1"
-    assert body["max_tokens"] == 32000
+    assert body["max_tokens"] == 3000
     assert body["temperature"] == 0
     assert body["response_format"]["type"] == "json_schema"
     assert body["response_format"]["json_schema"]["name"] == "team_llm_wiki_synthesis"
     assert body["messages"][1]["content"] == "context"
+
+
+def test_github_models_client_compacts_large_prompts_before_request(monkeypatch):
+    captured = {}
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def read(self):
+            return json.dumps(
+                {
+                    "choices": [
+                        {
+                            "message": {
+                                "content": json.dumps({"summary": "ok", "review_notes": [], "pages": []}),
+                            }
+                        }
+                    ]
+                }
+            ).encode("utf-8")
+
+    def fake_urlopen(req, timeout):
+        captured["body"] = json.loads(req.data.decode("utf-8"))
+        return FakeResponse()
+
+    large_prompt = (
+        "Run a Karpathy-style LLM wiki integration pass.\n\n"
+        "Allowed output pages:\n"
+        "- wiki/performance/wave41.md\n"
+        "- wiki/latest-context.md\n\n"
+        "Context files:\n\n"
+        "FILE: AGENTS.md\n```text\n" + ("agent rules\n" * 500) + "```\n\n"
+        "FILE: raw/users/alice/performance/wave41/source_artifacts/suite_metrics.json\n```text\n"
+        + ("{\"metric\": 0.619596}\n" * 12000)
+        + "```\n\n"
+        "FILE: raw/users/alice/performance/wave41/metrics.json\n```text\n{\"grouped_macro_log_loss\": 0.619596}\n```"
+    )
+    monkeypatch.setattr(llm_synthesis.request, "urlopen", fake_urlopen)
+    client = GitHubModelsChatClient(token="github-token", max_output_tokens=60000)
+
+    client.synthesize(model="gpt-5.5", reasoning_effort="high", prompt=large_prompt)
+
+    compact_prompt = captured["body"]["messages"][1]["content"]
+    assert len(compact_prompt) <= 18000
+    assert "Allowed output pages:" in compact_prompt
+    assert "wiki/performance/wave41.md" in compact_prompt
+    assert "FILE: raw/users/alice/performance/wave41/metrics.json" in compact_prompt
+    assert "FILE: raw/users/alice/performance/wave41/source_artifacts/suite_metrics.json" in compact_prompt
+    assert "<truncated for GitHub Models fallback>" in compact_prompt
+    assert captured["body"]["max_tokens"] <= 3500
 
 
 def test_llm_synthesis_falls_back_to_github_models_when_openai_quota_fails(tmp_path):
