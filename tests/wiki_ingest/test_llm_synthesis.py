@@ -1189,7 +1189,15 @@ def test_github_models_fallback_preserves_existing_non_entrypoint_pages(tmp_path
             "open_questions": [],
             "superseded_or_conflicting_claims": [],
             "review_notes": [],
-            "pages": single_dataset_integration_pages(),
+            "pages": [
+                {
+                    "path": page["path"],
+                    "content": "# Sleep Lifelog 2024\n\nLLM synthesized page with wrong compact metric `999`.\n",
+                }
+                if page["path"] == "wiki/preprocessing/sleep-lifelog-2024.md"
+                else page
+                for page in single_dataset_integration_pages()
+            ],
         }
     )
     fallback.provider_name = "github-models"
@@ -1207,7 +1215,9 @@ def test_github_models_fallback_preserves_existing_non_entrypoint_pages(tmp_path
     assert report.status == "bot_pr"
     assert "Old deterministic summary" in dataset_page
     assert "GitHub Models Synthesis Addendum" in dataset_page
-    assert "LLM synthesized page" in dataset_page
+    assert "LLM synthesized page with wrong compact metric" not in dataset_page
+    assert "`999`" not in dataset_page
+    assert "fallback_compact_body_applied: false" in dataset_page
 
 
 def test_github_models_fallback_does_not_report_supported_claim_promotions(tmp_path):
