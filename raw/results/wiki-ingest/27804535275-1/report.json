@@ -1,0 +1,211 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.json",
+    "raw/results/wiki-ingest/27804535275-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "status": "supported"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.json"
+  ],
+  "input_changed_paths": [
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/manifest.yaml"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [
+    {
+      "metric": "Q1_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6225370998897288
+    },
+    {
+      "metric": "Q2_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6555493560477773
+    },
+    {
+      "metric": "Q3_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6309857415368405
+    },
+    {
+      "metric": "S1_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.562996471228798
+    },
+    {
+      "metric": "S2_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6113857154018603
+    },
+    {
+      "metric": "S3_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.595105227779678
+    },
+    {
+      "metric": "S4_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6586155626317527
+    },
+    {
+      "metric": "delta_vs_prior_lgb_cb_reproduction",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": -0.000240067821740797
+    },
+    {
+      "metric": "grouped_macro_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6195964535023479
+    },
+    {
+      "metric": "macro_auroc",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.680617701580707
+    },
+    {
+      "metric": "macro_brier_score",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.2153164638768479
+    },
+    {
+      "metric": "macro_f1",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.7417894093790057
+    },
+    {
+      "metric": "macro_roc_auc",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.680617701580707
+    },
+    {
+      "metric": "prior_lgb_cb_reproduction_macro_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6198365213240887
+    },
+    {
+      "metric": "remaining_gap_to_0p61",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.009596453502347946
+    },
+    {
+      "metric": "targetwise_reblend_macro_log_loss",
+      "packet": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "reported_value": 0.6195964535023479
+    }
+  ],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "changed paths are limited to raw/users/**",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "status": "pass"
+      },
+      {
+        "affected_page_count": 4,
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, semantic lint, and page-role coverage",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+        "proposed_pages": [
+          "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+          "wiki/models/lightgbm-catboost.md",
+          "wiki/performance/sleep-health-hackathon-evaluation-policy.md",
+          "wiki/claims/current-supported-claims.md",
+          "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md",
+          "wiki/targets/sleep-lifelog-open-issues.md",
+          "wiki/performance/dacon-leaderboard-history.md"
+        ],
+        "stable_entity_count": 4,
+        "status": "pass"
+      }
+    ],
+    "status": "pass"
+  },
+  "packets": [
+    {
+      "claim_boundary": "local_oof_diagnostic_only",
+      "claim_status": "supported",
+      "id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: performance",
+        "high-risk wiki target path",
+        "high-risk canonical route",
+        "governance-tier claim status"
+      ],
+      "risk_tier": "tier4-governance",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/27804535275-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier4-governance",
+  "run_id": "27804535275-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": null,
+  "timing_ms": 176,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}

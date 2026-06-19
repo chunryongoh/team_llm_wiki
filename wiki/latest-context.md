@@ -36,6 +36,13 @@
 - [app context feature engineering 20260601](performance/2026-06-01-app-context-feature-engineering-20260601.md)
 
 <!-- wiki-ingest:latest:start -->
+### 27804535275-1 | 2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic
+
+- link: [[performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic]]
+- publish_action: `bot_pr`
+- risk_tier: `tier4-governance`
+- review-required: true
+
 ### 27396372321-1 | 2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck
 
 - link: [[performance/2026-06-12-dacon-public-05917-lgbm-xgb-anchor-graph-first-recheck]]
