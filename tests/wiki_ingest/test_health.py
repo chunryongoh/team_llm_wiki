@@ -395,6 +395,72 @@ def test_health_can_warn_for_stale_tentative_claim_on_scheduled_runs(tmp_path, m
     assert any(warning["code"] == "stale_tentative_claim" for warning in payload["warnings"])
 
 
+def test_health_warns_for_tracked_stale_tentative_claims_but_errors_on_untracked(tmp_path, monkeypatch):
+    seed_clean(tmp_path)
+    (tmp_path / "wiki" / "targets").mkdir()
+    for name in ["tracked", "untracked"]:
+        (tmp_path / "wiki" / "targets" / f"{name}.md").write_text(
+            "---\n"
+            "claim_status: tentative\n"
+            "date: 2026-05-01\n"
+            "---\n"
+            f"# {name.title()} hypothesis\n\n"
+            "raw_evidence:\n"
+            f"- raw/users/alice/{name}/README.md\n",
+            encoding="utf-8",
+        )
+    (tmp_path / "wiki" / "claims" / "stale-tentative-claims.md").write_text(
+        "# Stale Tentative Claims\n\n"
+        "| page | close condition |\n"
+        "| --- | --- |\n"
+        "| [Tracked](../targets/tracked.md) | Add raw evidence or supersede. |\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "wiki" / "index.md").write_text(
+        "# Index\n\n"
+        "<!-- wiki-ingest:index:start -->\n"
+        "- [[targets/tracked]]\n"
+        "- [[targets/untracked]]\n"
+        "- [Stale Tentative Claims](claims/stale-tentative-claims.md)\n"
+        "<!-- wiki-ingest:index:end -->\n",
+        encoding="utf-8",
+    )
+
+    class FrozenDate:
+        @classmethod
+        def today(cls):
+            return cls(2026, 5, 27)
+
+        @classmethod
+        def fromisoformat(cls, value):
+            from datetime import date
+
+            return date.fromisoformat(value)
+
+        def __new__(cls, *args):
+            from datetime import date
+
+            return date(*args)
+
+    monkeypatch.setattr("team_llm_wiki.wiki_ingest.health.date", FrozenDate, raising=False)
+
+    report = check_wiki_health(tmp_path)
+
+    assert report.ok is False
+    assert any(
+        error.code == "stale_tentative_claim" and error.path == "wiki/targets/untracked.md"
+        for error in report.errors
+    )
+    assert not any(
+        error.code == "stale_tentative_claim" and error.path == "wiki/targets/tracked.md"
+        for error in report.errors
+    )
+    assert any(
+        warning.code == "stale_tentative_claim" and warning.path == "wiki/targets/tracked.md"
+        for warning in report.warnings
+    )
+
+
 def test_health_detects_performance_metric_unverified(tmp_path):
     seed_clean(tmp_path)
     (tmp_path / "wiki" / "performance").mkdir(exist_ok=True)

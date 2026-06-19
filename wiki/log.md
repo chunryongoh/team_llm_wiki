@@ -220,3 +220,9 @@ Append-only ingest and maintenance events belong here.
 - updated: `wiki/latest-context.md`, `wiki/index.md`, `wiki/team/llm-wiki-operating-harness.md`, `wiki/team/wiki-ingest-policy.md`
 - decision: PR/ingest/synthesis health gate는 stale tentative claim을 error로 유지하고, scheduled `wiki-health-check`만 warning으로 내려 daily/weekly brief artifact 생성을 지속한다.
 - purpose: 오래된 tentative claim을 숨기거나 가짜 supported claim으로 승격하지 않고, 닫힘 조건이 있는 review queue로 관리한다.
+
+## [2026-06-19] policy-fix | tracked-stale-claims-health
+
+- updated: `src/team_llm_wiki/wiki_ingest/health.py`, `wiki/claims/stale-tentative-claims.md`, `wiki/team/llm-wiki-operating-harness.md`, `wiki/team/wiki-ingest-policy.md`
+- decision: [Stale Tentative Claims](claims/stale-tentative-claims.md)에 등록된 stale claim은 strict health에서도 warning으로 처리하고, registry에 없는 stale claim만 PR/ingest/synthesis gate error로 유지한다.
+- reason: Wave41 packet merge 후 `wiki-main-ingest`가 packet 자체 문제가 아니라 기존 tracked stale backlog 때문에 실패했다.

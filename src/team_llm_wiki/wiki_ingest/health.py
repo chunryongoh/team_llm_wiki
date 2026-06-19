@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date
 import json
 from pathlib import Path
+import posixpath
 import re
 
 from .brief import GENERATED_BRIEF_MARKER
@@ -39,6 +40,7 @@ HUB_SOFT_CHAR_LIMIT = 14000
 HUB_SOFT_HEADING_LIMIT = 24
 STALE_TENTATIVE_CLAIM_CODE = "stale_tentative_claim"
 STALE_TENTATIVE_MODES = {"error", "warning"}
+STALE_TENTATIVE_REGISTRY_PATH = "wiki/claims/stale-tentative-claims.md"
 
 
 def _generated_block_errors(repo_root: Path) -> list[HealthError]:
@@ -204,11 +206,33 @@ def _claim_errors(rel_path: str, frontmatter: dict[str, str], text: str) -> list
     return errors
 
 
-def _partition_stale_tentative_claims(errors: list[HealthError]) -> tuple[list[HealthError], list[HealthError]]:
+def _tracked_stale_tentative_paths(repo_root: Path) -> set[str]:
+    registry = repo_root / STALE_TENTATIVE_REGISTRY_PATH
+    if not registry.exists():
+        return set()
+    text = registry.read_text(encoding="utf-8")
+    paths: set[str] = set()
+    base = posixpath.dirname(STALE_TENTATIVE_REGISTRY_PATH)
+    for target in re.findall(r"\]\(([^)\n#]+\.md)(?:#[^)\n]*)?\)", text):
+        normalized = posixpath.normpath(target if target.startswith("wiki/") else posixpath.join(base, target))
+        if normalized.startswith("wiki/"):
+            paths.add(normalized)
+    for target in re.findall(r"\[\[([^]\n#]+)(?:#[^]\n]*)?]]", text):
+        normalized = posixpath.normpath(target if target.startswith("wiki/") else posixpath.join("wiki", target))
+        if normalized.startswith("wiki/"):
+            paths.add(normalized if normalized.endswith(".md") else f"{normalized}.md")
+    return paths
+
+
+def _partition_stale_tentative_claims(
+    errors: list[HealthError],
+    *,
+    tracked_paths: set[str] | None = None,
+) -> tuple[list[HealthError], list[HealthError]]:
     remaining: list[HealthError] = []
     stale_tentative_claims: list[HealthError] = []
     for error in errors:
-        if error.code == STALE_TENTATIVE_CLAIM_CODE:
+        if error.code == STALE_TENTATIVE_CLAIM_CODE and (tracked_paths is None or error.path in tracked_paths):
             stale_tentative_claims.append(error)
         else:
             remaining.append(error)
@@ -459,6 +483,12 @@ def check_wiki_health(
     if stale_tentative_mode == "warning":
         errors, stale_tentative_warnings = _partition_stale_tentative_claims(errors)
         warnings = [*warnings, *stale_tentative_warnings]
+    elif stale_tentative_mode == "error":
+        errors, tracked_stale_tentative_warnings = _partition_stale_tentative_claims(
+            errors,
+            tracked_paths=_tracked_stale_tentative_paths(repo_root),
+        )
+        warnings = [*warnings, *tracked_stale_tentative_warnings]
     report = HealthReport(
         ok=not errors,
         errors=errors,
