@@ -1232,11 +1232,11 @@ def test_github_models_fallback_does_not_report_supported_claim_promotions(tmp_p
     )
     fallback = FakeClient(
         {
-            "summary": "GitHub Models fallback attempted to promote a claim.",
+            "summary": "GitHub Models fallback attempted to promote a claim with wrong metric `999`.",
             "integration_plan": [],
             "created_pages": [],
             "updated_pages": [],
-            "claim_register": [{"status": "supported", "text": "Fallback promoted a local OOF claim."}],
+            "claim_register": [{"status": "supported", "text": "Fallback promoted a local OOF claim with `999`."}],
             "open_questions": [],
             "superseded_or_conflicting_claims": [],
             "review_notes": [],
@@ -1257,9 +1257,9 @@ def test_github_models_fallback_does_not_report_supported_claim_promotions(tmp_p
     payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "guarded-claims" / "report.json").read_text())
 
     assert report.status == "bot_pr"
-    assert payload["claim_register"] == [
-        {"status": "tentative", "text": "Fallback promoted a local OOF claim."}
-    ]
+    assert payload["synthesis_summary"] == "Dataset summary."
+    assert payload["claim_register"] == [{"status": "tentative", "text": "Dataset summary."}]
+    assert "999" not in json.dumps(payload, ensure_ascii=False)
     assert any("cannot promote supported claims" in note for note in payload["review_notes"])
 
 
