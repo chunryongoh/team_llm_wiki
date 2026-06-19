@@ -2,7 +2,7 @@
 
 ETRI/DACON 수면 건강 해커톤 팀의 공유 지식 저장소입니다.
 
-팀원은 `wiki/`를 직접 고치지 않고, 자신의 실험 결과를 `raw/users/**` packet PR로 올립니다. 이후 GitHub Actions가 검증하고 GPT-5.5가 팀 wiki로 정리합니다.
+팀원은 `wiki/`를 직접 고치지 않고, 자신의 실험 결과를 `raw/users/**` packet PR로 올립니다. 이후 GitHub Actions가 검증하고 LLM synthesis가 팀 wiki로 정리합니다.
 
 ## 흐름
 
@@ -13,7 +13,7 @@ flowchart LR
     C --> D["PR preview"]
     D --> E["wiki-main-ingest"]
     E --> F["ingest bot PR"]
-    F --> G["wiki-llm-synthesis<br/>GPT-5.5"]
+    F --> G["wiki-llm-synthesis<br/>OpenAI primary / GitHub Models fallback"]
     G --> H["synthesis bot PR"]
     H --> I["최신 wiki"]
 ```
@@ -22,7 +22,7 @@ flowchart LR
 | --- | --- |
 | Packet PR | 팀원이 raw evidence와 claim boundary 제출 |
 | Ingest bot PR | packet을 deterministic하게 검증/정규화 |
-| Synthesis bot PR | GPT-5.5가 기존 wiki와 통합 |
+| Synthesis bot PR | LLM이 기존 wiki와 통합 |
 
 ## Canonical Wiki Structure
 
@@ -60,6 +60,15 @@ https://github.com/chunryongoh/team-llm-wiki-packet-skill
 git clone https://github.com/chunryongoh/team-llm-wiki-packet-skill.git
 team-llm-wiki-packet-skill/install.sh --verify
 ```
+
+## LLM synthesis 모델 경로
+
+`wiki-llm-synthesis`는 GitHub Actions 안에서 끝까지 돌아가야 합니다.
+
+- 1순위: `OPENAI_API_KEY`가 있으면 OpenAI Responses API `gpt-5.5`를 사용합니다.
+- fallback: OpenAI key가 없거나 quota/rate/server 계열 recoverable 오류가 나면 GitHub Models를 `GITHUB_TOKEN`으로 호출합니다.
+- 기본 GitHub Models fallback은 `openai/gpt-4.1`입니다. 더 좋은 모델을 허용한 repo/org에서는 Actions variable `GITHUB_MODELS_MODEL`로 바꿀 수 있습니다.
+- synthesis bot PR 본문에는 실제 사용된 모델이 표시됩니다.
 
 ## AI가 먼저 읽을 파일
 

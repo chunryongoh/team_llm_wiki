@@ -23,6 +23,9 @@ DEFAULT_MODEL = "gpt-5.5"
 DEFAULT_REASONING_EFFORT = "high"
 DEFAULT_MAX_OUTPUT_TOKENS = 60000
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_GITHUB_MODELS_BASE_URL = "https://models.github.ai/inference"
+DEFAULT_GITHUB_MODELS_MODEL = "openai/gpt-4.1"
+DEFAULT_GITHUB_MODELS_MAX_OUTPUT_TOKENS = 32000
 MAX_CONTEXT_FILE_CHARS = 120_000
 
 
@@ -37,10 +40,13 @@ class OpenAIResponsesClient:
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.base_url = (base_url or os.environ.get("OPENAI_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
         self.max_output_tokens = max_output_tokens
+        self.provider_name = "openai-responses"
+        self.last_model: str | None = None
 
     def synthesize(self, *, model: str, reasoning_effort: str, prompt: str) -> dict[str, Any]:
         if not self.api_key:
             raise IngestFailure(FailureCode.MISSING_API_KEY, "OPENAI_API_KEY is required for LLM synthesis")
+        self.last_model = model
         payload = {
             "model": model,
             "reasoning": {"effort": reasoning_effort},
@@ -92,6 +98,123 @@ class OpenAIResponsesClient:
         return parsed if isinstance(parsed, dict) else {}
 
 
+class GitHubModelsChatClient:
+    def __init__(
+        self,
+        *,
+        token: str | None = None,
+        model: str | None = None,
+        base_url: str | None = None,
+        max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
+    ):
+        self.token = token or os.environ.get("GITHUB_MODELS_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        self.model = model or os.environ.get("GITHUB_MODELS_MODEL") or DEFAULT_GITHUB_MODELS_MODEL
+        self.base_url = (base_url or os.environ.get("GITHUB_MODELS_BASE_URL") or DEFAULT_GITHUB_MODELS_BASE_URL).rstrip("/")
+        env_budget = os.environ.get("GITHUB_MODELS_MAX_OUTPUT_TOKENS")
+        self.max_output_tokens = int(env_budget) if env_budget else min(max_output_tokens, DEFAULT_GITHUB_MODELS_MAX_OUTPUT_TOKENS)
+        self.provider_name = "github-models"
+        self.last_model: str | None = None
+
+    def synthesize(self, *, model: str, reasoning_effort: str, prompt: str) -> dict[str, Any]:
+        if not self.token:
+            raise IngestFailure(FailureCode.MISSING_API_KEY, "GITHUB_TOKEN or GITHUB_MODELS_TOKEN is required for GitHub Models synthesis")
+        self.last_model = self.model
+        payload = {
+            "model": self.model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are the Team LLM Wiki synthesis engine. Rewrite only the allowed wiki pages. "
+                        "Follow AGENTS.md and CLAUDE.md exactly. Preserve claim statuses unless raw evidence "
+                        "proves a change. Return only valid JSON matching the provided schema."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
+            "max_tokens": self.max_output_tokens,
+            "temperature": 0,
+            "response_format": _chat_response_schema(),
+        }
+        data = json.dumps(payload).encode("utf-8")
+        http_request = request.Request(
+            f"{self.base_url}/chat/completions",
+            data=data,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "Authorization": f"Bearer {self.token}",
+                "Content-Type": "application/json",
+                "X-GitHub-Api-Version": "2026-03-10",
+            },
+            method="POST",
+        )
+        try:
+            with request.urlopen(http_request, timeout=600) as response:
+                response_payload = json.loads(response.read().decode("utf-8"))
+        except error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            raise IngestFailure(
+                FailureCode.LLM_SYNTHESIS_FAILED,
+                f"GitHub Models API failed with HTTP {exc.code}",
+                {"body": body[:2000]},
+            ) from exc
+        except (OSError, json.JSONDecodeError) as exc:
+            raise IngestFailure(FailureCode.LLM_SYNTHESIS_FAILED, str(exc)) from exc
+        output_text = _extract_chat_completion_text(response_payload)
+        try:
+            parsed = _loads_llm_json(output_text)
+        except json.JSONDecodeError as exc:
+            raise IngestFailure(
+                FailureCode.INVALID_LLM_OUTPUT,
+                "GitHub Models output was not valid JSON",
+                {"output_text": output_text[:2000]},
+            ) from exc
+        return parsed if isinstance(parsed, dict) else {}
+
+
+class SynthesisClientChain:
+    def __init__(self, clients: list[Any]):
+        self.clients = clients
+        self.last_model: str | None = None
+        self.last_provider: str | None = None
+        self.review_notes: list[str] = []
+
+    def synthesize(self, *, model: str, reasoning_effort: str, prompt: str) -> dict[str, Any]:
+        failures: list[IngestFailure] = []
+        for client in self.clients:
+            try:
+                payload = client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+            except IngestFailure as exc:
+                failures.append(exc)
+                if _is_recoverable_synthesis_failure(exc):
+                    continue
+                raise
+            self.last_model = getattr(client, "last_model", None) or getattr(client, "model", None) or model
+            self.last_provider = getattr(client, "provider_name", client.__class__.__name__)
+            if failures:
+                failed = "; ".join(f"{failure.code.value}: {failure.message}" for failure in failures)
+                self.review_notes.append(
+                    f"Primary LLM provider failed recoverably ({failed}); synthesis completed with {self.last_provider} `{self.last_model}`."
+                )
+            return payload
+        if failures:
+            last = failures[-1]
+            detail = {"provider_failures": [failure.to_dict() for failure in failures]}
+            raise IngestFailure(last.code, last.message, detail) from last
+        raise IngestFailure(FailureCode.MISSING_API_KEY, "No LLM synthesis provider is configured")
+
+
+def default_synthesis_client(max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS) -> SynthesisClientChain:
+    clients: list[Any] = []
+    if os.environ.get("OPENAI_API_KEY"):
+        clients.append(OpenAIResponsesClient(max_output_tokens=max_output_tokens))
+    if os.environ.get("GITHUB_MODELS_TOKEN") or os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN"):
+        clients.append(GitHubModelsChatClient(max_output_tokens=max_output_tokens))
+    if not clients:
+        clients.append(OpenAIResponsesClient(max_output_tokens=max_output_tokens))
+    return SynthesisClientChain(clients)
+
+
 def run_llm_wiki_synthesis(
     repo_root: Path,
     changed_paths: list[str],
@@ -121,8 +244,10 @@ def run_llm_wiki_synthesis(
     target_paths = _target_paths(repo_root, manifests)
     evidence_by_target = _raw_evidence_by_target(repo_root, manifests, target_paths)
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
-    synthesis_client = client or OpenAIResponsesClient(max_output_tokens=max_output_tokens)
+    synthesis_client = client or default_synthesis_client(max_output_tokens=max_output_tokens)
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+    actual_model = getattr(synthesis_client, "last_model", None) or model
+    provider_notes = list(getattr(synthesis_client, "review_notes", []) or [])
     pages = _coerce_page_outputs(llm_payload)
     validation_failures = _page_validation_failures(
         repo_root,
@@ -145,8 +270,8 @@ def run_llm_wiki_synthesis(
             risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value,
             timing_ms=int((time.monotonic() - start) * 1000),
             llm_synthesis=True,
-            model=model,
-            review_notes=[str(note) for note in llm_payload.get("review_notes") or []],
+            model=actual_model,
+            review_notes=[*provider_notes, *[str(note) for note in llm_payload.get("review_notes") or []]],
             synthesis_summary=str(llm_payload.get("summary", "")),
         )
         _write_report(repo_root, report, final_report_path)
@@ -199,8 +324,8 @@ def run_llm_wiki_synthesis(
         risk_tier=RiskTierLabel.TIER4_GOVERNANCE.value if failures or _has_governance_targets(changed) else RiskTierLabel.TIER2_INTERPRETATION.value,
         timing_ms=int((time.monotonic() - start) * 1000),
         llm_synthesis=True,
-        model=model,
-        review_notes=[str(note) for note in llm_payload.get("review_notes") or []],
+        model=actual_model,
+        review_notes=[*provider_notes, *[str(note) for note in llm_payload.get("review_notes") or []]],
         synthesis_summary=str(llm_payload.get("summary", "")),
         integration_plan=[str(item) for item in llm_payload.get("integration_plan") or []],
         created_pages=[str(item) for item in llm_payload.get("created_pages") or []],
@@ -735,6 +860,73 @@ def _extract_output_text(response_payload: dict[str, Any]) -> str:
                 if isinstance(text, str):
                     texts.append(text)
     return "\n".join(texts)
+
+
+def _extract_chat_completion_text(response_payload: dict[str, Any]) -> str:
+    choices = response_payload.get("choices")
+    if isinstance(choices, list):
+        for choice in choices:
+            if not isinstance(choice, dict):
+                continue
+            message = choice.get("message")
+            if not isinstance(message, dict):
+                continue
+            content = message.get("content")
+            if isinstance(content, str):
+                return content
+            if isinstance(content, list):
+                texts = [
+                    item.get("text")
+                    for item in content
+                    if isinstance(item, dict) and isinstance(item.get("text"), str)
+                ]
+                if texts:
+                    return "\n".join(texts)
+    if isinstance(response_payload.get("output_text"), str):
+        return response_payload["output_text"]
+    return ""
+
+
+def _loads_llm_json(text: str) -> Any:
+    clean = text.strip()
+    if clean.startswith("```"):
+        clean = re.sub(r"^```(?:json)?\s*", "", clean)
+        clean = re.sub(r"\s*```$", "", clean).strip()
+    return json.loads(clean)
+
+
+def _is_recoverable_synthesis_failure(exc: IngestFailure) -> bool:
+    if exc.code is FailureCode.MISSING_API_KEY:
+        return True
+    if exc.code is not FailureCode.LLM_SYNTHESIS_FAILED:
+        return False
+    details = json.dumps(exc.details, ensure_ascii=False, sort_keys=True) if exc.details else ""
+    text = f"{exc.message}\n{details}".lower()
+    recoverable_markers = (
+        "http 429",
+        "insufficient_quota",
+        "rate_limit",
+        "temporarily",
+        "timeout",
+        "timed out",
+        "http 500",
+        "http 502",
+        "http 503",
+        "http 504",
+    )
+    return any(marker in text for marker in recoverable_markers)
+
+
+def _chat_response_schema() -> dict[str, Any]:
+    schema = _response_schema()
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": schema["name"],
+            "strict": schema["strict"],
+            "schema": schema["schema"],
+        },
+    }
 
 
 def _response_schema() -> dict[str, Any]:
