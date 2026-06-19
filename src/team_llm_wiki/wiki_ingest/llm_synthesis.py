@@ -254,8 +254,12 @@ def run_llm_wiki_synthesis(
     actual_model = getattr(synthesis_client, "last_model", None) or model
     provider_name = _synthesis_provider_name(synthesis_client)
     provider_notes = list(getattr(synthesis_client, "review_notes", []) or [])
-    llm_payload, claim_guard_notes = _guard_github_models_claim_register(llm_payload, provider_name=provider_name)
-    provider_notes.extend(claim_guard_notes)
+    llm_payload, metadata_notes = _normalize_github_models_payload_metadata(
+        llm_payload,
+        manifests=manifests,
+        provider_name=provider_name,
+    )
+    provider_notes.extend(metadata_notes)
     pages = _coerce_page_outputs(llm_payload)
     pages, preserve_notes = _preserve_existing_pages_for_github_models(
         repo_root,
@@ -564,36 +568,83 @@ def _synthesis_provider_name(client: Any) -> str:
     ).lower()
 
 
-def _guard_github_models_claim_register(
+def _normalize_github_models_payload_metadata(
     payload: dict[str, Any],
     *,
+    manifests: list[tuple[PacketManifest, Path]],
     provider_name: str,
 ) -> tuple[dict[str, Any], list[str]]:
     if provider_name != "github-models":
         return payload, []
-    claim_register = payload.get("claim_register")
-    if not isinstance(claim_register, list):
-        return payload, []
 
-    guarded_items: list[Any] = []
-    changed = False
-    for item in claim_register:
-        if not isinstance(item, dict):
-            guarded_items.append(item)
-            continue
-        guarded = dict(item)
-        if str(guarded.get("status", "")).lower() == "supported":
-            guarded["status"] = "tentative"
-            changed = True
-        guarded_items.append(guarded)
-    if not changed:
-        return payload, []
-
-    guarded_payload = dict(payload)
-    guarded_payload["claim_register"] = guarded_items
-    return guarded_payload, [
-        "GitHub Models fallback cannot promote supported claims; downgraded supported claim_register items to tentative."
+    original_claim_register = payload.get("claim_register")
+    attempted_supported = False
+    if isinstance(original_claim_register, list):
+        attempted_supported = any(
+            isinstance(item, dict) and str(item.get("status", "")).lower() == "supported"
+            for item in original_claim_register
+        )
+    normalized = dict(payload)
+    normalized["summary"] = _github_models_manifest_summary(manifests)
+    normalized["integration_plan"] = [
+        "GitHub Models fallback used compact model output only for route discovery.",
+        "Non-entrypoint wiki page bodies were generated from raw packet manifests and metrics_to_verify.",
+        "Claim boundaries, metric values, and validation gaps must be reviewed against raw evidence before promotion.",
     ]
+    normalized["claim_register"] = _github_models_manifest_claim_register(manifests)
+    normalized["open_questions"] = _github_models_manifest_open_questions(manifests)
+    normalized["superseded_or_conflicting_claims"] = []
+    notes = [
+        "GitHub Models fallback metadata was normalized from raw PacketManifest fields instead of compact model prose."
+    ]
+    if attempted_supported:
+        notes.append(
+            "GitHub Models fallback cannot promote supported claims; compact claim_register items were replaced with manifest-backed claim records."
+        )
+    return normalized, notes
+
+
+def _github_models_manifest_summary(manifests: list[tuple[PacketManifest, Path]]) -> str:
+    summaries = [manifest.summary for manifest, _root in manifests if manifest.summary.strip()]
+    return " | ".join(summaries) or "GitHub Models fallback manifest-backed synthesis."
+
+
+def _github_models_manifest_claim_register(manifests: list[tuple[PacketManifest, Path]]) -> list[dict[str, str]]:
+    claims: list[dict[str, str]] = []
+    for manifest, _root in manifests:
+        if manifest.claims:
+            for claim in manifest.claims:
+                claims.append(
+                    {
+                        "status": str(claim.status),
+                        "text": _fallback_inline_text(claim.text or manifest.summary, max_chars=520),
+                    }
+                )
+            continue
+        claims.append(
+            {
+                "status": str(manifest.claim_status),
+                "text": _fallback_inline_text(manifest.summary, max_chars=520),
+            }
+        )
+    return claims
+
+
+def _github_models_manifest_open_questions(manifests: list[tuple[PacketManifest, Path]]) -> list[dict[str, Any]]:
+    questions: list[dict[str, Any]] = []
+    for manifest, _root in manifests:
+        questions.append(
+            {
+                "id": f"fallback-review-{_slugify(manifest.id)}",
+                "question": f"Review `{manifest.id}` fallback scaffold against raw evidence and decide whether primary LLM or human synthesis should refine it.",
+                "priority": "medium",
+                "owner_role": "wiki-reviewer",
+                "merge_blocker": False,
+                "needed_evidence": "Raw packet manifest, metrics_to_verify, and referenced raw paths.",
+                "close_condition": "Reviewer confirms scaffold is sufficient or replaces it with primary LLM/human synthesis.",
+            }
+        )
+    return questions
 
 
 def _preserve_existing_pages_for_github_models(
