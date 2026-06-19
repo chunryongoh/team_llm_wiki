@@ -1,28 +1,34 @@
-# 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis Smoke Local OOF Diagnostic
+# 2026-06-18 Sleep Lifelog Packet Synthesis
 
-2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 요약.
+2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 통합한 synthesis report.
 
-## 주요 성과
-- grouped_macro_log_loss 기준 기존 reproduction 결과 대비 미세 개선.
-- smoke local OOF diagnostic evidence만 포함, DACON leaderboard 및 organizer validation evidence는 미포함.
+## 주요 내용
+- Foldsafe smoke local OOF diagnostic 결과, grouped_macro_log_loss 기준 기존 reproduction 결과 대비 미세 개선이 확인됨.
+- DACON leaderboard evidence는 제출되지 않았으며, organizer validation metric도 미포함.
+- Claim registry 및 leaderboard history는 변경 없음.
 
-## Claim boundary
-- local_oof_diagnostic_only claim 유지.
+## 증거 및 claim boundary
+- local_oof_diagnostic_only claim은 유지.
 - DACON leaderboard 및 organizer validation evidence gap 존재.
 
 ## 관련 페이지
-- [2026-06-18 Sleep Lifelog Packet Synthesis](../reports/2026-06-18-sleep-lifelog-packet-synthesis.md)
+- [Wave41 LGB/CB Foldsafe Synthesis Performance](../performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md)
 - [Current Supported Claims](../claims/current-supported-claims.md)
 - [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
+- [Sleep Lifelog Open Issues](../targets/sleep-lifelog-open-issues.md)
 
-## Open questions
-- DACON leaderboard private validation evidence 제출 필요.
+## 다음 액션
+- DACON leaderboard private validation evidence 확보 필요.
+- organizer validation metric 제출 시 claim status update 가능.
 
 ---
 
 ### Evidence provenance
 - packet id: 2026-06-19-packet-scan
 - smoke local OOF diagnostic only
+
+### Open questions
+- Wave41 결과가 DACON leaderboard private validation에서 재현되는가?
 
 ## Raw Evidence
 

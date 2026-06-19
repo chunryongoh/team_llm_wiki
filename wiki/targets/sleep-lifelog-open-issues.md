@@ -48,3 +48,13 @@ raw_evidence:
 ## Review rule
 
 질문을 닫는 packet은 raw metric, split, provenance, claim boundary를 함께 포함해야 한다. Notebook screenshot, Slack note, DOCX/PDF summary만으로는 close할 수 없다.
+
+<!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-targets-sleep-lifelog-open-issues-md -->
+## GitHub Models Fallback Synthesis | 2026-06-18
+
+- packet_ids: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- llm_summary: 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 packet synthesis report와 performance leaf page에 반영하였다. 기존 local OOF claim boundary를 유지하며, DACON leaderboard 및 organizer validation evidence gap을 명확히 기록하였다. claim registry와 leaderboar...
+- claim_status: preserved_from_raw_packet
+- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
+- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
+- synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`

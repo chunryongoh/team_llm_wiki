@@ -65,3 +65,13 @@ V152 anchor OOF, Subject-hole CV, stability filtering, window-pair features는 u
 - [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)
 - [Current Supported Claims](../claims/current-supported-claims.md)
 - [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)
+
+<!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-decisions-sleep-lifelog-evaluation-protocol-md -->
+## GitHub Models Fallback Synthesis | 2026-06-18
+
+- packet_ids: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- llm_summary: 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 packet synthesis report와 performance leaf page에 반영하였다. 기존 local OOF claim boundary를 유지하며, DACON leaderboard 및 organizer validation evidence gap을 명확히 기록하였다. claim registry와 leaderboar...
+- claim_status: preserved_from_raw_packet
+- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
+- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
+- synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
