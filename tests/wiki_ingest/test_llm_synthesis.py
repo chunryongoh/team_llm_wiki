@@ -1104,11 +1104,11 @@ def test_llm_synthesis_falls_back_to_github_models_when_openai_quota_fails(tmp_p
     assert len(fallback.calls) == 1
     assert report.model == "openai/gpt-4.1"
     assert "failed recoverably" in report.review_notes[0]
-    assert "OpenAI quota failed" in report.review_notes[1]
+    assert any("OpenAI quota failed" in note for note in report.review_notes)
     payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "fallback-run" / "report.json").read_text())
     assert payload["model"] == "openai/gpt-4.1"
     assert payload["review_notes"][0].startswith("Primary LLM provider failed recoverably")
-    assert payload["review_notes"][1].startswith("OpenAI quota failed")
+    assert any(note.startswith("OpenAI quota failed") for note in payload["review_notes"])
 
 
 def test_github_models_fallback_fills_missing_required_pages_from_partial_output(tmp_path):
@@ -1167,6 +1167,90 @@ def test_github_models_fallback_fills_missing_required_pages_from_partial_output
     assert "## Active Risks" in latest
     assert "## Next Actions" in latest
     assert "reports/2026-05-29-sleep-lifelog-packet-synthesis.md" in index
+
+
+def test_github_models_fallback_preserves_existing_non_entrypoint_pages(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    primary = FailingClient(
+        IngestFailure(
+            FailureCode.LLM_SYNTHESIS_FAILED,
+            "OpenAI Responses API failed with HTTP 429",
+            {"body": '{"code":"insufficient_quota"}'},
+        )
+    )
+    fallback = FakeClient(
+        {
+            "summary": "GitHub Models fallback synthesized all pages compactly.",
+            "integration_plan": [],
+            "created_pages": [],
+            "updated_pages": [],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": [],
+            "pages": single_dataset_integration_pages(),
+        }
+    )
+    fallback.provider_name = "github-models"
+    fallback.last_model = "openai/gpt-4.1"
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        run_id="preserve-existing",
+        client=SynthesisClientChain([primary, fallback]),
+    )
+
+    dataset_page = (tmp_path / "wiki" / "preprocessing" / "sleep-lifelog-2024.md").read_text(encoding="utf-8")
+
+    assert report.status == "bot_pr"
+    assert "Old deterministic summary" in dataset_page
+    assert "GitHub Models Synthesis Addendum" in dataset_page
+    assert "LLM synthesized page" in dataset_page
+
+
+def test_github_models_fallback_does_not_report_supported_claim_promotions(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    primary = FailingClient(
+        IngestFailure(
+            FailureCode.LLM_SYNTHESIS_FAILED,
+            "OpenAI Responses API failed with HTTP 429",
+            {"body": '{"code":"insufficient_quota"}'},
+        )
+    )
+    fallback = FakeClient(
+        {
+            "summary": "GitHub Models fallback attempted to promote a claim.",
+            "integration_plan": [],
+            "created_pages": [],
+            "updated_pages": [],
+            "claim_register": [{"status": "supported", "text": "Fallback promoted a local OOF claim."}],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": [],
+            "pages": single_dataset_integration_pages(),
+        }
+    )
+    fallback.provider_name = "github-models"
+    fallback.last_model = "openai/gpt-4.1"
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "llm-synthesis" / "guarded-claims" / "report.json",
+        run_id="guarded-claims",
+        client=SynthesisClientChain([primary, fallback]),
+    )
+
+    payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "guarded-claims" / "report.json").read_text())
+
+    assert report.status == "bot_pr"
+    assert payload["claim_register"] == [
+        {"status": "tentative", "text": "Fallback promoted a local OOF claim."}
+    ]
+    assert any("cannot promote supported claims" in note for note in payload["review_notes"])
 
 
 def test_run_llm_synthesis_can_override_openai_output_budget(monkeypatch, tmp_path):

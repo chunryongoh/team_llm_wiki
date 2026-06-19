@@ -252,15 +252,25 @@ def run_llm_wiki_synthesis(
     synthesis_client = client or default_synthesis_client(max_output_tokens=max_output_tokens)
     llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
     actual_model = getattr(synthesis_client, "last_model", None) or model
+    provider_name = _synthesis_provider_name(synthesis_client)
     provider_notes = list(getattr(synthesis_client, "review_notes", []) or [])
+    llm_payload, claim_guard_notes = _guard_github_models_claim_register(llm_payload, provider_name=provider_name)
+    provider_notes.extend(claim_guard_notes)
     pages = _coerce_page_outputs(llm_payload)
+    pages, preserve_notes = _preserve_existing_pages_for_github_models(
+        repo_root,
+        pages,
+        manifests=manifests,
+        provider_name=provider_name,
+    )
+    provider_notes.extend(preserve_notes)
     pages, fallback_fill_notes = _fill_missing_required_pages_for_github_models(
         repo_root,
         pages,
         required_paths=target_paths,
         manifests=manifests,
         llm_payload=llm_payload,
-        provider_name=_synthesis_provider_name(synthesis_client),
+        provider_name=provider_name,
     )
     provider_notes.extend(fallback_fill_notes)
     validation_failures = _page_validation_failures(
@@ -553,6 +563,111 @@ def _synthesis_provider_name(client: Any) -> str:
         or getattr(client, "provider_name", None)
         or client.__class__.__name__
     ).lower()
+
+
+def _guard_github_models_claim_register(
+    payload: dict[str, Any],
+    *,
+    provider_name: str,
+) -> tuple[dict[str, Any], list[str]]:
+    if provider_name != "github-models":
+        return payload, []
+    claim_register = payload.get("claim_register")
+    if not isinstance(claim_register, list):
+        return payload, []
+
+    guarded_items: list[Any] = []
+    changed = False
+    for item in claim_register:
+        if not isinstance(item, dict):
+            guarded_items.append(item)
+            continue
+        guarded = dict(item)
+        if str(guarded.get("status", "")).lower() == "supported":
+            guarded["status"] = "tentative"
+            changed = True
+        guarded_items.append(guarded)
+    if not changed:
+        return payload, []
+
+    guarded_payload = dict(payload)
+    guarded_payload["claim_register"] = guarded_items
+    return guarded_payload, [
+        "GitHub Models fallback cannot promote supported claims; downgraded supported claim_register items to tentative."
+    ]
+
+
+def _preserve_existing_pages_for_github_models(
+    repo_root: Path,
+    pages: list[dict[str, str]],
+    *,
+    manifests: list[tuple[PacketManifest, Path]],
+    provider_name: str,
+) -> tuple[list[dict[str, str]], list[str]]:
+    if provider_name != "github-models":
+        return pages, []
+
+    entrypoints = {"wiki/index.md", "wiki/log.md", "wiki/latest-context.md", "wiki/overview.md"}
+    preserved: list[dict[str, str]] = []
+    preserved_paths: list[str] = []
+    for page in pages:
+        path = page["path"]
+        existing_path = repo_root / path
+        if path in entrypoints or not existing_path.exists():
+            preserved.append(page)
+            continue
+        preserved.append(
+            {
+                "path": path,
+                "content": _github_models_existing_page_addendum(
+                    repo_root,
+                    path,
+                    page["content"],
+                    manifests=manifests,
+                ),
+            }
+        )
+        preserved_paths.append(path)
+    if not preserved_paths:
+        return preserved, []
+    preview = ", ".join(preserved_paths[:8])
+    if len(preserved_paths) > 8:
+        preview += f", and {len(preserved_paths) - 8} more"
+    return preserved, [f"GitHub Models fallback preserved existing wiki pages with non-destructive addenda: {preview}."]
+
+
+def _github_models_existing_page_addendum(
+    repo_root: Path,
+    rel_path: str,
+    generated_content: str,
+    *,
+    manifests: list[tuple[PacketManifest, Path]],
+) -> str:
+    existing = (repo_root / rel_path).read_text(encoding="utf-8").rstrip()
+    date_slug = _source_date_slug(manifests)
+    marker = f"<!-- llm-synthesis:github-models-nondestructive-addendum:{date_slug}:{_slugify(rel_path)} -->"
+    if marker in existing:
+        return existing + "\n"
+    body = _strip_leading_markdown_title(generated_content).strip()
+    if not body:
+        body = "- GitHub Models fallback did not return substantive body content for this page."
+    return (
+        existing
+        + "\n\n"
+        + marker
+        + "\n"
+        + f"## GitHub Models Synthesis Addendum | {date_slug}\n\n"
+        + body.rstrip()
+        + "\n\n"
+        + "- fallback_merge_policy: preserved_existing_page\n"
+    )
+
+
+def _strip_leading_markdown_title(content: str) -> str:
+    lines = content.splitlines()
+    if lines and lines[0].startswith("# "):
+        return "\n".join(lines[1:]).lstrip()
+    return content
 
 
 def _fill_missing_required_pages_for_github_models(
