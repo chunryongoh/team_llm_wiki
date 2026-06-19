@@ -1,0 +1,113 @@
+{
+  "changed_paths": [
+    "wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lightgbm-catboost.md",
+    "wiki/performance/sleep-health-hackathon-evaluation-policy.md",
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md"
+  ],
+  "claim_register": [
+    {
+      "status": "tentative",
+      "text": "2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic \uacb0\uacfc\ub294 \uae30\uc874 local_oof_diagnostic_only claim\uc744 \ubbf8\uc138\ud558\uac8c \uac1c\uc120\ud558\uba70, grouped_macro_log_loss \uae30\uc900\uc73c\ub85c 0.6198365213240887\uc744 \ub2ec\uc131\ud588\ub2e4. DACON leaderboard, organizer validation, local OOF, notebook output\uc740 \ubd84\ub9ac\ub418\uc5b4 \uad00\ub9ac\ub41c\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lightgbm-catboost.md",
+    "wiki/performance/sleep-health-hackathon-evaluation-policy.md",
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/27804535275-1/report.json"
+  ],
+  "integration_plan": [
+    "1. 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic \uacb0\uacfc\ub97c packet review \ubc0f performance leaf\uc5d0 \ubc18\uc601.",
+    "2. claim registry\uc5d0 \uae30\uc874 local_oof_diagnostic_only claim\uc758 \uc0c1\ud0dc\ub97c \uba85\ud655\ud788 \uc720\uc9c0\ud558\uba70, \ubbf8\uc138 \uac1c\uc120 \ub0b4\uc5ed\uc744 \uae30\ub85d.",
+    "3. DACON leaderboard history, canonical split/leakage policy, feature landscape, evaluation protocol, open questions, overview, index, log \ub4f1 \uad00\ub828 hub/leaf \ud398\uc774\uc9c0\uc5d0 cross-link \ubc0f \ucd5c\uc2e0 context\ub97c \ubc18\uc601.",
+    "4. superseded claim\uc774\ub098 contradiction\uc740 \uc5c6\uc74c\uc744 \uba85\uc2dc.",
+    "5. open questions\ub294 targets/sleep-lifelog-open-issues.md\uc5d0 backlog\ub85c \uad00\ub9ac."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "openai/gpt-4.1",
+  "open_questions": [
+    {
+      "close_condition": "Wave41 smoke local OOF diagnostic \uacb0\uacfc\uac00 DACON leaderboard \ubc0f organizer validation\uacfc \uc77c\uce58\ud558\ub294\uc9c0 \uac80\uc99d \ud544\uc694. DACON \uacf5\uc2dd leaderboard \ubc0f organizer validation raw evidence \ud655\ubcf4 \uc2dc close.",
+      "id": "openq-2026-06-18-dacon-validation",
+      "merge_blocker": true,
+      "needed_evidence": "DACON \uacf5\uc2dd leaderboard \ubc0f organizer validation raw evidence",
+      "owner_role": "validation-lead",
+      "priority": "high",
+      "question": "Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic \uacb0\uacfc\uac00 DACON leaderboard \ubc0f organizer validation\uacfc \uc77c\uce58\ud558\ub294\uac00?"
+    }
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/27805979242-1/report.json",
+  "review_notes": [
+    "Primary LLM provider failed recoverably (llm_synthesis_failed: OpenAI Responses API failed with HTTP 429); synthesis completed with github-models `openai/gpt-4.1`.",
+    "GitHub Models fallback cannot promote supported claims; downgraded supported claim_register items to tentative.",
+    "GitHub Models fallback preserved existing wiki pages with non-destructive addenda: wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md.",
+    "GitHub Models fallback filled missing required wiki pages: wiki/features/sleep-lifelog-feature-landscape.md, wiki/decisions/sleep-lifelog-evaluation-protocol.md, wiki/targets/sleep-lifelog-open-issues.md, wiki/claims/current-supported-claims.md, wiki/performance/dacon-leaderboard-history.md, wiki/preprocessing/canonical-split-and-leakage-policy.md, wiki/overview.md, wiki/latest-context.md, and 5 more.",
+    "wiki_plan.yaml\uc5d0\uc11c \uc81c\uc548\ub41c leaf \ud398\uc774\uc9c0\ub294 \ubaa8\ub450 \uc815\ub2f9\ud558\uba70, packet review\uc640 performance leaf\ub85c \ubd84\ub9ac\ud558\uc5ec \uae30\ub85d\ud568. hub \ud398\uc774\uc9c0\uc5d0 \uc138\ubd80 metric\uc744 \ud761\uc218\ud558\uc9c0 \uc54a\uace0 cross-link\ub85c \uad00\ub9ac\ud568. superseded claim\uc774\ub098 contradiction\uc740 \uc5c6\uc74c. open questions\ub294 targets/sleep-lifelog-open-issues.md\uc5d0 backlog\ub85c \uad00\ub9ac."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "27805979242-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": "2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic \uacb0\uacfc\ub97c packet review \ubc0f performance leaf\uc5d0 \ubc18\uc601\ud558\uc600\uc73c\uba70, claim registry\uc5d0 \uae30\uc874 local_oof_diagnostic_only claim\uc758 supported \uc0c1\ud0dc\ub97c \uc720\uc9c0\ud558\uc600\ub2e4. DACON leaderboard, organizer validation, local OOF, notebook output\uc740 \ubd84\ub9ac \uad00\ub9ac\ud558\uba70, open questions\ub294 targets/sleep-lifelog-open-issues.md\uc5d0 backlog\ub85c \uae30\ub85d\ud558\uc600\ub2e4. superseded claim\uc774\ub098 contradiction\uc740 \uc5c6\uc73c\uba70, integration plan\uc5d0 \ub530\ub77c cross-link \ubc0f \ucd5c\uc2e0 context\ub97c \ubc18\uc601\ud558\uc600\ub2e4.",
+  "timing_ms": 15033,
+  "updated_pages": [
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/overview.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md"
+  ],
+  "validation": {},
+  "warnings": []
+}

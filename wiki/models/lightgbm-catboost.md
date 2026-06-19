@@ -52,3 +52,13 @@ LightGBM + CatBoost는 current raw evidence에서 standalone best가 아니다. 
 - Q2 weight selection을 nested 또는 fold-safe procedure로 재검증한다.
 - same-split, same-feature, same-baseline 조건에서 LGB/CB, LGBM+XGB, CatBoost contribution을 비교한다.
 - leaderboard claim은 [DACON Leaderboard History](../performance/dacon-leaderboard-history.md) evidence 없이는 만들지 않는다.
+
+<!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-models-lightgbm-catboost-md -->
+## GitHub Models Fallback Synthesis | 2026-06-18
+
+- packet_ids: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- llm_summary: 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 packet review 및 performance leaf에 반영하였으며, claim registry에 기존 local_oof_diagnostic_only claim의 supported 상태를 유지하였다. DACON leaderboard, organizer validation, local OOF, notebook output...
+- claim_status: preserved_from_raw_packet
+- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
+- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
+- synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`

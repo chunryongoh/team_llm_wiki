@@ -1,18 +1,30 @@
-# Team LLM Wiki Overview
+# 2026-06-18 Sleep Lifelog Packet Synthesis
 
-## Current Focus
+2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 기반으로 최신 packet ingest 및 synthesis를 기록한다.
 
-- Latest packet synthesis topic: `sleep-lifelog`.
-- Source packets: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`.
+## 주요 내용
+- Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과: grouped_macro_log_loss 0.6198365213240887
+- 기존 local_oof_diagnostic_only claim을 미세하게 개선
+- DACON leaderboard, organizer validation, local OOF, notebook output은 분리 관리
 
-## Evidence Boundary
+## 증거 및 claim 경계
+- [Performance leaf](../performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md)에서 상세 metric 및 claim 경계 확인 가능
+- [Claim registry](../claims/current-supported-claims.md)에서 supported claim 상태 유지
 
-- Local OOF, notebook output, DACON public score, DACON private score, and organizer-official validation remain separate evidence surfaces.
-- GitHub Models fallback does not promote tentative claims; it preserves review-required integration context.
+## 관련 페이지
+- [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
+- [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)
+- [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)
+- [Sleep Lifelog Evaluation Protocol](../decisions/sleep-lifelog-evaluation-protocol.md)
+- [Sleep Lifelog Open Questions](../targets/sleep-lifelog-open-issues.md)
 
-## Review Queue
+## 다음 액션
+- DACON leaderboard 및 organizer validation raw evidence 확보 필요
+- open questions backlog 관리
 
-- Review `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md` and raw evidence before treating new claims as supported.
+---
+- packet id: 2026-06-19-packet-scan
+- schema version: packet-graph-v1.0
 
 ## Raw Evidence
 

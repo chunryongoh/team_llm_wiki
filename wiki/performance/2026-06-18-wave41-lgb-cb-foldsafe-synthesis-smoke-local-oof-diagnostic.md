@@ -325,3 +325,32 @@ raw-evidence-backed metric checks:
 ## Claims
 
 - supported: Wave41 LGB/CB fold-safe synthesis smoke improved the prior LGB/CB reproduction local OOF diagnostic line from 0.6198365213240887 to 0.6195964535023479, but remains local OOF only and short of the 0.61 goal.
+
+<!-- llm-synthesis:github-models-nondestructive-addendum:2026-06-18:wiki-performance-2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic-md -->
+## GitHub Models Synthesis Addendum | 2026-06-18
+
+2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic 결과를 기록한다.
+
+## 주요 metric
+- grouped_macro_log_loss: 0.6198365213240887
+
+## claim 경계
+- local_oof_diagnostic_only claim은 기존과 동일하게 supported 상태 유지
+- DACON leaderboard, organizer validation, local OOF, notebook output은 분리 관리
+
+## 증거
+- packet id: 2026-06-19-packet-scan
+- raw evidence: [raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/]
+
+## cross-link
+- [Sleep Lifelog Packet Synthesis](../reports/2026-06-18-sleep-lifelog-packet-synthesis.md)
+- [Claim Registry](../claims/current-supported-claims.md)
+- [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
+
+## open questions
+- DACON leaderboard 및 organizer validation과 일치 여부 검증 필요
+
+---
+- smoke local OOF diagnostic 결과는 standalone 우위가 아니라 targetwise reblend 0.1로 미세 개선됨
+
+- fallback_merge_policy: preserved_existing_page
