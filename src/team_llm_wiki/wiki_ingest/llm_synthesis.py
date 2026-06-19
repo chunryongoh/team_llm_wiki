@@ -254,6 +254,15 @@ def run_llm_wiki_synthesis(
     actual_model = getattr(synthesis_client, "last_model", None) or model
     provider_notes = list(getattr(synthesis_client, "review_notes", []) or [])
     pages = _coerce_page_outputs(llm_payload)
+    pages, fallback_fill_notes = _fill_missing_required_pages_for_github_models(
+        repo_root,
+        pages,
+        required_paths=target_paths,
+        manifests=manifests,
+        llm_payload=llm_payload,
+        provider_name=_synthesis_provider_name(synthesis_client),
+    )
+    provider_notes.extend(fallback_fill_notes)
     validation_failures = _page_validation_failures(
         repo_root,
         pages,
@@ -536,6 +545,141 @@ def _page_validation_failures(
             }
         )
     return failures
+
+
+def _synthesis_provider_name(client: Any) -> str:
+    return str(
+        getattr(client, "last_provider", None)
+        or getattr(client, "provider_name", None)
+        or client.__class__.__name__
+    ).lower()
+
+
+def _fill_missing_required_pages_for_github_models(
+    repo_root: Path,
+    pages: list[dict[str, str]],
+    *,
+    required_paths: list[str],
+    manifests: list[tuple[PacketManifest, Path]],
+    llm_payload: dict[str, Any],
+    provider_name: str,
+) -> tuple[list[dict[str, str]], list[str]]:
+    if provider_name != "github-models":
+        return pages, []
+    present = {page["path"] for page in pages}
+    missing_paths = [path for path in required_paths if path not in present]
+    if not missing_paths:
+        return pages, []
+
+    filled_pages = [*pages]
+    required_set = set(required_paths)
+    for path in missing_paths:
+        filled_pages.append(
+            {
+                "path": path,
+                "content": _github_models_required_page_fallback_content(
+                    repo_root,
+                    path,
+                    required_paths=required_set,
+                    manifests=manifests,
+                    llm_payload=llm_payload,
+                ),
+            }
+        )
+    preview = ", ".join(missing_paths[:8])
+    if len(missing_paths) > 8:
+        preview += f", and {len(missing_paths) - 8} more"
+    return filled_pages, [f"GitHub Models fallback filled missing required wiki pages: {preview}."]
+
+
+def _github_models_required_page_fallback_content(
+    repo_root: Path,
+    rel_path: str,
+    *,
+    required_paths: set[str],
+    manifests: list[tuple[PacketManifest, Path]],
+    llm_payload: dict[str, Any],
+) -> str:
+    topic = _topic_slug(manifests)
+    date_slug = _source_date_slug(manifests)
+    packet_ids = ", ".join(manifest.id for manifest, _root in manifests) or "unknown"
+    summary = _fallback_inline_text(llm_payload.get("summary") or "GitHub Models fallback synthesis", max_chars=260)
+    report_path = next((path for path in required_paths if path.startswith("wiki/reports/")), "wiki/index.md")
+    report_link = report_path.removeprefix("wiki/").removesuffix(".md")
+
+    if rel_path == "wiki/index.md":
+        entries = [
+            _default_index_entry(path)
+            for path in sorted(required_paths)
+            if _index_target_from_wiki_path(path)
+        ]
+        return "# Team LLM Wiki Index\n\n" + INDEX_START + "\n" + "\n".join(entries) + "\n" + INDEX_END + "\n"
+    if rel_path == "wiki/latest-context.md":
+        return (
+            "# Latest Context\n\n"
+            "[[index]] [[overview]] [[log]]\n\n"
+            "## Current Best\n\n"
+            "- GitHub Models fallback completed the packet synthesis path while preserving claim boundaries.\n\n"
+            "## Active Risks\n\n"
+            "- Some required pages were conservatively filled because the fallback model omitted them under the compact context limit.\n"
+            "- Review raw evidence before promoting any tentative metric or feature claim.\n\n"
+            "## Next Actions\n\n"
+            f"- Review `{report_path}` and the packet ids `{packet_ids}` before merging the synthesis PR.\n\n"
+            f"{LATEST_START}\n"
+            f"### {date_slug} | {topic} fallback synthesis\n\n"
+            f"- link: [[{report_link}]]\n"
+            f"- packets: `{packet_ids}`\n"
+            f"{LATEST_END}\n"
+        )
+    if rel_path == "wiki/log.md":
+        return (
+            "# Log\n\n"
+            f"## [{date_slug}] llm-synthesis | {topic}\n\n"
+            "- GitHub Models fallback produced a partial synthesis; required wiki pages were conservatively filled in GitHub Actions.\n"
+            f"- packets: `{packet_ids}`\n"
+            f"- report: `{report_path}`\n"
+        )
+    if rel_path == "wiki/overview.md":
+        return (
+            "# Team LLM Wiki Overview\n\n"
+            "## Current Focus\n\n"
+            f"- Latest packet synthesis topic: `{topic}`.\n"
+            f"- Source packets: `{packet_ids}`.\n\n"
+            "## Evidence Boundary\n\n"
+            "- Local OOF, notebook output, DACON public score, DACON private score, and organizer-official validation remain separate evidence surfaces.\n"
+            "- GitHub Models fallback does not promote tentative claims; it preserves review-required integration context.\n\n"
+            "## Review Queue\n\n"
+            f"- Review `{report_path}` and raw evidence before treating new claims as supported.\n"
+        )
+
+    existing_path = repo_root / rel_path
+    title = _fallback_title_from_path(rel_path)
+    existing = existing_path.read_text(encoding="utf-8").rstrip() if existing_path.exists() else f"# {title}"
+    marker = f"<!-- llm-synthesis:github-models-required-page-fill:{date_slug}:{_slugify(rel_path)} -->"
+    section = (
+        f"{marker}\n"
+        f"## GitHub Models Fallback Synthesis | {date_slug}\n\n"
+        f"- packet_ids: `{packet_ids}`\n"
+        f"- llm_summary: {summary}\n"
+        "- claim_status: preserved_from_raw_packet\n"
+        "- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.\n"
+        "- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.\n"
+        f"- synthesis_report: `{report_path}`\n"
+    )
+    if marker in existing:
+        return existing + "\n"
+    return existing + "\n\n" + section
+
+
+def _fallback_title_from_path(rel_path: str) -> str:
+    return Path(rel_path).stem.replace("-", " ").title()
+
+
+def _fallback_inline_text(value: Any, *, max_chars: int) -> str:
+    text = re.sub(r"\s+", " ", str(value)).strip()
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3].rstrip() + "..."
 
 
 def _validate_generated_pages_against_contract(repo_root: Path, pages: list[dict[str, object]]) -> list[dict[str, object]]:

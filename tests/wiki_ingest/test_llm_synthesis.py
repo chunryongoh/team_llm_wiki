@@ -1111,6 +1111,64 @@ def test_llm_synthesis_falls_back_to_github_models_when_openai_quota_fails(tmp_p
     assert payload["review_notes"][1].startswith("OpenAI quota failed")
 
 
+def test_github_models_fallback_fills_missing_required_pages_from_partial_output(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    primary = FailingClient(
+        IngestFailure(
+            FailureCode.LLM_SYNTHESIS_FAILED,
+            "OpenAI Responses API failed with HTTP 429",
+            {"body": '{"code":"insufficient_quota"}'},
+        )
+    )
+    partial_pages = [
+        page
+        for page in single_dataset_integration_pages()
+        if page["path"]
+        in {
+            "wiki/preprocessing/sleep-lifelog-2024.md",
+            "wiki/reports/2026-05-29-sleep-lifelog-packet-synthesis.md",
+        }
+    ]
+    fallback = FakeClient(
+        {
+            "summary": "GitHub Models fallback returned a compact partial synthesis.",
+            "integration_plan": ["Use partial LLM synthesis plus conservative required-page fill."],
+            "created_pages": [],
+            "updated_pages": [],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": ["Fallback model produced only high-signal packet pages."],
+            "pages": partial_pages,
+        }
+    )
+    fallback.provider_name = "github-models"
+    fallback.last_model = "openai/gpt-4.1"
+    client = SynthesisClientChain([primary, fallback])
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "llm-synthesis" / "partial-fallback" / "report.json",
+        run_id="partial-fallback",
+        client=client,
+    )
+
+    required_paths = {page["path"] for page in single_dataset_integration_pages()}
+    generated_paths = set(report.generated_paths)
+    latest = (tmp_path / "wiki" / "latest-context.md").read_text(encoding="utf-8")
+    index = (tmp_path / "wiki" / "index.md").read_text(encoding="utf-8")
+
+    assert report.status == "bot_pr"
+    assert required_paths.issubset(generated_paths)
+    assert any("filled missing required wiki pages" in note for note in report.review_notes)
+    assert "## Current Best" in latest
+    assert "## Active Risks" in latest
+    assert "## Next Actions" in latest
+    assert "reports/2026-05-29-sleep-lifelog-packet-synthesis.md" in index
+
+
 def test_run_llm_synthesis_can_override_openai_output_budget(monkeypatch, tmp_path):
     seed_repo(tmp_path)
     packet_root = seed_dataset_packet(tmp_path)
