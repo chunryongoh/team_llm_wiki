@@ -1,0 +1,349 @@
+{
+  "budgets": {
+    "Q1": {
+      "calibration_candidates": false,
+      "catboost_trials": 5,
+      "lightgbm_trials": 5,
+      "weight_candidates": false
+    },
+    "Q2": {
+      "calibration_candidates": true,
+      "catboost_trials": 10,
+      "lightgbm_trials": 10,
+      "weight_candidates": true
+    },
+    "Q3": {
+      "calibration_candidates": false,
+      "catboost_trials": 5,
+      "lightgbm_trials": 5,
+      "weight_candidates": false
+    },
+    "S1": {
+      "calibration_candidates": false,
+      "catboost_trials": 5,
+      "lightgbm_trials": 5,
+      "weight_candidates": false
+    },
+    "S2": {
+      "calibration_candidates": false,
+      "catboost_trials": 5,
+      "lightgbm_trials": 5,
+      "weight_candidates": false
+    },
+    "S3": {
+      "calibration_candidates": false,
+      "catboost_trials": 5,
+      "lightgbm_trials": 5,
+      "weight_candidates": false
+    },
+    "S4": {
+      "calibration_candidates": true,
+      "catboost_trials": 10,
+      "lightgbm_trials": 10,
+      "weight_candidates": true
+    }
+  },
+  "candidate_count": 13,
+  "candidate_seed": 4103,
+  "candidates": [
+    {
+      "candidate_id": "lgb_foldsafe_baseline_v1",
+      "candidate_kind": "single_model",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_foldsafe_baseline_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Fold-safe LightGBM baseline over all targets.",
+      "eligible_target_names": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "model_family": "lightgbm",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_foldsafe_baseline_v1"
+    },
+    {
+      "candidate_id": "cb_foldsafe_baseline_v1",
+      "candidate_kind": "single_model",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Fold-safe CatBoost baseline over all targets.",
+      "eligible_target_names": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "model_family": "catboost",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1"
+    },
+    {
+      "candidate_id": "lgb_cb_foldsafe_fixed_blend_v1",
+      "candidate_kind": "blend",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_cb_foldsafe_fixed_blend_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Fixed 0.5 LightGBM plus 0.5 CatBoost fold-safe blend.",
+      "eligible_target_names": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "S1",
+        "S2",
+        "S3",
+        "S4"
+      ],
+      "model_family": "blend",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_cb_foldsafe_fixed_blend_v1"
+    },
+    {
+      "candidate_id": "q2_lgb_weighted_reliability_v1",
+      "candidate_kind": "single_model",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_lgb_weighted_reliability_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Q2 LightGBM candidate with reliability sample weights.",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "model_family": "lightgbm",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_lgb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "q2_cb_weighted_reliability_v1",
+      "candidate_kind": "single_model",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_cb_weighted_reliability_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Q2 CatBoost candidate with reliability sample weights.",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "model_family": "catboost",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_cb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "s4_lgb_weighted_reliability_v1",
+      "candidate_kind": "single_model",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_lgb_weighted_reliability_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "S4 LightGBM candidate with reliability sample weights.",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "model_family": "lightgbm",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_lgb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "s4_cb_weighted_reliability_v1",
+      "candidate_kind": "single_model",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_cb_weighted_reliability_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "S4 CatBoost candidate with reliability sample weights.",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "model_family": "catboost",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_cb_weighted_reliability_v1"
+    },
+    {
+      "candidate_id": "q2_uncertainty_prior_shrink_v1",
+      "candidate_kind": "calibration",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_uncertainty_prior_shrink_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Q2 uncertainty prior shrink diagnostic.",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "model_family": "postprocess",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_uncertainty_prior_shrink_v1"
+    },
+    {
+      "candidate_id": "s4_uncertainty_prior_shrink_v1",
+      "candidate_kind": "calibration",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_uncertainty_prior_shrink_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "S4 uncertainty prior shrink diagnostic.",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "model_family": "postprocess",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_uncertainty_prior_shrink_v1"
+    },
+    {
+      "candidate_id": "q2_temperature_scale_v1",
+      "candidate_kind": "calibration",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_temperature_scale_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Q2 temperature scaling diagnostic.",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "model_family": "postprocess",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_temperature_scale_v1"
+    },
+    {
+      "candidate_id": "s4_temperature_scale_v1",
+      "candidate_kind": "calibration",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_temperature_scale_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "S4 temperature scaling diagnostic.",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "model_family": "postprocess",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_temperature_scale_v1"
+    },
+    {
+      "candidate_id": "q2_nested_platt_diagnostic_v1",
+      "candidate_kind": "calibration",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_nested_platt_diagnostic_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "Q2 nested Platt calibration diagnostic.",
+      "eligible_target_names": [
+        "Q2"
+      ],
+      "model_family": "postprocess",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_nested_platt_diagnostic_v1"
+    },
+    {
+      "candidate_id": "s4_nested_platt_diagnostic_v1",
+      "candidate_kind": "calibration",
+      "candidate_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_nested_platt_diagnostic_v1",
+      "claim_boundary": "local_oof_diagnostic_only",
+      "description": "S4 nested Platt calibration diagnostic.",
+      "eligible_target_names": [
+        "S4"
+      ],
+      "model_family": "postprocess",
+      "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_nested_platt_diagnostic_v1"
+    }
+  ],
+  "claim_boundary": "local_oof_diagnostic_only",
+  "decision_matrix": {
+    "claim_boundary": "local_oof_diagnostic_only",
+    "columns": [
+      "candidate_id",
+      "target",
+      "source_pool_policy",
+      "eligible_target_names",
+      "target_score",
+      "best_anchor_target_score",
+      "target_delta_vs_anchor",
+      "reblend_weight",
+      "macro_brier_delta",
+      "fold_logloss_std",
+      "control_result",
+      "claim_status",
+      "claim_reason"
+    ],
+    "path": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1/decision_matrix.csv",
+    "valid_claim_statuses": [
+      "disputed",
+      "superseded",
+      "supported",
+      "tentative"
+    ]
+  },
+  "decision_matrix_columns": [
+    "candidate_id",
+    "target",
+    "source_pool_policy",
+    "eligible_target_names",
+    "target_score",
+    "best_anchor_target_score",
+    "target_delta_vs_anchor",
+    "reblend_weight",
+    "macro_brier_delta",
+    "fold_logloss_std",
+    "control_result",
+    "claim_status",
+    "claim_reason"
+  ],
+  "execution_plan": {
+    "confirm_expensive_run_required": true,
+    "run_command": "run-wave41-lgb-cb-foldsafe-synthesis --confirm-expensive-run",
+    "task_boundary": "Task 5 planning, catalog, validation, and preflight only",
+    "writes_files": false
+  },
+  "expanded_pool_claim_policy": "primary_claim_allowed",
+  "inner_splits": 3,
+  "max_parallel_candidates": 1,
+  "mode": "smoke",
+  "n_splits": 5,
+  "optuna_random_seed": 4101,
+  "optuna_trial_columns": [
+    "candidate_id",
+    "target",
+    "model_family",
+    "mode",
+    "trial_number",
+    "trial_seed",
+    "status",
+    "objective_value",
+    "target_logloss",
+    "macro_brier",
+    "params_json"
+  ],
+  "optuna_trials": {
+    "claim_boundary": "local_oof_diagnostic_only",
+    "columns": [
+      "candidate_id",
+      "target",
+      "model_family",
+      "mode",
+      "trial_number",
+      "trial_seed",
+      "status",
+      "objective_value",
+      "target_logloss",
+      "macro_brier",
+      "params_json"
+    ],
+    "path": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1/optuna_trials.csv"
+  },
+  "output_root": "raw/results",
+  "plan_command": {
+    "claim_boundary": "local_oof_diagnostic_only",
+    "name": "plan-wave41-lgb-cb-foldsafe-synthesis",
+    "writes_files": false
+  },
+  "primary_targets": [
+    "Q2",
+    "S4"
+  ],
+  "reblend": {
+    "blend_id": "lgb_cb_targetwise_synthesis_v1",
+    "blend_run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-targetwise-reblend-v1",
+    "claim_boundary": "local_oof_diagnostic_only",
+    "min_delta": 0.0,
+    "run_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-targetwise-reblend-v1",
+    "source_run_dirs": [
+      {
+        "claim_boundary": "local_oof_diagnostic_only",
+        "run_dir": "raw/results/2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "source_role": "current_best_anchor"
+      }
+    ]
+  },
+  "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1",
+  "source_pool_policy": "primary_claim_pool",
+  "status": "planned",
+  "suite_output_dir": "raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1",
+  "target_names": [
+    "Q1",
+    "Q2",
+    "Q3",
+    "S1",
+    "S2",
+    "S3",
+    "S4"
+  ],
+  "thread_caps": {
+    "catboost_thread_count": 4,
+    "lightgbm_n_jobs": 4
+  },
+  "timeout_seconds": null
+}

@@ -1,0 +1,29 @@
+{
+  "findings": [
+    {
+      "blocks": [
+        "graph_node_creation"
+      ],
+      "category": "graph_signal_gap",
+      "evidence": [
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_note.md",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_summary.json",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_metrics.json",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/decision_matrix.csv",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/candidate_status.csv",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/fold_subjects.json",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_plan.json",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/optuna_trials.csv",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/targetwise_reblend_summary.json",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/blend_weights.json",
+        "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/target_deltas.json"
+      ],
+      "id": "missing-graph-signals",
+      "message": "Required graph signals were not found: LightGBM/XGBoost anchor-blend model signal, Subject-hole CV preprocessing signal, Public LB metric signal.",
+      "recommended_action": "Collect artifacts with explicit model, preprocessing, and public LB metric signals.",
+      "severity": "warn"
+    }
+  ],
+  "packet_id": "2026-06-19-packet-scan",
+  "schema_version": "packet-graph-v1.0"
+}

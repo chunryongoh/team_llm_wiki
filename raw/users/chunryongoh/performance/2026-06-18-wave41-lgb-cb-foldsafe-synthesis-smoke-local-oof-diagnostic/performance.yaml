@@ -1,0 +1,127 @@
+baseline_comparison:
+  baseline_run_id: 2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1
+  baseline_score: 0.6198365213240887
+  candidate_score: 0.6195964535023479
+  delta: -0.000240067821740797
+  direction: lower_is_better
+  same_metric_definition: true
+  same_split: true
+claim_status: supported
+confusion_matrices: not computed in this packet
+dataset:
+  hash: none
+  name: sleep-lifelog-2024
+  version: released-package
+decision_matrix_summary:
+  disputed: 25
+  supported: 2
+  tentative: 4
+evidence_files:
+  blend_weights: source_artifacts/blend_weights.json
+  candidate_status: source_artifacts/candidate_status.csv
+  decision_matrix: source_artifacts/decision_matrix.csv
+  fold_subjects: source_artifacts/fold_subjects.json
+  optuna_trials: source_artifacts/optuna_trials.csv
+  suite_metrics: source_artifacts/suite_metrics.json
+  suite_plan: source_artifacts/suite_plan.json
+  suite_summary: source_artifacts/suite_summary.json
+  target_deltas: source_artifacts/target_deltas.json
+  targetwise_reblend_summary: source_artifacts/targetwise_reblend_summary.json
+metric_definitions:
+  grouped_macro_log_loss: mean of target log-loss values across Q1, Q2, Q3, S1, S2, S3, S4 on grouped local OOF; lower is better
+  macro_brier_score: mean Brier score across targets on local OOF; lower is better
+  macro_f1: mean target F1 across local OOF targets; higher is better
+  macro_roc_auc: mean ROC-AUC across local OOF targets; higher is better
+model:
+  family: lightgbm-catboost-foldsafe-synthesis-targetwise-reblend
+  weights_in_repo: false
+oof_predictions: not copied; original run wrote per-target OOF CSVs under ETRI/raw/results/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-targetwise-reblend-v1/predictions/
+overall_metrics:
+  Q1_log_loss: 0.6225370998897288
+  Q2_log_loss: 0.6555493560477773
+  Q3_log_loss: 0.6309857415368405
+  S1_log_loss: 0.562996471228798
+  S2_log_loss: 0.6113857154018603
+  S3_log_loss: 0.595105227779678
+  S4_log_loss: 0.6586155626317527
+  delta_vs_prior_lgb_cb_reproduction: -0.000240067821740797
+  grouped_macro_log_loss: 0.6195964535023479
+  macro_auroc: 0.680617701580707
+  macro_brier_score: 0.2153164638768479
+  macro_f1: 0.7417894093790057
+  macro_roc_auc: 0.680617701580707
+  primary: grouped_macro_log_loss
+  prior_lgb_cb_reproduction_macro_log_loss: 0.6198365213240887
+  remaining_gap_to_0p61: 0.009596453502347946
+  targetwise_reblend_macro_log_loss: 0.6195964535023479
+primary_metric: grouped_macro_log_loss
+required_metric_families:
+  - log_loss
+  - auroc
+selected_target_weights:
+  Q1:
+    cb_foldsafe_baseline_v1: 0.05
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 0.95
+  Q2:
+    cb_foldsafe_baseline_v1: 0.045000000000000005
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 0.855
+    q2_nested_platt_diagnostic_v1: 0.1
+  Q3:
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 1.0
+  S1:
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 1.0
+  S2:
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 1.0
+  S3:
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 1.0
+  S4:
+    lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0: 0.765
+    lgb_foldsafe_baseline_v1: 0.135
+    s4_nested_platt_diagnostic_v1: 0.1
+semantic_lint:
+  - Do not promote local OOF diagnostic evidence to DACON public/private leaderboard or organizer-official validation.
+  - Do not call LGB/CB fold-safe synthesis a broadly superior standalone model; supported evidence is targetwise reblend/calibration diversity.
+  - Do not treat supported nested Platt rows as standalone target-score improvement because target_delta_vs_anchor is 0.0.
+  - Do not hide disputed macro Brier guard outcomes when describing reliability/sample-weight candidates.
+  - Graph-first missing public LB signals are expected for this packet and should not block the local OOF packet plan.
+split:
+  group_key: subject_id
+  name: local-groupkfold-subject-5fold-oof
+split_id: local-groupkfold-subject-5fold-oof
+submission_predictions: not generated; DACON submission evidence is outside this local OOF claim boundary
+supported_rows:
+  -
+    candidate_id: q2_nested_platt_diagnostic_v1
+    reblend_weight: 0.1
+    support_basis: targetwise reblend weight, not standalone delta
+    target: Q2
+  -
+    candidate_id: s4_nested_platt_diagnostic_v1
+    reblend_weight: 0.1
+    support_basis: targetwise reblend weight, not standalone delta
+    target: S4
+target_metrics:
+  Q1:
+    log_loss: 0.6225370998897288
+  Q2:
+    log_loss: 0.6555493560477773
+  Q3:
+    log_loss: 0.6309857415368405
+  S1:
+    log_loss: 0.562996471228798
+  S2:
+    log_loss: 0.6113857154018603
+  S3:
+    log_loss: 0.595105227779678
+  S4:
+    log_loss: 0.6586155626317527
+targets:
+  - Q1
+  - Q2
+  - Q3
+  - S1
+  - S2
+  - S3
+  - S4
+task: dacon-sleep-lgb-cb-foldsafe-synthesis-local-oof
+uncertainty: Smoke run only. No full-run seed/fold uncertainty interval. Most raw weighted reliability candidates are disputed by macro Brier guard; supported rows are calibration/blend diagnostics, not standalone superiority. Local OOF diagnostic only.

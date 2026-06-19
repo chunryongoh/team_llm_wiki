@@ -1,0 +1,442 @@
+{
+  "delta_definition": "blend_target_score_minus_source_target_score",
+  "score_direction": "lower_is_better",
+  "summary": {
+    "flat_target_count": 4,
+    "improved_target_count": 3,
+    "max_target_improvement": -0.001371004825979405,
+    "max_target_worsening": 0.0,
+    "mean_delta_vs_best_source": -0.00024006782174076528,
+    "worsened_target_count": 0
+  },
+  "target_deltas": {
+    "Q1": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": -0.00022294497533148494,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6227600448650603
+      },
+      "blend_score": 0.6225370998897288,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": -0.00022294497533148494,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6227600448650603,
+          "weight": 0.95
+        },
+        {
+          "candidate_id": "cb_foldsafe_baseline_v1",
+          "delta": -0.07324566051282044,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1",
+          "score": 0.6957827604025493,
+          "weight": 0.05
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6957827604025493,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6227600448650603,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.7008932288975893,
+        "lgb_foldsafe_baseline_v1": 0.7186089949169779
+      }
+    },
+    "Q2": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": -8.652495087446699e-05,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6556358809986518
+      },
+      "blend_score": 0.6555493560477773,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": -8.652495087446699e-05,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6556358809986518,
+          "weight": 0.855
+        },
+        {
+          "candidate_id": "cb_foldsafe_baseline_v1",
+          "delta": -0.038155430665964496,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1",
+          "score": 0.6937047867137418,
+          "weight": 0.045000000000000005
+        },
+        {
+          "candidate_id": "q2_nested_platt_diagnostic_v1",
+          "delta": -8.652495087446699e-05,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_nested_platt_diagnostic_v1",
+          "score": 0.6556358809986518,
+          "weight": 0.1
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6937047867137418,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6556358809986518,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.7015942977628624,
+        "lgb_foldsafe_baseline_v1": 0.7245359587067768,
+        "q2_cb_weighted_reliability_v1": 0.6900178445526732,
+        "q2_lgb_weighted_reliability_v1": 0.7328674847085078,
+        "q2_nested_platt_diagnostic_v1": 0.6556358809986518,
+        "q2_temperature_scale_v1": 0.656119598961425,
+        "q2_uncertainty_prior_shrink_v1": 0.655970063133343
+      }
+    },
+    "Q3": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6309857415368405
+      },
+      "blend_score": 0.6309857415368405,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6309857415368405,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6715456996069803,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6309857415368405,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.6744962156537947,
+        "lgb_foldsafe_baseline_v1": 0.6935234735248417
+      }
+    },
+    "S1": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.562996471228798
+      },
+      "blend_score": 0.562996471228798,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.562996471228798,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6317083114476415,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.562996471228798,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.64203266650006,
+        "lgb_foldsafe_baseline_v1": 0.6811706388409787
+      }
+    },
+    "S2": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6113857154018603
+      },
+      "blend_score": 0.6113857154018603,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6113857154018603,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6682101763204937,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6113857154018603,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.6792808869990242,
+        "lgb_foldsafe_baseline_v1": 0.7120286759962432
+      }
+    },
+    "S3": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.595105227779678
+      },
+      "blend_score": 0.595105227779678,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.595105227779678,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6920251089983172,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.595105227779678,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.7140480003689764,
+        "lgb_foldsafe_baseline_v1": 0.7562575517339877
+      }
+    },
+    "S4": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": -0.001371004825979405,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6599865674577321
+      },
+      "blend_score": 0.6586155626317527,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": -0.001371004825979405,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6599865674577321,
+          "weight": 0.765
+        },
+        {
+          "candidate_id": "lgb_foldsafe_baseline_v1",
+          "delta": -0.06873917517399986,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_foldsafe_baseline_v1",
+          "score": 0.7273547378057525,
+          "weight": 0.135
+        },
+        {
+          "candidate_id": "s4_nested_platt_diagnostic_v1",
+          "delta": -0.001371004825979405,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_nested_platt_diagnostic_v1",
+          "score": 0.6599865674577321,
+          "weight": 0.1
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6943267566052017,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6599865674577321,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.6950460398263132,
+        "lgb_foldsafe_baseline_v1": 0.7273547378057525,
+        "s4_cb_weighted_reliability_v1": 0.6916832943369586,
+        "s4_lgb_weighted_reliability_v1": 0.7283917217014442,
+        "s4_nested_platt_diagnostic_v1": 0.6599865674577321,
+        "s4_temperature_scale_v1": 0.6602522178631097,
+        "s4_uncertainty_prior_shrink_v1": 0.660164754257362
+      }
+    }
+  },
+  "targets": {
+    "Q1": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": -0.00022294497533148494,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6227600448650603
+      },
+      "blend_score": 0.6225370998897288,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": -0.00022294497533148494,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6227600448650603,
+          "weight": 0.95
+        },
+        {
+          "candidate_id": "cb_foldsafe_baseline_v1",
+          "delta": -0.07324566051282044,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1",
+          "score": 0.6957827604025493,
+          "weight": 0.05
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6957827604025493,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6227600448650603,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.7008932288975893,
+        "lgb_foldsafe_baseline_v1": 0.7186089949169779
+      }
+    },
+    "Q2": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": -8.652495087446699e-05,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6556358809986518
+      },
+      "blend_score": 0.6555493560477773,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": -8.652495087446699e-05,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6556358809986518,
+          "weight": 0.855
+        },
+        {
+          "candidate_id": "cb_foldsafe_baseline_v1",
+          "delta": -0.038155430665964496,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-cb_foldsafe_baseline_v1",
+          "score": 0.6937047867137418,
+          "weight": 0.045000000000000005
+        },
+        {
+          "candidate_id": "q2_nested_platt_diagnostic_v1",
+          "delta": -8.652495087446699e-05,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-q2_nested_platt_diagnostic_v1",
+          "score": 0.6556358809986518,
+          "weight": 0.1
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6937047867137418,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6556358809986518,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.7015942977628624,
+        "lgb_foldsafe_baseline_v1": 0.7245359587067768,
+        "q2_cb_weighted_reliability_v1": 0.6900178445526732,
+        "q2_lgb_weighted_reliability_v1": 0.7328674847085078,
+        "q2_nested_platt_diagnostic_v1": 0.6556358809986518,
+        "q2_temperature_scale_v1": 0.656119598961425,
+        "q2_uncertainty_prior_shrink_v1": 0.655970063133343
+      }
+    },
+    "Q3": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6309857415368405
+      },
+      "blend_score": 0.6309857415368405,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6309857415368405,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6715456996069803,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6309857415368405,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.6744962156537947,
+        "lgb_foldsafe_baseline_v1": 0.6935234735248417
+      }
+    },
+    "S1": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.562996471228798
+      },
+      "blend_score": 0.562996471228798,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.562996471228798,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6317083114476415,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.562996471228798,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.64203266650006,
+        "lgb_foldsafe_baseline_v1": 0.6811706388409787
+      }
+    },
+    "S2": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6113857154018603
+      },
+      "blend_score": 0.6113857154018603,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6113857154018603,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6682101763204937,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6113857154018603,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.6792808869990242,
+        "lgb_foldsafe_baseline_v1": 0.7120286759962432
+      }
+    },
+    "S3": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": 0.0,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.595105227779678
+      },
+      "blend_score": 0.595105227779678,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": 0.0,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.595105227779678,
+          "weight": 1.0
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6920251089983172,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.595105227779678,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.7140480003689764,
+        "lgb_foldsafe_baseline_v1": 0.7562575517339877
+      }
+    },
+    "S4": {
+      "best_single_source": {
+        "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+        "delta": -0.001371004825979405,
+        "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+        "score": 0.6599865674577321
+      },
+      "blend_score": 0.6586155626317527,
+      "selected_sources": [
+        {
+          "candidate_id": "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0",
+          "delta": -0.001371004825979405,
+          "run_id": "2026-05-26-lgb-cb-reproduction-audit-v1-current-line-targetwise-reblend-min0-v1",
+          "score": 0.6599865674577321,
+          "weight": 0.765
+        },
+        {
+          "candidate_id": "lgb_foldsafe_baseline_v1",
+          "delta": -0.06873917517399986,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-lgb_foldsafe_baseline_v1",
+          "score": 0.7273547378057525,
+          "weight": 0.135
+        },
+        {
+          "candidate_id": "s4_nested_platt_diagnostic_v1",
+          "delta": -0.001371004825979405,
+          "run_id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-v1-s4_nested_platt_diagnostic_v1",
+          "score": 0.6599865674577321,
+          "weight": 0.1
+        }
+      ],
+      "source_scores": {
+        "cb_foldsafe_baseline_v1": 0.6943267566052017,
+        "lgb-cb-notebook-reproduction-v1-current-line-targetwise-reblend-min0": 0.6599865674577321,
+        "lgb_cb_foldsafe_fixed_blend_v1": 0.6950460398263132,
+        "lgb_foldsafe_baseline_v1": 0.7273547378057525,
+        "s4_cb_weighted_reliability_v1": 0.6916832943369586,
+        "s4_lgb_weighted_reliability_v1": 0.7283917217014442,
+        "s4_nested_platt_diagnostic_v1": 0.6599865674577321,
+        "s4_temperature_scale_v1": 0.6602522178631097,
+        "s4_uncertainty_prior_shrink_v1": 0.660164754257362
+      }
+    }
+  }
+}

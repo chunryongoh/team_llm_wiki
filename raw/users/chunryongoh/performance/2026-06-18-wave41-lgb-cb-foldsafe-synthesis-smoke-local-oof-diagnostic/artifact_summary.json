@@ -1,0 +1,46 @@
+{
+  "claim_boundaries": [
+    "Public leaderboard observations stay tentative until submission id, export, or CSV hash lineage exists."
+  ],
+  "evidence_gaps": [
+    "Missing graph signals: LightGBM/XGBoost anchor-blend model signal, Subject-hole CV preprocessing signal, Public LB metric signal."
+  ],
+  "features": [],
+  "interpretations": [
+    "The artifacts are useful as external code-share evidence, not as verified run lineage."
+  ],
+  "metrics": [],
+  "models": [
+    "LightGBM",
+    "CatBoost"
+  ],
+  "observed_facts": [
+    "No required graph signals were found in the scan manifest."
+  ],
+  "packet_id": "2026-06-19-packet-scan",
+  "preferred_synthesis_inputs": [
+    "artifact_summary.json",
+    "packet_entity_graph.json",
+    "semantic_lint.json",
+    "question_queue.yaml",
+    "wiki_plan.yaml"
+  ],
+  "preprocessing": [
+    "OOF"
+  ],
+  "schema_version": "packet-graph-v1.0",
+  "source_files": [
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_note.md",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_summary.json",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/decision_matrix.csv",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/candidate_status.csv",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/fold_subjects.json",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_plan.json",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/optuna_trials.csv",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/targetwise_reblend_summary.json",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/blend_weights.json",
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/target_deltas.json"
+  ],
+  "summary_ko": "스캔 매니페스트에서 그래프 후보 신호를 검토했다. 필수 그래프 신호 일부가 없어 해당 노드 생성을 보류했다."
+}

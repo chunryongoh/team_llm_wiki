@@ -1,0 +1,121 @@
+affected_pages:
+- expected_change: Mark as prior/superseded current-line evidence, not invalidated
+    as raw evidence.
+  path: wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md
+  role: packet_review
+- expected_change: 'Add fold-safe synthesis smoke interpretation: useful Q2/S4 calibration
+    diversity, not broad standalone superiority.'
+  path: wiki/models/lightgbm-catboost.md
+  role: leaf
+- expected_change: Add closeable Q2/S4 Brier-safe calibration/reliability follow-up
+    if not already present.
+  path: wiki/targets/sleep-lifelog-open-issues.md
+  role: hub
+- expected_change: No DACON leaderboard change; preserve evidence-surface separation.
+  path: wiki/performance/dacon-leaderboard-history.md
+  role: registry
+claim_boundary: local_oof_diagnostic_only
+claim_registry_updates:
+- 'supported: Wave41 LGB/CB fold-safe synthesis smoke local OOF targetwise reblend
+  scored 0.6195964535023479, improving the prior LGB/CB reproduction local line by
+  about -0.0002400678217408 under local_oof_diagnostic_only.'
+- 'supported but narrow: Q2/S4 nested Platt diagnostics are selected by targetwise
+  reblend weight 0.1; this is not standalone model superiority.'
+- 'disputed: most raw LGB/CB weighted reliability rows remain disputed by macro Brier
+  guard or lack of targetwise support.'
+claim_status: supported
+decisions:
+- Keep claim boundary local_oof_diagnostic_only; do not run as DACON/public promotion
+  evidence.
+evidence_gaps:
+- No DACON submission id, leaderboard export, submission CSV lineage, or organizer-official
+  validation evidence is included.
+- No AUPRC metric is reported in the Wave41 smoke artifact.
+- No full-run multi-seed uncertainty interval is included; this is a smoke result.
+- Independent subagent sidecar review was not run in this turn; packet plan used local
+  emulated Performance Verifier, Model Architect, Preprocessing Auditor, Spec Reviewer,
+  and Evidence Quality Reviewer checklists.
+open_questions:
+- close_condition: A full or stricter smoke packet shows Brier-safe support or disputes
+    the branch.
+  id: wave41-lgb-cb-full-brier-safe-escalation
+  merge_blocker: false
+  needed_evidence:
+  - full run decision_matrix.csv
+  - macro Brier delta by candidate
+  - targetwise reblend weights
+  owner_role: model-owner
+  priority: high
+  question: Can Q2/S4 calibration diversity be preserved while reducing disputed macro
+    Brier rows in a full run?
+- close_condition: Submission lineage packet confirms or rejects leaderboard mapping.
+  id: wave41-lgb-cb-public-lineage
+  merge_blocker: false
+  needed_evidence:
+  - submission id
+  - submission CSV hash
+  - leaderboard export
+  - local run mapping
+  owner_role: validation-owner
+  priority: medium
+  question: Does any Wave41 LGB/CB synthesis output map to a DACON public/private
+    submission?
+packet_id: 2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic
+packet_type: performance
+schema: team-llm-wiki-plan/v1
+semantic_lint:
+- Do not promote local OOF diagnostic evidence to DACON public/private leaderboard
+  or organizer-official validation.
+- Do not call LGB/CB fold-safe synthesis broadly superior as a standalone model.
+- Supported rows are supported by targetwise reblend weight, not target_delta_vs_anchor.
+- Macro Brier disputed rows must remain visible in synthesis.
+- This packet improves the local maintained diagnostic line but remains short of the
+  0.61 goal.
+- Do not call LGB/CB fold-safe synthesis a broadly superior standalone model; supported
+  evidence is targetwise reblend/calibration diversity.
+- Do not treat supported nested Platt rows as standalone target-score improvement
+  because target_delta_vs_anchor is 0.0.
+- Do not hide disputed macro Brier guard outcomes when describing reliability/sample-weight
+  candidates.
+- Graph-first missing public LB signals are expected for this packet and should not
+  block the local OOF packet plan.
+stable_entities:
+- action: create_or_update
+  id: performance:wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof
+  kind: performance
+  page: wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md
+  page_role: packet_review
+  promotion_reason:
+  - current_local_oof_line_update
+  - claim_boundary_needed
+- action: update
+  id: model:lightgbm-catboost
+  kind: model
+  page: wiki/models/lightgbm-catboost.md
+  page_role: leaf
+  promotion_reason:
+  - same_model_family_new_foldsafe_synthesis_result
+  - calibration_diversity_guidance_needed
+- action: update
+  id: benchmark:sleep-health-hackathon-v0
+  kind: benchmark
+  page: wiki/performance/sleep-health-hackathon-evaluation-policy.md
+  page_role: policy
+  promotion_reason:
+  - local_oof_claim_boundary_reinforcement
+- action: update
+  id: claim:current-supported-local-oof
+  kind: claim
+  page: wiki/claims/current-supported-claims.md
+  page_role: registry
+  promotion_reason:
+  - supported_local_oof_claim_changes
+supersedes_or_conflicts:
+- Supersedes the prior maintained local OOF diagnostic line 2026-06-01-lgb-cb-reproduction-local-oof-diagnostic
+  numerically, but does not invalidate its raw evidence.
+- Does not supersede DACON public/private leaderboard observations because this packet
+  has no submission lineage.
+topic_pages:
+- wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md
+- wiki/models/lightgbm-catboost.md
+- wiki/targets/sleep-lifelog-open-issues.md
