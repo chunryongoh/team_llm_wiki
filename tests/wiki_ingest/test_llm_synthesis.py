@@ -7,7 +7,9 @@ import yaml
 
 from team_llm_wiki.wiki_ingest import llm_synthesis
 from team_llm_wiki.wiki_ingest.llm_synthesis import (
+    GitHubModelsChatClient,
     OpenAIResponsesClient,
+    SynthesisClientChain,
     _integration_paths,
     _validate_generated_pages_against_contract,
 )
@@ -27,6 +29,16 @@ class FakeClient:
     def synthesize(self, *, model, reasoning_effort, prompt):
         self.calls.append({"model": model, "reasoning_effort": reasoning_effort, "prompt": prompt})
         return self.payload
+
+
+class FailingClient:
+    def __init__(self, failure: IngestFailure):
+        self.failure = failure
+        self.calls = []
+
+    def synthesize(self, *, model, reasoning_effort, prompt):
+        self.calls.append({"model": model, "reasoning_effort": reasoning_effort, "prompt": prompt})
+        raise self.failure
 
 
 def seed_repo(root: Path):
@@ -941,6 +953,108 @@ def test_openai_responses_client_posts_structured_gpt55_request(monkeypatch):
     assert body["max_output_tokens"] >= 60000
     assert body["text"]["format"]["type"] == "json_schema"
     assert body["input"][1]["content"] == "context"
+
+
+def test_github_models_client_posts_structured_chat_completion(monkeypatch):
+    captured = {}
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def read(self):
+            return json.dumps(
+                {
+                    "choices": [
+                        {
+                            "message": {
+                                "role": "assistant",
+                                "content": json.dumps({"summary": "ok", "review_notes": [], "pages": []}),
+                            }
+                        }
+                    ]
+                }
+            ).encode("utf-8")
+
+    def fake_urlopen(req, timeout):
+        captured["url"] = req.full_url
+        captured["timeout"] = timeout
+        captured["headers"] = dict(req.header_items())
+        captured["body"] = json.loads(req.data.decode("utf-8"))
+        return FakeResponse()
+
+    monkeypatch.setattr(llm_synthesis.request, "urlopen", fake_urlopen)
+    client = GitHubModelsChatClient(
+        token="github-token",
+        model="openai/gpt-4.1",
+        base_url="https://models.github.test/inference",
+        max_output_tokens=32000,
+    )
+
+    payload = client.synthesize(model="gpt-5.5", reasoning_effort="high", prompt="context")
+
+    assert payload["summary"] == "ok"
+    assert captured["url"] == "https://models.github.test/inference/chat/completions"
+    assert captured["timeout"] == 600
+    assert captured["headers"]["Authorization"] == "Bearer github-token"
+    assert captured["headers"]["Accept"] == "application/vnd.github+json"
+    body = captured["body"]
+    assert body["model"] == "openai/gpt-4.1"
+    assert body["max_tokens"] == 32000
+    assert body["temperature"] == 0
+    assert body["response_format"]["type"] == "json_schema"
+    assert body["response_format"]["json_schema"]["name"] == "team_llm_wiki_synthesis"
+    assert body["messages"][1]["content"] == "context"
+
+
+def test_llm_synthesis_falls_back_to_github_models_when_openai_quota_fails(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    primary = FailingClient(
+        IngestFailure(
+            FailureCode.LLM_SYNTHESIS_FAILED,
+            "OpenAI Responses API failed with HTTP 429",
+            {"body": '{"code":"insufficient_quota"}'},
+        )
+    )
+    fallback = FakeClient(
+        {
+            "summary": "GitHub Models fallback synthesized packet.",
+            "integration_plan": [],
+            "created_pages": [],
+            "updated_pages": [],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": ["OpenAI quota failed; GitHub Models fallback completed synthesis."],
+            "pages": single_dataset_integration_pages(),
+        }
+    )
+    fallback.provider_name = "github-models"
+    fallback.last_model = "openai/gpt-4.1"
+    client = SynthesisClientChain([primary, fallback])
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "llm-synthesis" / "fallback-run" / "report.json",
+        run_id="fallback-run",
+        client=client,
+    )
+
+    assert report.status == "bot_pr"
+    assert len(primary.calls) == 1
+    assert len(fallback.calls) == 1
+    assert report.model == "openai/gpt-4.1"
+    assert "failed recoverably" in report.review_notes[0]
+    assert "OpenAI quota failed" in report.review_notes[1]
+    payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "fallback-run" / "report.json").read_text())
+    assert payload["model"] == "openai/gpt-4.1"
+    assert payload["review_notes"][0].startswith("Primary LLM provider failed recoverably")
+    assert payload["review_notes"][1].startswith("OpenAI quota failed")
 
 
 def test_run_llm_synthesis_can_override_openai_output_budget(monkeypatch, tmp_path):

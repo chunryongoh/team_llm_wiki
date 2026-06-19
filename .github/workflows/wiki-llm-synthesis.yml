@@ -23,6 +23,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  models: read
 
 concurrency:
   group: wiki-llm-synthesis-${{ github.ref }}
@@ -77,16 +78,18 @@ jobs:
           Path("changed-paths.txt").write_text("\n".join(paths) + ("\n" if paths else ""), encoding="utf-8")
           PY
           fi
-      - name: Run GPT-5.5 wiki synthesis
+      - name: Run LLM wiki synthesis
         id: synth
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_MODELS_MODEL: ${{ vars.GITHUB_MODELS_MODEL || 'openai/gpt-4.1' }}
           PYTHONPATH: src
           RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
+          if [ -z "$OPENAI_API_KEY" ] && [ -z "$GITHUB_TOKEN" ]; then
             printf "status=skipped\n" >> "$GITHUB_OUTPUT"
-            printf "## LLM wiki synthesis\n\n건너뜀: OPENAI_API_KEY repository secret이 설정되어 있지 않습니다.\n" >> "$GITHUB_STEP_SUMMARY"
+            printf "## LLM wiki synthesis\n\n건너뜀: OPENAI_API_KEY와 GITHUB_TOKEN이 모두 없습니다.\n" >> "$GITHUB_STEP_SUMMARY"
             touch add-paths.txt
             exit 0
           fi
@@ -114,6 +117,7 @@ jobs:
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {
               "status": payload.get("status", "missing"),
               "add_paths": "\n".join(paths),
+              "model": payload.get("model", "gpt-5.5"),
           })
           summary_raw = json.dumps(payload, ensure_ascii=False)
           Path(os.environ["GITHUB_STEP_SUMMARY"]).write_text(render_workflow_summary(summary_raw).replace("Wiki ingest", "LLM wiki synthesis"), encoding="utf-8")
@@ -171,6 +175,7 @@ jobs:
         id: pr_body
         env:
           PYTHONPATH: src
+          MODEL_USED: ${{ steps.synth.outputs.model || 'gpt-5.5' }}
         run: |
           python - <<'PY'
           import json
@@ -182,15 +187,15 @@ jobs:
           validation_path = Path("validation-output.json")
           if validation_path.exists():
               payload["validation"] = json.loads(validation_path.read_text(encoding="utf-8"))
-          body = "## 사용한 LLM 모델\n\n- `gpt-5.5`\n\n" + render_bot_pr_body(payload)
+          body = f"## 사용한 LLM 모델\n\n- `{os.environ['MODEL_USED']}`\n\n" + render_bot_pr_body(payload)
           write_github_outputs(Path(os.environ["GITHUB_OUTPUT"]), {"pr_body": body})
           PY
       - name: Create bot PR for LLM synthesis
         if: steps.synth.outputs.status == 'bot_pr'
         uses: peter-evans/create-pull-request@v8
         with:
-          title: "[llm-wiki-bot][검토 필요] GPT-5.5 팀 위키 통합 정리"
-          commit-message: "[llm-wiki-bot] GPT-5.5 팀 위키 통합 정리"
+          title: "[llm-wiki-bot][검토 필요] 팀 위키 통합 정리"
+          commit-message: "[llm-wiki-bot] 팀 위키 통합 정리"
           body: ${{ steps.pr_body.outputs.pr_body }}
           branch: "bot/llm-synthesis-${{ github.run_id }}-${{ github.run_attempt }}"
           add-paths: ${{ steps.synth.outputs.add_paths }}

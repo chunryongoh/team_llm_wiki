@@ -30,15 +30,19 @@ def test_main_ingest_push_diff_uses_full_push_range():
 
 def test_llm_synthesis_workflow_runs_after_ingest_reports_and_uses_openai_key():
     workflow = Path(".github/workflows/wiki-llm-synthesis.yml").read_text(encoding="utf-8")
+    parsed = load_workflow(".github/workflows/wiki-llm-synthesis.yml")
 
     assert "raw/results/wiki-ingest/**" in workflow
     assert "OPENAI_API_KEY" in workflow
+    assert parsed["permissions"]["models"] == "read"
+    assert "GITHUB_TOKEN: ${{ github.token }}" in workflow
+    assert "GITHUB_MODELS_MODEL" in workflow
     assert "run-llm-wiki-synthesis" in workflow
     assert "--max-output-tokens 60000" in workflow
     assert "preview_payload_from_streams" in workflow
     assert "peter-evans/create-pull-request@v8" in workflow
     assert "bot/llm-synthesis-" in workflow
-    assert "[검토 필요] GPT-5.5 팀 위키 통합 정리" in workflow
+    assert "[검토 필요] 팀 위키 통합 정리" in workflow
     assert "## 사용한 LLM 모델" in workflow
 
 
