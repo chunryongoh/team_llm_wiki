@@ -65,3 +65,13 @@ Graph-first packet은 `0.5917`을 새 score row로 만들지 않는다. 같은 D
 ## Promotion evidence
 
 Verified row로 승격하려면 DACON submission id, leaderboard export, timestamp, 제출 CSV lineage, local run mapping, feature/model policy mapping이 필요하다.
+
+<!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-performance-dacon-leaderboard-history-md -->
+## GitHub Models Fallback Synthesis | 2026-06-18
+
+- packet_ids: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- llm_summary: 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic packet evidence를 ingest하여, smoke local OOF diagnostic 결과를 별도 leaf와 report로 기록함. claim registry는 기존 local OOF claim이 supported로 유지됨을 명시하며, DACON leaderboard history, metric history, split...
+- claim_status: preserved_from_raw_packet
+- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
+- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
+- synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`

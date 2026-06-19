@@ -325,3 +325,12 @@ raw-evidence-backed metric checks:
 ## Claims
 
 - supported: Wave41 LGB/CB fold-safe synthesis smoke improved the prior LGB/CB reproduction local OOF diagnostic line from 0.6198365213240887 to 0.6195964535023479, but remains local OOF only and short of the 0.61 goal.
+
+<!-- llm-synthesis:github-models-nondestructive-addendum:2026-06-18:wiki-performance-2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic-md -->
+## GitHub Models Synthesis Addendum | 2026-06-18
+
+- fallback_merge_policy: preserved_existing_page
+- fallback_compact_body_applied: false
+- packet_ids: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- note: GitHub Models fallback returned compact content for this existing page, but the body was not applied because compact fallback output can omit or distort metric provenance.
+- action: Review the existing page body, raw evidence, and synthesis report instead of treating this addendum as a metric update.

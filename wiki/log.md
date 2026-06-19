@@ -231,3 +231,9 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md`
 - run: `27804535275-1`
+
+## [2026-06-18] llm-synthesis | sleep-lifelog
+
+- GitHub Models fallback produced a partial synthesis; required wiki pages were conservatively filled in GitHub Actions.
+- packets: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`

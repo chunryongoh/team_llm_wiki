@@ -1,18 +1,29 @@
-# Team LLM Wiki Overview
+# 2026-06-18 Sleep Lifelog Packet Synthesis Report
 
-## Current Focus
+이 보고서는 2026-06-18 Wave41 LGB/CB Foldsafe Synthesis smoke local OOF diagnostic packet의 ingest 결과를 요약한다.
 
-- Latest packet synthesis topic: `sleep-lifelog`.
-- Source packets: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`.
+## 주요 내용
+- Foldsafe Synthesis smoke local OOF diagnostic 결과는 기존 reproduction 결과와 거의 동일한 grouped_macro_log_loss(0.6198365213240887)를 기록.
+- split policy 및 leakage policy는 canonical-split-and-leakage-policy를 준수함.
+- DACON leaderboard에는 제출되지 않았으며, local OOF evidence만으로 claim status는 supported로 유지됨.
 
-## Evidence Boundary
+## claim registry
+- 기존 local OOF claim이 supported로 유지됨 ([Current Supported Claims](../claims/current-supported-claims.md)).
 
-- Local OOF, notebook output, DACON public score, DACON private score, and organizer-official validation remain separate evidence surfaces.
-- GitHub Models fallback does not promote tentative claims; it preserves review-required integration context.
+## open questions
+- 해당 모델이 DACON leaderboard에 제출되어 private score가 확인될 때까지 검증 필요 ([sleep-lifelog-open-issues](../targets/sleep-lifelog-open-issues.md)).
 
-## Review Queue
+## cross-link
+- [Canonical Split And Leakage Policy](../preprocessing/canonical-split-and-leakage-policy.md)
+- [DACON Leaderboard History](../performance/dacon-leaderboard-history.md)
+- [Current Supported Claims](../claims/current-supported-claims.md)
 
-- Review `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md` and raw evidence before treating new claims as supported.
+## next actions
+- leaderboard 제출 evidence 확보 시 claim status update 필요.
+
+---
+
+본 synthesis report는 smoke local OOF diagnostic 결과를 기록하며, 추가 evidence가 확보될 때 claim boundary 및 registry를 업데이트한다.
 
 ## Raw Evidence
 
