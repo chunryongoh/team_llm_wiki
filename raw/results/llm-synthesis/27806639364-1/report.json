@@ -1,0 +1,109 @@
+{
+  "changed_paths": [
+    "wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lightgbm-catboost.md",
+    "wiki/performance/sleep-health-hackathon-evaluation-policy.md",
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md"
+  ],
+  "claim_register": [
+    {
+      "status": "supported",
+      "text": "Wave41 LGB/CB fold-safe synthesis smoke improved the prior LGB/CB reproduction local OOF diagnostic line from 0.6198365213240887 to 0.6195964535023479, but remains local OOF only and short of the 0.61 goal."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/lightgbm-catboost.md",
+    "wiki/performance/sleep-health-hackathon-evaluation-policy.md",
+    "wiki/performance/2026-06-01-lgb-cb-reproduction-local-oof-diagnostic.md"
+  ],
+  "input_changed_paths": [
+    "raw/results/wiki-ingest/27804535275-1/report.json"
+  ],
+  "integration_plan": [
+    "GitHub Models fallback used compact model output only for route discovery.",
+    "Non-entrypoint wiki page bodies were generated from raw packet manifests and metrics_to_verify.",
+    "Claim boundaries, metric values, and validation gaps must be reviewed against raw evidence before promotion."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "openai/gpt-4.1",
+  "open_questions": [
+    {
+      "close_condition": "Reviewer confirms scaffold is sufficient or replaces it with primary LLM/human synthesis.",
+      "id": "fallback-review-2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "merge_blocker": false,
+      "needed_evidence": "Raw packet manifest, metrics_to_verify, and referenced raw paths.",
+      "owner_role": "wiki-reviewer",
+      "priority": "medium",
+      "question": "Review `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic` fallback scaffold against raw evidence and decide whether primary LLM or human synthesis should refine it."
+    }
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "packet_root": "raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/27806639364-1/report.json",
+  "review_notes": [
+    "Primary LLM provider failed recoverably (llm_synthesis_failed: OpenAI Responses API failed with HTTP 429); synthesis completed with github-models `openai/gpt-4.1`.",
+    "GitHub Models fallback metadata was normalized from raw PacketManifest fields instead of compact model prose.",
+    "GitHub Models fallback cannot promote supported claims; compact claim_register items were replaced with manifest-backed claim records.",
+    "GitHub Models fallback preserved existing wiki pages with non-destructive addenda: wiki/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic.md.",
+    "GitHub Models fallback replaced compact new-page bodies with deterministic scaffolds: wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md.",
+    "GitHub Models fallback filled missing required wiki pages: wiki/features/sleep-lifelog-feature-landscape.md, wiki/decisions/sleep-lifelog-evaluation-protocol.md, wiki/targets/sleep-lifelog-open-issues.md, wiki/claims/current-supported-claims.md, wiki/performance/dacon-leaderboard-history.md, wiki/preprocessing/canonical-split-and-leakage-policy.md, wiki/overview.md, wiki/latest-context.md, and 5 more.",
+    "wiki_plan.yaml\uc5d0\uc11c \uc81c\uc548\ub41c leaf page\ub294 smoke local OOF diagnostic evidence surface\ub97c \ubd84\ub9ac \uad00\ub9ac\ud558\ub294 \uc815\ucc45\uc5d0 \ub530\ub77c \uc815\ub2f9\ud558\uac8c \uc0dd\uc131\ub428. \ubaa8\ub4e0 evidence surface\ub294 \ubcc4\ub3c4 \uad00\ub9ac\uac00 \ud544\uc694\ud558\ubbc0\ub85c hub\uc5d0 absorb\ud558\uc9c0 \uc54a\uace0 leaf\ub85c \uc720\uc9c0\ud568. DACON leaderboard, organizer validation, local OOF, notebook output\uc740 \ud63c\ud569\ud558\uc9c0 \uc54a\uc74c."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "27806639364-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_summary": "Wave41 LGB/CB fold-safe synthesis smoke improved the prior LGB/CB reproduction local OOF diagnostic line from 0.6198365213240887 to 0.6195964535023479, but remains local OOF only and short of the 0.61 goal.",
+  "timing_ms": 16637,
+  "updated_pages": [
+    "wiki/claims/current-supported-claims.md",
+    "wiki/index.md",
+    "wiki/overview.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "wiki/targets/sleep-lifelog-open-issues.md"
+  ],
+  "validation": {},
+  "warnings": []
+}
