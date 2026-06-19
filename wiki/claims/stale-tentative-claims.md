@@ -14,7 +14,8 @@ review_required: true
 
 ## Operating Rule
 
-- PR, ingest bot PR, synthesis bot PR 검증은 stale tentative claim을 error로 유지한다.
+- PR, ingest bot PR, synthesis bot PR 검증은 registry에 없는 stale tentative claim을 error로 유지한다.
+- 이 registry에 명시된 stale tentative claim은 strict health에서도 warning으로 내려간다.
 - scheduled `wiki-health-check`는 stale tentative claim만 warning으로 낮춰 daily/weekly brief artifact를 계속 만든다.
 - warning 처리는 해결이 아니라 attention routing이다.
 - stale claim을 닫을 때는 근거 surface를 분리한다. local OOF, notebook output, DACON public LB, private LB, organizer official validation은 서로 다른 claim boundary다.

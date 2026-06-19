@@ -120,6 +120,6 @@ PYTHONPATH=src python -m team_llm_wiki.cli check-wiki-health --repo-root .
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src pytest -q
 ```
 
-PR/ingest/synthesis 검증은 strict입니다. scheduled `wiki-health-check`만 오래된 tentative claim을 warning으로 내려 daily/weekly brief를 계속 생성합니다.
+PR/ingest/synthesis 검증은 strict입니다. 단, [Stale Tentative Claims](wiki/claims/stale-tentative-claims.md)에 등록된 오래된 tentative claim은 warning으로 관리하고, 등록되지 않은 stale claim은 error로 막습니다. scheduled `wiki-health-check`는 모든 stale tentative claim을 warning으로 내려 daily/weekly brief를 계속 생성합니다.
 
 최근 검증 사례: DACON `Public 0.5917 LGBM+XGB anchor` packet PR `#47` -> ingest PR `#48` -> synthesis PR `#49`.

@@ -15,7 +15,7 @@
 - V152 anchor OOF는 strict out-of-fold generation과 row identity proof가 없으면 high leakage-risk feature다.
 - Window-pair section은 일부 placeholder code라 parquet-backed feature evidence 전에는 implemented feature로 쓰지 않는다.
 - App context, stability filtering, v186 SHAP, v200-v209 sparse splice, Section07 weekly claims는 모두 `tentative`; 1875 pool은 historical source review다.
-- 오래된 tentative claim은 [Stale Tentative Claims](claims/stale-tentative-claims.md)에서 추적한다. scheduled health에서는 warning으로 브리핑하지만 PR/ingest/synthesis gate에서는 error로 유지한다.
+- 오래된 tentative claim은 [Stale Tentative Claims](claims/stale-tentative-claims.md)에서 추적한다. registry에 등록된 stale claim은 warning으로 관리하고, 등록되지 않은 stale claim은 PR/ingest/synthesis gate에서 error로 유지한다.
 - SHAP importance, public score note, local OOF, DACON leaderboard, private leaderboard를 한 ranking surface로 합치면 안 된다.
 
 ## Next Actions
