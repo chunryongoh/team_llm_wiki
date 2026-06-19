@@ -66,9 +66,10 @@ team-llm-wiki-packet-skill/install.sh --verify
 `wiki-llm-synthesis`는 GitHub Actions 안에서 끝까지 돌아가야 합니다.
 
 - 1순위: `OPENAI_API_KEY`가 있으면 OpenAI Responses API `gpt-5.5`를 사용합니다.
+- `gpt-5.5` primary가 가능하면 먼저 `entity-graph`, `evidence-claims`, `wiki-routing` specialist lane을 각각 실행하고, 마지막 `gpt-5.5` integrator가 lane 결과를 합쳐 wiki page를 작성합니다.
 - fallback: OpenAI key가 없거나 quota/rate/server 계열 recoverable 오류가 나면 GitHub Models를 `GITHUB_TOKEN`으로 호출합니다.
 - 기본 GitHub Models fallback은 `openai/gpt-4.1`입니다. 더 좋은 모델을 허용한 repo/org에서는 Actions variable `GITHUB_MODELS_MODEL`로 바꿀 수 있습니다.
-- synthesis bot PR 본문에는 실제 사용된 모델이 표시됩니다.
+- synthesis bot PR 본문에는 실제 사용된 모델과 specialist lane 요약이 표시됩니다.
 
 ## AI가 먼저 읽을 파일
 

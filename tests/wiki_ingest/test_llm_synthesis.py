@@ -41,6 +41,67 @@ class FailingClient:
         raise self.failure
 
 
+class LaneAwareFakeOpenAIClient:
+    provider_name = "openai-responses"
+
+    def __init__(self, payload):
+        self.payload = payload
+        self.structured_calls = []
+        self.final_calls = []
+        self.last_model = None
+
+    def synthesize_structured(self, *, model, reasoning_effort, prompt, response_schema, system_content):
+        self.structured_calls.append(
+            {
+                "model": model,
+                "reasoning_effort": reasoning_effort,
+                "prompt": prompt,
+                "response_schema": response_schema,
+                "system_content": system_content,
+            }
+        )
+        lane_id = "unknown"
+        for line in prompt.splitlines():
+            if line.startswith("Lane id:"):
+                lane_id = line.removeprefix("Lane id:").strip().strip("`")
+                break
+        self.last_model = model
+        return {
+            "lane_id": lane_id,
+            "role": f"{lane_id} specialist",
+            "summary": f"{lane_id} reviewed the packet evidence.",
+            "findings": [f"{lane_id} finding"],
+            "recommended_pages": ["wiki/preprocessing/sleep-lifelog-2024.md"],
+            "risks": [f"{lane_id} risk"],
+            "open_questions": [f"{lane_id} question"],
+        }
+
+    def synthesize(self, *, model, reasoning_effort, prompt):
+        self.final_calls.append({"model": model, "reasoning_effort": reasoning_effort, "prompt": prompt})
+        self.last_model = model
+        return self.payload
+
+
+class LaneFailingOpenAIClient:
+    provider_name = "openai-responses"
+
+    def __init__(self, failure: IngestFailure):
+        self.failure = failure
+        self.structured_calls = []
+        self.final_calls = []
+        self.last_model = None
+
+    def synthesize_structured(self, *, model, reasoning_effort, prompt, response_schema, system_content):
+        self.structured_calls.append({"model": model, "reasoning_effort": reasoning_effort, "prompt": prompt})
+        self.last_model = model
+        raise self.failure
+
+    def synthesize(self, *, model, reasoning_effort, prompt):
+        self.final_calls.append({"model": model, "reasoning_effort": reasoning_effort, "prompt": prompt})
+        self.last_model = model
+        raise self.failure
+
+
 def seed_repo(root: Path):
     contract_target = root / DEFAULT_CONTRACT_PATH
     contract_target.parent.mkdir(parents=True, exist_ok=True)
@@ -452,6 +513,43 @@ def test_llm_synthesis_calls_gpt55_with_policy_packet_and_existing_wiki_context(
     assert payload["model"] == "gpt-5.5"
     assert payload["llm_synthesis"] is True
     assert payload["review_notes"] == ["Confirm tentative claims remain tentative."]
+
+
+def test_openai_primary_runs_gpt55_specialist_lanes_before_final_integration(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    client = LaneAwareFakeOpenAIClient(
+        {
+            "summary": "Specialist lane reports were integrated into final wiki pages.",
+            "review_notes": ["Final integrator used lane reports."],
+            "pages": single_dataset_integration_pages(),
+        }
+    )
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "llm-synthesis" / "lane-run" / "report.json",
+        run_id="lane-run",
+        client=client,
+    )
+
+    assert report.status == "bot_pr"
+    assert len(client.structured_calls) >= 3
+    assert len(client.final_calls) == 1
+    assert {call["model"] for call in client.structured_calls} == {"gpt-5.5"}
+    assert client.final_calls[0]["model"] == "gpt-5.5"
+    assert "Specialist lane reports" in client.final_calls[0]["prompt"]
+    assert "entity-graph" in client.final_calls[0]["prompt"]
+    assert "evidence-claims" in client.final_calls[0]["prompt"]
+    assert "wiki-routing" in client.final_calls[0]["prompt"]
+    payload = json.loads((tmp_path / "raw" / "results" / "llm-synthesis" / "lane-run" / "report.json").read_text())
+    assert [lane["lane_id"] for lane in payload["synthesis_lanes"]] == [
+        "entity-graph",
+        "evidence-claims",
+        "wiki-routing",
+    ]
+    assert any("GPT-5.5 primary specialist lanes completed" in note for note in payload["review_notes"])
 
 
 def test_llm_synthesis_allows_safe_wiki_plan_leaf_targets(tmp_path):
@@ -1109,6 +1207,50 @@ def test_llm_synthesis_falls_back_to_github_models_when_openai_quota_fails(tmp_p
     assert payload["model"] == "openai/gpt-4.1"
     assert payload["review_notes"][0].startswith("Primary LLM provider failed recoverably")
     assert any(note.startswith("OpenAI quota failed") for note in payload["review_notes"])
+
+
+def test_llm_synthesis_falls_back_when_openai_specialist_lane_quota_fails(tmp_path):
+    seed_repo(tmp_path)
+    packet_root = seed_dataset_packet(tmp_path)
+    primary = LaneFailingOpenAIClient(
+        IngestFailure(
+            FailureCode.LLM_SYNTHESIS_FAILED,
+            "OpenAI Responses API failed with HTTP 429",
+            {"body": '{"code":"insufficient_quota"}'},
+        )
+    )
+    fallback = FakeClient(
+        {
+            "summary": "GitHub Models fallback synthesized packet after lane failure.",
+            "integration_plan": [],
+            "created_pages": [],
+            "updated_pages": [],
+            "claim_register": [],
+            "open_questions": [],
+            "superseded_or_conflicting_claims": [],
+            "review_notes": ["OpenAI lane quota failed; fallback completed synthesis."],
+            "pages": single_dataset_integration_pages(),
+        }
+    )
+    fallback.provider_name = "github-models"
+    fallback.last_model = "openai/gpt-4.1"
+    client = SynthesisClientChain([primary, fallback])
+
+    report = run_llm_wiki_synthesis(
+        tmp_path,
+        changed_paths=[str(packet_root.relative_to(tmp_path) / "manifest.yaml")],
+        report_path=tmp_path / "raw" / "results" / "llm-synthesis" / "lane-fallback" / "report.json",
+        run_id="lane-fallback",
+        client=client,
+    )
+
+    assert report.status == "bot_pr"
+    assert len(primary.structured_calls) == 1
+    assert primary.final_calls == []
+    assert len(fallback.calls) == 1
+    assert report.model == "openai/gpt-4.1"
+    assert report.synthesis_lanes == []
+    assert any("failed recoverably" in note for note in report.review_notes)
 
 
 def test_github_models_fallback_fills_missing_required_pages_from_partial_output(tmp_path):

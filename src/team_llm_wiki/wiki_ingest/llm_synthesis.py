@@ -28,6 +28,32 @@ DEFAULT_GITHUB_MODELS_MODEL = "openai/gpt-4.1"
 DEFAULT_GITHUB_MODELS_MAX_OUTPUT_TOKENS = 3000
 DEFAULT_GITHUB_MODELS_MAX_PROMPT_CHARS = 12000
 MAX_CONTEXT_FILE_CHARS = 120_000
+PRIMARY_SYNTHESIS_LANES = (
+    {
+        "id": "entity-graph",
+        "role": "Entity graph mapper",
+        "focus": (
+            "Identify durable wiki entities, page roles, cross-links, repeated concepts, and places where "
+            "packet-specific notes should become stable leaf memory."
+        ),
+    },
+    {
+        "id": "evidence-claims",
+        "role": "Evidence and claim auditor",
+        "focus": (
+            "Separate raw evidence from inference; audit metrics, claim_status, split boundaries, leaderboard "
+            "claims, superseded claims, and evidence gaps."
+        ),
+    },
+    {
+        "id": "wiki-routing",
+        "role": "Wiki routing and context curator",
+        "focus": (
+            "Plan how latest-context, index, overview, log, reports, targets, decisions, preprocessing, features, "
+            "models, and performance pages should be updated without creating duplicate hubs."
+        ),
+    },
+)
 
 
 class OpenAIResponsesClient:
@@ -45,6 +71,27 @@ class OpenAIResponsesClient:
         self.last_model: str | None = None
 
     def synthesize(self, *, model: str, reasoning_effort: str, prompt: str) -> dict[str, Any]:
+        return self.synthesize_structured(
+            model=model,
+            reasoning_effort=reasoning_effort,
+            prompt=prompt,
+            response_schema=_response_schema(),
+            system_content=(
+                "You are the Team LLM Wiki synthesis engine. Rewrite only the allowed wiki pages. "
+                "Follow AGENTS.md and CLAUDE.md exactly. Preserve claim statuses unless raw evidence "
+                "proves a change. Return only the requested JSON."
+            ),
+        )
+
+    def synthesize_structured(
+        self,
+        *,
+        model: str,
+        reasoning_effort: str,
+        prompt: str,
+        response_schema: dict[str, Any],
+        system_content: str,
+    ) -> dict[str, Any]:
         if not self.api_key:
             raise IngestFailure(FailureCode.MISSING_API_KEY, "OPENAI_API_KEY is required for LLM synthesis")
         self.last_model = model
@@ -52,16 +99,9 @@ class OpenAIResponsesClient:
             "model": model,
             "reasoning": {"effort": reasoning_effort},
             "max_output_tokens": self.max_output_tokens,
-            "text": {"format": _response_schema()},
+            "text": {"format": response_schema},
             "input": [
-                {
-                    "role": "system",
-                    "content": (
-                        "You are the Team LLM Wiki synthesis engine. Rewrite only the allowed wiki pages. "
-                        "Follow AGENTS.md and CLAUDE.md exactly. Preserve claim statuses unless raw evidence "
-                        "proves a change. Return only the requested JSON."
-                    ),
-                },
+                {"role": "system", "content": system_content},
                 {"role": "user", "content": prompt},
             ],
         }
@@ -182,13 +222,27 @@ class SynthesisClientChain:
         self.clients = clients
         self.last_model: str | None = None
         self.last_provider: str | None = None
+        self.last_lane_reports: list[dict[str, Any]] = []
         self.review_notes: list[str] = []
 
     def synthesize(self, *, model: str, reasoning_effort: str, prompt: str) -> dict[str, Any]:
+        return self.synthesize_with_lanes(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+
+    def synthesize_with_lanes(self, *, model: str, reasoning_effort: str, prompt: str) -> dict[str, Any]:
         failures: list[IngestFailure] = []
+        self.last_lane_reports = []
         for client in self.clients:
             try:
-                payload = client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+                if _supports_primary_specialist_lanes(client):
+                    payload, lane_reports = _call_client_with_specialist_lanes(
+                        client,
+                        model=model,
+                        reasoning_effort=reasoning_effort,
+                        prompt=prompt,
+                    )
+                else:
+                    payload = client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+                    lane_reports = []
             except IngestFailure as exc:
                 failures.append(exc)
                 if _is_recoverable_synthesis_failure(exc):
@@ -196,6 +250,7 @@ class SynthesisClientChain:
                 raise
             self.last_model = getattr(client, "last_model", None) or getattr(client, "model", None) or model
             self.last_provider = getattr(client, "provider_name", client.__class__.__name__)
+            self.last_lane_reports = lane_reports
             if failures:
                 failed = "; ".join(f"{failure.code.value}: {failure.message}" for failure in failures)
                 self.review_notes.append(
@@ -218,6 +273,28 @@ def default_synthesis_client(max_output_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS)
     if not clients:
         clients.append(OpenAIResponsesClient(max_output_tokens=max_output_tokens))
     return SynthesisClientChain(clients)
+
+
+def _synthesize_with_optional_lanes(
+    client: Any,
+    *,
+    model: str,
+    reasoning_effort: str,
+    prompt: str,
+) -> dict[str, Any]:
+    if hasattr(client, "synthesize_with_lanes"):
+        return client.synthesize_with_lanes(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+    if _supports_primary_specialist_lanes(client):
+        payload, lane_reports = _call_client_with_specialist_lanes(
+            client,
+            model=model,
+            reasoning_effort=reasoning_effort,
+            prompt=prompt,
+        )
+        setattr(client, "last_lane_reports", lane_reports)
+        return payload
+    setattr(client, "last_lane_reports", [])
+    return client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
 
 
 def run_llm_wiki_synthesis(
@@ -250,10 +327,20 @@ def run_llm_wiki_synthesis(
     evidence_by_target = _raw_evidence_by_target(repo_root, manifests, target_paths)
     prompt = build_llm_synthesis_prompt(repo_root, manifests, target_paths)
     synthesis_client = client or default_synthesis_client(max_output_tokens=max_output_tokens)
-    llm_payload = synthesis_client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=prompt)
+    llm_payload = _synthesize_with_optional_lanes(
+        synthesis_client,
+        model=model,
+        reasoning_effort=reasoning_effort,
+        prompt=prompt,
+    )
     actual_model = getattr(synthesis_client, "last_model", None) or model
     provider_name = _synthesis_provider_name(synthesis_client)
     provider_notes = list(getattr(synthesis_client, "review_notes", []) or [])
+    lane_reports = list(getattr(synthesis_client, "last_lane_reports", []) or [])
+    if lane_reports:
+        lane_ids = ", ".join(str(report.get("lane_id", "unknown")) for report in lane_reports)
+        model_label = "GPT-5.5" if actual_model == DEFAULT_MODEL else actual_model
+        provider_notes.append(f"{model_label} primary specialist lanes completed: {lane_ids}.")
     llm_payload, metadata_notes = _normalize_github_models_payload_metadata(
         llm_payload,
         manifests=manifests,
@@ -299,6 +386,7 @@ def run_llm_wiki_synthesis(
             llm_synthesis=True,
             model=actual_model,
             review_notes=[*provider_notes, *[str(note) for note in llm_payload.get("review_notes") or []]],
+            synthesis_lanes=lane_reports,
             synthesis_summary=str(llm_payload.get("summary", "")),
         )
         _write_report(repo_root, report, final_report_path)
@@ -353,6 +441,7 @@ def run_llm_wiki_synthesis(
         llm_synthesis=True,
         model=actual_model,
         review_notes=[*provider_notes, *[str(note) for note in llm_payload.get("review_notes") or []]],
+        synthesis_lanes=lane_reports,
         synthesis_summary=str(llm_payload.get("summary", "")),
         integration_plan=[str(item) for item in llm_payload.get("integration_plan") or []],
         created_pages=[str(item) for item in llm_payload.get("created_pages") or []],
@@ -439,6 +528,78 @@ def build_llm_synthesis_prompt(
         "Context files:\n\n"
         + "\n\n".join(files)
     )
+
+
+def _supports_primary_specialist_lanes(client: Any) -> bool:
+    return getattr(client, "provider_name", None) == "openai-responses" and hasattr(client, "synthesize_structured")
+
+
+def _call_client_with_specialist_lanes(
+    client: Any,
+    *,
+    model: str,
+    reasoning_effort: str,
+    prompt: str,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    lane_reports: list[dict[str, Any]] = []
+    for lane in PRIMARY_SYNTHESIS_LANES:
+        lane_payload = client.synthesize_structured(
+            model=model,
+            reasoning_effort=reasoning_effort,
+            prompt=_build_specialist_lane_prompt(prompt, lane),
+            response_schema=_lane_response_schema(),
+            system_content=(
+                "You are one specialist lane in the Team LLM Wiki synthesis system. "
+                "Do not write wiki page bodies. Return only concise JSON findings for the final integrator."
+            ),
+        )
+        lane_reports.append(_coerce_lane_report(lane, lane_payload))
+    final_prompt = _build_integrator_prompt(prompt, lane_reports)
+    final_payload = client.synthesize(model=model, reasoning_effort=reasoning_effort, prompt=final_prompt)
+    return final_payload, lane_reports
+
+
+def _build_specialist_lane_prompt(base_prompt: str, lane: dict[str, str]) -> str:
+    return (
+        "Run one specialist pre-synthesis lane for a Karpathy-style LLM wiki update.\n"
+        f"Lane id: `{lane['id']}`\n"
+        f"Role: {lane['role']}\n"
+        f"Focus: {lane['focus']}\n\n"
+        "Return JSON with lane_id, role, summary, findings, recommended_pages, risks, and open_questions. "
+        "Do not include markdown page bodies; the final integrator owns page generation.\n\n"
+        "Shared synthesis context follows.\n\n"
+        f"{base_prompt}"
+    )
+
+
+def _build_integrator_prompt(base_prompt: str, lane_reports: list[dict[str, Any]]) -> str:
+    return (
+        f"{base_prompt}\n\n"
+        "Specialist lane reports (GPT-5.5 primary subagent-style fan-out):\n"
+        f"{json.dumps(lane_reports, ensure_ascii=False, indent=2)}\n\n"
+        "Use the specialist lane reports as bounded subagent notes. Resolve conflicts conservatively, "
+        "preserve raw evidence boundaries, and write the final allowed wiki pages exactly once."
+    )
+
+
+def _coerce_lane_report(lane: dict[str, str], payload: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise IngestFailure(FailureCode.INVALID_LLM_OUTPUT, "Specialist lane output must be a JSON object")
+    return {
+        "lane_id": str(payload.get("lane_id") or lane["id"]),
+        "role": str(payload.get("role") or lane["role"]),
+        "summary": str(payload.get("summary") or ""),
+        "findings": _string_list(payload.get("findings")),
+        "recommended_pages": _string_list(payload.get("recommended_pages")),
+        "risks": _string_list(payload.get("risks")),
+        "open_questions": _string_list(payload.get("open_questions")),
+    }
+
+
+def _string_list(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(item) for item in value if str(item).strip()]
 
 
 def _resolve_packet_roots(repo_root: Path, changed_paths: list[str]) -> list[Path]:
@@ -1435,6 +1596,36 @@ def _chat_response_schema() -> dict[str, Any]:
             "name": schema["name"],
             "strict": schema["strict"],
             "schema": schema["schema"],
+        },
+    }
+
+
+def _lane_response_schema() -> dict[str, Any]:
+    return {
+        "type": "json_schema",
+        "name": "team_llm_wiki_synthesis_lane",
+        "strict": True,
+        "schema": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": [
+                "lane_id",
+                "role",
+                "summary",
+                "findings",
+                "recommended_pages",
+                "risks",
+                "open_questions",
+            ],
+            "properties": {
+                "lane_id": {"type": "string"},
+                "role": {"type": "string"},
+                "summary": {"type": "string"},
+                "findings": {"type": "array", "items": {"type": "string"}},
+                "recommended_pages": {"type": "array", "items": {"type": "string"}},
+                "risks": {"type": "array", "items": {"type": "string"}},
+                "open_questions": {"type": "array", "items": {"type": "string"}},
+            },
         },
     }
 

@@ -101,5 +101,6 @@ Use `PYTHONPATH=src python -m team_llm_wiki.cli check-wiki-health --repo-root .`
 ## Automation Policy
 
 - When LLM-assisted synthesis is enabled, use `gpt-5.5` as the default high-accuracy model and keep all LLM output review-required.
+- When `gpt-5.5` primary synthesis is available, divide the pass into specialist lane findings for entity graph mapping, evidence/claim audit, and wiki routing before the final integration call.
 - Merge-time ingest must remain reproducible without an API key.
 - Do not add automation-only smoke-test packets to `raw/` or `wiki/`. End-to-end workflow tests that intentionally enter team memory must use DACON/ETRI sleep-health domain content; pure workflow evidence belongs in PR comments, run summaries, or engineering docs outside the research wiki.
