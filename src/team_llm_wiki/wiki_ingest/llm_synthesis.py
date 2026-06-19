@@ -639,35 +639,28 @@ def _preserve_existing_pages_for_github_models(
 def _github_models_existing_page_addendum(
     repo_root: Path,
     rel_path: str,
-    generated_content: str,
+    _generated_content: str,
     *,
     manifests: list[tuple[PacketManifest, Path]],
 ) -> str:
     existing = (repo_root / rel_path).read_text(encoding="utf-8").rstrip()
     date_slug = _source_date_slug(manifests)
+    packet_ids = ", ".join(manifest.id for manifest, _root in manifests) or "unknown"
     marker = f"<!-- llm-synthesis:github-models-nondestructive-addendum:{date_slug}:{_slugify(rel_path)} -->"
     if marker in existing:
         return existing + "\n"
-    body = _strip_leading_markdown_title(generated_content).strip()
-    if not body:
-        body = "- GitHub Models fallback did not return substantive body content for this page."
     return (
         existing
         + "\n\n"
         + marker
         + "\n"
         + f"## GitHub Models Synthesis Addendum | {date_slug}\n\n"
-        + body.rstrip()
-        + "\n\n"
         + "- fallback_merge_policy: preserved_existing_page\n"
+        + "- fallback_compact_body_applied: false\n"
+        + f"- packet_ids: `{packet_ids}`\n"
+        + "- note: GitHub Models fallback returned compact content for this existing page, but the body was not applied because compact fallback output can omit or distort metric provenance.\n"
+        + "- action: Review the existing page body, raw evidence, and synthesis report instead of treating this addendum as a metric update.\n"
     )
-
-
-def _strip_leading_markdown_title(content: str) -> str:
-    lines = content.splitlines()
-    if lines and lines[0].startswith("# "):
-        return "\n".join(lines[1:]).lstrip()
-    return content
 
 
 def _fill_missing_required_pages_for_github_models(
@@ -734,12 +727,13 @@ def _github_models_required_page_fallback_content(
             "# Latest Context\n\n"
             "[[index]] [[overview]] [[log]]\n\n"
             "## Current Best\n\n"
-            "- GitHub Models fallback completed the packet synthesis path while preserving claim boundaries.\n\n"
+            f"- Latest synthesized packet topic: `{topic}`.\n"
+            "- Claim boundaries are preserved; local OOF, leaderboard, notebook, and official validation evidence remain separate.\n\n"
             "## Active Risks\n\n"
-            "- Some required pages were conservatively filled because the fallback model omitted them under the compact context limit.\n"
-            "- Review raw evidence before promoting any tentative metric or feature claim.\n\n"
+            "- GitHub Models fallback filled some required pages conservatively because the primary LLM provider was unavailable.\n"
+            "- Do not promote tentative metric or feature claims without raw evidence and validation lineage.\n\n"
             "## Next Actions\n\n"
-            f"- Review `{report_path}` and the packet ids `{packet_ids}` before merging the synthesis PR.\n\n"
+            f"- Use `{report_path}` as the entrypoint for this synthesis wave and close any validation evidence gaps.\n\n"
             f"{LATEST_START}\n"
             f"### {date_slug} | {topic} fallback synthesis\n\n"
             f"- link: [[{report_link}]]\n"
