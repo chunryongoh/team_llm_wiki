@@ -242,3 +242,10 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md`
 - run: `28153696483-1`
+
+## [2026-06-25] llm-synthesis | sleep-lifelog
+
+- OpenAI primary synthesis hit HTTP 429 in GitHub Actions; GitHub Models fallback produced scaffolds.
+- Codex manually refined the fallback branch into stable entity pages for wave43 performance, feature families, stacked ensemble, same-subject-hole CV, S1, S3, Q3/S4 updates, and validation gaps.
+- packets: `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`
+- report: `wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md`

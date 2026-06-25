@@ -37,6 +37,15 @@ raw_evidence:
 - values: final `grouped_macro_log_loss` `0.6198365213240887`, baseline `0.6198684545582471`, delta `-3.19332341584e-05`
 - guardrail: DACON public/private leaderboard 또는 organizer-official validation claim으로 승격하지 않는다.
 
+### Wave43 stack-v2 same-subject-hole local OOF
+
+- status: `supported`
+- boundary: `local_same_subject_hole_oof_only`
+- source: [Wave43 Claude Campaign Stack](../performance/wave43-claude-campaign-stack.md)
+- statement: Claude wave43 campaign의 final `stack-v2`는 same-subject-hole five-fold local OOF에서 calibrated macro log-loss `0.5897217743642561`을 기록했다.
+- values: subject-mean baseline `0.6245305092520156`, stack nested `0.5946367652711365`, calibrated stack `0.5897217743642561`, delta vs subject-mean `-0.0348087348877595`
+- guardrail: projected public `0.5927217743642561`과 progress-log public observation `0.60761`은 official leaderboard evidence가 아니다.
+
 ## Tentative Or Boundary-Limited Claims
 
 | claim | status | boundary | source |
@@ -47,6 +56,8 @@ raw_evidence:
 | Subject-hole CV improves LB correlation | tentative | exploratory external split idea | [Subject Hole CV](../preprocessing/subject-hole-cv.md) |
 | app context staged public LB `0.6218831823 -> 0.6106185586` | tentative | DOCX public LB observation | [app context](../performance/2026-06-01-app-context-feature-engineering-20260601.md) |
 | Section07 labelwise public note `0.5986218188` | tentative | user-reported public score only | [labelwise weekly](../reports/2026-05-29-labelwise-weekly-progress-target-bottlenecks.md) |
+| Wave43 projected public `0.5927217743642561` | tentative | projection from local OOF, no DACON leaderboard export | [Wave43 stack](../performance/wave43-claude-campaign-stack.md) |
+| Wave43 public observation `0.60761` | tentative | Claude/user progress-log observation only | [DACON Leaderboard History](../performance/dacon-leaderboard-history.md) |
 | 1875 feature pool and `715` dedup candidates | superseded | historical DOCX/PDF notebook-output; raw ablation/correlation evidence still missing | [1875 feature](../features/2026-05-28-1875-feature-domain-ablation-and-dedup.md) |
 | v186 public LB `0.5922831771` and SHAP drivers | tentative | user/PDF-reported public score plus interpretation evidence | [v186 SHAP](../performance/2026-05-29-v186-shap-leaderboard-analysis.md) |
 | v200-v209 sparse splice guardrail | tentative | PDF review and public-score notes | [v200-v209](../reports/2026-05-29-v200-v209-sparse-splice-review.md) |

@@ -58,3 +58,12 @@ raw_evidence:
 - evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
 - review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
 - synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
+
+## Wave43 Open Issues | 2026-06-25
+
+- Attach official DACON leaderboard evidence for public `0.60761` and final stack submission.
+- Attach fold assignment or row membership artifacts for same-subject-hole five-fold CV.
+- Decide whether large OOF prediction arrays belong in raw packets or remain external local evidence.
+- Resolve S4 next experiment: fragmentation proxy, WASO-specific feature selection, or domain adaptation.
+
+See [Wave43 Open Validation Gaps](wave43-open-validation-gaps.md).

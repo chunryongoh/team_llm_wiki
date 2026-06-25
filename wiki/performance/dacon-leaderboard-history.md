@@ -50,6 +50,8 @@ raw_evidence:
 | `v209-q23-low` | `0.592551` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
 | `section9_labelwise_best_20260522_1239` | `0.5986218188` | `user_reported_public_score_only` | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | tentative |
 | `section07_candidate_baseline_seed_ensemble_20260529_1029` | `0.6003735255` | `user_reported_public_score_only` | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | tentative |
+| `wave43-stack-v2-progress-observation` | `0.60761` | `user_reported_public_score_only` | `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`; Claude progress log note | tentative |
+| `wave43-stack-v2-projected-public` | `0.5927217743642561` | `projection_not_leaderboard` | `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`; local OOF projection | tentative |
 | `app-context-stage0-baseline` | `0.6218831823` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
 | `app-context-stage1-daily-evening` | `0.6182941107` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
 | `app-context-stage2-presleep-night` | `0.6106185586` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
@@ -65,6 +67,10 @@ Graph-first packet은 `0.5917`을 새 score row로 만들지 않는다. 같은 D
 ## Promotion evidence
 
 Verified row로 승격하려면 DACON submission id, leaderboard export, timestamp, 제출 CSV lineage, local run mapping, feature/model policy mapping이 필요하다.
+
+## 2026-06-25 Wave43 note
+
+Wave43 `stack-v2`의 supported value는 DACON score가 아니라 same-subject-hole local OOF `0.5897217743642561`이다. 이 page에는 public 관측/추정 surface만 기록한다. `0.60761`은 Claude/user progress-log observation이고, `0.5927217743642561`은 projected public이므로 `verified_public_lb`로 승격하지 않는다.
 
 <!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-performance-dacon-leaderboard-history-md -->
 ## GitHub Models Fallback Synthesis | 2026-06-18

@@ -34,6 +34,7 @@ raw_evidence:
 |---|---:|---|---|---|
 | `groupkfold-subject-3fold-oof` | 3 | `subject_id` | local canonical sprint definition | 초기 dataset/benchmark 기준 |
 | `local-groupkfold-subject-5fold-oof` | 5 | `subject_id` | `local_oof_diagnostic_only` | LGB/CB supported diagnostic 기준 |
+| `same-subject-hole-5fold-temporal-by-subject` | 5 | `subject_id` | `local_same_subject_hole_oof_only` | Wave43 stack-v2 기준; organizer-official 아님 |
 | `subject-hole-cv-5fold-reference` | 5 | `subject_id` | external code-share and notebook-output reference | DACON code share `13975`; `2026-06-12` recheck에서도 fold file 없음 |
 | `v186-report-oof-plus-public-lb-observation` | unknown | `subject_id` | PDF OOF + user-reported public score | submission lineage 없음 |
 | `20260526-172609-lgbcat-timesplit-public-lb-observation` | unknown | `subject_id` | DOCX public LB observation | app-context stage report |
@@ -66,6 +67,10 @@ Subject-hole CV는 각 subject를 `sleep_date` 순으로 나누고 early+late ch
 ## Promotion gate
 
 성능 claim을 `supported` 또는 `verified_public_lb`로 승격하려면 split surface, preprocessing fit scope, raw metric, leakage audit, submission lineage가 같은 provenance chain으로 연결되어야 한다.
+
+## 2026-06-25 Wave43 same-subject-hole note
+
+Wave43는 [Same Subject Hole CV](same-subject-hole-cv.md)를 local OOF surface로 사용한다. 이 split은 same-subject temporal hole을 통해 test 구조에 가까운 local proxy를 만들려는 선택이며, public/private leaderboard나 organizer-official validation과 같은 의미가 아니다. Future packet은 fold assignment artifact와 row membership을 첨부해야 한다.
 
 <!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-preprocessing-canonical-split-and-leakage-policy-md -->
 ## GitHub Models Fallback Synthesis | 2026-06-18

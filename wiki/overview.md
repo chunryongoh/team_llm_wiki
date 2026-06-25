@@ -2,38 +2,22 @@
 
 ## Current Focus
 
-- Latest packet synthesis topic: `sleep-lifelog`.
-- Source packets: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`.
+The current focus is the sleep-lifelog DACON/ETRI hackathon wiki. The latest integrated wave is `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`.
+
+## Current Best Evidence
+
+- Best supported local OOF line: [Wave43 Claude Campaign Stack](performance/wave43-claude-campaign-stack.md), calibrated macro log-loss `0.5897217743642561`.
+- Validation surface: [Same Subject Hole CV](preprocessing/same-subject-hole-cv.md), local five-fold `subject_id` temporal-hole policy.
+- Model shape: [Wave43 Stacked Ensemble](models/wave43-stacked-ensemble.md), targetwise candidate stack over 236-238 candidate models per target.
+- Feature shape: [Wave43 Feature Families](features/wave43-feature-families.md), with S1/Withings mimic and S3/actigraphy as the clearest target insights.
 
 ## Evidence Boundary
 
-- Local OOF, notebook output, DACON public score, DACON private score, and organizer-official validation remain separate evidence surfaces.
-- GitHub Models fallback does not promote tentative claims; it preserves review-required integration context.
+Local OOF, notebook output, DACON public score, DACON private score, projected public, and organizer-official validation are separate surfaces. The supported wave43 claim is local OOF only. Public `0.60761` and projected public `0.59272` remain tentative until raw leaderboard/submission lineage is attached.
 
 ## Review Queue
 
-- Review `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md` and raw evidence before treating new claims as supported.
-
-## Raw Evidence
-
-raw_evidence:
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/manifest.yaml
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/artifact_summary.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/metrics.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/packet.md
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/packet_entity_graph.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/performance.yaml
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/question_queue.yaml
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/semantic_lint.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/wiki_plan.yaml
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_note.md
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_summary.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_metrics.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/decision_matrix.csv
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/candidate_status.csv
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/fold_subjects.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/suite_plan.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/optuna_trials.csv
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/targetwise_reblend_summary.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/blend_weights.json
-- raw/users/chunryongoh/performance/2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic/source_artifacts/target_deltas.json
+- Close [Wave43 Open Validation Gaps](targets/wave43-open-validation-gaps.md).
+- Add official leaderboard export or submission hash for the wave43 public observation.
+- Attach fold assignment/row membership evidence for same-subject-hole CV.
+- Continue S4-specific work; S4 remains the main unresolved target.

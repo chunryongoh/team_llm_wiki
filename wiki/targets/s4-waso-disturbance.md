@@ -38,3 +38,7 @@ S4 feature를 채택하려면 same-split S4 target metric, removed/added feature
 
 - [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)
 - [Sleep Lifelog Open Questions](sleep-lifelog-open-issues.md)
+
+## Wave43 Update | 2026-06-25
+
+Wave43 confirms S4 remains unresolved. The final stack records S4 calibrated log-loss `0.6056339184314705`; WASO and transfer probes were useful hypotheses but did not beat the final stack. Treat broad sleep disturbance additions as tentative until a same-split S4 ablation beats the stack or clearly improves calibration.

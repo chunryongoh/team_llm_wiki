@@ -70,3 +70,7 @@ raw_evidence:
 - evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
 - review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
 - synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
+
+## Wave43 Feature Update | 2026-06-25
+
+Wave43 adds a target-specific feature map rather than one global feature rule. Sliding-window/intraday features are now a Q-family candidate, Withings-mat mimic features are S1 evidence, actigraphy scorers are S3 evidence, and WASO/transfer features remain tentative for S4. See [Wave43 Feature Families](wave43-feature-families.md).

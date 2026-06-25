@@ -39,3 +39,7 @@ Q3 개선 claim은 전체 average score가 아니라 same-split Q3 metric, featu
 - [Sleep Lifelog Feature Landscape](../features/sleep-lifelog-feature-landscape.md)
 - [Sleep Lifelog Open Questions](sleep-lifelog-open-issues.md)
 - [App Context Windows](../features/app-context-windows.md)
+
+## Wave43 Update | 2026-06-25
+
+Wave43 supersedes the strongest version of "Q-family has no extractable signal." The final stack records Q3 calibrated log-loss `0.650460985046031`, and sliding-window/intraday candidates helped Q2/Q3 enough to justify continued Q-family feature work. The bottleneck remains: Q3 is still one of the weakest targets and needs dedicated presleep stress, frequency, and routine-disruption features with same-split ablation.

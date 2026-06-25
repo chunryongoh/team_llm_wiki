@@ -1,0 +1,124 @@
+{
+  "changed_paths": [
+    "wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/wave43-claude-campaign-stack.md",
+    "wiki/features/wave43-feature-families.md",
+    "wiki/preprocessing/same-subject-hole-cv.md",
+    "wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/wave43-stacked-ensemble.md",
+    "wiki/targets/s1-total-sleep-time.md",
+    "wiki/targets/s3-sleep-onset-latency.md",
+    "wiki/targets/q3-stress-bottleneck.md",
+    "wiki/targets/s4-waso-disturbance.md",
+    "wiki/targets/wave43-open-validation-gaps.md"
+  ],
+  "claim_register": [
+    {
+      "status": "supported",
+      "text": "Claude \ubcc4\ub3c4 \uc791\uc5c5\uc73c\ub85c \uc218\ud589\ub41c wave43 \ucea0\ud398\uc778 \uacb0\uacfc\ub97c team LLM wiki\uc5d0 \uc62c\ub9ac\uae30 \uc704\ud55c \uc131\ub2a5 packet\uc785\ub2c8\ub2e4. \ucd5c\uc885 stack-v2\ub294 subject-mean baseline 0.62453 \ub300\ube44 calibrated local OOF macro log-loss 0.58972\ub97c \uae30\ub85d\ud588\uace0, projected public\uc740 0.59272\ub85c \ucd94\uc815\ub418\uc5c8\uc2b5\ub2c8\ub2e4. \uc2e4\uc81c \ud655\uc778\ub41c public score 0.60761\uc740 Claude \uc9c4\ud589 \ub85c\uadf8 \uae30\ubc18 \uad00\uce21\uce58\uc774\ubbc0\ub85c leaderboard export\uac00 \ucd94\uac00\ub418\uae30 \uc804\uae4c\uc9c0\ub294 \ubcc4\ub3c4 claim boundary\ub97c \uc720\uc9c0\ud574\uc57c \ud569\ub2c8\ub2e4."
+    }
+  ],
+  "claim_statuses": [],
+  "created_pages": [
+    "wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/wave43-claude-campaign-stack.md",
+    "wiki/features/wave43-feature-families.md"
+  ],
+  "failures": [],
+  "generated_paths": [
+    "wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md",
+    "wiki/performance/wave43-claude-campaign-stack.md",
+    "wiki/features/wave43-feature-families.md",
+    "wiki/preprocessing/same-subject-hole-cv.md",
+    "wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md",
+    "wiki/features/sleep-lifelog-feature-landscape.md",
+    "wiki/decisions/sleep-lifelog-evaluation-protocol.md",
+    "wiki/targets/sleep-lifelog-open-issues.md",
+    "wiki/claims/current-supported-claims.md",
+    "wiki/performance/dacon-leaderboard-history.md",
+    "wiki/preprocessing/canonical-split-and-leakage-policy.md",
+    "wiki/overview.md",
+    "wiki/latest-context.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/models/wave43-stacked-ensemble.md",
+    "wiki/targets/s1-total-sleep-time.md",
+    "wiki/targets/s3-sleep-onset-latency.md",
+    "wiki/targets/q3-stress-bottleneck.md",
+    "wiki/targets/s4-waso-disturbance.md",
+    "wiki/targets/wave43-open-validation-gaps.md"
+  ],
+  "input_changed_paths": [
+    "automation/.cache/compiled/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.json",
+    "raw/results/wiki-ingest/28153696483-1/report.json",
+    "wiki/index.md",
+    "wiki/latest-context.md",
+    "wiki/log.md",
+    "wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md"
+  ],
+  "integration_plan": [
+    "GitHub Models fallback used compact model output only for route discovery.",
+    "Non-entrypoint wiki page bodies were generated from raw packet manifests and metrics_to_verify.",
+    "Claim boundaries, metric values, and validation gaps must be reviewed against raw evidence before promotion."
+  ],
+  "link_lint_errors": [],
+  "llm_synthesis": true,
+  "metric_changes": [],
+  "model": "openai/gpt-4.1",
+  "open_questions": [
+    {
+      "close_condition": "Reviewer confirms scaffold is sufficient or replaces it with primary LLM/human synthesis.",
+      "id": "fallback-review-2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "merge_blocker": false,
+      "needed_evidence": "Raw packet manifest, metrics_to_verify, and referenced raw paths.",
+      "owner_role": "wiki-reviewer",
+      "priority": "medium",
+      "question": "Review `2026-06-25-wave43-claude-campaign-stack-local-oof-projection` fallback scaffold against raw evidence and decide whether primary LLM or human synthesis should refine it."
+    }
+  ],
+  "packet_roots": [
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection"
+  ],
+  "packet_skill_compatibility": {},
+  "packets": [
+    {
+      "id": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/llm-synthesis/28153765973-2/report.json",
+  "review_notes": [
+    "Primary LLM provider failed recoverably (llm_synthesis_failed: OpenAI Responses API failed with HTTP 429); synthesis completed with github-models `openai/gpt-4.1`.",
+    "GitHub Models fallback metadata was normalized from raw PacketManifest fields instead of compact model prose.",
+    "GitHub Models fallback cannot promote supported claims; compact claim_register items were replaced with manifest-backed claim records.",
+    "GitHub Models fallback replaced compact new-page bodies with deterministic scaffolds: wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md, wiki/performance/wave43-claude-campaign-stack.md, wiki/features/wave43-feature-families.md, wiki/preprocessing/same-subject-hole-cv.md.",
+    "GitHub Models fallback filled missing required wiki pages: wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md, wiki/features/sleep-lifelog-feature-landscape.md, wiki/decisions/sleep-lifelog-evaluation-protocol.md, wiki/targets/sleep-lifelog-open-issues.md, wiki/claims/current-supported-claims.md, wiki/performance/dacon-leaderboard-history.md, wiki/preprocessing/canonical-split-and-leakage-policy.md, wiki/overview.md, and 9 more.",
+    "wave43-feature-families.md\uc640 wave43-claude-campaign-stack.md\ub294 wiki_plan.yaml\uc5d0\uc11c \uc81c\uc548\ub41c leaf page\ub85c \ucda9\ubd84\ud788 \uc815\ub2f9\ud654\ub428. \uac01 feature\uc640 \ubaa8\ub378 \uad6c\uc870\uc758 \uc0c1\uc138\ub97c \ubcc4\ub3c4 leaf\ub85c \uc720\uc9c0\ud558\ub294 \uac83\uc774 \ud300 \uba54\ubaa8\ub9ac\uc758 \uc7ac\uc0ac\uc6a9\uc131\uc744 \ub192\uc784.",
+    "same-subject-hole-cv.md\ub294 split/leakage \uc815\ucc45\uc758 \ud575\uc2ec leaf\ub85c \uc815\ub2f9\ud654\ub428. \uae30\uc874 \uc815\ucc45\uacfc cross-link \ud544\uc694.",
+    "packet synthesis \ubcf4\uace0\uc11c\ub294 evidence gap\uacfc open question\uc744 \uba85\ud655\ud788 \ub4dc\ub7ec\ub0b4\uba70, claim status \ubcc0\uacbd \uc870\uac74\uc744 \uba85\uc2dc\ud568."
+  ],
+  "risk_tier": "tier4-governance",
+  "run_id": "28153765973-2",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_lanes": [],
+  "synthesis_summary": "Claude \ubcc4\ub3c4 \uc791\uc5c5\uc73c\ub85c \uc218\ud589\ub41c wave43 \ucea0\ud398\uc778 \uacb0\uacfc\ub97c team LLM wiki\uc5d0 \uc62c\ub9ac\uae30 \uc704\ud55c \uc131\ub2a5 packet\uc785\ub2c8\ub2e4. \ucd5c\uc885 stack-v2\ub294 subject-mean baseline 0.62453 \ub300\ube44 calibrated local OOF macro log-loss 0.58972\ub97c \uae30\ub85d\ud588\uace0, projected public\uc740 0.59272\ub85c \ucd94\uc815\ub418\uc5c8\uc2b5\ub2c8\ub2e4. \uc2e4\uc81c \ud655\uc778\ub41c public score 0.60761\uc740 Claude \uc9c4\ud589 \ub85c\uadf8 \uae30\ubc18 \uad00\uce21\uce58\uc774\ubbc0\ub85c leaderboard export\uac00 \ucd94\uac00\ub418\uae30 \uc804\uae4c\uc9c0\ub294 \ubcc4\ub3c4 claim boundary\ub97c \uc720\uc9c0\ud574\uc57c \ud569\ub2c8\ub2e4.",
+  "timing_ms": 31932,
+  "updated_pages": [
+    "wiki/preprocessing/same-subject-hole-cv.md"
+  ],
+  "validation": {},
+  "warnings": []
+}

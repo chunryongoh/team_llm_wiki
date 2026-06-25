@@ -245,3 +245,7 @@ raw-evidence-backed metric checks:
 - `projected_public_macro_log_loss`: reported `0.5927217743642561`, raw_path `metrics.json`, tolerance `0.0`
 - `withings_s1_log_loss`: reported `0.5059412643362348`, raw_path `metrics.json`, tolerance `0.0`
 - `actigraphy_s3_log_loss`: reported `0.5112450274138282`, raw_path `metrics.json`, tolerance `0.0`
+
+## Manual Synthesis Review | 2026-06-25
+
+This packet review page remains the raw packet mirror. Stable wiki interpretation has been split into [Wave43 Claude Campaign Stack](wave43-claude-campaign-stack.md), [Wave43 Feature Families](../features/wave43-feature-families.md), [Wave43 Stacked Ensemble](../models/wave43-stacked-ensemble.md), [Same Subject Hole CV](../preprocessing/same-subject-hole-cv.md), and target pages for S1/S3/Q3/S4.

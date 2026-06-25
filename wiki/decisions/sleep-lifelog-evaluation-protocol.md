@@ -75,3 +75,7 @@ V152 anchor OOF, Subject-hole CV, stability filtering, window-pair features는 u
 - evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
 - review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
 - synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
+
+## Wave43 Evaluation Decision | 2026-06-25
+
+Wave43 local OOF claims use same-subject-hole five-fold validation. This surface can support local model comparison inside wave43, but it does not become DACON public/private leaderboard evidence. Any leaderboard promotion requires submission id, export/screenshot, submission CSV lineage, and mapping back to the local run.
