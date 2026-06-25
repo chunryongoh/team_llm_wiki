@@ -75,3 +75,13 @@ Verified row로 승격하려면 DACON submission id, leaderboard export, timesta
 - evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
 - review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
 - synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
+
+<!-- llm-synthesis:github-models-required-page-fill:2026-06-25:wiki-performance-dacon-leaderboard-history-md -->
+## GitHub Models Fallback Synthesis | 2026-06-25
+
+- packet_ids: `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`
+- packet_summary: 2026-06-25-wave43-claude-campaign-stack-local-oof-projection: Claude 별도 작업으로 수행된 wave43 캠페인 결과를 team LLM wiki에 올리기 위한 성능 packet입니다. 최종 stack-v2는 subject-mean baseline 0.62453 대비 calibrated local OOF macro log-loss 0.58972를 기록했고, projected public은 0.59272로 추정되었습니다. 실제 확인된 public score 0.60761은 Claude 진행 로그 기반 관측치이므로 leaderboard export가 추가되기 전까지는 별도 claim boundary를 유지해야 합니다.
+- claim_status: preserved_from_raw_packet
+- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
+- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
+- synthesis_report: `wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md`
