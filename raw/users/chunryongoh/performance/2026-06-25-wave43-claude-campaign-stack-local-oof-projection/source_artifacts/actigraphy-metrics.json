@@ -1,0 +1,642 @@
+{
+  "pipeline": "wave43-actigraphy",
+  "approach": "METHOD A: validated actigraphy sleep/wake scoring (Cole-Kripke 1992, Sadeh 1994, FIXED published coefficients, no fitting) on a per-minute ACTIVITY-COUNT PROXY (wPedo steps + mActivity non-STILL + within-minute wHr std) inside the reconstructed in-bed interval. METHOD C: structural-constraint propagation from reliable TIB/TST (SE=TST/TIB, nonsleep budget, reconciliation deltas vs each scorer).",
+  "activity_count_proxy": "steps + 50*(mActivity!=STILL) + 8*hr_within_minute_std; missing->0",
+  "cole_kripke": {
+    "P": 1e-05,
+    "weights": [
+      404.0,
+      598.0,
+      326.0,
+      441.0,
+      1408.0,
+      508.0,
+      350.0
+    ],
+    "offsets": [
+      -4,
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "rule": "sleep if D<1"
+  },
+  "sadeh": {
+    "intercept": 7.601,
+    "avg": -0.065,
+    "nats": -1.08,
+    "sd": -0.056,
+    "lg": -0.703,
+    "window_min": 11,
+    "rule": "sleep if PS>0",
+    "activity_cap": 300
+  },
+  "n_lgb_trials": 50,
+  "n_cb_trials": 25,
+  "n_folds": 5,
+  "ck_features": [
+    "ck_se",
+    "ck_tst_h",
+    "ck_sol_h",
+    "ck_waso_h",
+    "ck_n_awak",
+    "ck_longest_wake_min",
+    "ck_se_spt"
+  ],
+  "sd_features": [
+    "sd_se",
+    "sd_tst_h",
+    "sd_sol_h",
+    "sd_waso_h",
+    "sd_n_awak",
+    "sd_longest_wake_min",
+    "sd_se_spt"
+  ],
+  "struct_features": [
+    "se_from_tst_tib",
+    "nonsleep_h",
+    "nonsleep_frac",
+    "se_struct_minus_ck",
+    "se_struct_minus_sd",
+    "nonsleep_minus_ck_waso",
+    "nonsleep_minus_sd_waso"
+  ],
+  "qual_features": [
+    "actig_coverage",
+    "actig_count_med",
+    "actig_count_mean",
+    "scorer_agree"
+  ],
+  "n_actig_features": 25,
+  "n_withings_features": 34,
+  "n_existing_features": 249,
+  "train_actig_coverage": 449,
+  "train_rows": 450,
+  "test_actig_coverage": 250,
+  "test_rows": 250,
+  "macro_subj_mean_ref": 0.62453,
+  "macro_subj_mean_oof": 0.6245305092520156,
+  "macro_final_oof": 0.6057276763757835,
+  "delta_macro_vs_subjmean": 0.01880283287623208,
+  "noise_floor": 0.009,
+  "improved_vs_subjmean": [
+    "Q1",
+    "S1",
+    "S3",
+    "S4"
+  ],
+  "improved_S_vs_subjmean": [
+    "S1",
+    "S3",
+    "S4"
+  ],
+  "beats_stack_noise_S": [
+    "S3"
+  ],
+  "actig_only_cracks_S_vs_subjmean": [
+    "S1",
+    "S3"
+  ],
+  "stack_ref": {
+    "S1": 0.506,
+    "S2": 0.565,
+    "S3": 0.53,
+    "S4": 0.617
+  },
+  "best_alpha_per_target": {
+    "Q1": 10.0,
+    "Q2": 50.0,
+    "Q3": 50.0,
+    "S1": 10.0,
+    "S2": 10.0,
+    "S3": 5.0,
+    "S4": 10.0
+  },
+  "tuning_oof": {
+    "actig": {
+      "Q1": {
+        "lgb": 0.6616601887297547,
+        "cb": 0.6720634507697165
+      },
+      "Q2": {
+        "lgb": 0.6946567914955193,
+        "cb": 0.7064173352509278
+      },
+      "Q3": {
+        "lgb": 0.6673026951643483,
+        "cb": 0.687295881568055
+      },
+      "S1": {
+        "lgb": 0.5353159488161053,
+        "cb": 0.5416074039505435
+      },
+      "S2": {
+        "lgb": 0.5836058290851389,
+        "cb": 0.5952654470435705
+      },
+      "S3": {
+        "lgb": 0.5140123693379367,
+        "cb": 0.5276975875532446
+      },
+      "S4": {
+        "lgb": 0.6616870448025161,
+        "cb": 0.646885430711792
+      }
+    },
+    "actig_wth": {
+      "Q1": {
+        "lgb": 0.672123898454507,
+        "cb": 0.6671504921569363
+      },
+      "Q2": {
+        "lgb": 0.7021865942212832,
+        "cb": 0.7179814318366384
+      },
+      "Q3": {
+        "lgb": 0.6739646033911223,
+        "cb": 0.6799096258389842
+      },
+      "S1": {
+        "lgb": 0.5182346926133973,
+        "cb": 0.520014148799871
+      },
+      "S2": {
+        "lgb": 0.5792795895199044,
+        "cb": 0.5843282749042737
+      },
+      "S3": {
+        "lgb": 0.5558171160752904,
+        "cb": 0.533240696066374
+      },
+      "S4": {
+        "lgb": 0.6272306898071093,
+        "cb": 0.6269019535344835
+      }
+    },
+    "combo": {
+      "Q1": {
+        "lgb": 0.6666645143528609,
+        "cb": 0.6703229572057677
+      },
+      "Q2": {
+        "lgb": 0.6998399894462103,
+        "cb": 0.6981749291500958
+      },
+      "Q3": {
+        "lgb": 0.6805209380355033,
+        "cb": 0.6663485553473283
+      },
+      "S1": {
+        "lgb": 0.5297155068936802,
+        "cb": 0.5516795845897993
+      },
+      "S2": {
+        "lgb": 0.5920786811000815,
+        "cb": 0.5903263990375811
+      },
+      "S3": {
+        "lgb": 0.5598492254003298,
+        "cb": 0.5496928344226425
+      },
+      "S4": {
+        "lgb": 0.6318011705943535,
+        "cb": 0.623664548993295
+      }
+    }
+  },
+  "feature_importance_S": {
+    "S1": [
+      [
+        "subj_mean_enc",
+        1911.983899417704
+      ],
+      [
+        "first_screen_on_hour",
+        864.5850760864996
+      ],
+      [
+        "home_gps_frac",
+        739.6361566844462
+      ],
+      [
+        "lights_off_hour",
+        659.5209573067414
+      ],
+      [
+        "mat_tst_x_home",
+        650.20429569932
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        389.34957348428725
+      ],
+      [
+        "bed_exit_hour",
+        376.6645050369698
+      ],
+      [
+        "charge_total_h",
+        295.52664481382817
+      ],
+      [
+        "time_in_bed_h",
+        289.97611090310056
+      ],
+      [
+        "last_step_hour",
+        264.510599589441
+      ],
+      [
+        "charge_overnight_h",
+        251.25522535277082
+      ],
+      [
+        "mat_sleep_onset_hour",
+        229.8200248486446
+      ],
+      [
+        "charge_start_to_onset_h",
+        226.07912002382818
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        182.63248265069296
+      ],
+      [
+        "mat_final_wake_hour",
+        181.48084881040268
+      ]
+    ],
+    "S2": [
+      [
+        "subj_mean_enc",
+        2708.378128573697
+      ],
+      [
+        "home_wifi_overlap",
+        598.4141884673154
+      ],
+      [
+        "mat_final_wake_hour",
+        422.03984396904707
+      ],
+      [
+        "charge_end_hour",
+        376.06797348825785
+      ],
+      [
+        "lights_off_hour",
+        356.5017409635475
+      ],
+      [
+        "charge_start_to_onset_h",
+        314.59870458449586
+      ],
+      [
+        "charge_total_h",
+        225.76545853167772
+      ],
+      [
+        "mat_tst_x_home",
+        203.65845663955315
+      ],
+      [
+        "bed_entry_anchor_spread",
+        189.41572608567458
+      ],
+      [
+        "screen_down_hour",
+        173.7918284162879
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        167.08841399475932
+      ],
+      [
+        "first_screen_on_hour",
+        162.72463572770357
+      ],
+      [
+        "charge_start_hour",
+        160.18214824155712
+      ],
+      [
+        "reg_mat_tst_h_dev",
+        157.30440396931954
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        157.1781597440131
+      ]
+    ],
+    "S3": [
+      [
+        "subj_mean_enc",
+        3642.611010563841
+      ],
+      [
+        "lights_off_hour",
+        756.721832666688
+      ],
+      [
+        "home_wifi_overlap",
+        561.8064121261486
+      ],
+      [
+        "mat_se_x_home",
+        308.5583378300071
+      ],
+      [
+        "scorer_agree",
+        294.593853501603
+      ],
+      [
+        "sd_tst_h",
+        233.6770326618862
+      ],
+      [
+        "first_screen_on_hour",
+        205.8440281791809
+      ],
+      [
+        "actig_count_mean",
+        200.9258078766543
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        181.1552165043278
+      ],
+      [
+        "ck_tst_h",
+        161.77062800902786
+      ],
+      [
+        "last_step_hour",
+        147.95412545651197
+      ],
+      [
+        "mat_final_wake_hour",
+        139.77508128324052
+      ],
+      [
+        "charge_start_hour",
+        134.53055627716185
+      ],
+      [
+        "charge_start_to_onset_h",
+        118.65533842262812
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        117.21283572933316
+      ]
+    ],
+    "S4": [
+      [
+        "home_wifi_overlap",
+        1362.9493075050486
+      ],
+      [
+        "charge_frac_in_bed",
+        920.2152033031743
+      ],
+      [
+        "subj_mean_enc",
+        789.2361537418328
+      ],
+      [
+        "reg_mat_tst_h_dev",
+        305.4561693072319
+      ],
+      [
+        "bed_entry_anchor_spread",
+        290.31392907723784
+      ],
+      [
+        "first_screen_on_hour",
+        264.2079289511312
+      ],
+      [
+        "lights_off_hour",
+        261.67797138541937
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        235.5063354759477
+      ],
+      [
+        "mat_final_wake_hour",
+        230.6162146423012
+      ],
+      [
+        "charge_overnight_h",
+        223.22269072197378
+      ],
+      [
+        "mat_longest_wake_min",
+        219.03813883662224
+      ],
+      [
+        "charge_start_to_onset_h",
+        200.7271898649633
+      ],
+      [
+        "bed_entry_hour",
+        198.49590204028937
+      ],
+      [
+        "charge_total_h",
+        175.2790499816183
+      ],
+      [
+        "home_gps_frac",
+        161.79643037170172
+      ]
+    ]
+  },
+  "per_target": {
+    "Q1": {
+      "subj_mean_oof": 0.672655171630032,
+      "subj_mean_ref": 0.67266,
+      "actig_lgb_oof": 0.6616601887297547,
+      "actig_cb_oof": 0.6720634507697165,
+      "actig_wth_lgb_oof": 0.672123898454507,
+      "actig_wth_cb_oof": 0.6671504921569363,
+      "combo_lgb_oof": 0.6666645143528609,
+      "combo_cb_oof": 0.6703229572057677,
+      "best_model": "actig_lgb",
+      "best_model_oof": 0.6616601887297547,
+      "blend_w": 0.7000000000000001,
+      "blend_oof": 0.6590666018078981,
+      "final_oof": 0.6590666018078981,
+      "delta_vs_subjmean": 0.013588569822133856,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.6616601887297547,
+      "actig_wth_oof": 0.6671504921569363,
+      "actig_only_delta_vs_subjmean": 0.010994982900277228,
+      "actig_only_beats_subjmean": true
+    },
+    "Q2": {
+      "subj_mean_oof": 0.6929996408521616,
+      "subj_mean_ref": 0.693,
+      "actig_lgb_oof": 0.6946567914955193,
+      "actig_cb_oof": 0.7064173352509278,
+      "actig_wth_lgb_oof": 0.7021865942212832,
+      "actig_wth_cb_oof": 0.7179814318366384,
+      "combo_lgb_oof": 0.6998399894462103,
+      "combo_cb_oof": 0.6981749291500958,
+      "best_model": "actig_lgb",
+      "best_model_oof": 0.6946567914955193,
+      "blend_w": 0.2,
+      "blend_oof": 0.6928983435464782,
+      "final_oof": 0.6928983435464782,
+      "delta_vs_subjmean": 0.00010129730568342321,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.6946567914955193,
+      "actig_wth_oof": 0.7021865942212832,
+      "actig_only_delta_vs_subjmean": -0.0016571506433576966,
+      "actig_only_beats_subjmean": false
+    },
+    "Q3": {
+      "subj_mean_oof": 0.6695293043179024,
+      "subj_mean_ref": 0.66953,
+      "actig_lgb_oof": 0.6673026951643483,
+      "actig_cb_oof": 0.687295881568055,
+      "actig_wth_lgb_oof": 0.6739646033911223,
+      "actig_wth_cb_oof": 0.6799096258389842,
+      "combo_lgb_oof": 0.6805209380355033,
+      "combo_cb_oof": 0.6663485553473283,
+      "best_model": "combo_cb",
+      "best_model_oof": 0.6663485553473283,
+      "blend_w": 0.65,
+      "blend_oof": 0.6650570881459384,
+      "final_oof": 0.6650570881459384,
+      "delta_vs_subjmean": 0.004472216171963916,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.6673026951643483,
+      "actig_wth_oof": 0.6739646033911223,
+      "actig_only_delta_vs_subjmean": 0.0022266091535541044,
+      "actig_only_beats_subjmean": false
+    },
+    "S1": {
+      "subj_mean_oof": 0.575821016915498,
+      "subj_mean_ref": 0.57582,
+      "actig_lgb_oof": 0.5353159488161053,
+      "actig_cb_oof": 0.5416074039505435,
+      "actig_wth_lgb_oof": 0.5182346926133973,
+      "actig_wth_cb_oof": 0.520014148799871,
+      "combo_lgb_oof": 0.5297155068936802,
+      "combo_cb_oof": 0.5516795845897993,
+      "best_model": "actig_wth_lgb",
+      "best_model_oof": 0.5182346926133973,
+      "blend_w": 0.8500000000000001,
+      "blend_oof": 0.5164357748791497,
+      "final_oof": 0.5164357748791497,
+      "delta_vs_subjmean": 0.05938524203634832,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.5353159488161053,
+      "actig_wth_oof": 0.5182346926133973,
+      "actig_only_delta_vs_subjmean": 0.040505068099392694,
+      "actig_only_beats_subjmean": true,
+      "stack_ref": 0.506,
+      "final_delta_vs_stack": -0.010435774879149706,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.02931594881610533
+    },
+    "S2": {
+      "subj_mean_oof": 0.5800769959049744,
+      "subj_mean_ref": 0.58008,
+      "actig_lgb_oof": 0.5836058290851389,
+      "actig_cb_oof": 0.5952654470435705,
+      "actig_wth_lgb_oof": 0.5792795895199044,
+      "actig_wth_cb_oof": 0.5843282749042737,
+      "combo_lgb_oof": 0.5920786811000815,
+      "combo_cb_oof": 0.5903263990375811,
+      "best_model": "actig_wth_lgb",
+      "best_model_oof": 0.5792795895199044,
+      "blend_w": 0.55,
+      "blend_oof": 0.574033924149907,
+      "final_oof": 0.574033924149907,
+      "delta_vs_subjmean": 0.006043071755067464,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.5836058290851389,
+      "actig_wth_oof": 0.5792795895199044,
+      "actig_only_delta_vs_subjmean": -0.0035288331801645034,
+      "actig_only_beats_subjmean": false,
+      "stack_ref": 0.565,
+      "final_delta_vs_stack": -0.009033924149907002,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.01860582908513897
+    },
+    "S3": {
+      "subj_mean_oof": 0.5332407156510615,
+      "subj_mean_ref": 0.53324,
+      "actig_lgb_oof": 0.5140123693379367,
+      "actig_cb_oof": 0.5276975875532446,
+      "actig_wth_lgb_oof": 0.5558171160752904,
+      "actig_wth_cb_oof": 0.533240696066374,
+      "combo_lgb_oof": 0.5598492254003298,
+      "combo_cb_oof": 0.5496928344226425,
+      "best_model": "actig_lgb",
+      "best_model_oof": 0.5140123693379367,
+      "blend_w": 0.75,
+      "blend_oof": 0.5112450274138282,
+      "final_oof": 0.5112450274138282,
+      "delta_vs_subjmean": 0.021995688237233302,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.5140123693379367,
+      "actig_wth_oof": 0.533240696066374,
+      "actig_only_delta_vs_subjmean": 0.019228346313124756,
+      "actig_only_beats_subjmean": true,
+      "stack_ref": 0.53,
+      "final_delta_vs_stack": 0.01875497258617187,
+      "beats_stack_noise": true,
+      "actig_only_delta_vs_stack": 0.015987630662063324
+    },
+    "S4": {
+      "subj_mean_oof": 0.6473907194924797,
+      "subj_mean_ref": 0.64739,
+      "actig_lgb_oof": 0.6616870448025161,
+      "actig_cb_oof": 0.646885430711792,
+      "actig_wth_lgb_oof": 0.6272306898071093,
+      "actig_wth_cb_oof": 0.6269019535344835,
+      "combo_lgb_oof": 0.6318011705943535,
+      "combo_cb_oof": 0.623664548993295,
+      "best_model": "combo_cb",
+      "best_model_oof": 0.623664548993295,
+      "blend_w": 0.8,
+      "blend_oof": 0.6213569746872842,
+      "final_oof": 0.6213569746872842,
+      "delta_vs_subjmean": 0.02603374480519549,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.646885430711792,
+      "actig_wth_oof": 0.6269019535344835,
+      "actig_only_delta_vs_subjmean": 0.0005052887806876738,
+      "actig_only_beats_subjmean": false,
+      "stack_ref": 0.617,
+      "final_delta_vs_stack": -0.004356974687284243,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.02988543071179206
+    }
+  },
+  "subjmean_oof_verification": {
+    "macro_oof": 0.6245305092520156,
+    "expected": 0.62453,
+    "per_target_oof": {
+      "Q1": 0.672655171630032,
+      "Q2": 0.6929996408521616,
+      "Q3": 0.6695293043179024,
+      "S1": 0.575821016915498,
+      "S2": 0.5800769959049744,
+      "S3": 0.5332407156510615,
+      "S4": 0.6473907194924797
+    },
+    "match": true
+  },
+  "leak_check": "Cole-Kripke & Sadeh are FIXED published algorithms with NO fitted parameters. All actigraphy + structural features computed from each night's OWN movement/HR streams inside that night's own reconstructed in-bed interval over fixed clock window [19:00 lifelog_date, 12:00 sleep_date]. Structural features use own-night TIB/TST. subj_mean_enc + regularity/rank reference stats = fold-train for OOF, full-train (no test labels) for test. subjmean OOF macro asserted == 0.62453 (leak-safe same-subject-hole folds confirmed). No row-own/future label, no test-label fitting, no pseudo-labeling, NO external/Nanum data. Features forced finite.",
+  "external_data_used": false,
+  "elapsed_seconds": 2091.7572927474976
+}

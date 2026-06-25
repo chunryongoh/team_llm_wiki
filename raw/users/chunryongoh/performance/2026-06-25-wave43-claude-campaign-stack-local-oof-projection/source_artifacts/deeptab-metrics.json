@@ -1,0 +1,215 @@
+{
+  "pipeline": "wave43-deeptab",
+  "models": [
+    "fttrans",
+    "tabresnet",
+    "mlp",
+    "tabnet"
+  ],
+  "n_folds": 5,
+  "n_daily_features": 249,
+  "n_intraday_features": 203,
+  "n_total_features": 453,
+  "device": "cuda",
+  "gpu": {
+    "device": "NVIDIA RTX A6000",
+    "max_mem_allocated_GB": 0.901457408,
+    "max_mem_reserved_GB": 1.157627904,
+    "total_GB": 51.041271808
+  },
+  "macro_subj_mean_ref": 0.62453,
+  "macro_subj_mean_oof": 0.6245305092520156,
+  "macro_model_oof": {
+    "fttrans": 0.6264347440708425,
+    "tabresnet": 0.6390006192781692,
+    "mlp": 0.6374298784360735,
+    "tabnet": 0.6415941441890568
+  },
+  "macro_best_blend_oof": 0.6119782672287923,
+  "macro_delta_vs_subjmean_ref": 0.012551732771207691,
+  "stack_oof_ref": 0.602,
+  "noise_floor": 0.0175,
+  "half_se": 0.00875,
+  "best_alpha_per_target": {
+    "Q1": 10.0,
+    "Q2": 50.0,
+    "Q3": 50.0,
+    "S1": 10.0,
+    "S2": 10.0,
+    "S3": 5.0,
+    "S4": 10.0
+  },
+  "chosen_loss": {
+    "fttrans": {
+      "Q1": "smooth",
+      "Q2": "focal",
+      "Q3": "focal",
+      "S1": "smooth",
+      "S2": "smooth",
+      "S3": "smooth",
+      "S4": "bce"
+    },
+    "tabresnet": {
+      "Q1": "smooth",
+      "Q2": "focal",
+      "Q3": "focal",
+      "S1": "smooth",
+      "S2": "focal",
+      "S3": "bce",
+      "S4": "focal"
+    },
+    "mlp": {
+      "Q1": "bce",
+      "Q2": "smooth",
+      "Q3": "focal",
+      "S1": "smooth",
+      "S2": "focal",
+      "S3": "bce",
+      "S4": "focal"
+    }
+  },
+  "per_target": {
+    "Q1": {
+      "subj_mean_oof": 0.672655171630032,
+      "fttrans_oof": 0.6729066589324708,
+      "tabresnet_oof": 0.6724772087089154,
+      "mlp_oof": 0.6772868570633105,
+      "tabnet_oof": 0.6833519280273711,
+      "deepblend_oof": 0.6691426598074913,
+      "best_src": "deepblend",
+      "best_src_oof": 0.6691426598074913,
+      "best_w": 0.5750000000000001,
+      "best_blend_ll": 0.6650047790833022,
+      "subj_mean_ref": 0.67266,
+      "delta_vs_subjmean": 0.007655220916697791,
+      "blend_beats_subjmean_noise": 0.0,
+      "chosen_loss": {
+        "fttrans": "smooth",
+        "tabresnet": "smooth",
+        "mlp": "bce"
+      }
+    },
+    "Q2": {
+      "subj_mean_oof": 0.6929996408521616,
+      "fttrans_oof": 0.6550671201655633,
+      "tabresnet_oof": 0.6788353282780281,
+      "mlp_oof": 0.678068434208596,
+      "tabnet_oof": 0.682270577746404,
+      "deepblend_oof": 0.6661430782290803,
+      "best_src": "fttrans",
+      "best_src_oof": 0.6550671201655633,
+      "best_w": 1.0,
+      "best_blend_ll": 0.6550671201655633,
+      "subj_mean_ref": 0.693,
+      "delta_vs_subjmean": 0.037932879834436606,
+      "blend_beats_subjmean_noise": 1.0,
+      "chosen_loss": {
+        "fttrans": "focal",
+        "tabresnet": "focal",
+        "mlp": "smooth"
+      }
+    },
+    "Q3": {
+      "subj_mean_oof": 0.6695293043179024,
+      "fttrans_oof": 0.664154985568962,
+      "tabresnet_oof": 0.6667523741776417,
+      "mlp_oof": 0.6659850657148664,
+      "tabnet_oof": 0.6514594435162515,
+      "deepblend_oof": 0.6546143789750964,
+      "best_src": "tabnet",
+      "best_src_oof": 0.6514594435162515,
+      "best_w": 0.9,
+      "best_blend_ll": 0.6511781913436202,
+      "subj_mean_ref": 0.66953,
+      "delta_vs_subjmean": 0.018351808656379753,
+      "blend_beats_subjmean_noise": 1.0,
+      "chosen_loss": {
+        "fttrans": "focal",
+        "tabresnet": "focal",
+        "mlp": "focal"
+      }
+    },
+    "S1": {
+      "subj_mean_oof": 0.575821016915498,
+      "fttrans_oof": 0.5769782310414581,
+      "tabresnet_oof": 0.6022808062876664,
+      "mlp_oof": 0.5942806316120367,
+      "tabnet_oof": 0.5985068910355542,
+      "deepblend_oof": 0.5765831345514835,
+      "best_src": "deepblend",
+      "best_src_oof": 0.5765831345514835,
+      "best_w": 0.47500000000000003,
+      "best_blend_ll": 0.5693105742744713,
+      "subj_mean_ref": 0.57582,
+      "delta_vs_subjmean": 0.006509425725528706,
+      "blend_beats_subjmean_noise": 0.0,
+      "chosen_loss": {
+        "fttrans": "smooth",
+        "tabresnet": "smooth",
+        "mlp": "smooth"
+      }
+    },
+    "S2": {
+      "subj_mean_oof": 0.5800769959049744,
+      "fttrans_oof": 0.6039148207351668,
+      "tabresnet_oof": 0.6095623774107337,
+      "mlp_oof": 0.610837125298909,
+      "tabnet_oof": 0.630461822675527,
+      "deepblend_oof": 0.6021215719449108,
+      "best_src": "deepblend",
+      "best_src_oof": 0.6021215719449108,
+      "best_w": 0.2,
+      "best_blend_ll": 0.5779208357523739,
+      "subj_mean_ref": 0.58008,
+      "delta_vs_subjmean": 0.0021591642476261885,
+      "blend_beats_subjmean_noise": 0.0,
+      "chosen_loss": {
+        "fttrans": "smooth",
+        "tabresnet": "focal",
+        "mlp": "focal"
+      }
+    },
+    "S3": {
+      "subj_mean_oof": 0.5332407156510615,
+      "fttrans_oof": 0.56609210534527,
+      "tabresnet_oof": 0.5890462331087272,
+      "mlp_oof": 0.577552334152715,
+      "tabnet_oof": 0.5789911809749043,
+      "deepblend_oof": 0.5570399525981382,
+      "best_src": "deepblend",
+      "best_src_oof": 0.5570399525981382,
+      "best_w": 0.25,
+      "best_blend_ll": 0.5284568548604945,
+      "subj_mean_ref": 0.53324,
+      "delta_vs_subjmean": 0.004783145139505507,
+      "blend_beats_subjmean_noise": 0.0,
+      "chosen_loss": {
+        "fttrans": "smooth",
+        "tabresnet": "bce",
+        "mlp": "bce"
+      }
+    },
+    "S4": {
+      "subj_mean_oof": 0.6473907194924797,
+      "fttrans_oof": 0.6459292867070063,
+      "tabresnet_oof": 0.6540500069754717,
+      "mlp_oof": 0.6579987010020808,
+      "tabnet_oof": 0.6661171653473856,
+      "deepblend_oof": 0.6469674133008821,
+      "best_src": "fttrans",
+      "best_src_oof": 0.6459292867070063,
+      "best_w": 0.525,
+      "best_blend_ll": 0.6369095151217206,
+      "subj_mean_ref": 0.64739,
+      "delta_vs_subjmean": 0.010480484878279461,
+      "blend_beats_subjmean_noise": 1.0,
+      "chosen_loss": {
+        "fttrans": "bce",
+        "tabresnet": "focal",
+        "mlp": "focal"
+      }
+    }
+  },
+  "elapsed_seconds": 837.3640892505646,
+  "leak_check": "PASS \u2014 standardization mean/std and NaN-impute median computed from TRAIN-FOLD rows only (test uses full-train stats via subj_mean_enc_fulltest path; deep-net feature standardization for test uses each fold's train stats and is averaged over folds). subj_mean_enc fold-held-out for OOF, full-train (no test labels) for test. subject_id embedding uses id only (no labels). Intra-day features row-independent (reused from richfeat/sliding-window builds). No pseudo-labeling, no test-label fitting."
+}

@@ -1,0 +1,126 @@
+packet_id: 2026-06-25-wave43-claude-campaign-stack-local-oof-projection
+ingest_intent: stable_entity_updates
+stable_entities:
+  - id: performance:wave43-claude-campaign-stack
+    kind: performance
+    action: create_or_update
+    page: wiki/performance/wave43-claude-campaign-stack.md
+    page_role: leaf
+    promotion_reason:
+      - independent_performance_claim_needed
+      - final_claude_campaign_summary
+  - id: performance:dacon-leaderboard-history
+    kind: performance_registry
+    action: update
+    page: wiki/performance/dacon-leaderboard-history.md
+    page_role: registry
+    promotion_reason:
+      - public_observation_requires_claim_boundary
+  - id: evaluation:same-subject-hole-cv
+    kind: validation_policy
+    action: create_or_update
+    page: wiki/preprocessing/same-subject-hole-cv.md
+    page_role: policy
+    promotion_reason:
+      - reusable_validation_policy
+      - leakage_boundary_needed
+  - id: features:wave43-feature-families
+    kind: feature_map
+    action: create_or_update
+    page: wiki/features/wave43-feature-families.md
+    page_role: hub
+    promotion_reason:
+      - cross_target_feature_family_map
+  - id: models:wave43-stacked-ensemble
+    kind: model_architecture
+    action: create_or_update
+    page: wiki/models/wave43-stacked-ensemble.md
+    page_role: leaf
+    promotion_reason:
+      - targetwise_candidate_pool_and_calibration
+  - id: target:s1-total-sleep-time
+    kind: target_insight
+    action: create_or_update
+    page: wiki/targets/s1-total-sleep-time.md
+    page_role: leaf
+    promotion_reason:
+      - withings_mimic_signal
+  - id: target:s3-sleep-onset-latency
+    kind: target_insight
+    action: create_or_update
+    page: wiki/targets/s3-sleep-onset-latency.md
+    page_role: leaf
+    promotion_reason:
+      - actigraphy_scorer_signal
+  - id: target:q3-stress-bottleneck
+    kind: target_bottleneck
+    action: update
+    page: wiki/targets/q3-stress-bottleneck.md
+    page_role: leaf
+    promotion_reason:
+      - q_signal_supersession
+  - id: target:s4-waso-disturbance
+    kind: target_bottleneck
+    action: update
+    page: wiki/targets/s4-waso-disturbance.md
+    page_role: leaf
+    promotion_reason:
+      - negative_result_tracking
+affected_pages:
+  - path: wiki/claims/current-supported-claims.md
+    role: registry
+    expected_change: "support local OOF stack-v2 claim but keep projected/observed public claims separate"
+  - path: wiki/targets/wave43-open-validation-gaps.md
+    role: registry
+    expected_change: "track leaderboard export, official split, OOF prediction, and S4 next-test gaps"
+semantic_lint:
+  - "Do not promote projected_public_macro_log_loss 0.59272 to official leaderboard evidence."
+  - "Do not collapse same-subject-hole local OOF metrics and public/private leaderboard scores into one claim."
+  - "Do not paste packet.md verbatim into one wiki page; update stable entities and registries."
+  - "Mark Q-family impossibility claims as superseded, not deleted."
+  - "Keep S4 WASO/transfer runs as negative or tentative until they beat the final stack."
+preferred_updates:
+  - path: wiki/performance/wave43-claude-campaign-stack.md
+    action: create_or_update
+    entity_type: performance_summary
+    reason: "Claude wave43 campaign의 최종 local OOF 결과와 후보군 구조를 stable page로 보존한다."
+  - path: wiki/performance/dacon-leaderboard-history.md
+    action: update
+    entity_type: leaderboard_registry
+    reason: "public score observation과 projected public score를 claim boundary와 함께 분리 기록한다."
+  - path: wiki/preprocessing/same-subject-hole-cv.md
+    action: create_or_update
+    entity_type: validation_policy
+    reason: "wave43의 local canonical CV policy와 leakage boundary를 명시한다."
+  - path: wiki/features/wave43-feature-families.md
+    action: create_or_update
+    entity_type: feature_map
+    reason: "sliding-window, Withings mimic, actigraphy scorer, WASO, SSL/sequence/transfer 계열을 중복 없이 정리한다."
+  - path: wiki/models/wave43-stacked-ensemble.md
+    action: create_or_update
+    entity_type: model_architecture
+    reason: "236-238개 target별 후보 pool, nested stack, calibration policy를 설명한다."
+  - path: wiki/targets/s1-total-sleep-time.md
+    action: create_or_update
+    entity_type: target_insight
+    reason: "Withings-mat mimic 계열이 S1에서 가장 강한 신호를 만든다는 insight를 보존한다."
+  - path: wiki/targets/s3-sleep-onset-latency.md
+    action: create_or_update
+    entity_type: target_insight
+    reason: "actigraphy scorer가 S3를 개선했다는 target-specific insight를 보존한다."
+  - path: wiki/targets/q3-stress-bottleneck.md
+    action: update
+    entity_type: target_bottleneck
+    reason: "Q3는 여전히 어려우나 sliding-window/stack으로 일부 신호가 생겼다는 supersession을 기록한다."
+  - path: wiki/targets/s4-waso-disturbance.md
+    action: update
+    entity_type: target_bottleneck
+    reason: "WASO/transfer 시도가 final stack을 넘지 못했다는 negative result를 기록한다."
+  - path: wiki/targets/wave43-open-validation-gaps.md
+    action: create_or_update
+    entity_type: open_question
+    reason: "leaderboard export, OOF prediction, official split, external transfer의 검증 공백을 추적한다."
+do_not:
+  - "Do not paste packet.md verbatim into wiki as the final synthesis."
+  - "Do not merge projected public and official leaderboard results under one supported claim."
+  - "Do not promote partial batch-correction/domain-adaptation runs without metric evidence."

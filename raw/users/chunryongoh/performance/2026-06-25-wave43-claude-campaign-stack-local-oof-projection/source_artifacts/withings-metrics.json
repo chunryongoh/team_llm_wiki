@@ -1,0 +1,590 @@
+{
+  "pipeline": "wave43-withings",
+  "approach": "charging/home-anchored Withings-mat-mimicking in-bed reconstruction; mat-aligned TST/TIB/SE/SOL/WASO gated by home-night confidence",
+  "n_lgb_trials": 50,
+  "n_cb_trials": 25,
+  "n_folds": 5,
+  "n_withings_features": 34,
+  "withings_feature_names": [
+    "charge_start_hour",
+    "screen_down_hour",
+    "last_step_hour",
+    "lights_off_hour",
+    "bed_entry_hour",
+    "n_bed_entry_anchors",
+    "bed_entry_anchor_spread",
+    "charge_end_hour",
+    "first_screen_on_hour",
+    "bed_exit_hour",
+    "n_bed_exit_anchors",
+    "time_in_bed_h",
+    "mat_tst_h",
+    "mat_se",
+    "mat_sol_h",
+    "mat_sleep_onset_hour",
+    "mat_final_wake_hour",
+    "mat_waso_h",
+    "mat_n_awakenings",
+    "mat_longest_wake_min",
+    "mat_se_spt",
+    "charge_total_h",
+    "charge_overnight_h",
+    "charge_frac_in_bed",
+    "charge_start_to_onset_h",
+    "home_gps_frac",
+    "home_wifi_overlap",
+    "home_conf",
+    "home_night_flag",
+    "mat_se_x_home",
+    "mat_sol_x_home",
+    "mat_tst_x_home",
+    "hr_coverage_in_bed",
+    "chg_coverage"
+  ],
+  "n_existing_features": 249,
+  "regularity_features": [
+    "reg_bed_entry_hour_dev",
+    "reg_mat_sleep_onset_hour_dev",
+    "reg_mat_tst_h_dev"
+  ],
+  "rank_features": [
+    "rank_mat_tst_h",
+    "rank_mat_se",
+    "rank_mat_sol_h"
+  ],
+  "search_window_hours": [
+    19.0,
+    36.0
+  ],
+  "train_recon_coverage": 449,
+  "train_rows": 450,
+  "test_recon_coverage": 250,
+  "test_rows": 250,
+  "home_conf_coverage": 431,
+  "home_night_flag_mean": 0.8747099767981439,
+  "home_night_only_train_rows": 377,
+  "macro_subj_mean_ref": 0.62453,
+  "macro_subj_mean_oof": 0.6245305092520156,
+  "macro_final_oof": 0.605383923594734,
+  "delta_macro_vs_subjmean": 0.019146585657281556,
+  "noise_floor": 0.009,
+  "improved_vs_subjmean": [
+    "Q1",
+    "S1",
+    "S2",
+    "S4"
+  ],
+  "improved_S_vs_subjmean": [
+    "S1",
+    "S2",
+    "S4"
+  ],
+  "beats_stack_noise_S": [
+    "S1"
+  ],
+  "stack_ref": {
+    "S1": 0.564,
+    "S2": 0.57,
+    "S3": 0.532,
+    "S4": 0.627
+  },
+  "best_alpha_per_target": {
+    "Q1": 10.0,
+    "Q2": 50.0,
+    "Q3": 50.0,
+    "S1": 10.0,
+    "S2": 10.0,
+    "S3": 5.0,
+    "S4": 10.0
+  },
+  "tuning_oof": {
+    "withings": {
+      "Q1": {
+        "lgb": 0.674873385300758,
+        "cb": 0.6631332139695031
+      },
+      "Q2": {
+        "lgb": 0.7011539104099204,
+        "cb": 0.7111285990509542
+      },
+      "Q3": {
+        "lgb": 0.6727583203867834,
+        "cb": 0.6718875568659314
+      },
+      "S1": {
+        "lgb": 0.5065148070828044,
+        "cb": 0.5173960793668859
+      },
+      "S2": {
+        "lgb": 0.5749366756327206,
+        "cb": 0.566873617014218
+      },
+      "S3": {
+        "lgb": 0.5556674455364382,
+        "cb": 0.5370483692915113
+      },
+      "S4": {
+        "lgb": 0.6250352460297103,
+        "cb": 0.6240104873296137
+      }
+    },
+    "combo": {
+      "Q1": {
+        "lgb": 0.6710561023468457,
+        "cb": 0.6721644557591749
+      },
+      "Q2": {
+        "lgb": 0.7030441563209385,
+        "cb": 0.6945722726588835
+      },
+      "Q3": {
+        "lgb": 0.6833776064105225,
+        "cb": 0.6684368198574848
+      },
+      "S1": {
+        "lgb": 0.5306550170593504,
+        "cb": 0.5447587392525702
+      },
+      "S2": {
+        "lgb": 0.5935452550238525,
+        "cb": 0.5924795805792564
+      },
+      "S3": {
+        "lgb": 0.5547130380521221,
+        "cb": 0.5523299374941896
+      },
+      "S4": {
+        "lgb": 0.6297640863442392,
+        "cb": 0.6351910863443987
+      }
+    }
+  },
+  "feature_importance_S": {
+    "S1": [
+      [
+        "subj_mean_enc",
+        1885.9894219915886
+      ],
+      [
+        "first_screen_on_hour",
+        928.106460980131
+      ],
+      [
+        "home_gps_frac",
+        838.7559310198994
+      ],
+      [
+        "lights_off_hour",
+        741.1704272268835
+      ],
+      [
+        "mat_tst_x_home",
+        683.5885129928247
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        423.5695546876086
+      ],
+      [
+        "bed_exit_hour",
+        416.635414623609
+      ],
+      [
+        "time_in_bed_h",
+        368.4928158241637
+      ],
+      [
+        "charge_overnight_h",
+        331.4627445188098
+      ],
+      [
+        "charge_total_h",
+        315.2572366134609
+      ],
+      [
+        "last_step_hour",
+        247.15615866612643
+      ],
+      [
+        "mat_sleep_onset_hour",
+        222.3837314513214
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        203.5521951612991
+      ],
+      [
+        "mat_final_wake_hour",
+        195.15635163559
+      ],
+      [
+        "home_wifi_overlap",
+        188.0673130215182
+      ]
+    ],
+    "S2": [
+      [
+        "subj_mean_enc",
+        2694.1540930044057
+      ],
+      [
+        "home_wifi_overlap",
+        614.7325091317762
+      ],
+      [
+        "mat_final_wake_hour",
+        445.28750966116786
+      ],
+      [
+        "lights_off_hour",
+        390.96975181607013
+      ],
+      [
+        "charge_end_hour",
+        349.04833365201375
+      ],
+      [
+        "charge_start_to_onset_h",
+        320.19633136884454
+      ],
+      [
+        "screen_down_hour",
+        248.74112907930976
+      ],
+      [
+        "charge_total_h",
+        243.40920455689957
+      ],
+      [
+        "mat_tst_x_home",
+        219.62770146504045
+      ],
+      [
+        "first_screen_on_hour",
+        185.50644295662642
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        166.43718193471432
+      ],
+      [
+        "reg_mat_tst_h_dev",
+        163.3275854960084
+      ],
+      [
+        "bed_entry_anchor_spread",
+        158.34061709340676
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        156.1683289190819
+      ],
+      [
+        "charge_start_hour",
+        152.98009243135223
+      ]
+    ],
+    "S3": [
+      [
+        "subj_mean_enc",
+        3623.9122487922136
+      ],
+      [
+        "lights_off_hour",
+        797.4917385492008
+      ],
+      [
+        "home_wifi_overlap",
+        631.2585142572857
+      ],
+      [
+        "mat_se_x_home",
+        356.77253732268423
+      ],
+      [
+        "first_screen_on_hour",
+        216.51346559475132
+      ],
+      [
+        "time_in_bed_h",
+        186.2925395278944
+      ],
+      [
+        "charge_start_hour",
+        173.92730029206177
+      ],
+      [
+        "last_step_hour",
+        169.93951649740848
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        159.0822986997664
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        148.64015105873113
+      ],
+      [
+        "charge_start_to_onset_h",
+        147.73010795004666
+      ],
+      [
+        "bed_entry_anchor_spread",
+        136.5436450311645
+      ],
+      [
+        "hr_coverage_in_bed",
+        123.49039823561907
+      ],
+      [
+        "mat_final_wake_hour",
+        113.85291348061571
+      ],
+      [
+        "mat_tst_h",
+        99.5516212319285
+      ]
+    ],
+    "S4": [
+      [
+        "home_wifi_overlap",
+        1392.9530256983744
+      ],
+      [
+        "charge_frac_in_bed",
+        962.1516561242752
+      ],
+      [
+        "subj_mean_enc",
+        770.53688012372
+      ],
+      [
+        "reg_mat_tst_h_dev",
+        344.0386266829446
+      ],
+      [
+        "first_screen_on_hour",
+        301.54359470284544
+      ],
+      [
+        "lights_off_hour",
+        267.91417735628784
+      ],
+      [
+        "bed_entry_anchor_spread",
+        243.42245760187507
+      ],
+      [
+        "charge_overnight_h",
+        222.92613156852894
+      ],
+      [
+        "charge_start_to_onset_h",
+        222.3702417202294
+      ],
+      [
+        "mat_final_wake_hour",
+        221.61228405684233
+      ],
+      [
+        "mat_longest_wake_min",
+        207.5987882167101
+      ],
+      [
+        "charge_total_h",
+        184.94017370045185
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        181.8236223082058
+      ],
+      [
+        "rank_mat_sol_h",
+        164.0790683478117
+      ],
+      [
+        "charge_start_hour",
+        161.55136509425938
+      ]
+    ]
+  },
+  "per_target": {
+    "Q1": {
+      "subj_mean_oof": 0.672655171630032,
+      "subj_mean_ref": 0.67266,
+      "withings_lgb_oof": 0.674873385300758,
+      "withings_cb_oof": 0.6631332139695031,
+      "combo_lgb_oof": 0.6710561023468457,
+      "combo_cb_oof": 0.6721644557591749,
+      "home_lgb_oof": 0.6772146928584373,
+      "home_cb_oof": 0.6702963380119147,
+      "best_model": "withings_cb",
+      "best_model_oof": 0.6631332139695031,
+      "blend_w": 0.65,
+      "blend_oof": 0.6591144975690074,
+      "final_oof": 0.6591144975690074,
+      "delta_vs_subjmean": 0.013540674061024549,
+      "beats_noise": true,
+      "combo_all_night_oof": 0.6710561023468457,
+      "combo_home_night_oof": 0.6702963380119147,
+      "home_gating_delta": 0.000759764334930968,
+      "home_gating_helps": false
+    },
+    "Q2": {
+      "subj_mean_oof": 0.6929996408521616,
+      "subj_mean_ref": 0.693,
+      "withings_lgb_oof": 0.7011539104099204,
+      "withings_cb_oof": 0.7111285990509542,
+      "combo_lgb_oof": 0.7030441563209385,
+      "combo_cb_oof": 0.6945722726588835,
+      "home_lgb_oof": 0.7080981557722735,
+      "home_cb_oof": 0.7055809574236875,
+      "best_model": "combo_cb",
+      "best_model_oof": 0.6945722726588835,
+      "blend_w": 0.4,
+      "blend_oof": 0.6917164185553979,
+      "final_oof": 0.6917164185553979,
+      "delta_vs_subjmean": 0.0012832222967636975,
+      "beats_noise": false,
+      "combo_all_night_oof": 0.6945722726588835,
+      "combo_home_night_oof": 0.7055809574236875,
+      "home_gating_delta": -0.011008684764803989,
+      "home_gating_helps": false
+    },
+    "Q3": {
+      "subj_mean_oof": 0.6695293043179024,
+      "subj_mean_ref": 0.66953,
+      "withings_lgb_oof": 0.6727583203867834,
+      "withings_cb_oof": 0.6718875568659314,
+      "combo_lgb_oof": 0.6833776064105225,
+      "combo_cb_oof": 0.6684368198574848,
+      "home_lgb_oof": 0.6868803006347153,
+      "home_cb_oof": 0.665310241859963,
+      "best_model": "home_cb",
+      "best_model_oof": 0.665310241859963,
+      "blend_w": 0.75,
+      "blend_oof": 0.664856258818727,
+      "final_oof": 0.664856258818727,
+      "delta_vs_subjmean": 0.0046730454991753545,
+      "beats_noise": false,
+      "combo_all_night_oof": 0.6684368198574848,
+      "combo_home_night_oof": 0.665310241859963,
+      "home_gating_delta": 0.0031265779975218067,
+      "home_gating_helps": false
+    },
+    "S1": {
+      "subj_mean_oof": 0.575821016915498,
+      "subj_mean_ref": 0.57582,
+      "withings_lgb_oof": 0.5065148070828044,
+      "withings_cb_oof": 0.5173960793668859,
+      "combo_lgb_oof": 0.5306550170593504,
+      "combo_cb_oof": 0.5447587392525702,
+      "home_lgb_oof": 0.5403059543179691,
+      "home_cb_oof": 0.5727155385828872,
+      "best_model": "withings_lgb",
+      "best_model_oof": 0.5065148070828044,
+      "blend_w": 0.9500000000000001,
+      "blend_oof": 0.5059412643362348,
+      "final_oof": 0.5059412643362348,
+      "delta_vs_subjmean": 0.06987975257926327,
+      "beats_noise": true,
+      "combo_all_night_oof": 0.5306550170593504,
+      "combo_home_night_oof": 0.5403059543179691,
+      "home_gating_delta": -0.009650937258618764,
+      "home_gating_helps": false,
+      "stack_ref": 0.564,
+      "delta_vs_stack": 0.05805873566376518,
+      "beats_stack_noise": true
+    },
+    "S2": {
+      "subj_mean_oof": 0.5800769959049744,
+      "subj_mean_ref": 0.58008,
+      "withings_lgb_oof": 0.5749366756327206,
+      "withings_cb_oof": 0.566873617014218,
+      "combo_lgb_oof": 0.5935452550238525,
+      "combo_cb_oof": 0.5924795805792564,
+      "home_lgb_oof": 0.607012173642098,
+      "home_cb_oof": 0.5949694153486429,
+      "best_model": "withings_cb",
+      "best_model_oof": 0.566873617014218,
+      "blend_w": 0.75,
+      "blend_oof": 0.5644736518767703,
+      "final_oof": 0.5644736518767703,
+      "delta_vs_subjmean": 0.01560334402820407,
+      "beats_noise": true,
+      "combo_all_night_oof": 0.5924795805792564,
+      "combo_home_night_oof": 0.5949694153486429,
+      "home_gating_delta": -0.0024898347693864675,
+      "home_gating_helps": false,
+      "stack_ref": 0.57,
+      "delta_vs_stack": 0.0055263481232296074,
+      "beats_stack_noise": false
+    },
+    "S3": {
+      "subj_mean_oof": 0.5332407156510615,
+      "subj_mean_ref": 0.53324,
+      "withings_lgb_oof": 0.5556674455364382,
+      "withings_cb_oof": 0.5370483692915113,
+      "combo_lgb_oof": 0.5547130380521221,
+      "combo_cb_oof": 0.5523299374941896,
+      "home_lgb_oof": 0.5672375360264665,
+      "home_cb_oof": 0.5657321768013598,
+      "best_model": "withings_cb",
+      "best_model_oof": 0.5370483692915113,
+      "blend_w": 0.45,
+      "blend_oof": 0.527773264057485,
+      "final_oof": 0.527773264057485,
+      "delta_vs_subjmean": 0.005467451593576422,
+      "beats_noise": false,
+      "combo_all_night_oof": 0.5523299374941896,
+      "combo_home_night_oof": 0.5657321768013598,
+      "home_gating_delta": -0.013402239307170216,
+      "home_gating_helps": false,
+      "stack_ref": 0.532,
+      "delta_vs_stack": 0.004226735942514992,
+      "beats_stack_noise": false
+    },
+    "S4": {
+      "subj_mean_oof": 0.6473907194924797,
+      "subj_mean_ref": 0.64739,
+      "withings_lgb_oof": 0.6250352460297103,
+      "withings_cb_oof": 0.6240104873296137,
+      "combo_lgb_oof": 0.6297640863442392,
+      "combo_cb_oof": 0.6351910863443987,
+      "home_lgb_oof": 0.6360286777518102,
+      "home_cb_oof": 0.6530051220983033,
+      "best_model": "withings_cb",
+      "best_model_oof": 0.6240104873296137,
+      "blend_w": 0.9,
+      "blend_oof": 0.6238121099495161,
+      "final_oof": 0.6238121099495161,
+      "delta_vs_subjmean": 0.023578609542963647,
+      "beats_noise": true,
+      "combo_all_night_oof": 0.6297640863442392,
+      "combo_home_night_oof": 0.6360286777518102,
+      "home_gating_delta": -0.006264591407570963,
+      "home_gating_helps": false,
+      "stack_ref": 0.627,
+      "delta_vs_stack": 0.0031878900504839214,
+      "beats_stack_noise": false
+    }
+  },
+  "subjmean_oof_verification": {
+    "macro_oof": 0.6245305092520156,
+    "expected": 0.62453,
+    "per_target_oof": {
+      "Q1": 0.672655171630032,
+      "Q2": 0.6929996408521616,
+      "Q3": 0.6695293043179024,
+      "S1": 0.575821016915498,
+      "S2": 0.5800769959049744,
+      "S3": 0.5332407156510615,
+      "S4": 0.6473907194924797
+    },
+    "match": true
+  },
+  "leak_check": "All withings recon features from each night's own streams over fixed clock window [19:00 lifelog_date, 12:00 sleep_date]; bed-anchors (charge-start, screen-down, last-step, lights-off) and in-bed sleep/wake from own-night signals only. Home GPS anchor = subject's OWN-stream median position; home WiFi fingerprint = subject's OWN most-frequent strong BSSIDs; both per-subject, label-free, fold-independent. Regularity-dev + rank reference stats = fold-train for OOF, full-train for test. subj_mean_enc = fold-train for OOF, full-train (no test labels) for test. No row-own/future label, no test-label fitting, no pseudo-labeling, NO external data. All features forced finite.",
+  "external_data_used": false,
+  "elapsed_seconds": 1532.4814229011536
+}

@@ -1,0 +1,75 @@
+{
+  "packet_id": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+  "local_root": "/home/chunoh/ETRI",
+  "source_artifacts": [
+    {
+      "path": "source_artifacts/stack-v2-metrics.json",
+      "sha256_prefix": "a6e56c3843d2477d",
+      "role": "final_stack_metrics"
+    },
+    {
+      "path": "source_artifacts/stack-v2-build.py",
+      "sha256_prefix": "58de5732c8aa54be",
+      "role": "final_stack_pipeline_code"
+    },
+    {
+      "path": "source_artifacts/withings-metrics.json",
+      "sha256_prefix": "e9fefdc19768517f",
+      "role": "withings_mimic_metrics"
+    },
+    {
+      "path": "source_artifacts/withings-build.py",
+      "sha256_prefix": "ed6abffe9c60fca6",
+      "role": "withings_mimic_pipeline_code"
+    },
+    {
+      "path": "source_artifacts/actigraphy-metrics.json",
+      "sha256_prefix": "cb13c8bdf3e7febe",
+      "role": "actigraphy_metrics"
+    },
+    {
+      "path": "source_artifacts/actigraphy-build.py",
+      "sha256_prefix": "9dc2ae7b111bbcf8",
+      "role": "actigraphy_pipeline_code"
+    },
+    {
+      "path": "source_artifacts/transfer-metrics.json",
+      "sha256_prefix": "df254c960020f776",
+      "role": "external_transfer_metrics"
+    },
+    {
+      "path": "source_artifacts/waso-metrics.json",
+      "sha256_prefix": "132b4384b0eba605",
+      "role": "waso_metrics"
+    },
+    {
+      "path": "source_artifacts/deeptab-metrics.json",
+      "sha256_prefix": "07e659af5c829a42",
+      "role": "deep_tabular_metrics"
+    },
+    {
+      "path": "source_artifacts/seqbag-metrics.json",
+      "sha256_prefix": "af19a9b4926349aa",
+      "role": "sequence_bag_metrics"
+    },
+    {
+      "path": "source_artifacts/sliding-window-metrics.json",
+      "sha256_prefix": "2d04302b17c00b0e",
+      "role": "sliding_window_metrics"
+    },
+    {
+      "path": "source_artifacts/submission-v2-ledger.csv",
+      "sha256_prefix": "90b7b147ca140d77",
+      "role": "early_public_leaderboard_observation"
+    }
+  ],
+  "subagent_results_used": [
+    "methodology_map",
+    "performance_evidence_surface"
+  ],
+  "local_reverification": [
+    "stack-v2 calibrated macro and target metrics were read directly from copied metrics snapshot.",
+    "withings and actigraphy target metrics were read directly from copied metrics snapshots.",
+    "public 0.60761 was treated as progress-ledger observation, not official export evidence."
+  ]
+}
