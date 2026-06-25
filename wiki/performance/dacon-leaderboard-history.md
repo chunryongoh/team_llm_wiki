@@ -50,6 +50,8 @@ raw_evidence:
 | `v209-q23-low` | `0.592551` | `user_reported_public_score_only` | `2026-05-29-v200-v209-sparse-splice-review` | tentative |
 | `section9_labelwise_best_20260522_1239` | `0.5986218188` | `user_reported_public_score_only` | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | tentative |
 | `section07_candidate_baseline_seed_ensemble_20260529_1029` | `0.6003735255` | `user_reported_public_score_only` | `2026-05-29-labelwise-weekly-progress-target-bottlenecks` | tentative |
+| `wave43-stack-v2-progress-observation` | `0.60761` | `user_reported_public_score_only` | `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`; Claude progress log note | tentative |
+| `wave43-stack-v2-projected-public` | `0.5927217743642561` | `projection_not_leaderboard` | `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`; local OOF projection | tentative |
 | `app-context-stage0-baseline` | `0.6218831823` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
 | `app-context-stage1-daily-evening` | `0.6182941107` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
 | `app-context-stage2-presleep-night` | `0.6106185586` | `docx_report_public_lb_observation` | `2026-06-01-app-context-feature-engineering-20260601` | tentative |
@@ -66,6 +68,10 @@ Graph-first packet은 `0.5917`을 새 score row로 만들지 않는다. 같은 D
 
 Verified row로 승격하려면 DACON submission id, leaderboard export, timestamp, 제출 CSV lineage, local run mapping, feature/model policy mapping이 필요하다.
 
+## 2026-06-25 Wave43 note
+
+Wave43 `stack-v2`의 supported value는 DACON score가 아니라 same-subject-hole local OOF `0.5897217743642561`이다. 이 page에는 public 관측/추정 surface만 기록한다. `0.60761`은 Claude/user progress-log observation이고, `0.5927217743642561`은 projected public이므로 `verified_public_lb`로 승격하지 않는다.
+
 <!-- llm-synthesis:github-models-required-page-fill:2026-06-18:wiki-performance-dacon-leaderboard-history-md -->
 ## GitHub Models Fallback Synthesis | 2026-06-18
 
@@ -75,13 +81,3 @@ Verified row로 승격하려면 DACON submission id, leaderboard export, timesta
 - evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
 - review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
 - synthesis_report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
-
-<!-- llm-synthesis:github-models-required-page-fill:2026-06-25:wiki-performance-dacon-leaderboard-history-md -->
-## GitHub Models Fallback Synthesis | 2026-06-25
-
-- packet_ids: `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`
-- packet_summary: 2026-06-25-wave43-claude-campaign-stack-local-oof-projection: Claude 별도 작업으로 수행된 wave43 캠페인 결과를 team LLM wiki에 올리기 위한 성능 packet입니다. 최종 stack-v2는 subject-mean baseline 0.62453 대비 calibrated local OOF macro log-loss 0.58972를 기록했고, projected public은 0.59272로 추정되었습니다. 실제 확인된 public score 0.60761은 Claude 진행 로그 기반 관측치이므로 leaderboard export가 추가되기 전까지는 별도 claim boundary를 유지해야 합니다.
-- claim_status: preserved_from_raw_packet
-- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
-- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
-- synthesis_report: `wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md`

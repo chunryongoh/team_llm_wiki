@@ -1,60 +1,37 @@
-# 2026 06 25 Sleep Lifelog Packet Synthesis
-
-## GitHub Models Deterministic Page Scaffold
-
-- fallback_merge_policy: deterministic_new_page_scaffold
-- fallback_compact_body_applied: false
-- note: GitHub Models fallback identified this page as required, but compact model prose was not applied because metric provenance must come from raw packet evidence.
-
-## Source Packets
-
-### 2026-06-25-wave43-claude-campaign-stack-local-oof-projection
-
-- packet_type: `performance`
-- title: Wave43 Claude campaign stack local OOF projection
-- date: `2026-06-25`
-- owner: `chunryongoh`
-- dataset: `sleep-lifelog-2024` (`released-package`)
-- split: `same-subject-hole-5fold-temporal-by-subject`
-- model: `wave43-stacked-ensemble`
-- claim_boundary: `local same-subject-hole OOF metrics are supported by copied metric snapshots; public leaderboard values are user/Claude-recorded observations or projections unless separately exported.`
-- claim_status: `supported`
-- summary: Claude 별도 작업으로 수행된 wave43 캠페인 결과를 team LLM wiki에 올리기 위한 성능 packet입니다. 최종 stack-v2는 subject-mean baseline 0.62453 대비 calibrated local OOF macro log-loss 0.58972를 기록했고, projected public은 0.59272로 추정되었습니다. 실제 확인된 public score 0.60761은 Claude 진행 로그 기반 관측치이므로 leaderboard export가 추가되기 전까지는 별도 claim boundary를 유지해야 합니다.
-
-#### Raw-backed Metrics
-
-- `grouped_macro_log_loss`: `0.5897217743642561` (raw_path: `metrics.json`)
-- `projected_public_macro_log_loss`: `0.5927217743642561` (raw_path: `metrics.json`)
-- `withings_s1_log_loss`: `0.5059412643362348` (raw_path: `metrics.json`)
-- `actigraphy_s3_log_loss`: `0.5112450274138282` (raw_path: `metrics.json`)
-
-## Review Boundary
-
-- Local OOF, notebook output, DACON public/private leaderboard, and organizer-official validation remain separate evidence surfaces.
-- Do not treat this scaffold as a claim promotion; update it with primary LLM synthesis or human review when stronger evidence is available.
-
-## Raw Evidence
-
+---
+id: 2026-06-25-sleep-lifelog-packet-synthesis
+type: synthesis-report
+page_role: report
+title: Sleep Lifelog Packet Synthesis 2026-06-25
+status: active
+date: 2026-06-25
+claim_status: supported
 raw_evidence:
+- raw/results/llm-synthesis/28153765973-2/report.json
 - raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/manifest.yaml
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/packet.md
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/performance.yaml
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/wiki_plan.yaml
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/artifact_summary.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/packet_entity_graph.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/semantic_lint.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/question_queue.yaml
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/stack-v2-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/stack-v2-build.py
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/stack-v2-next-steps-post-cap-reset.md
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/withings-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/withings-build.py
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/actigraphy-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/actigraphy-build.py
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/waso-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/transfer-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/deeptab-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/seqbag-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/sliding-window-metrics.json
-- raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/submission-v2-ledger.csv
+---
+
+# Sleep Lifelog Packet Synthesis 2026-06-25
+
+This report integrates the wave43 Claude campaign packet. GitHub Actions primary OpenAI synthesis hit HTTP 429 and fell back to GitHub Models; this branch was then manually refined in Codex to replace deterministic scaffolds with stable wiki entities.
+
+## Main Result
+
+Wave43 `stack-v2` is the current best local OOF evidence: calibrated macro log-loss `0.5897217743642561` under same-subject-hole five-fold validation. The supported claim is local OOF only.
+
+## Entity Updates
+
+- [Wave43 Claude Campaign Stack](../performance/wave43-claude-campaign-stack.md) records the current best local result and claim boundaries.
+- [Wave43 Feature Families](../features/wave43-feature-families.md) separates target-specific feature hypotheses.
+- [Wave43 Stacked Ensemble](../models/wave43-stacked-ensemble.md) documents the targetwise candidate stack.
+- [Same Subject Hole CV](../preprocessing/same-subject-hole-cv.md) records the validation surface and its non-official status.
+- [S1 Total Sleep Time](../targets/s1-total-sleep-time.md) and [S3 Sleep Onset Latency](../targets/s3-sleep-onset-latency.md) capture target insights.
+- [Wave43 Open Validation Gaps](../targets/wave43-open-validation-gaps.md) tracks promotion blockers.
+
+## Boundary Decisions
+
+- `0.58972` local OOF is supported.
+- `0.59272` projected public is tentative.
+- `0.60761` public observation is tentative until leaderboard export or submission hash is attached.
+- Q-family impossibility is superseded; Q3 remains hard.
+- S4 remains an unresolved target despite WASO/transfer attempts.

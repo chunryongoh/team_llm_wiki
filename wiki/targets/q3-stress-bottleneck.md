@@ -40,12 +40,6 @@ Q3 개선 claim은 전체 average score가 아니라 same-split Q3 metric, featu
 - [Sleep Lifelog Open Questions](sleep-lifelog-open-issues.md)
 - [App Context Windows](../features/app-context-windows.md)
 
-<!-- llm-synthesis:github-models-required-page-fill:2026-06-25:wiki-targets-q3-stress-bottleneck-md -->
-## GitHub Models Fallback Synthesis | 2026-06-25
+## Wave43 Update | 2026-06-25
 
-- packet_ids: `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`
-- packet_summary: 2026-06-25-wave43-claude-campaign-stack-local-oof-projection: Claude 별도 작업으로 수행된 wave43 캠페인 결과를 team LLM wiki에 올리기 위한 성능 packet입니다. 최종 stack-v2는 subject-mean baseline 0.62453 대비 calibrated local OOF macro log-loss 0.58972를 기록했고, projected public은 0.59272로 추정되었습니다. 실제 확인된 public score 0.60761은 Claude 진행 로그 기반 관측치이므로 leaderboard export가 추가되기 전까지는 별도 claim boundary를 유지해야 합니다.
-- claim_status: preserved_from_raw_packet
-- evidence_boundary: local_oof, notebook_output, DACON_public, DACON_private, and organizer_official evidence must stay separate.
-- review_note: This page was conservatively filled in GitHub Actions because the compact fallback model omitted a required wiki page.
-- synthesis_report: `wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md`
+Wave43 supersedes the strongest version of "Q-family has no extractable signal." The final stack records Q3 calibrated log-loss `0.650460985046031`, and sliding-window/intraday candidates helped Q2/Q3 enough to justify continued Q-family feature work. The bottleneck remains: Q3 is still one of the weakest targets and needs dedicated presleep stress, frequency, and routine-disruption features with same-split ablation.
