@@ -1,0 +1,2 @@
+date,candidate_id,local_macro,public_macro,public_confirmed,notes
+2026-06-23,targetwise_lgbcb_notebook_reproduction,0.6517900769,0.62918,local_subject_oof_0.65179 -> public_0.62918 (public BETTER by 0.0226; same-subject test easier than leave-subject-out). CONFIRM uploaded file (v1/v2).,"Best clean-reproducible line; within noise of v1. Upload, record public_macro."

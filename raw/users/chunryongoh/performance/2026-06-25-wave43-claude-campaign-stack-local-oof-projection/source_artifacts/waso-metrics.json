@@ -1,0 +1,812 @@
+{
+  "pipeline": "wave43-waso",
+  "approach": "MULTI-SCORER validated actigraphy (Cole-Kripke 1992, Sadeh 1994, Webster 1982 + rescoring rules, Oakley/Actiwatch threshold low/med/high, Sazonov 2004 logistic; ALL fixed published coefficients, NO fitting) on a per-minute ACTIVITY-COUNT PROXY (wPedo steps + mActivity non-STILL + within-minute wHr std) inside the reconstructed in-bed interval. Per-scorer SE/TST/SOL/WASO/#awak/mean+max awak/frag-idx/sleep-bouts/longest-bout/wake-bouts. SCORER-AGREEMENT + consensus-WASO (>=2/>=3/majority votes). FRAGMENTATION: movement-index, activity bursts, restlessness, HR-spike arousal density, early/mid/late-third WASO asymmetry. Structural SE=TST/TIB reconciliation vs each scorer.",
+  "activity_count_proxy": "steps + 50*(mActivity!=STILL) + 8*hr_within_minute_std; missing->0",
+  "scorers": {
+    "cole_kripke": {
+      "P": 1e-05,
+      "weights": [
+        404.0,
+        598.0,
+        326.0,
+        441.0,
+        1408.0,
+        508.0,
+        350.0
+      ],
+      "offsets": [
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2
+      ],
+      "rule": "sleep if D<1"
+    },
+    "sadeh": {
+      "intercept": 7.601,
+      "avg": -0.065,
+      "nats": -1.08,
+      "sd": -0.056,
+      "lg": -0.703,
+      "window_min": 11,
+      "rule": "sleep if PS>0",
+      "activity_cap": 300
+    },
+    "webster": {
+      "P": 0.025,
+      "weights": [
+        0.15,
+        0.15,
+        0.15,
+        0.08,
+        0.21,
+        0.12,
+        0.13
+      ],
+      "offsets": [
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2
+      ],
+      "rule": "sleep if score<1 then apply 5 rescoring rules (4/10/15-min wake rules + short-bout flanking)"
+    },
+    "oakley_actiwatch": {
+      "thresholds": {
+        "low": 20.0,
+        "med": 40.0,
+        "high": 80.0
+      },
+      "weighted_count": "A0 + 0.2*(A-1+A+1) + 0.04*(A-2+A+2)",
+      "rule": "wake if weighted>threshold"
+    },
+    "sazonov": {
+      "intercept": 1.727,
+      "coef": [
+        -0.256,
+        -0.154,
+        -0.136,
+        -0.14,
+        -0.176,
+        -0.131,
+        -0.041
+      ],
+      "features": "descending order-stats of 7-min window",
+      "rule": "sleep if logistic(z)>0.5"
+    }
+  },
+  "n_lgb_trials": 50,
+  "n_cb_trials": 25,
+  "n_folds": 5,
+  "scorer_prefixes": [
+    "ck",
+    "sd",
+    "wb",
+    "oak_low",
+    "oak_med",
+    "oak_high",
+    "saz"
+  ],
+  "scorer_metric_keys": [
+    "se",
+    "tst_h",
+    "sol_h",
+    "waso_h",
+    "waso_frac",
+    "n_awak",
+    "mean_awak_min",
+    "max_awak_min",
+    "frag_idx",
+    "n_sleep_bouts",
+    "longest_sleep_bout_min",
+    "n_wake_bouts",
+    "se_spt"
+  ],
+  "scorer_features": [
+    "ck_se",
+    "ck_tst_h",
+    "ck_sol_h",
+    "ck_waso_h",
+    "ck_waso_frac",
+    "ck_n_awak",
+    "ck_mean_awak_min",
+    "ck_max_awak_min",
+    "ck_frag_idx",
+    "ck_n_sleep_bouts",
+    "ck_longest_sleep_bout_min",
+    "ck_n_wake_bouts",
+    "ck_se_spt",
+    "sd_se",
+    "sd_tst_h",
+    "sd_sol_h",
+    "sd_waso_h",
+    "sd_waso_frac",
+    "sd_n_awak",
+    "sd_mean_awak_min",
+    "sd_max_awak_min",
+    "sd_frag_idx",
+    "sd_n_sleep_bouts",
+    "sd_longest_sleep_bout_min",
+    "sd_n_wake_bouts",
+    "sd_se_spt",
+    "wb_se",
+    "wb_tst_h",
+    "wb_sol_h",
+    "wb_waso_h",
+    "wb_waso_frac",
+    "wb_n_awak",
+    "wb_mean_awak_min",
+    "wb_max_awak_min",
+    "wb_frag_idx",
+    "wb_n_sleep_bouts",
+    "wb_longest_sleep_bout_min",
+    "wb_n_wake_bouts",
+    "wb_se_spt",
+    "oak_low_se",
+    "oak_low_tst_h",
+    "oak_low_sol_h",
+    "oak_low_waso_h",
+    "oak_low_waso_frac",
+    "oak_low_n_awak",
+    "oak_low_mean_awak_min",
+    "oak_low_max_awak_min",
+    "oak_low_frag_idx",
+    "oak_low_n_sleep_bouts",
+    "oak_low_longest_sleep_bout_min",
+    "oak_low_n_wake_bouts",
+    "oak_low_se_spt",
+    "oak_med_se",
+    "oak_med_tst_h",
+    "oak_med_sol_h",
+    "oak_med_waso_h",
+    "oak_med_waso_frac",
+    "oak_med_n_awak",
+    "oak_med_mean_awak_min",
+    "oak_med_max_awak_min",
+    "oak_med_frag_idx",
+    "oak_med_n_sleep_bouts",
+    "oak_med_longest_sleep_bout_min",
+    "oak_med_n_wake_bouts",
+    "oak_med_se_spt",
+    "oak_high_se",
+    "oak_high_tst_h",
+    "oak_high_sol_h",
+    "oak_high_waso_h",
+    "oak_high_waso_frac",
+    "oak_high_n_awak",
+    "oak_high_mean_awak_min",
+    "oak_high_max_awak_min",
+    "oak_high_frag_idx",
+    "oak_high_n_sleep_bouts",
+    "oak_high_longest_sleep_bout_min",
+    "oak_high_n_wake_bouts",
+    "oak_high_se_spt",
+    "saz_se",
+    "saz_tst_h",
+    "saz_sol_h",
+    "saz_waso_h",
+    "saz_waso_frac",
+    "saz_n_awak",
+    "saz_mean_awak_min",
+    "saz_max_awak_min",
+    "saz_frag_idx",
+    "saz_n_sleep_bouts",
+    "saz_longest_sleep_bout_min",
+    "saz_n_wake_bouts",
+    "saz_se_spt"
+  ],
+  "consensus_features": [
+    "cons_agree_mean",
+    "cons_wake_votes_mean",
+    "cons_wake_votes_frac",
+    "cons_vote_std_mean",
+    "cons_consensus_se",
+    "cons_consensus_waso2_h",
+    "cons_consensus_waso3_h",
+    "cons_consensus_waso_maj_h"
+  ],
+  "frag_features": [
+    "frag_move_idx_sleep",
+    "frag_n_bursts_sleep",
+    "frag_restlessness",
+    "frag_arousal_density",
+    "frag_waso_early_h",
+    "frag_waso_mid_h",
+    "frag_waso_late_h",
+    "frag_waso_late_minus_early_h"
+  ],
+  "struct_features": [
+    "se_from_tst_tib",
+    "nonsleep_h",
+    "nonsleep_frac",
+    "se_struct_minus_ck",
+    "se_struct_minus_sd",
+    "se_struct_minus_wb",
+    "se_struct_minus_oak_low",
+    "se_struct_minus_oak_med",
+    "se_struct_minus_oak_high",
+    "se_struct_minus_saz",
+    "nonsleep_minus_ck_waso",
+    "nonsleep_minus_sd_waso",
+    "nonsleep_minus_wb_waso",
+    "nonsleep_minus_oak_low_waso",
+    "nonsleep_minus_oak_med_waso",
+    "nonsleep_minus_oak_high_waso",
+    "nonsleep_minus_saz_waso"
+  ],
+  "qual_features": [
+    "actig_coverage",
+    "actig_count_med",
+    "actig_count_mean"
+  ],
+  "n_actig_features": 127,
+  "n_withings_features": 34,
+  "n_existing_features": 249,
+  "train_actig_coverage": 449,
+  "train_rows": 450,
+  "test_actig_coverage": 250,
+  "test_rows": 250,
+  "macro_subj_mean_ref": 0.62453,
+  "macro_subj_mean_oof": 0.6245305092520156,
+  "macro_final_oof": 0.6094724940343177,
+  "delta_macro_vs_subjmean": 0.015058015217697895,
+  "noise_floor": 0.009,
+  "improved_vs_subjmean": [
+    "Q1",
+    "S1",
+    "S4"
+  ],
+  "improved_S_vs_subjmean": [
+    "S1",
+    "S4"
+  ],
+  "beats_stack_noise_S": [],
+  "actig_only_cracks_S_vs_subjmean": [
+    "S1"
+  ],
+  "stack_ref": {
+    "S1": 0.509,
+    "S2": 0.566,
+    "S3": 0.52,
+    "S4": 0.614
+  },
+  "best_alpha_per_target": {
+    "Q1": 10.0,
+    "Q2": 50.0,
+    "Q3": 50.0,
+    "S1": 10.0,
+    "S2": 10.0,
+    "S3": 5.0,
+    "S4": 10.0
+  },
+  "tuning_oof": {
+    "actig": {
+      "Q1": {
+        "lgb": 0.6732011160643052,
+        "cb": 0.6663835941401688
+      },
+      "Q2": {
+        "lgb": 0.6966013397581301,
+        "cb": 0.7210943646000385
+      },
+      "Q3": {
+        "lgb": 0.6680719497533038,
+        "cb": 0.6848163717709553
+      },
+      "S1": {
+        "lgb": 0.534791659186314,
+        "cb": 0.5356439094232757
+      },
+      "S2": {
+        "lgb": 0.5932909781838565,
+        "cb": 0.59648086928832
+      },
+      "S3": {
+        "lgb": 0.5431455593136733,
+        "cb": 0.5324594077921458
+      },
+      "S4": {
+        "lgb": 0.660972373532222,
+        "cb": 0.6516372475056387
+      }
+    },
+    "actig_wth": {
+      "Q1": {
+        "lgb": 0.6760293539162179,
+        "cb": 0.6680138278094913
+      },
+      "Q2": {
+        "lgb": 0.7045354632195592,
+        "cb": 0.721651962159341
+      },
+      "Q3": {
+        "lgb": 0.6767614900874309,
+        "cb": 0.6814030588862849
+      },
+      "S1": {
+        "lgb": 0.514829336399846,
+        "cb": 0.534376060678191
+      },
+      "S2": {
+        "lgb": 0.5811102279039838,
+        "cb": 0.5892654814029139
+      },
+      "S3": {
+        "lgb": 0.5565651413997584,
+        "cb": 0.541621665733744
+      },
+      "S4": {
+        "lgb": 0.6290221966419363,
+        "cb": 0.6291367018387544
+      }
+    },
+    "combo": {
+      "Q1": {
+        "lgb": 0.6721357607054675,
+        "cb": 0.674442895515756
+      },
+      "Q2": {
+        "lgb": 0.7041896331014813,
+        "cb": 0.7025114538495068
+      },
+      "Q3": {
+        "lgb": 0.6801828108009503,
+        "cb": 0.6708396364884395
+      },
+      "S1": {
+        "lgb": 0.5319373184189369,
+        "cb": 0.5466070817198949
+      },
+      "S2": {
+        "lgb": 0.594595642914955,
+        "cb": 0.5911749470287297
+      },
+      "S3": {
+        "lgb": 0.5517943449773932,
+        "cb": 0.5500707330329276
+      },
+      "S4": {
+        "lgb": 0.6298020227186302,
+        "cb": 0.6286879223481434
+      }
+    }
+  },
+  "feature_importance_S": {
+    "S1": [
+      [
+        "subj_mean_enc",
+        1919.7871594210544
+      ],
+      [
+        "first_screen_on_hour",
+        836.7370263007339
+      ],
+      [
+        "mat_tst_x_home",
+        645.5543586872518
+      ],
+      [
+        "home_gps_frac",
+        641.3430115449084
+      ],
+      [
+        "lights_off_hour",
+        571.3187896290874
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        321.5842479662038
+      ],
+      [
+        "bed_exit_hour",
+        255.2580096231045
+      ],
+      [
+        "charge_overnight_h",
+        248.66996608390764
+      ],
+      [
+        "charge_total_h",
+        245.22069441422354
+      ],
+      [
+        "mat_sleep_onset_hour",
+        219.7451635151083
+      ],
+      [
+        "home_wifi_overlap",
+        218.0771108768531
+      ],
+      [
+        "last_step_hour",
+        216.77523431579914
+      ],
+      [
+        "charge_start_to_onset_h",
+        215.8599313087875
+      ],
+      [
+        "oak_high_longest_sleep_bout_min",
+        201.6623757913212
+      ],
+      [
+        "mat_se_x_home",
+        179.85755683301613
+      ]
+    ],
+    "S2": [
+      [
+        "subj_mean_enc",
+        2711.810743283011
+      ],
+      [
+        "home_wifi_overlap",
+        625.1753745516762
+      ],
+      [
+        "mat_final_wake_hour",
+        393.5043409988284
+      ],
+      [
+        "charge_start_to_onset_h",
+        329.40721893683076
+      ],
+      [
+        "lights_off_hour",
+        321.9520243542611
+      ],
+      [
+        "charge_end_hour",
+        320.3270536879427
+      ],
+      [
+        "charge_total_h",
+        261.04954042099416
+      ],
+      [
+        "first_screen_on_hour",
+        203.05187268555164
+      ],
+      [
+        "screen_down_hour",
+        197.01391778310926
+      ],
+      [
+        "mat_tst_x_home",
+        193.3890079855919
+      ],
+      [
+        "bed_entry_anchor_spread",
+        168.00054712955534
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        165.6671733992207
+      ],
+      [
+        "home_gps_frac",
+        156.52773189829895
+      ],
+      [
+        "charge_start_hour",
+        142.02947052905802
+      ],
+      [
+        "oak_low_sol_h",
+        132.49614438414574
+      ]
+    ],
+    "S3": [
+      [
+        "subj_mean_enc",
+        3602.770202769834
+      ],
+      [
+        "lights_off_hour",
+        803.4664492541403
+      ],
+      [
+        "home_wifi_overlap",
+        576.3886373678915
+      ],
+      [
+        "wb_longest_sleep_bout_min",
+        377.5654067329597
+      ],
+      [
+        "mat_se_x_home",
+        281.7753869369626
+      ],
+      [
+        "first_screen_on_hour",
+        177.3991781291843
+      ],
+      [
+        "frag_waso_early_h",
+        169.47208928316832
+      ],
+      [
+        "reg_mat_sleep_onset_hour_dev",
+        138.53256748893182
+      ],
+      [
+        "charge_start_to_onset_h",
+        128.03420367386207
+      ],
+      [
+        "last_step_hour",
+        126.32328153045
+      ],
+      [
+        "cons_consensus_waso2_h",
+        124.32130913669243
+      ],
+      [
+        "cons_vote_std_mean",
+        117.34513115882874
+      ],
+      [
+        "bed_entry_anchor_spread",
+        112.05173634221137
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        111.9190851924559
+      ],
+      [
+        "saz_tst_h",
+        107.19567150815055
+      ]
+    ],
+    "S4": [
+      [
+        "home_wifi_overlap",
+        1362.7227604452637
+      ],
+      [
+        "charge_frac_in_bed",
+        980.399593342443
+      ],
+      [
+        "subj_mean_enc",
+        740.0742545982939
+      ],
+      [
+        "first_screen_on_hour",
+        312.76925504463725
+      ],
+      [
+        "lights_off_hour",
+        297.56492619394703
+      ],
+      [
+        "reg_mat_tst_h_dev",
+        285.6957304403186
+      ],
+      [
+        "bed_entry_anchor_spread",
+        264.8469040978234
+      ],
+      [
+        "charge_start_to_onset_h",
+        246.28838258981705
+      ],
+      [
+        "charge_overnight_h",
+        232.90845465660095
+      ],
+      [
+        "mat_final_wake_hour",
+        225.30441353470087
+      ],
+      [
+        "mat_longest_wake_min",
+        218.7088419497013
+      ],
+      [
+        "reg_bed_entry_hour_dev",
+        216.7888470441103
+      ],
+      [
+        "bed_entry_hour",
+        174.7911833524704
+      ],
+      [
+        "home_gps_frac",
+        162.60561429709196
+      ],
+      [
+        "charge_total_h",
+        156.69093811511993
+      ]
+    ]
+  },
+  "per_target": {
+    "Q1": {
+      "subj_mean_oof": 0.672655171630032,
+      "subj_mean_ref": 0.67266,
+      "actig_lgb_oof": 0.6732011160643052,
+      "actig_cb_oof": 0.6663835941401688,
+      "actig_wth_lgb_oof": 0.6760293539162179,
+      "actig_wth_cb_oof": 0.6680138278094913,
+      "combo_lgb_oof": 0.6721357607054675,
+      "combo_cb_oof": 0.674442895515756,
+      "best_model": "actig_cb",
+      "best_model_oof": 0.6663835941401688,
+      "blend_w": 0.6000000000000001,
+      "blend_oof": 0.6617136062608087,
+      "final_oof": 0.6617136062608087,
+      "delta_vs_subjmean": 0.010941565369223305,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.6663835941401688,
+      "actig_wth_oof": 0.6680138278094913,
+      "actig_only_delta_vs_subjmean": 0.006271577489863178,
+      "actig_only_beats_subjmean": false
+    },
+    "Q2": {
+      "subj_mean_oof": 0.6929996408521616,
+      "subj_mean_ref": 0.693,
+      "actig_lgb_oof": 0.6966013397581301,
+      "actig_cb_oof": 0.7210943646000385,
+      "actig_wth_lgb_oof": 0.7045354632195592,
+      "actig_wth_cb_oof": 0.721651962159341,
+      "combo_lgb_oof": 0.7041896331014813,
+      "combo_cb_oof": 0.7025114538495068,
+      "best_model": "actig_lgb",
+      "best_model_oof": 0.6966013397581301,
+      "blend_w": 0.0,
+      "blend_oof": 0.6929996408521616,
+      "final_oof": 0.6929996408521616,
+      "delta_vs_subjmean": 0.0,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.6966013397581301,
+      "actig_wth_oof": 0.7045354632195592,
+      "actig_only_delta_vs_subjmean": -0.003601698905968509,
+      "actig_only_beats_subjmean": false
+    },
+    "Q3": {
+      "subj_mean_oof": 0.6695293043179024,
+      "subj_mean_ref": 0.66953,
+      "actig_lgb_oof": 0.6680719497533038,
+      "actig_cb_oof": 0.6848163717709553,
+      "actig_wth_lgb_oof": 0.6767614900874309,
+      "actig_wth_cb_oof": 0.6814030588862849,
+      "combo_lgb_oof": 0.6801828108009503,
+      "combo_cb_oof": 0.6708396364884395,
+      "best_model": "actig_lgb",
+      "best_model_oof": 0.6680719497533038,
+      "blend_w": 0.7000000000000001,
+      "blend_oof": 0.6678216840114475,
+      "final_oof": 0.6678216840114475,
+      "delta_vs_subjmean": 0.0017076203064548823,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.6680719497533038,
+      "actig_wth_oof": 0.6767614900874309,
+      "actig_only_delta_vs_subjmean": 0.001457354564598612,
+      "actig_only_beats_subjmean": false
+    },
+    "S1": {
+      "subj_mean_oof": 0.575821016915498,
+      "subj_mean_ref": 0.57582,
+      "actig_lgb_oof": 0.534791659186314,
+      "actig_cb_oof": 0.5356439094232757,
+      "actig_wth_lgb_oof": 0.514829336399846,
+      "actig_wth_cb_oof": 0.534376060678191,
+      "combo_lgb_oof": 0.5319373184189369,
+      "combo_cb_oof": 0.5466070817198949,
+      "best_model": "actig_wth_lgb",
+      "best_model_oof": 0.514829336399846,
+      "blend_w": 1.0,
+      "blend_oof": 0.514829336399846,
+      "final_oof": 0.514829336399846,
+      "delta_vs_subjmean": 0.06099168051565207,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.534791659186314,
+      "actig_wth_oof": 0.514829336399846,
+      "actig_only_delta_vs_subjmean": 0.041029357729184035,
+      "actig_only_beats_subjmean": true,
+      "stack_ref": 0.509,
+      "final_delta_vs_stack": -0.005829336399845952,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.025791659186313987
+    },
+    "S2": {
+      "subj_mean_oof": 0.5800769959049744,
+      "subj_mean_ref": 0.58008,
+      "actig_lgb_oof": 0.5932909781838565,
+      "actig_cb_oof": 0.59648086928832,
+      "actig_wth_lgb_oof": 0.5811102279039838,
+      "actig_wth_cb_oof": 0.5892654814029139,
+      "combo_lgb_oof": 0.594595642914955,
+      "combo_cb_oof": 0.5911749470287297,
+      "best_model": "actig_wth_lgb",
+      "best_model_oof": 0.5811102279039838,
+      "blend_w": 0.5,
+      "blend_oof": 0.5763473590606213,
+      "final_oof": 0.5763473590606213,
+      "delta_vs_subjmean": 0.0037296368443531236,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.5932909781838565,
+      "actig_wth_oof": 0.5811102279039838,
+      "actig_only_delta_vs_subjmean": -0.013213982278882042,
+      "actig_only_beats_subjmean": false,
+      "stack_ref": 0.566,
+      "final_delta_vs_stack": -0.010347359060621342,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.027290978183856507
+    },
+    "S3": {
+      "subj_mean_oof": 0.5332407156510615,
+      "subj_mean_ref": 0.53324,
+      "actig_lgb_oof": 0.5431455593136733,
+      "actig_cb_oof": 0.5324594077921458,
+      "actig_wth_lgb_oof": 0.5565651413997584,
+      "actig_wth_cb_oof": 0.541621665733744,
+      "combo_lgb_oof": 0.5517943449773932,
+      "combo_cb_oof": 0.5500707330329276,
+      "best_model": "actig_cb",
+      "best_model_oof": 0.5324594077921458,
+      "blend_w": 0.5,
+      "blend_oof": 0.5242744482614909,
+      "final_oof": 0.5242744482614909,
+      "delta_vs_subjmean": 0.008966267389570515,
+      "beats_subjmean_noise": false,
+      "actig_only_oof": 0.5324594077921458,
+      "actig_wth_oof": 0.541621665733744,
+      "actig_only_delta_vs_subjmean": 0.0007813078589156142,
+      "actig_only_beats_subjmean": false,
+      "stack_ref": 0.52,
+      "final_delta_vs_stack": -0.004274448261490926,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.012459407792145827
+    },
+    "S4": {
+      "subj_mean_oof": 0.6473907194924797,
+      "subj_mean_ref": 0.64739,
+      "actig_lgb_oof": 0.660972373532222,
+      "actig_cb_oof": 0.6516372475056387,
+      "actig_wth_lgb_oof": 0.6290221966419363,
+      "actig_wth_cb_oof": 0.6291367018387544,
+      "combo_lgb_oof": 0.6298020227186302,
+      "combo_cb_oof": 0.6286879223481434,
+      "best_model": "combo_cb",
+      "best_model_oof": 0.6286879223481434,
+      "blend_w": 0.9,
+      "blend_oof": 0.6283213833938479,
+      "final_oof": 0.6283213833938479,
+      "delta_vs_subjmean": 0.019069336098631817,
+      "beats_subjmean_noise": true,
+      "actig_only_oof": 0.6516372475056387,
+      "actig_wth_oof": 0.6290221966419363,
+      "actig_only_delta_vs_subjmean": -0.004246528013158946,
+      "actig_only_beats_subjmean": false,
+      "stack_ref": 0.614,
+      "final_delta_vs_stack": -0.01432138339384792,
+      "beats_stack_noise": false,
+      "actig_only_delta_vs_stack": -0.03763724750563868
+    }
+  },
+  "subjmean_oof_verification": {
+    "macro_oof": 0.6245305092520156,
+    "expected": 0.62453,
+    "per_target_oof": {
+      "Q1": 0.672655171630032,
+      "Q2": 0.6929996408521616,
+      "Q3": 0.6695293043179024,
+      "S1": 0.575821016915498,
+      "S2": 0.5800769959049744,
+      "S3": 0.5332407156510615,
+      "S4": 0.6473907194924797
+    },
+    "match": true
+  },
+  "leak_check": "All 5 scorers (Cole-Kripke, Sadeh, Webster+rescoring, Oakley/Actiwatch 3-threshold, Sazonov) are FIXED published algorithms with NO fitted parameters. All actigraphy/consensus/fragmentation/structural features computed from each night's OWN movement/HR streams inside that night's own reconstructed in-bed interval over fixed clock window [19:00 lifelog_date, 12:00 sleep_date]. subj_mean_enc + regularity/rank reference stats = fold-train for OOF, full-train (no test labels) for test. subjmean OOF macro asserted == 0.62453 (leak-safe same-subject-hole folds confirmed). No row-own/future label, no test-label fitting, no pseudo-labeling, NO external/Nanum data. Features forced finite.",
+  "external_data_used": false,
+  "elapsed_seconds": 2715.7960867881775
+}

@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    {"id": "campaign:wave43-claude", "type": "campaign", "label": "Wave43 Claude campaign"},
+    {"id": "model:wave43-stack-v2", "type": "model", "label": "Wave43 stack-v2"},
+    {"id": "split:same-subject-hole-5fold", "type": "validation_policy", "label": "Same-subject-hole 5-fold"},
+    {"id": "metric:calibrated-macro-0.58972", "type": "performance", "label": "Calibrated macro log-loss 0.58972"},
+    {"id": "metric:projected-public-0.59272", "type": "projection", "label": "Projected public 0.59272"},
+    {"id": "feature:sliding-window-intraday", "type": "feature_family", "label": "Sliding-window intraday"},
+    {"id": "feature:withings-mat-mimic", "type": "feature_family", "label": "Withings-mat mimic"},
+    {"id": "feature:actigraphy-scorer", "type": "feature_family", "label": "Actigraphy scorer"},
+    {"id": "feature:waso-sleep-physiology", "type": "feature_family", "label": "WASO sleep physiology"},
+    {"id": "feature:ssl-sequence-deeptab", "type": "feature_family", "label": "SSL / sequence / deep tabular"},
+    {"id": "target:S1", "type": "target", "label": "S1 total sleep time"},
+    {"id": "target:S3", "type": "target", "label": "S3 sleep onset latency"},
+    {"id": "target:Q3", "type": "target", "label": "Q3 stress bottleneck"},
+    {"id": "target:S4", "type": "target", "label": "S4 WASO disturbance"}
+  ],
+  "edges": [
+    {"source": "campaign:wave43-claude", "target": "model:wave43-stack-v2", "relation": "produced"},
+    {"source": "model:wave43-stack-v2", "target": "split:same-subject-hole-5fold", "relation": "validated_on"},
+    {"source": "model:wave43-stack-v2", "target": "metric:calibrated-macro-0.58972", "relation": "achieved"},
+    {"source": "metric:calibrated-macro-0.58972", "target": "metric:projected-public-0.59272", "relation": "used_for_projection"},
+    {"source": "feature:sliding-window-intraday", "target": "target:Q3", "relation": "improved_signal_for"},
+    {"source": "feature:withings-mat-mimic", "target": "target:S1", "relation": "strongest_signal_for"},
+    {"source": "feature:actigraphy-scorer", "target": "target:S3", "relation": "strongest_signal_for"},
+    {"source": "feature:waso-sleep-physiology", "target": "target:S4", "relation": "tested_for_but_not_decisive"},
+    {"source": "feature:ssl-sequence-deeptab", "target": "model:wave43-stack-v2", "relation": "expanded_candidate_pool_for"}
+  ]
+}

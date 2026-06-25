@@ -1,0 +1,22 @@
+packet_id: 2026-06-25-wave43-claude-campaign-stack-local-oof-projection
+questions:
+  - id: leaderboard-export-needed
+    priority: high
+    owner: chunryongoh
+    question: "public 0.60761 및 최종 stack-v2 submission의 official leaderboard export 또는 submission hash를 raw evidence로 추가할 수 있는가?"
+    reason: "leaderboard claim을 supported로 승격하려면 chat/progress ledger 외부 증거가 필요하다."
+  - id: oof-prediction-artifact-policy
+    priority: medium
+    owner: team
+    question: "OOF prediction arrays와 final submission CSV를 packet에 복사할지, 로컬 ETRI raw path reference만 유지할지 결정해야 한다."
+    reason: "재현성과 packet 크기/보안 경계를 같이 정해야 한다."
+  - id: official-split-supersession
+    priority: high
+    owner: team
+    question: "organizer-official split 또는 private leaderboard semantics가 확인되면 same-subject-hole policy를 어떻게 supersede할 것인가?"
+    reason: "현재 split은 local canonical policy이며 official validation semantics가 아니다."
+  - id: s4-next-test
+    priority: medium
+    owner: team
+    question: "S4는 WASO/transfer가 final stack을 넘지 못했는데, 다음 실험은 sleep fragmentation proxy, domain adaptation, target-specific feature selection 중 무엇이어야 하는가?"
+    reason: "S4가 여전히 최종 macro의 병목이다."

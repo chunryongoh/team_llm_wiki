@@ -1,0 +1,46 @@
+{
+  "packet_id": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+  "status": "review_required",
+  "checks": [
+    {
+      "id": "local-oof-vs-public-boundary",
+      "severity": "high",
+      "result": "pass_with_warning",
+      "message": "Local OOF, public observation, and projected public are explicitly separated. Synthesis must preserve this separation."
+    },
+    {
+      "id": "raw-packet-mirror-risk",
+      "severity": "medium",
+      "result": "warning",
+      "message": "The packet contains many details. Wiki synthesis should update stable entity pages instead of copying the packet into one monolithic page."
+    },
+    {
+      "id": "target-specific-claims",
+      "severity": "medium",
+      "result": "pass_with_warning",
+      "message": "S1 and S3 feature-family insights are supported; S4 transfer/WASO insights remain negative or tentative."
+    },
+    {
+      "id": "leaderboard-evidence",
+      "severity": "high",
+      "result": "warning",
+      "message": "Public 0.60761 requires official leaderboard export or submission hash before becoming supported leaderboard evidence."
+    }
+  ],
+  "recommended_claim_status_changes": [
+    {
+      "claim": "Final stack-v2 local same-subject-hole calibrated macro log-loss is 0.58972.",
+      "status": "supported"
+    },
+    {
+      "claim": "Final stack-v2 official public leaderboard score is 0.59272.",
+      "status": "disputed",
+      "reason": "0.59272 is only a projection in the available evidence."
+    },
+    {
+      "claim": "Wave43 proves Q-family signal is impossible.",
+      "status": "superseded",
+      "reason": "Sliding-window and stack results extracted non-trivial Q2/Q3 signal."
+    }
+  ]
+}

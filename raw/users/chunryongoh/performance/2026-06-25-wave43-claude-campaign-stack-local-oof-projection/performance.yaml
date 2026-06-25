@@ -1,0 +1,76 @@
+primary_metric:
+  name: macro_log_loss
+  direction: lower_is_better
+  surface: local_same_subject_hole_oof
+metric_definitions:
+  macro_log_loss: "Q1, Q2, Q3, S1, S2, S3, S4 binary log-loss의 단순 평균입니다."
+  projected_public_macro_log_loss: "local OOF와 기존 public 관측치 사이의 경험적 편차를 반영한 추정치이며 official leaderboard 결과가 아닙니다."
+targets:
+  - Q1
+  - Q2
+  - Q3
+  - S1
+  - S2
+  - S3
+  - S4
+split_id: same-subject-hole-5fold-temporal-by-subject
+overall_metrics:
+  subject_mean_macro_log_loss: 0.6245305092520156
+  equal_all_macro_log_loss: 0.6157419292915838
+  stack_nested_macro_log_loss: 0.5946367652711365
+  calibrated_stack_macro_log_loss: 0.5897217743642561
+  projected_public_macro_log_loss: 0.5927217743642561
+  confirmed_public_best_observed: 0.60761
+  stack_vs_subject_mean_delta: -0.0348087348877595
+target_metrics:
+  Q1:
+    calibrated_log_loss: 0.6450606619738299
+    calibration: temp
+    subject_mean_log_loss: 0.672655171630032
+    candidate_count: 236
+  Q2:
+    calibrated_log_loss: 0.6455155286285766
+    calibration: temp
+    subject_mean_log_loss: 0.6831541577661156
+    candidate_count: 236
+  Q3:
+    calibrated_log_loss: 0.650460985046031
+    calibration: none
+    subject_mean_log_loss: 0.6718103460280456
+    candidate_count: 236
+  S1:
+    calibrated_log_loss: 0.5084141950084338
+    calibration: none
+    subject_mean_log_loss: 0.5329081668026648
+    candidate_count: 236
+  S2:
+    calibrated_log_loss: 0.5561343457335379
+    calibration: platt
+    subject_mean_log_loss: 0.5891687906867859
+    candidate_count: 236
+  S3:
+    calibrated_log_loss: 0.5168327857279124
+    calibration: temp
+    subject_mean_log_loss: 0.5692478507528313
+    candidate_count: 238
+  S4:
+    calibrated_log_loss: 0.6056339184314705
+    calibration: temp
+    subject_mean_log_loss: 0.6527684700976335
+    candidate_count: 236
+confusion_matrices: []
+oof_predictions:
+  available: false
+  reason: "OOF prediction arrays remain in the local ETRI result tree; this packet keeps metric/code snapshots and source references."
+submission_predictions:
+  available: true
+  source_ref: "ETRI/raw/results/2026-06-24-wave43-stack-v2/submission.csv"
+  copied_into_packet: false
+baseline_comparison:
+  primary_baseline: subject_mean
+  calibrated_stack_delta: -0.0348087348877595
+  stack_nested_delta: -0.0298937439808791
+uncertainty:
+  oof_noise_floor_reference: "wave43-p0 subject bootstrap macro SE was recorded around 0.0175 in the Claude progress ledger."
+  leaderboard_status: "0.60761 is a Claude/user-recorded public observation; 0.59272 is a projection, not a submitted official public/private score."
+claim_status: supported
