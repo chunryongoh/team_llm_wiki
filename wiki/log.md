@@ -237,3 +237,8 @@ Append-only ingest and maintenance events belong here.
 - GitHub Models fallback produced a partial synthesis; required wiki pages were conservatively filled in GitHub Actions.
 - packets: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
 - report: `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md`
+
+## [2026-06-25] ingest | 2026-06-25-wave43-claude-campaign-stack-local-oof-projection
+
+- target: `wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md`
+- run: `28153696483-1`
