@@ -242,3 +242,9 @@ Append-only ingest and maintenance events belong here.
 
 - target: `wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md`
 - run: `28153696483-1`
+
+## [2026-06-25] llm-synthesis | sleep-lifelog
+
+- GitHub Models fallback produced a partial synthesis; required wiki pages were conservatively filled in GitHub Actions.
+- packets: `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`
+- report: `wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md`

@@ -14,18 +14,11 @@
 
 ## Next Actions
 
-- Use `wiki/reports/2026-06-18-sleep-lifelog-packet-synthesis.md` as the entrypoint for this synthesis wave and close any validation evidence gaps.
+- Use `wiki/reports/2026-06-25-sleep-lifelog-packet-synthesis.md` as the entrypoint for this synthesis wave and close any validation evidence gaps.
 
 <!-- wiki-ingest:latest:start -->
-### 28153696483-1 | 2026-06-25-wave43-claude-campaign-stack-local-oof-projection
+### 2026-06-25 | sleep-lifelog fallback synthesis
 
-- link: [[performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection]]
-- publish_action: `bot_pr`
-- risk_tier: `tier4-governance`
-- review-required: true
-
-### 2026-06-18 | sleep-lifelog fallback synthesis
-
-- link: [[reports/2026-06-18-sleep-lifelog-packet-synthesis]]
-- packets: `2026-06-18-wave41-lgb-cb-foldsafe-synthesis-smoke-local-oof-diagnostic`
+- link: [[reports/2026-06-25-sleep-lifelog-packet-synthesis]]
+- packets: `2026-06-25-wave43-claude-campaign-stack-local-oof-projection`
 <!-- wiki-ingest:latest:end -->
