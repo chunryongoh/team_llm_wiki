@@ -1,0 +1,177 @@
+{
+  "changed_paths": [
+    "wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.json",
+    "raw/results/wiki-ingest/28153696483-1/report.json"
+  ],
+  "claim_register": [],
+  "claim_statuses": [
+    {
+      "packet": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "status": "supported"
+    }
+  ],
+  "created_pages": [],
+  "failures": [],
+  "generated_paths": [
+    "wiki/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.md",
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/latest-context.md",
+    "automation/.cache/compiled/2026-06-25-wave43-claude-campaign-stack-local-oof-projection.json"
+  ],
+  "input_changed_paths": [
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/artifact_summary.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/manifest.yaml",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/packet.md",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/packet_entity_graph.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/performance.yaml",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/question_queue.yaml",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/semantic_lint.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/actigraphy-build.py",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/actigraphy-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/deeptab-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/seqbag-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/sliding-window-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/stack-v2-build.py",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/stack-v2-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/stack-v2-next-steps-post-cap-reset.md",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/submission-v2-ledger.csv",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/transfer-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/waso-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/withings-build.py",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/source_artifacts/withings-metrics.json",
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection/wiki_plan.yaml"
+  ],
+  "integration_plan": [],
+  "link_lint_errors": [],
+  "llm_synthesis": false,
+  "metric_changes": [
+    {
+      "metric": "grouped_macro_log_loss",
+      "packet": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "reported_value": 0.5897217743642561
+    },
+    {
+      "metric": "projected_public_macro_log_loss",
+      "packet": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "reported_value": 0.5927217743642561
+    },
+    {
+      "metric": "withings_s1_log_loss",
+      "packet": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "reported_value": 0.5059412643362348
+    },
+    {
+      "metric": "actigraphy_s3_log_loss",
+      "packet": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "reported_value": 0.5112450274138282
+    }
+  ],
+  "model": null,
+  "open_questions": [],
+  "packet_roots": [
+    "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection"
+  ],
+  "packet_skill_compatibility": {
+    "checks": [
+      {
+        "id": "changed_scope",
+        "message": "changed paths are limited to raw/users/**",
+        "status": "pass"
+      },
+      {
+        "id": "manifest",
+        "message": "manifest.yaml loaded",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "status": "pass"
+      },
+      {
+        "id": "packet_root_shape",
+        "message": "packet root follows raw/users/<owner>/<category>/<date-slug>",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "status": "pass"
+      },
+      {
+        "id": "packet_markdown",
+        "message": "packet.md exists",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "status": "pass"
+      },
+      {
+        "id": "claim_boundary",
+        "message": "claim_boundary is present",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "status": "pass"
+      },
+      {
+        "id": "metric_claim_evidence",
+        "message": "metric evidence contract is present or not required",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "status": "pass"
+      },
+      {
+        "id": "strong_claim_evidence",
+        "message": "claim evidence level is compatible with packet skill policy",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "status": "pass"
+      },
+      {
+        "affected_page_count": 2,
+        "id": "entity_coverage",
+        "message": "wiki_plan.yaml includes stable entities, affected pages, semantic lint, and page-role coverage",
+        "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+        "proposed_pages": [
+          "wiki/performance/wave43-claude-campaign-stack.md",
+          "wiki/performance/dacon-leaderboard-history.md",
+          "wiki/preprocessing/same-subject-hole-cv.md",
+          "wiki/features/wave43-feature-families.md",
+          "wiki/models/wave43-stacked-ensemble.md",
+          "wiki/targets/s1-total-sleep-time.md",
+          "wiki/targets/s3-sleep-onset-latency.md",
+          "wiki/targets/q3-stress-bottleneck.md",
+          "wiki/targets/s4-waso-disturbance.md",
+          "wiki/claims/current-supported-claims.md",
+          "wiki/targets/wave43-open-validation-gaps.md"
+        ],
+        "stable_entity_count": 9,
+        "status": "pass"
+      }
+    ],
+    "status": "pass"
+  },
+  "packets": [
+    {
+      "claim_boundary": "local same-subject-hole OOF metrics are supported by copied metric snapshots; public leaderboard values are user/Claude-recorded observations or projections unless separately exported.",
+      "claim_status": "supported",
+      "id": "2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "packet_root": "raw/users/chunryongoh/performance/2026-06-25-wave43-claude-campaign-stack-local-oof-projection",
+      "publish_action": "bot_pr",
+      "risk_reasons": [
+        "high-risk packet type: performance",
+        "high-risk wiki target path",
+        "high-risk canonical route",
+        "governance-tier claim status"
+      ],
+      "risk_tier": "tier4-governance",
+      "type": "performance"
+    }
+  ],
+  "policy_warnings": [],
+  "report_path": "raw/results/wiki-ingest/28153696483-1/report.json",
+  "review_notes": [],
+  "risk_tier": "tier4-governance",
+  "run_id": "28153696483-1",
+  "status": "bot_pr",
+  "superseded_or_conflicting_claims": [],
+  "synthesis_lanes": [],
+  "synthesis_summary": null,
+  "timing_ms": 195,
+  "updated_pages": [],
+  "validation": {},
+  "warnings": []
+}
